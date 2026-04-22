@@ -1,0 +1,12 @@
+/* Custom DSM syntax highlighting */
+
+/* Docstrings (String.Doc) - Brown/tan italic, distinct from green types */
+.highlight .sd {
+    color: #8B6914;  /* Dark goldenrod - documentation style */
+    font-style: italic;
+}
+
+/* Reduce API reference page titles (class names) */
+article h1 {
+    font-size: 1.8em;
+}

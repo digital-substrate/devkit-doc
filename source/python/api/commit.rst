@@ -1,0 +1,159 @@
+Commit System
+=============
+
+The commit system provides transactional persistence with history tracking.
+
+**When to use**: Use ``CommitDatabase`` for versioned persistence with history,
+branching, and sync. Every change creates a commit, enabling undo/redo
+and concurrent editing.
+
+Quick Start
+-----------
+
+.. code-block:: python
+
+   from dsviper import CommitDatabase, CommitMutableState
+
+   # Open versioned database (created with dsm_util.py)
+   db = CommitDatabase.open("model.cdb")
+   db.definitions().inject()
+
+   # Create mutable state from latest commit
+   state = db.state(db.last_commit_id())
+   mutable = CommitMutableState(state)
+
+   # Apply mutations via AttachmentMutating interface
+   mutating = mutable.attachment_mutating()
+   mutating.set(MYAPP_A_USER, key, document)
+
+   # Commit changes → returns new commit ID
+   commit_id = db.commit_mutations("Add user", mutable)
+
+.. seealso::
+
+   For detailed examples and the Dual-Layer Contract, see :doc:`../commit`.
+
+Path-Based Mutations
+--------------------
+
+Use ``Path`` with ``update()`` to modify specific fields without replacing
+the entire document. This enables multiplayer editing where concurrent
+changes to different fields merge automatically.
+
+.. code-block:: python
+
+   from dsviper import CommitDatabase, CommitMutableState, Path
+
+   db = CommitDatabase.open("model.cdb")
+   db.definitions().inject()
+
+   # Build a path to a nested field: document.address.city
+   path_city = Path.from_field("address").field("city").const()
+
+   # Create mutable state
+   state = db.state(db.last_commit_id())
+   mutable = CommitMutableState(state)
+   mutating = mutable.attachment_mutating()
+
+   # Update only the city field (not the whole document)
+   mutating.update(MYAPP_A_USER, user_key, path_city, "Paris")
+
+   # Commit
+   db.commit_mutations("Update city", mutable)
+
+With ``set()``, concurrent edits to the same document cause one to be overwritten. With ``update()``,
+edits to different fields merge automatically—essential for multiplayer editing.
+
+Choosing the Right Class
+------------------------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 35 25 40
+
+   * - Use Case
+     - Class
+     - Example
+   * - Open versioned database
+     - :class:`CommitDatabase`
+     - ``db = CommitDatabase.open(path)``
+   * - Read state at specific commit
+     - :class:`CommitState`
+     - ``state = db.state(commit_id)``
+   * - Prepare mutations
+     - :class:`CommitMutableState`
+     - ``mutable = CommitMutableState(state)``
+   * - Read documents (get, keys, has)
+     - :class:`AttachmentGetting`
+     - ``getting = state.attachment_getting()``
+   * - Write documents (set, update)
+     - :class:`AttachmentMutating`
+     - ``mutating = mutable.attachment_mutating()``
+   * - Inspect commit metadata
+     - :class:`CommitHeader`
+     - ``header = db.commit_header(id)``
+
+Core Classes
+------------
+
+.. autosummary::
+   :toctree: generated/
+   :nosignatures:
+
+   dsviper.Commit
+   dsviper.CommitDatabase
+   dsviper.CommitDatabaseSQLite
+   dsviper.CommitDatabaseRemote
+   dsviper.CommitDatabaseServer
+   dsviper.CommitDatabasing
+
+State Access
+------------
+
+.. autosummary::
+   :toctree: generated/
+   :nosignatures:
+
+   dsviper.CommitState
+   dsviper.CommitMutableState
+
+History & DAG
+-------------
+
+.. autosummary::
+   :toctree: generated/
+   :nosignatures:
+
+   dsviper.CommitNode
+   dsviper.CommitNodeGrid
+   dsviper.CommitNodeGridBuilder
+   dsviper.CommitHeader
+   dsviper.CommitData
+   dsviper.CommitEvalAction
+
+Synchronization
+---------------
+
+.. autosummary::
+   :toctree: generated/
+   :nosignatures:
+
+   dsviper.CommitStore
+   dsviper.CommitStoreNotifying
+   dsviper.CommitSynchronizer
+   dsviper.CommitSynchronizerInfo
+   dsviper.CommitSynchronizerInfoTransmit
+   dsviper.CommitSyncData
+
+Tracing
+-------
+
+.. autosummary::
+   :toctree: generated/
+   :nosignatures:
+
+   dsviper.CommitStateTracing
+   dsviper.CommitStateTrace
+   dsviper.CommitStateTraceProgram
+   dsviper.ValueProcessorTrace
+   dsviper.ValueProcessorTraceOpcode

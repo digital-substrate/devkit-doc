@@ -11,5 +11,8 @@ furo
 # MyST parser (Markdown support in Sphinx)
 myst-parser
 
+# Copy-button on every code block
+sphinx-copybutton
+
 # dsviper runtime (required by pyi_signatures extension to extract API type hints)
 dsviper

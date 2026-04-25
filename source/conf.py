@@ -24,6 +24,7 @@ extensions = [
 	'sphinx.ext.autodoc',
 	'sphinx.ext.autosummary',
 	'myst_parser',
+	'sphinx_copybutton',
 	'dsm_lexer',
 	'pyi_signatures',
 ]
@@ -34,6 +35,12 @@ exclude_patterns = []
 # Autosummary settings
 autosummary_generate = True
 autosummary_imported_members = True
+
+# Copy-button: strip Python REPL and shell prompts so the copied snippet is
+# directly executable.
+copybutton_prompt_text = r">>> |\.\.\. |\$ "
+copybutton_prompt_is_regexp = True
+copybutton_only_copy_prompt_lines = True
 
 
 

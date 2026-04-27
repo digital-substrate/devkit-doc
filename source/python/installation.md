@@ -60,30 +60,12 @@ points:
 - **Seamless bridge**: Python natives (lists, dicts, tuples) are accepted as input since
   Viper's metadata drives automatic conversion.
 
-## Core Philosophy
+## Strong-Typed Layer Over Python
 
-Understanding these principles helps you work effectively with Viper:
-
-> **Metadata Everywhere Principle**
->
-> Viper's type system carries metadata at runtime. This means Type, Value,
-> Function, Serialization, Database Persistence, and RPC all leverage the same
-> type information. Define your types once, and Viper handles serialization,
-> validation, and cross-language interoperability automatically.
-
-> **Strong-Typed Layer Over Python**
->
 > Unlike Python's permissive duck typing, dsviper enforces types immediately.
 > When you create a `Vector<Int64>`, only integers can be added. Type mismatches
 > raise `ViperError` exceptions at the point of error, not downstream when data
 > is corrupted. See [Error Handling](errors.md) for details.
-
-> **Reference Semantics + Immutable Commits**
->
-> Primitive values are immutable. Containers (Vector, Map, Set) are mutable
-> via `shared_ptr` (like Python references). Once committed to a database,
-> state becomes immutable in the commit DAG. This enables safe concurrent
-> access and version control.
 
 ## Quick Test
 

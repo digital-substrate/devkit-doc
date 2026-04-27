@@ -15,23 +15,24 @@ Applications built with Viper follow a 3-tier pattern:
 └────────────────────────────┬───────────────────────────────┘
                              │
 ┌────────────────────────────▼───────────────────────────────┐
-│  TIER 2: LOGIC (Bridges + Store + Components)              │
-│  Generated pools, hand-written business code               │
+│  TIER 2: LOGIC (Context + Bridges + Components)            │
+│  Application Context (orchestration), generated pools,     │
+│  hand-written business code                                │
 └────────────────────────────┬───────────────────────────────┘
                              │
 ┌────────────────────────────▼───────────────────────────────┐
 │  TIER 3: DATA (Viper Runtime)                              │
-│  CommitDatabase, persistence, dsviper binding              │
+│  CommitDatabase, CommitStore, persistence, dsviper binding │
 └────────────────────────────────────────────────────────────┘
 ```
 
 ### Tier Responsibilities
 
-| Tier             | Responsibility                      | Platform-Specific? |
-|------------------|-------------------------------------|--------------------|
-| **Presentation** | UI framework, windows, dialogs      | Yes                |
-| **Logic**        | Bridges, Store, business components | Partially          |
-| **Data**         | Viper runtime, persistence          | No (shared)        |
+| Tier             | Responsibility                                                | Platform-Specific? |
+|------------------|---------------------------------------------------------------|--------------------|
+| **Presentation** | UI framework, windows, dialogs                                | Yes                |
+| **Logic**        | Application Context, bridges, business components             | Partially          |
+| **Data**         | Viper runtime (CommitDatabase, CommitStore), persistence      | No (shared)        |
 
 ## The Full Application Stack
 
@@ -44,8 +45,10 @@ For business applications with domain logic, the stack expands:
 └────────────────────────────┬───────────────────────────────┘
                              │
 ┌────────────────────────────▼───────────────────────────────┐
-│  2. Store Layer                                            │
-│  Application store + generated pools                       │
+│  2. Application Context                                    │
+│  Singleton orchestrator: owns the CommitStore, the         │
+│  generated FunctionPools, and the application's domain     │
+│  state (e.g. current GraphKey)                             │
 └────────────────────────────┬───────────────────────────────┘
                              │
 ┌────────────────────────────▼───────────────────────────────┐
@@ -65,7 +68,8 @@ For business applications with domain logic, the stack expands:
                              │
 ┌────────────────────────────▼───────────────────────────────┐
 │  6. Viper Runtime                                          │
-│  Core C++ engine, dsviper Python binding                   │
+│  Core C++ engine (CommitStore, CommitDatabase),            │
+│  dsviper Python binding                                    │
 └────────────────────────────────────────────────────────────┘
 ```
 
@@ -82,28 +86,77 @@ Platform-specific presentation code:
 
 This layer changes for each target platform but follows the same logical structure.
 
-### Layer 2: Store
+### Layer 2: Application Context
 
-The **Store** orchestrates the application:
+The **Context** is the application-level singleton that orchestrates the runtime.
+It is *not* a subclass of `Viper::CommitStore`: it **owns** a `CommitStore`
+(provided by the Viper runtime) and adds the application-specific surface around
+it — the generated `FunctionPool` / `AttachmentFunctionPool` instances, the
+domain state (e.g. the current graph), and the action dispatch.
 
-- Holds the database reference
-- Manages application state
-- Provides undo/redo
-- Dispatches notifications to UI
+Responsibilities of the Context:
+
+- Own the `CommitStore` (which itself holds the `CommitDatabase` and the
+  current `CommitState`)
+- Hold the generated tool / model / attachment `FunctionPools`
+- Hold application-level domain state (e.g. `graphKey`)
+- Open / close / load the database
+- Dispatch user actions through `CommitMutableState`
+- Expose framework-agnostic notifications via `CommitStoreNotifying`
 
 ```cpp
-// Store pattern (C++)
-class Store {
-public:
-    void createGraph(string label);
-    void newVertex(Position position);
-    void deleteSelection();
+// Context pattern (C++) — see com.digitalsubstrate.ge / GE_Context.hpp
+namespace GE {
 
-    CommitDatabase* database();
-    bool canUndo();
-    void undo();
+class Context final {
+public:
+    static std::shared_ptr<Context> Instance();
+
+    // Database lifecycle (owned via the store)
+    void use(std::shared_ptr<Viper::CommitDatabase> const & database);
+    void close();
+    void load();
+    static std::shared_ptr<Viper::CommitDatabase> createDatabase(
+        std::filesystem::path const & filePath);
+
+    // Domain operations
+    void newGraph();
+    void useNewGraph(std::string const & label);
+    void dispatchAction(std::string const & label,
+                        std::shared_ptr<ContextAction> const & action);
+
+    // Owned components
+    std::shared_ptr<Viper::CommitStore> store;
+
+    std::shared_ptr<Viper::FunctionPool>           tools;
+    std::shared_ptr<Viper::AttachmentFunctionPool> modelGraph;
+    std::shared_ptr<Viper::AttachmentFunctionPool> modelSelection;
+    std::shared_ptr<Viper::AttachmentFunctionPool> modelIntegrity;
+    std::shared_ptr<Viper::AttachmentFunctionPool> attachments;
+
+    // Domain state
+    GE::Graph::GraphKey graphKey;
 };
+
+} // namespace GE
 ```
+
+Action dispatch always goes through the store's `CommitMutableState`, so undo/redo
+and notifications stay coherent:
+
+```cpp
+void Context::dispatchAction(std::string const & label,
+                             std::shared_ptr<ContextAction> const & action) {
+    auto const ms{store->mutableState()};
+    action->run(ms);
+    store->commitMutations(label, ms);
+}
+```
+
+The previous "Store-as-application-singleton" pattern is superseded: the
+generic store concerns (database, state, undo/redo, notifications) live in
+`Viper::CommitStore`, and the application-specific concerns (which pools,
+which domain state, which actions) live in the application's `Context`.
 
 ### Layer 3: Bridges
 
@@ -204,25 +257,28 @@ All implementations expose the same signals:
 
 The architecture supports multiple languages:
 
-| Layer          | C++ Application | Python Application |
-|----------------|-----------------|--------------------|
-| UI             | AppKit/Qt C++   | PySide/Qt Python   |
-| Store          | C++ singleton   | dsviper            |
-| Business       | C++             | Python or dsviper  |
-| Infrastructure | C++ generated   | Python generated   |
-| Runtime        | Viper C++       | dsviper            |
+| Layer          | C++ Application                  | Python Application       |
+|----------------|----------------------------------|--------------------------|
+| UI             | AppKit/Qt C++                    | PySide/Qt Python         |
+| Context        | C++ singleton (owns CommitStore) | Python class (owns store)|
+| Business       | C++                              | Python or dsviper        |
+| Infrastructure | C++ generated                    | Python generated         |
+| Runtime        | Viper C++ (CommitStore, ...)     | dsviper                  |
 
 ### Python Integration
 
-The `dsviper` module exposes the entire Viper runtime:
+The `dsviper` module exposes the entire Viper runtime, including
+`CommitStore` and `CommitDatabase`. A Python application's `Context` follows
+the same pattern as the C++ one — it instantiates a `CommitStore` and wires
+the generated pools around it:
 
 ```python
-from dsviper import CommitStore, CommitDatabase
+import dsviper
 
-# Open database
-database = CommitDatabase.open("path/to/data.cdb")
-store = CommitStore.instance()
-store.use(database)
+database = dsviper.CommitDatabase.create("path/to/data.cdb",
+                                         "An Application Database")
+store = dsviper.CommitStore.make()
+store.set_database(database)
 
 # Undo/Redo operations
 if store.can_undo():
@@ -236,7 +292,8 @@ if store.can_undo():
 Each layer has a single responsibility:
 
 - **UI**: Only presentation, no business logic
-- **Store**: Orchestration, not implementation
+- **Context**: Orchestration only — owns the `CommitStore` and the pools, does
+  not reimplement them
 - **Bridges**: Connection, not logic
 - **Business**: Domain rules, not infrastructure
 - **Generated**: Infrastructure, not business

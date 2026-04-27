@@ -143,7 +143,7 @@ CommitDatabase guarantees structural integrity but NOT semantic integrity.
 When concurrent streams converge, mutations on non-existent documents or unresolved paths are silently ignored.
 Your application must validate business rules when consuming state.
 
-See [The Dual-Layer Contract](../concepts/commit_contract.md).
+See [The Dual-Layer Contract](commit_contract.md).
 ```
 
 ### Step 8: Read from Database

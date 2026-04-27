@@ -68,12 +68,6 @@ Documentation
 
    tools/index
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Viper Concepts
-
-   concepts/index
-
 
 Indices
 -------

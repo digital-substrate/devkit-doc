@@ -24,7 +24,7 @@ without checking business rules—mutations on non-existent documents or unresol
 Your application must validate data when consuming state. The validation cost scales
 with your data model complexity and business rules, not with Viper.
 
-See [The Dual-Layer Contract](../concepts/commit_contract.md) for details.
+See [The Dual-Layer Contract](commit_contract.md) for details.
 ```
 
 ---

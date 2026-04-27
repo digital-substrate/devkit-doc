@@ -21,18 +21,22 @@ VS Code with DSM syntax highlighting and problem matcher.
 
 ### Installation
 
-The VS Code extension is distributed as a `.vsix` file in the `ide/` folder.
+The VS Code extension is published on the [VS Code
+Marketplace](https://marketplace.visualstudio.com/items?itemName=DigitalSubstrate.ds-dsm).
 
 1. Open Visual Studio Code
-2. Open Command Palette: `Cmd+Shift+P` (macOS) or `Ctrl+Shift+P` (Windows/Linux)
-3. Run: `Extensions: Install from VSIX...`
-4. Select the file: `ide/ds-dsm-1.2.0.vsix`
+2. Open the Extensions view: `Cmd+Shift+X` (macOS) or `Ctrl+Shift+X` (Windows/Linux)
+3. Search for **DSM Syntax Highlighter** (publisher: *DigitalSubstrate*)
+4. Click **Install**
 
 Alternatively, install from the command line:
 
 ```bash
-code --install-extension ide/ds-dsm-1.2.0.vsix
+code --install-extension DigitalSubstrate.ds-dsm
 ```
+
+Source repository:
+[github.com/digital-substrate/dsm-vscode](https://github.com/digital-substrate/dsm-vscode).
 
 ### Syntax Highlighting
 
@@ -172,13 +176,17 @@ JetBrains plugin showing syntax highlighting, code completion, Structure view, a
 
 ### Installation
 
-The JetBrains plugin is distributed as a `.zip` file in the `ide/` folder.
+The JetBrains plugin is published on the [JetBrains
+Marketplace](https://plugins.jetbrains.com/plugin/com.digitalsubstrate.dsm).
 
 1. Open your JetBrains IDE (IntelliJ IDEA, PyCharm, CLion, etc.)
-2. Go to: `Settings/Preferences > Plugins`
-3. Click the gear icon and select `Install Plugin from Disk...`
-4. Select the file: `ide/dsm-jetbrains-plugin-1.2.3.zip`
+2. Go to: `Settings/Preferences > Plugins > Marketplace`
+3. Search for **DSM** (publisher: *Digital Substrate*)
+4. Click **Install**
 5. Restart the IDE when prompted
+
+Source repository:
+[github.com/digital-substrate/dsm-jetbrains](https://github.com/digital-substrate/dsm-jetbrains).
 
 ### Key Features for DSM Development
 

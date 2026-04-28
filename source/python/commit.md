@@ -18,11 +18,13 @@ streams, and sync. Every change creates a commit, enabling undo/redo and concurr
 **The Dual-Layer Contract**
 
 CommitDatabase guarantees **structural integrity** (deterministic merge, DAG consistency)
-but NOT **semantic integrity**. When concurrent streams converge, mutations are applied automatically
-without checking business rules—mutations on non-existent documents or unresolved paths are silently ignored.
+but NOT **semantic integrity**. Best-effort merge means the state returned after convergence
+is **structurally sound but semantically untrusted**: mutations may have been silently dropped,
+and disjoint updates may have combined into a state that violates a cross-field invariant.
 
-Your application must validate data when consuming state. The validation cost scales
-with your data model complexity and business rules, not with Viper.
+Treat post-merge state like deserialized external input: re-validate it at read time, before
+acting on it. `dsviper.Error` covers only API misuse — it does not signal lost mutations or
+business-rule violations.
 
 See [The Dual-Layer Contract](commit_contract.md) for details.
 ```

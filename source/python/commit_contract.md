@@ -33,7 +33,7 @@ network input, a deserialized file, an external API. The natural reflex is to
 validate at that boundary and then trust the data internally.
 
 Best-effort merge breaks that reflex. **The state returned by
-`commit_mutations` is itself a boundary**, even though the data never left the
+`state(commitId)` is itself a boundary**, even though the data never left the
 process:
 
 - Mutations you submitted may have been silently dropped.
@@ -89,16 +89,10 @@ The contract shapes how you should write code on top of `dsviper.Commit*`:
 - **Do not assume** that every operation you build into a `CommitMutableState`
   will land. After merging concurrent commits, some operations may have been
   silently dropped because their targets disappeared.
-- **Re-read the resulting state** through the typed accessors before acting on
-  it. The state after `commit_mutations` is the source of truth, not the
-  mutations you submitted.
-- **Validate at the application boundary,** which now means *both* external
-  inputs *and* engine output. If your domain has invariants (uniqueness,
+- **Validate at the application boundary,** which means 
+  the engine output. If your domain has invariants (uniqueness,
   referential integrity, cross-field consistency), enforce them when consuming
   the state.
-- **Do not rely on `dsviper.Error` for business rules.** It signals only the
-  *external-untrusted* family — structural misuse of the API. Post-merge
-  untrusted state and semantic invalidity are silent.
 
 ## Summary
 

@@ -23,6 +23,9 @@ make clean && make html
 # Live preview
 pip install sphinx-autobuild
 sphinx-autobuild source build/html
+
+# Build NotebookLM-friendly text bundles (build/notebooklm/*.txt)
+make notebooklm
 ```
 
 ## Structure
@@ -38,6 +41,9 @@ source/
 ├── dsm/              # DSM language reference
 ├── python/           # Python guide + auto-generated API reference
 └── tools/            # Toolchain (Kibo, dsm_util, IDE plugins, templates)
+
+tools/
+└── build_notebooklm.py  # Bundles Sphinx text output into NotebookLM sources
 ```
 
 ## Documentation Language

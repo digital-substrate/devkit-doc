@@ -24,8 +24,15 @@ if errorlevel 9009 (
 )
 
 if "%1" == "" goto help
+if "%1" == "notebooklm" goto notebooklm
 
 %SPHINXBUILD% -M %1 %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
+goto end
+
+:notebooklm
+set SOURCE_DIR=%SOURCEDIR%
+set BUILD_DIR=%BUILDDIR%
+python tools\build_notebooklm.py
 goto end
 
 :help

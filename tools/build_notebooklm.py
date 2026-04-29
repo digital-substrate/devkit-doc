@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
-"""Build NotebookLM-friendly text bundles from Sphinx text builder output.
+"""Build NotebookLM-friendly Markdown bundles from Sphinx markdown output.
 
-Produces a small set of concatenated .txt files under build/notebooklm/, one
+Produces a small set of concatenated .md files under build/notebooklm/, one
 per top-level section of the documentation. Each original page is preceded by
-a `FILE: <relative-path>` header so NotebookLM can cite precise sources.
+a `<!-- FILE: <relative-path> -->` marker so NotebookLM can cite precise
+sources while keeping the bundle valid Markdown.
 
 Auto-generated API stub pages under python/api/generated/ are excluded: they
 are noisy reference material that does not help conversational Q&A. The 11
-curated python/api/*.txt category pages are kept inside the Python guide
+curated python/api/*.md category pages are kept inside the Python guide
 bundle.
 
 Usage:
@@ -24,8 +25,6 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable
 
-SEPARATOR = "=" * 50
-
 
 @dataclass(frozen=True)
 class Bundle:
@@ -35,7 +34,7 @@ class Bundle:
 
 
 BUNDLES: tuple[Bundle, ...] = (
-    Bundle("devkit-overview", ("index.txt",)),
+    Bundle("devkit-overview", ("index.md",)),
     Bundle("devkit-dsm", ("dsm",)),
     Bundle(
         "devkit-python-guide",
@@ -46,34 +45,34 @@ BUNDLES: tuple[Bundle, ...] = (
 )
 
 
-def collect_files(text_dir: Path, bundle: Bundle) -> list[Path]:
+def collect_files(src_dir: Path, bundle: Bundle) -> list[Path]:
     files: list[Path] = []
     for root in bundle.roots:
-        target = text_dir / root
+        target = src_dir / root
         if target.is_file():
             files.append(target)
         elif target.is_dir():
-            files.extend(sorted(target.rglob("*.txt")))
-    return [f for f in files if not bundle.exclude(f.relative_to(text_dir))]
+            files.extend(sorted(target.rglob("*.md")))
+    return [f for f in files if not bundle.exclude(f.relative_to(src_dir))]
 
 
-def write_bundle(out_path: Path, text_dir: Path, files: list[Path]) -> None:
+def write_bundle(out_path: Path, src_dir: Path, files: list[Path]) -> None:
     with out_path.open("w", encoding="utf-8") as out:
         for f in files:
-            rel = f.relative_to(text_dir).as_posix()
-            out.write(f"\n\n{SEPARATOR}\nFILE: {rel}\n{SEPARATOR}\n\n")
+            rel = f.relative_to(src_dir).as_posix()
+            out.write(f"\n\n<!-- FILE: {rel} -->\n\n")
             out.write(f.read_text(encoding="utf-8"))
 
 
 def main() -> int:
     source_dir = Path(os.environ.get("SOURCE_DIR", "source"))
     build_dir = Path(os.environ.get("BUILD_DIR", "build"))
-    text_dir = build_dir / "text"
+    md_dir = build_dir / "markdown"
     out_dir = build_dir / "notebooklm"
 
-    print(f"running sphinx-build -b text → {text_dir}/")
+    print(f"running sphinx-build -b markdown → {md_dir}/")
     subprocess.run(
-        ["sphinx-build", "-b", "text", str(source_dir), str(text_dir)],
+        ["sphinx-build", "-b", "markdown", str(source_dir), str(md_dir)],
         check=True,
     )
 
@@ -81,12 +80,12 @@ def main() -> int:
 
     print(f"writing bundles to {out_dir}/")
     for bundle in BUNDLES:
-        files = collect_files(text_dir, bundle)
-        out_path = out_dir / f"{bundle.name}.txt"
-        write_bundle(out_path, text_dir, files)
+        files = collect_files(md_dir, bundle)
+        out_path = out_dir / f"{bundle.name}.md"
+        write_bundle(out_path, md_dir, files)
         size_kb = out_path.stat().st_size / 1024
         word_count = sum(len(f.read_text(encoding="utf-8").split()) for f in files)
-        print(f"  {bundle.name}.txt  {size_kb:>7.1f} KB  {word_count:>7} words  ({len(files)} pages)")
+        print(f"  {bundle.name}.md  {size_kb:>7.1f} KB  {word_count:>7} words  ({len(files)} pages)")
 
     return 0
 

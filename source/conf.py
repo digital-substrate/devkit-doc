@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.abspath('./_ext'))
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'Viper'
+project = 'DevKit'
 copyright = '2025, Digital Substrate'
 author = 'Digital Substrate'
 release = '1.2'

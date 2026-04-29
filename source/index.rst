@@ -1,15 +1,15 @@
-dsviper Documentation
-=====================
+DevKit Documentation
+====================
 
 **Define your data model. Get type safety, versioning, and Python bindings for free.**
 
-Viper is a metadata-driven runtime that turns data modeling into a first-class
-development experience. Define your data structures in DSM (a purpose-built DSL),
-and Viper gives you:
+DevKit is the Digital Substrate Python toolkit for metadata-driven data
+modeling. Define your data structures in DSM (a purpose-built DSL), and the
+dsviper runtime gives you:
 
 - **Strong typing** - Type mismatches raise exceptions immediately, not silently corrupt data
 - **Version control for data** - Every mutation is tracked in a commit DAG (like git for your data)
-- **Seamless Python integration** - Work with native Python types, Viper handles conversions
+- **Seamless Python integration** - Work with native Python types, dsviper handles conversions
 
 .. code-block:: python
 
@@ -28,6 +28,26 @@ and Viper gives you:
    state = CommitMutableState(db.initial_state())
    ma.tuto_user_login_set(state.attachment_mutating(), key, login)
    db.commit_mutations("Add user", state)
+
+
+DevKit, dsviper, Viper — what's what?
+-------------------------------------
+
+Three names appear across this documentation. Here is how they layer.
+
+**DevKit** — *What you download.*
+   The Digital Substrate Python toolkit, distributed as a single ZIP — bundles
+   dsviper, the Kibo code generator, templates, CLI tools, and offline
+   documentation.
+
+**dsviper** — *What runs in your Python apps.*
+   The Python runtime distributed on PyPI. Strong-typed Python API over the
+   Viper C++ engine. Installed via ``pip install dsviper`` or pulled in by the
+   DevKit ZIP.
+
+**Viper** — *The C++ engine behind dsviper.*
+   The underlying metadata-driven C++ runtime — type system, commit DAG,
+   database tier. Currently used internally; not yet distributed standalone.
 
 
 Two Ways to Work

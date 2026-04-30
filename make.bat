@@ -23,8 +23,11 @@ if errorlevel 9009 (
 	exit /b 1
 )
 
+if "%DOC_VERSION%" == "" set DOC_VERSION=1.2
+
 if "%1" == "" goto help
 if "%1" == "notebooklm" goto notebooklm
+if "%1" == "distzip" goto distzip
 
 %SPHINXBUILD% -M %1 %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 goto end
@@ -33,6 +36,15 @@ goto end
 set SOURCE_DIR=%SOURCEDIR%
 set BUILD_DIR=%BUILDDIR%
 python tools\build_notebooklm.py
+goto end
+
+:distzip
+%SPHINXBUILD% -M html %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
+if errorlevel 1 goto end
+if not exist "%BUILDDIR%\dist" mkdir "%BUILDDIR%\dist"
+if exist "%BUILDDIR%\dist\devkit-%DOC_VERSION%-doc.zip" del "%BUILDDIR%\dist\devkit-%DOC_VERSION%-doc.zip"
+powershell -Command "Compress-Archive -Path '%BUILDDIR%\html' -DestinationPath '%BUILDDIR%\dist\devkit-%DOC_VERSION%-doc.zip'"
+echo wrote %BUILDDIR%\dist\devkit-%DOC_VERSION%-doc.zip
 goto end
 
 :help

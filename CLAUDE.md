@@ -31,6 +31,9 @@ make coverage   # list dsviper symbols not referenced by autodoc/autosummary
 
 # Build NotebookLM-friendly Markdown bundles (build/notebooklm/*.md)
 make notebooklm
+
+# Build a release-ready offline doc archive (build/dist/devkit-1.2-doc.zip)
+make distzip
 ```
 
 ## Structure

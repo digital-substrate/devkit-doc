@@ -31,7 +31,7 @@ extensions = [
 ]
 
 templates_path = ['_templates']
-exclude_patterns = []
+exclude_patterns = ['_fixtures']
 
 # Autosummary settings
 autosummary_generate = True
@@ -53,6 +53,25 @@ doctest_default_flags = (
     | doctest.IGNORE_EXCEPTION_DETAIL
     | doctest.NORMALIZE_WHITESPACE
 )
+
+# Global doctest setup: load the bundled Tuto fixture model and inject its
+# generated constants (TUTO_A_USER_LOGIN, TUTO_S_LOGIN, …) so Zone 2
+# examples can use them without depending on a Kibo-generated package.
+_FIXTURE_TUTO = os.path.join(os.path.dirname(__file__), '_fixtures', 'Tuto')
+doctest_global_setup = f'''
+from dsviper import *
+_builder = DSMBuilder.assemble({_FIXTURE_TUTO!r})
+_report, _dsm_defs, _tuto_defs = _builder.parse()
+_tuto_defs.inject(globals())
+
+def _new_tuto_db():
+    """Fresh in-memory CommitDatabase pre-populated with Tuto definitions."""
+    _db = CommitDatabase.create_in_memory()
+    _db.extend_definitions(_tuto_defs)
+    return _db
+
+db = _new_tuto_db()
+'''
 
 
 

@@ -15,31 +15,40 @@ Processing DSM files follows three steps:
 
 ## Step 1: Assemble
 
-`DSMBuilder.assemble()` reads DSM files:
+`DSMBuilder.assemble()` reads DSM files. The path can be a single `.dsm`
+file or a directory containing `.dsm` files; in the directory case, every
+file is concatenated and parsed as a single unit. The doctests below reuse
+the bundled `Tuto` fixture builder pre-loaded by the test harness:
+
+```{doctest}
+>>> builder = _builder
+>>> [p.source().split('/')[-1] for p in builder.parts()]
+['model.dsm']
+```
+
+In production code you would assemble from your own paths:
 
 ```pycon
->>> from dsviper import *
-
-# Assemble a single file
 >>> builder = DSMBuilder.assemble("model.dsm")
 
-# Assemble all .dsm files in a directory
 >>> builder = DSMBuilder.assemble("models")
 
-# View assembled parts
 >>> for part in builder.parts():
 ...     print(part.source())
 ```
-
-If the path is a directory, all `.dsm` files are assembled together and parsed as a single
-unit.
 
 ## Step 2: Parse
 
 `parse()` validates syntax and semantics, returning three values:
 
-```pycon
+```{doctest}
 >>> report, dsm_defs, defs = builder.parse()
+>>> report.has_error()
+False
+>>> type(dsm_defs).__name__
+'DSMDefinitions'
+>>> type(defs).__name__
+'DefinitionsConst'
 ```
 
 | Return Value | Type               | Description                             |
@@ -52,15 +61,11 @@ unit.
 
 ```pycon
 >>> report, dsm_defs, defs = builder.parse()
-
 >>> if report.has_error():
-    ...
-for error in report.errors():
-    ...
-print(f"{error.source()}:{error.line()}: {error.message()}")
+...     for error in report.errors():
+...         print(f"{error.source()}:{error.line()}: {error.message()}")
 ... else:
-...
-print("Parse successful!")
+...     print("Parse successful!")
 ```
 
 ## Step 3: DSM Introspection
@@ -71,7 +76,7 @@ print("Parse successful!")
 
 The root container for all DSM elements:
 
-```pycon
+```{doctest}
 >>> dsm_defs.concepts()
 [Tuto::User]
 
@@ -79,7 +84,7 @@ The root container for all DSM elements:
 [Tuto::Login, Tuto::Identity]
 
 >>> dsm_defs.enumerations()
-[Tuto::Status]
+[]
 
 >>> dsm_defs.attachments()
 [attachment<User, Login> Tuto::login, attachment<User, Identity> Tuto::identity]
@@ -89,46 +94,43 @@ The root container for all DSM elements:
 
 Inspect concept definitions:
 
-```pycon
+```{doctest}
 >>> concept = dsm_defs.concepts()[0]
 >>> concept.type_name()
 Tuto::User
 
->>> concept.runtime_id()
-'a1b2c3d4-...'
+>>> isinstance(concept.runtime_id(), ValueUUId)
+True
 
 >>> concept.documentation()
-'A user in the system.'
+'A user.'
 
->>> concept.parent()  # None if no parent
-Tuto::Admin
+>>> concept.parent() is None
+True
 ```
+
+For a model with concept inheritance, `parent()` returns the parent concept,
+e.g. `Tuto::Admin`.
 
 ### DSMStructure
 
 Inspect structure definitions and their fields:
 
-```pycon
->>> struct = dsm_defs.structures()[0]
+```{doctest}
+>>> struct = [s for s in dsm_defs.structures() if str(s.type_name()) == 'Tuto::Login'][0]
 >>> struct.type_name()
 Tuto::Login
 
->>> for field in struct.fields():
-    ...
-print(f"{field.name()}: {field.type()}")
-nickname: string
-password: string
+>>> [(f.name(), str(f.type())) for f in struct.fields()]
+[('nickname', 'string'), ('password', 'string')]
 
->>> field = struct.fields()[0]
->>> field.documentation()
-'The user display name.'
->>> field.default_value()
+>>> struct.fields()[0].documentation()
 ''
 ```
 
 ### DSMEnumeration
 
-Inspect enumeration definitions:
+For a model with an enumeration, you can inspect cases:
 
 ```pycon
 >>> enum = dsm_defs.enumerations()[0]
@@ -136,8 +138,7 @@ Inspect enumeration definitions:
 Tuto::Status
 
 >>> for case in enum.members():
-    ...
-print(case.name())
+...     print(case.name())
 pending
 active
 completed
@@ -145,12 +146,13 @@ completed
 
 ### DSMAttachment
 
-Inspect attachment definitions:
+Inspect attachment definitions. `identifier()` returns the fully qualified
+name `<concept>.<attachment>`:
 
-```pycon
+```{doctest}
 >>> att = dsm_defs.attachments()[0]
 >>> att.identifier()
-'login'
+'Tuto::User.login'
 
 >>> att.key_type()
 Tuto::User
@@ -161,32 +163,29 @@ Tuto::Login
 
 ### Generate DSM Text
 
-Reconstruct DSM source from definitions:
+Reconstruct DSM source from definitions. The output groups types by
+attachment and adds explanatory comments:
 
-```pycon
->>> print(dsm_defs.to_dsm())
-namespace Tuto {f529bc42-a399-415c-baf0-db42949d2ba2} {
-    concept User;
-    struct Login {
-        string nickname;
-        string password;
-    };
-    attachment<User, Login> login;
-};
+```{doctest}
+>>> source = dsm_defs.to_dsm()
+>>> 'namespace Tuto' in source and 'concept User' in source
+True
+>>> 'attachment<User, Login> login' in source
+True
 ```
 
 Pass `show_runtime_id=True` to append runtime IDs.
 
 ## Using Runtime Definitions
 
-The `DefinitionsConst` from parse enables runtime operations:
+The `DefinitionsConst` from parse enables runtime operations.
 
 ### Inject Constants
 
-```pycon
->>> defs.inject()
+`defs.inject()` makes generated constants available in the namespace.
+The `Tuto` constants are already in scope thanks to the doctest fixture:
 
-# Constants are now available
+```{doctest}
 >>> TUTO_S_LOGIN
 Tuto::Login
 
@@ -206,43 +205,47 @@ attachment<User, Login> Tuto::login
 
 ### Query Types
 
-```pycon
+```{doctest}
 >>> types = defs.query_types("Login")
->>> t_login = types[0]
->>> Value.create(t_login)
-{nickname = '', password = ''}
+>>> types
+[Tuto::Login]
+>>> Value.create(types[0])
+{nickname='', password=''}
 ```
 
 ### Access Attachments
 
 ```pycon
 >>> for att in defs.attachments():
-    ...
-print(att.description())
+...     print(att.description())
 ```
 
 ## Serialization
 
-DSMDefinitions can be serialized for distribution:
+DSMDefinitions can be serialized for distribution.
 
 ### Binary (DSMB)
 
-```pycon
-# Encode
+```{doctest}
 >>> blob = dsm_defs.encode()
+>>> blob
+blob(...)
 
-# Decode
->>> dsm_defs = DSMDefinitions.decode(blob)
+>>> restored = DSMDefinitions.decode(blob)
+>>> type(restored).__name__
+'DSMDefinitions'
 ```
 
 ### JSON
 
-```pycon
-# Encode
+```{doctest}
 >>> json_str = dsm_defs.json_encode()
+>>> 'concepts' in json_str and 'attachments' in json_str
+True
 
-# Decode
->>> dsm_defs = DSMDefinitions.json_decode(json_str)
+>>> restored = DSMDefinitions.json_decode(json_str)
+>>> type(restored).__name__
+'DSMDefinitions'
 ```
 
 ## What's Next

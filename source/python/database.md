@@ -14,22 +14,21 @@ see [CommitDatabase](commit.md).
 
 ## Creating a Database
 
-```pycon
->>> from dsviper import *
+In-memory and on-disk variants:
 
-# Create in memory
+```{doctest}
 >>> db = Database.create_in_memory()
+>>> db.in_memory()
+True
+```
 
-# Create on disk
+```pycon
 >>> db = Database.create("data.vdb")
 
-# Create with documentation metadata
 >>> db = Database.create("data.vdb", documentation="Cache for processed meshes")
 
-# Open existing
 >>> db = Database.open("data.vdb")
 
-# Open in read-only mode
 >>> db = Database.open("data.vdb", readonly=True)
 ```
 
@@ -47,14 +46,11 @@ True
 Database supports network access through a server:
 
 ```pycon
-# List available databases on a server
 >>> Database.databases("server.local")
 ['cache', 'index']
 
-# Connect to a remote database
 >>> db = Database.connect("cache", "server.local")
 
-# Unix socket connection
 >>> db = Database.connect_local("cache", "/tmp/project.sock")
 ```
 
@@ -64,12 +60,17 @@ See [Server](../tools/server.md) for deployment details.
 
 ## Setting Up Definitions
 
+```{doctest}
+>>> _ = db.extend_definitions(_tuto_defs)
+>>> db.definitions().attachments()
+[attachment<User, Login> Tuto::login, attachment<User, Identity> Tuto::identity]
+```
+
+In your own code you would assemble definitions from your DSM model:
+
 ```pycon
-# Load definitions from DSM
 >>> builder = DSMBuilder.assemble("model.dsm")
 >>> report, dsm_defs, defs = builder.parse()
-
-# Extend database with definitions
 >>> db.extend_definitions(defs)
 >>> defs.inject()
 ```
@@ -78,40 +79,67 @@ See [Server](../tools/server.md) for deployment details.
 
 ## CRUD Operations
 
-```pycon
-# Create
+Create a key and a document:
+
+```{doctest}
 >>> key = TUTO_A_USER_LOGIN.create_key()
 >>> login = TUTO_A_USER_LOGIN.create_document()
 >>> login.nickname = "alice"
+```
 
-# Write (requires transaction)
+Write — all mutations require a transaction:
+
+```{doctest}
 >>> db.begin_transaction()
->>> db.set(TUTO_A_USER_LOGIN, key, login)
+>>> _ = db.set(TUTO_A_USER_LOGIN, key, login)
 >>> db.commit()
+```
 
-# Read
+Read:
+
+```{doctest}
 >>> result = db.get(TUTO_A_USER_LOGIN, key)
 >>> result.unwrap()
 {nickname='alice', password=''}
+```
 
-# Check existence
+Check existence:
+
+```{doctest}
 >>> db.has(TUTO_A_USER_LOGIN, key)
 True
+```
 
-# Update
+Update:
+
+```{doctest}
 >>> db.begin_transaction()
 >>> login.password = "secret"
->>> db.set(TUTO_A_USER_LOGIN, key, login)
+>>> _ = db.set(TUTO_A_USER_LOGIN, key, login)
 >>> db.commit()
 
-# Delete
+>>> db.get(TUTO_A_USER_LOGIN, key).unwrap()
+{nickname='alice', password='secret'}
+```
+
+List keys for an attachment — `keys()` returns a `ValueSet` of `ValueUUId`:
+
+```{doctest}
+>>> isinstance(db.keys(TUTO_A_USER_LOGIN), ValueSet)
+True
+>>> len(db.keys(TUTO_A_USER_LOGIN))
+1
+```
+
+Delete:
+
+```{doctest}
 >>> db.begin_transaction()
->>> db.delete(TUTO_A_USER_LOGIN, key)
+>>> _ = db.delete(TUTO_A_USER_LOGIN, key)
 >>> db.commit()
 
-# List all keys
->>> db.keys(TUTO_A_USER_LOGIN)
-[key1, key2, ...]
+>>> db.has(TUTO_A_USER_LOGIN, key)
+False
 ```
 
 ---
@@ -120,18 +148,26 @@ True
 
 All write operations require a transaction:
 
-```pycon
+```{doctest}
 >>> db.begin_transaction()
->>> # ... mutations ...
->>> db.commit()      # Apply changes
-
-# Or rollback
->>> db.begin_transaction()
->>> # ... mutations ...
->>> db.rollback()    # Discard changes
+>>> db.in_transaction()
+True
+>>> db.commit()
+>>> db.in_transaction()
+False
 ```
 
-**Safe transaction pattern** - Always use try/finally to ensure cleanup:
+A transaction can also be rolled back:
+
+```{doctest}
+>>> db.begin_transaction()
+>>> _ = db.set(TUTO_A_USER_LOGIN, key, login)
+>>> db.rollback()
+>>> db.has(TUTO_A_USER_LOGIN, key)
+False
+```
+
+**Safe transaction pattern** — use try/finally to ensure cleanup:
 
 ```python
 db.begin_transaction()
@@ -143,25 +179,16 @@ except ViperError:
     raise
 ```
 
-You can check transaction state with `in_transaction()`:
-
-```pycon
->>> db.in_transaction()
-False
->>> db.begin_transaction()
->>> db.in_transaction()
-True
-```
-
 ---
 
 ## Lifecycle
 
 Always close a database when done, especially for on-disk databases:
 
-```pycon
->>> db.close()
->>> db.is_closed()
+```{doctest}
+>>> tmp_db = Database.create_in_memory()
+>>> tmp_db.close()
+>>> tmp_db.is_closed()
 True
 ```
 
@@ -169,22 +196,21 @@ True
 
 ## Metadata
 
-```pycon
->>> db.path()
-'/path/to/data.vdb'
+`Database` exposes a few metadata accessors:
 
+```{doctest}
 >>> db.in_memory()
-False
-
->>> db.uuid()
-{a1b2c3d4-...}
-
->>> db.documentation()
-'Cache for processed meshes'
-
+True
+>>> db.path()
+'InMemory'
+>>> isinstance(db.uuid(), ValueUUId)
+True
 >>> db.codec_name()
 'StreamBinary'
 ```
+
+For an on-disk database, `path()` returns the file path and `documentation()`
+returns the string passed to `Database.create(..., documentation=...)`.
 
 ---
 

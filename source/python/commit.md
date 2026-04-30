@@ -34,28 +34,37 @@ See [The Dual-Layer Contract](commit_contract.md) for details.
 ## Opening a CommitDatabase
 
 ```pycon
-# Open existing database
 >>> db = CommitDatabase.open("model.cdb")
+```
 
-# Create new database (with embedded definitions)
-# Use: python3 tools/dsm_util.py create_commit_database model.dsm model.cdb
+To create a new database with embedded definitions, use:
+
+```bash
+python3 tools/dsm_util.py create_commit_database model.dsm model.cdb
 ```
 
 ---
 
 ## Reading State
 
-Get a read-only state from any commit:
+A freshly created database has no commits — `first_commit_id()` and
+`last_commit_id()` return `None`:
 
-```pycon
-# State at last commit
->>> state = db.state(db.last_commit_id())
+```{doctest}
+>>> db.first_commit_id() is None
+True
+>>> db.last_commit_id() is None
+True
+>>> db.head_commit_ids()
+set()
+```
 
-# State at first commit
->>> state = db.state(db.first_commit_id())
+The `initial_state()` method always works and returns the empty state:
 
-# Initial state (before any commits)
->>> state = db.initial_state()
+```{doctest}
+>>> initial = db.initial_state()
+>>> len(initial.attachment_getting().keys(TUTO_A_USER_LOGIN))
+0
 ```
 
 ### AttachmentGetting Interface
@@ -65,12 +74,10 @@ Read attachments via `attachment_getting()`:
 ```pycon
 >>> getting = state.attachment_getting()
 
-# Get a document
 >>> doc = getting.get(attachment, key)
 >>> doc
 Optional({...})
 
-# Get all keys
 >>> keys = getting.keys(attachment)
 ```
 
@@ -84,10 +91,8 @@ Create a mutable state and apply changes:
 >>> mutable_state = CommitMutableState(db.state(db.last_commit_id()))
 >>> mutating = mutable_state.attachment_mutating()
 
-# Set a document
 >>> mutating.set(attachment, key, document)
 
-# Update a field (path-based)
 >>> mutating.update(attachment, key, path, new_value)
 ```
 
@@ -95,38 +100,30 @@ Create a mutable state and apply changes:
 
 ### Committing
 
-Commit mutations to the database:
+`commit_mutations()` returns the new commit id — capture it explicitly to
+chain further mutations or read the resulting state:
 
 ```pycon
 >>> commit_id = db.commit_mutations("Commit message", mutable_state)
->>> commit_id
-'87b2b1d275f0ac3b2389b18f58d7abe0214c2493'
 ```
 
 ---
 
 ## Complete Example
 
-```pycon
->>> from dsviper import *
+Add an Alice document and read it back:
 
-# Open database and inject definitions
->>> db = CommitDatabase.open("model.cdb")
->>> db.definitions().inject()
-
-# Create a new key and document
+```{doctest}
 >>> key = TUTO_A_USER_LOGIN.create_key()
 >>> login = TUTO_A_USER_LOGIN.create_document()
 >>> login.nickname = "alice"
 >>> login.password = "secret"
 
-# Commit the document
->>> mutable = CommitMutableState(db.state(db.last_commit_id()))
+>>> mutable = CommitMutableState(db.initial_state())
 >>> mutable.attachment_mutating().set(TUTO_A_USER_LOGIN, key, login)
->>> db.commit_mutations("Add Alice", mutable)
+>>> commit_id = db.commit_mutations("Add Alice", mutable)
 
-# Read it back
->>> state = db.state(db.last_commit_id())
+>>> state = db.state(commit_id)
 >>> state.attachment_getting().get(TUTO_A_USER_LOGIN, key)
 Optional({nickname='alice', password='secret'})
 ```
@@ -154,44 +151,21 @@ users edit concurrently.
 ### Field Update
 
 ```pycon
->>> mutating.update(
-    ...
-TUTO_A_USER_LOGIN, key,
-...
-TUTO_P_LOGIN_NICKNAME, "alice_updated"
-... )
+>>> mutating.update(TUTO_A_USER_LOGIN, key, TUTO_P_LOGIN_NICKNAME, "alice_updated")
 ```
 
 ### Set Operations
 
 ```pycon
-# Add elements to a set field
->>> mutating.union_in_set(
-    ...
-GRAPH_A_TOPOLOGY, graph_key,
-...
-GRAPH_P_TOPOLOGY_VERTEX_KEYS, {new_vertex_key}
-... )
+>>> mutating.union_in_set(GRAPH_A_TOPOLOGY, graph_key, GRAPH_P_TOPOLOGY_VERTEX_KEYS, {new_vertex_key})
 
-# Remove elements from a set field
->>> mutating.subtract_in_set(
-    ...
-GRAPH_A_TOPOLOGY, graph_key,
-...
-GRAPH_P_TOPOLOGY_VERTEX_KEYS, {deleted_vertex_key}
-... )
+>>> mutating.subtract_in_set(GRAPH_A_TOPOLOGY, graph_key, GRAPH_P_TOPOLOGY_VERTEX_KEYS, {deleted_vertex_key})
 ```
 
 ### Map Operations
 
 ```pycon
-# Add entries to a map field
->>> mutating.union_in_map(
-    ...
-attachment, key, path_to_map,
-...
-{"new_key": "new_value"}
-... )
+>>> mutating.union_in_map(attachment, key, path_to_map, {"new_key": "new_value"})
 ```
 
 ### Why Paths Matter
@@ -213,20 +187,21 @@ With `set()`, one user's changes would overwrite the other's.
 
 Inspect commit metadata:
 
-```pycon
->>> header = db.commit_header(db.last_commit_id())
+```{doctest}
+>>> header = db.commit_header(commit_id)
 >>> header.label()
-'Update nickname'
->>> header.parent_commit_id()
-'87b2b1d275f0ac3b2389b18f58d7abe0214c2493'
+'Add Alice'
+>>> header.parent_commit_id() == ValueCommitId()
+True
 ```
 
-Navigate history:
+The first commit's parent is the zero `ValueCommitId` (no ancestor).
+
+Navigate history by passing the explicit ids you captured:
 
 ```pycon
-# Compare states at different commits
->>> state1 = db.state(db.first_commit_id())
->>> state2 = db.state(db.last_commit_id())
+>>> state1 = db.state(first_commit_id)
+>>> state2 = db.state(latest_commit_id)
 ```
 
 ---
@@ -235,14 +210,14 @@ Navigate history:
 
 CommitDatabase stores its definitions:
 
-```pycon
+```{doctest}
 >>> defs = db.definitions()
 >>> defs.types()
 [Tuto::User, Tuto::Login, Tuto::Identity]
-
->>> defs.inject()
-# Now TUTO_A_USER_LOGIN etc. are available
 ```
+
+Calling `defs.inject()` makes `TUTO_A_USER_LOGIN`, `TUTO_S_LOGIN`, etc.
+available as constants in the calling namespace.
 
 ---
 

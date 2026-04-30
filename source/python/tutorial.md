@@ -55,30 +55,22 @@ python3 tools/dsm_util.py create_commit_database model.dsm model.cdb
 
 ### Step 4: Open and Explore
 
-Open the database in Python:
+Open the database in Python and list the types and attachments it carries:
 
-```pycon
->>> from dsviper import *
->>> db = CommitDatabase.open("model.cdb")
-
-# See the defined types
+```{doctest}
 >>> db.definitions().types()
 [Tuto::User, Tuto::Login, Tuto::Identity]
 
-# See the attachments
 >>> db.definitions().attachments()
-[attachment<User, Login> Tuto::login,
- attachment<User, Identity> Tuto::identity]
+[attachment<User, Login> Tuto::login, attachment<User, Identity> Tuto::identity]
 ```
 
 ### Step 5: Inject Constants
 
-Make types accessible as constants:
+`db.definitions().inject()` makes types accessible as constants in the
+caller's namespace (already done in this tutorial's setup):
 
-```pycon
->>> db.definitions().inject()
-
-# Now we have constants for types and attachments
+```{doctest}
 >>> TUTO_A_USER_LOGIN
 attachment<User, Login> Tuto::login
 
@@ -98,17 +90,18 @@ Tuto::Login
 
 ### Step 6: Create a Key and Document
 
-Create a new User key:
+Create a new User key. `instance_id()` returns the underlying UUID
+(randomly generated, so we just check the type here):
 
-```pycon
+```{doctest}
 >>> key = TUTO_A_USER_LOGIN.create_key()
->>> key.instance_id()
-'fc472756-8f9e-42aa-a06f-051d330d0108'
+>>> isinstance(key.instance_id(), ValueUUId)
+True
 ```
 
 Create a Login document:
 
-```pycon
+```{doctest}
 >>> login = TUTO_A_USER_LOGIN.create_document()
 >>> login
 {nickname='', password=''}
@@ -121,19 +114,16 @@ Create a Login document:
 
 ### Step 7: Commit to Database
 
-Create a mutable state and commit:
+Create a mutable state, associate the document with the key, and commit:
 
-```pycon
-# Create mutable state from initial state
+```{doctest}
 >>> mutable_state = CommitMutableState(db.initial_state())
 
-# Associate document with key
 >>> mutable_state.attachment_mutating().set(TUTO_A_USER_LOGIN, key, login)
 
-# Commit the mutations
 >>> commit_id = db.commit_mutations("First Commit", mutable_state)
->>> commit_id
-'87b2b1d275f0ac3b2389b18f58d7abe0214c2493'
+>>> isinstance(commit_id, ValueCommitId) and len(str(commit_id)) == 40
+True
 ```
 
 ```{important}
@@ -150,7 +140,7 @@ See [The Dual-Layer Contract](commit_contract.md).
 
 Read the document back:
 
-```pycon
+```{doctest}
 >>> state = db.state(commit_id)
 >>> result = state.attachment_getting().get(TUTO_A_USER_LOGIN, key)
 >>> result
@@ -162,33 +152,30 @@ Optional({nickname='zoop', password='robust'})
 
 ### Step 9: Update a Field
 
-Update using a path-based setter:
+Update using a path-based setter. Capture the new commit id returned by
+`commit_mutations` — the database's mutating APIs don't auto-advance an
+implicit "current commit" pointer, so chaining commits requires the
+explicit id:
 
-```pycon
->>> mutable_state = CommitMutableState(db.state(db.last_commit_id()))
->>> mutable_state.attachment_mutating().update(
-...     TUTO_A_USER_LOGIN, key,
-...     TUTO_P_LOGIN_NICKNAME, "zoopy"
-... )
->>> db.commit_mutations("Update Nickname", mutable_state)
+```{doctest}
+>>> mutable_state = CommitMutableState(db.state(commit_id))
+>>> mutable_state.attachment_mutating().update(TUTO_A_USER_LOGIN, key, TUTO_P_LOGIN_NICKNAME, "zoopy")
+>>> updated_id = db.commit_mutations("Update Nickname", mutable_state)
 ```
 
 ### Step 10: View History
 
 Read from different commits:
 
-```pycon
-# Latest commit
->>> state = db.state(db.last_commit_id())
+```{doctest}
+>>> state = db.state(updated_id)
 >>> state.attachment_getting().get(TUTO_A_USER_LOGIN, key)
 Optional({nickname='zoopy', password='robust'})
 
-# First commit
->>> state = db.state(db.first_commit_id())
+>>> state = db.state(commit_id)
 >>> state.attachment_getting().get(TUTO_A_USER_LOGIN, key)
 Optional({nickname='zoop', password='robust'})
 
-# Initial state (before any commits)
 >>> state = db.initial_state()
 >>> state.attachment_getting().get(TUTO_A_USER_LOGIN, key)
 nil
@@ -196,12 +183,12 @@ nil
 
 ### Step 11: Inspect Commit Headers
 
-```pycon
->>> header = db.commit_header(db.last_commit_id())
+```{doctest}
+>>> header = db.commit_header(updated_id)
 >>> header.label()
 'Update Nickname'
->>> header.parent_commit_id()
-'87b2b1d275f0ac3b2389b18f58d7abe0214c2493'
+>>> header.parent_commit_id() == commit_id
+True
 ```
 
 ## Two Approaches
@@ -212,7 +199,7 @@ Viper supports two ways to work with your data model:
 
 Use Viper's runtime metadata directly:
 
-- `Definitions.load()` → work with types at runtime
+- `DSMBuilder.assemble(path).parse()` → work with types at runtime
 - Flexible, interpretive, Python-friendly
 - No code generation needed
 
@@ -241,6 +228,12 @@ This creates a Python package with:
 # Use generated accessors
 >>> state = CommitMutableState(db.state(db.last_commit_id()))
 >>> ma.tuto_user_login_set(state.attachment_mutating(), key, login)
+```
+
+```{note}
+The Static API snippet above requires running Kibo first to generate the
+`model.attachments` package. It is illustrative — see the
+[Kibo](../tools/kibo.md) chapter for the full code-generation workflow.
 ```
 
 Both approaches use the same underlying Viper runtime.

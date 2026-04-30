@@ -1,0 +1,22 @@
+// Types definitions
+namespace Tuto {f529bc42-0618-4f54-a3fb-d55f95c5ad03} {
+
+"""A user."""
+concept User;
+
+"""Login credentials for a User."""
+struct Login {
+    string nickname;
+    string password;
+};
+
+"""Identity information for a User."""
+struct Identity {
+    string firstname;
+    string lastname;
+};
+
+attachment<User, Login> login;
+attachment<User, Identity> identity;
+
+};

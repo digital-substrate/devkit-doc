@@ -27,16 +27,12 @@ A `blob_id` is a SHA-1 hash referencing a blob managed by the Database blob API.
 requires the dedicated blob API:
 
 ```pycon
-# Store blob → get blob_id
 >>> blob_id = db.create_blob(layout, content)
 
-# Retrieve blob by blob_id
 >>> content = db.blob(blob_id)
 
-# List all blob_ids in database
 >>> db.blob_ids()
 
-# Get blob metadata
 >>> info = db.blob_info(blob_id)
 >>> info.size()
 1024
@@ -51,17 +47,14 @@ exists in the database. Always call `create_blob()` before using the
 
 ## ValueBlob
 
-A `ValueBlob` holds inline binary data:
+A `ValueBlob` holds inline binary data. To pull the bytes back out, use the
+`bytes()` builtin (the buffer protocol) — there is no `.bytes()` method:
 
-```pycon
->>> from dsviper import *
-
-# Create blob from bytes
+```{doctest}
 >>> data = bytes([1, 2, 3, 4, 5])
 >>> blob = ValueBlob(data)
 
-# Access bytes
->>> blob.bytes()
+>>> bytes(blob)
 b'\x01\x02\x03\x04\x05'
 
 >>> len(blob)
@@ -70,19 +63,18 @@ b'\x01\x02\x03\x04\x05'
 
 ## ValueBlobId
 
-A `ValueBlobId` references external binary data. The ID is computed from the blob's layout
-and content:
+A `ValueBlobId` references external binary data. The id is computed from the layout
+and content (deterministic SHA-1):
 
-```pycon
-# Create blob_id from layout and content
+```{doctest}
 >>> layout = BlobLayout()
 >>> content = ValueBlob(bytes([1, 2, 3, 4]))
 >>> blob_id = ValueBlobId(layout, content)
 >>> blob_id
-'6b8f3ca756046be29244d9bdb6b5ca5c00468ad5'
+6b8f3ca756046be29244d9bdb6b5ca5c00468ad5
 
-# Parse blob_id from string
->>> blob_id = ValueBlobId.try_parse("6b8f3ca756046be29244d9bdb6b5ca5c00468ad5")
+>>> ValueBlobId.try_parse("6b8f3ca756046be29244d9bdb6b5ca5c00468ad5")
+6b8f3ca756046be29244d9bdb6b5ca5c00468ad5
 ```
 
 ## BlobLayout - Metadata Everywhere
@@ -90,22 +82,16 @@ and content:
 A `BlobLayout` describes how to interpret blob bytes. This is the **Metadata Everywhere**
 principle applied to binary data: the layout is metadata that gives meaning to raw bytes.
 
-```pycon
->>> from dsviper import *
-
-# Default layout: array of unsigned bytes
+```{doctest}
 >>> BlobLayout()
 'uchar-1'
 
-# 3D positions: array of (float, float, float)
 >>> BlobLayout('float', 3)
 'float-3'
 
-# Triangle indices: array of (uint, uint, uint)
 >>> BlobLayout('uint', 3)
 'uint-3'
 
-# UV coordinates: array of (float, float)
 >>> BlobLayout('float', 2)
 'float-2'
 ```
@@ -118,49 +104,47 @@ The layout enables:
 
 ## BlobView (Read-Only)
 
-A `BlobView` interprets an existing blob with a given layout (read-only):
+A `BlobView` interprets an existing blob with a given layout (read-only). When
+the layout has more than one component per element, indexing returns a tuple:
 
-```pycon
->>> from dsviper import *
+```{doctest}
+>>> import struct
+>>> _buf = bytearray()
+>>> for i in range(100):
+...     _ = _buf.extend(struct.pack('<fff', float(i), float(i*2), float(i*3)))
+>>> raw = ValueBlob(bytes(_buf))
 
-# Existing blob from database
->>> blob = db.blob(blob_id)
-
-# Interpret as vec3 positions
->>> view = BlobView(BlobLayout('float', 3), blob)
+>>> view = BlobView(BlobLayout('float', 3), raw)
 >>> view.count()
 100
-
-# Read elements
 >>> view[0]
-(1.0, 2.0, 3.0)
+(0.0, 0.0, 0.0)
 >>> view[99]
-(10.0, 20.0, 30.0)
+(99.0, 198.0, 297.0)
 ```
 
 Use `BlobView` when you need to read blob data without copying.
 
 ## BlobArray (Read-Write)
 
-A `BlobArray` is a typed array backed by a blob:
+A `BlobArray` is a typed array backed by a blob. Writes and reads use the
+NumPy buffer protocol — the array exposes a *flat* `(N*components,)` view, so
+reshape it to `(N, components)` to assign per-element tuples:
 
-```pycon
-# Create array of 100 vec3 positions
+```{doctest}
+>>> import numpy as np
 >>> layout = BlobLayout('float', 3)
 >>> array = BlobArray(layout, 100)
 
-# Write elements as tuples
->>> array[0] = (1.0, 2.0, 3.0)
->>> array[1] = (4.0, 5.0, 6.0)
+>>> np_view = np.array(array, copy=False).reshape(100, 3)
+>>> np_view[0] = [1.0, 2.0, 3.0]
+>>> np_view[1] = [4.0, 5.0, 6.0]
 
-# Read back
->>> array[0]
+>>> view = BlobView(layout, array.blob())
+>>> view[0]
 (1.0, 2.0, 3.0)
-
-# Properties
->>> array.count()       # 100 elements
->>> array.data_count()  # 300 floats (100 × 3)
->>> array.byte_count()  # 1200 bytes (300 × 4)
+>>> view[1]
+(4.0, 5.0, 6.0)
 ```
 
 ## BlobPack - Structured Binary Data
@@ -170,19 +154,16 @@ is ideal for complex structures like 3D meshes.
 
 ### Example: 3D Mesh Storage
 
-A mesh has positions, normals, UVs, and triangle indices—each with a different layout:
+A mesh has positions, normals, UVs, and triangle indices — each with a different layout.
+Define the structure with a descriptor, then create the pack:
 
-```pycon
->>> from dsviper import *
-
-# Define the mesh structure
+```{doctest}
 >>> descriptor = BlobPackDescriptor()
->>> descriptor.add_region('positions', BlobLayout('float', 3), 4)  # 4 vec3
->>> descriptor.add_region('normals', BlobLayout('float', 3), 4)    # 4 vec3
->>> descriptor.add_region('uvs', BlobLayout('float', 2), 4)        # 4 vec2
->>> descriptor.add_region('indices', BlobLayout('uint', 3), 2)     # 2 triangles
+>>> descriptor.add_region('positions', BlobLayout('float', 3), 4)
+>>> descriptor.add_region('normals', BlobLayout('float', 3), 4)
+>>> descriptor.add_region('uvs', BlobLayout('float', 2), 4)
+>>> descriptor.add_region('indices', BlobLayout('uint', 3), 2)
 
-# Create the pack
 >>> mesh = BlobPack(descriptor)
 >>> len(mesh)
 4
@@ -190,62 +171,54 @@ A mesh has positions, normals, UVs, and triangle indices—each with a different
 
 ### Fill the Mesh Data
 
-```pycon
-# Quad vertices (4 corners)
->>> mesh['positions'][0] = (-1.0, -1.0, 0.0)
->>> mesh['positions'][1] = (1.0, -1.0, 0.0)
->>> mesh['positions'][2] = (1.0, 1.0, 0.0)
->>> mesh['positions'][3] = (-1.0, 1.0, 0.0)
+Each region exposes a flat NumPy view; reshape to write per-vertex tuples:
 
-# Normals (all facing +Z)
->>> for i in range(4):
-...     mesh['normals'][i] = (0.0, 0.0, 1.0)
+```{doctest}
+>>> import numpy as np
+>>> pos = np.array(mesh['positions'], copy=False).reshape(4, 3)
+>>> pos[:] = [[-1.0, -1.0, 0.0], [1.0, -1.0, 0.0],
+...           [ 1.0,  1.0, 0.0], [-1.0,  1.0, 0.0]]
 
-# UVs
->>> mesh['uvs'][0] = (0.0, 0.0)
->>> mesh['uvs'][1] = (1.0, 0.0)
->>> mesh['uvs'][2] = (1.0, 1.0)
->>> mesh['uvs'][3] = (0.0, 1.0)
+>>> normals = np.array(mesh['normals'], copy=False).reshape(4, 3)
+>>> normals[:] = [[0.0, 0.0, 1.0]] * 4
 
-# Two triangles forming the quad
->>> mesh['indices'][0] = (0, 1, 2)
->>> mesh['indices'][1] = (0, 2, 3)
+>>> uvs = np.array(mesh['uvs'], copy=False).reshape(4, 2)
+>>> uvs[:] = [[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]]
+
+>>> indices = np.array(mesh['indices'], copy=False).reshape(2, 3)
+>>> indices[:] = [[0, 1, 2], [0, 2, 3]]
 ```
 
 ### Serialize and Restore
 
-```pycon
-# Serialize to a single blob
+```{doctest}
 >>> blob = mesh.blob()
-
-# Store in database
->>> blob_id = db.create_blob(BlobLayout(), blob)
-
-# Later: restore from blob
 >>> restored = BlobPack.from_blob(blob)
->>> restored['positions'][0]
-(-1.0, -1.0, 0.0)
->>> restored['indices'][1]
-(0, 2, 3)
+
+>>> np.array(restored['positions'], copy=False).reshape(4, 3)[0].tolist()
+[-1.0, -1.0, 0.0]
+>>> np.array(restored['indices'], copy=False).reshape(2, 3)[1].tolist()
+[0, 2, 3]
 ```
 
 ### Region Access
 
-```pycon
-# Check if region exists
+```{doctest}
 >>> 'positions' in mesh
 True
 >>> 'colors' in mesh
 False
 
-# Get region info
->>> vertices = mesh['positions']
->>> vertices.name()
+>>> mesh['positions'].name()
 'positions'
->>> vertices.count()
+>>> mesh['positions'].count()
 4
->>> vertices.blob_layout()
+>>> mesh['positions'].blob_layout()
 'float-3'
+>>> mesh['positions'].data_count()
+12
+>>> mesh['positions'].byte_count()
+48
 ```
 
 ### Why BlobPack?
@@ -264,67 +237,63 @@ with NumPy and other array libraries.
 
 ### Zero-Copy View
 
-```pycon
->>> import numpy as np
->>> from dsviper import *
+The buffer is exposed as a flat 1D array of components — reshape to give it
+the geometric shape you want:
 
-# Create a BlobArray of vec3 positions
+```{doctest}
+>>> import numpy as np
 >>> layout = BlobLayout('float', 3)
 >>> positions = BlobArray(layout, 100)
 
-# Get NumPy view (no copy!)
 >>> np_view = np.array(positions, copy=False)
 >>> np_view.shape
-(100, 3)
+(300,)
 >>> np_view.dtype
 dtype('float32')
+
+>>> np_view.reshape(100, 3).shape
+(100, 3)
 ```
 
 ### Bidirectional Modifications
 
 Changes through NumPy affect the original BlobArray:
 
-```pycon
-# Modify via NumPy
->>> np_view[0] = [10.0, 20.0, 30.0]
+```{doctest}
+>>> reshaped = np.array(positions, copy=False).reshape(100, 3)
+>>> reshaped[0] = [10.0, 20.0, 30.0]
 
-# Original is updated
->>> positions[0]
+>>> view = BlobView(layout, positions.blob())
+>>> view[0]
 (10.0, 20.0, 30.0)
 ```
 
 ### Direct Memory Access
 
-```pycon
-# memoryview for low-level access
+```{doctest}
 >>> mv = memoryview(positions)
 >>> mv.nbytes
-1200  # 100 × 3 × 4 bytes
-
-# Bulk copy from bytes
->>> source = b'\x00\x00\x80\x3f...'  # binary data
->>> positions.copy(source)
+1200
 ```
 
 ### BlobPack Regions
 
-`BlobPackRegion` also supports the Buffer Protocol:
+`BlobPackRegion` also supports the Buffer Protocol — same flat-then-reshape
+idiom:
 
-```pycon
-# Access mesh regions as NumPy arrays
->>> positions_np = np.array(mesh['positions'], copy=False)
->>> normals_np = np.array(mesh['normals'], copy=False)
->>> uvs_np = np.array(mesh['uvs'], copy=False)
+```{doctest}
+>>> positions_np = np.array(mesh['positions'], copy=False).reshape(4, 3)
+>>> normals_np = np.array(mesh['normals'], copy=False).reshape(4, 3)
+>>> uvs_np = np.array(mesh['uvs'], copy=False).reshape(4, 2)
 
 >>> positions_np.shape
 (4, 3)
 >>> uvs_np.shape
 (4, 2)
 
-# Transform all positions at once
->>> positions_np *= 2.0  # Scale mesh
->>> mesh['positions'][0]
-(-2.0, -2.0, 0.0)
+>>> positions_np *= 2.0
+>>> positions_np[0].tolist()
+[-2.0, -2.0, 0.0]
 ```
 
 ### Why Zero-Copy Matters
@@ -377,12 +346,10 @@ Inline blobs are stored directly in the document:
 Use the database blob API to store and retrieve:
 
 ```pycon
-# Store blob via Database blob API
 >>> layout = BlobLayout('float', 3)
 >>> content = ValueBlob(mesh_bytes)
 >>> blob_id = db.create_blob(layout, content)
 
-# Use blob_id in document
 >>> texture = Value.create(t_texture)
 >>> texture.width = 1024
 >>> texture.height = 1024
@@ -394,12 +361,10 @@ Use the database blob API to store and retrieve:
 ### Retrieving Blobs
 
 ```pycon
-# Get blob by ID
 >>> content = db.blob(blob_id)
->>> content.bytes()
+>>> bytes(content)
 b'...'
 
-# Partial read (for large blobs)
 >>> chunk = db.read_blob(blob_id, size=1024, offset=0)
 ```
 
@@ -411,16 +376,12 @@ For very large blobs, use streaming to avoid loading everything in memory.
 BlobStream for larger data:
 
 ```pycon
-# Create a stream for a 100MB blob
 >>> layout = BlobLayout('uchar', 1)
 >>> stream = db.blob_stream_create(layout, size=100_000_000)
 
-# Write in chunks
 >>> for chunk in read_file_in_chunks("large_file.bin"):
-    ...
-db.blob_stream_append(stream, ValueBlob(chunk))
+...     db.blob_stream_append(stream, ValueBlob(chunk))
 
-# Close stream → get blob_id
 >>> blob_id = db.blob_stream_close(stream)
 ```
 

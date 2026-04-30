@@ -77,9 +77,12 @@ autodoc-generated API pages. Resolves inherited methods via class hierarchy.
 - Use MyST Markdown (`.md`) for content pages, reStructuredText (`.rst`) for toctrees
 - Code examples: prefer Python, wrap runnable snippets in ` ```{doctest} ` so
   `make doctest` validates them against the real `dsviper` runtime. The Tuto
-  fixture (`source/_fixtures/Tuto/model.dsm`, kept in sync with the
-  `dsm-samples` canonical Tuto) is pre-loaded and `db`, `_tuto_defs`,
-  `TUTO_*` are in scope via `doctest_global_setup` in `conf.py`.
+  fixture (`source/_fixtures/Tuto/model.dsm`) is pre-loaded and `db`,
+  `_tuto_defs`, `TUTO_*` are in scope via `doctest_global_setup` in `conf.py`.
+- **Tuto fixture is mirrored** in the `dsm-samples` repo at
+  `/Volumes/DigitalSubstrate/dsm-samples/Tuto/model.dsm`. Whenever you edit
+  one, copy the change to the other in the same PR, otherwise the
+  doc-tested model and the canonical sample drift apart.
 - Doctest gotchas: continuation lines (`... `) inside an argument list
   conflict with the global `ELLIPSIS` flag — keep multi-arg calls on a
   single line. `commit_mutations()` does not auto-advance an implicit
@@ -87,6 +90,17 @@ autodoc-generated API pages. Resolves inherited methods via class hierarchy.
   does not wire the same type-bridge as `inject()` (no-arg → `__main__`).
 - Directives: `{note}`, `{tip}`, `{warning}` for callouts
 - After any file move or rename: `make clean && make html` (Sphinx caches old paths)
+
+## Distribution Artifacts
+
+`build/dist/` collects release-ready artifacts:
+
+| Target           | Output                                | Notes                                       |
+|------------------|---------------------------------------|---------------------------------------------|
+| `make distzip`   | `devkit-<version>-doc.zip` (~8 MB)    | Multi-page HTML, full nav + search          |
+| `make pdf`       | `devkit-<version>-doc.pdf` (~3 MB)    | xelatex, ~400 pages, complete API reference |
+
+`DOC_VERSION` defaults to `1.2`; override from the environment if needed.
 
 ## Git Workflow
 

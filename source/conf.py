@@ -96,3 +96,12 @@ html_theme_options = {
 
 # MyST parser settings - limit auto-generated TOC depth from headings
 myst_heading_anchors = 3  # Generate anchors for h1-h3 only
+
+# -- LaTeX / PDF output ------------------------------------------------------
+# xelatex handles Unicode natively (the doc uses box-drawing characters in
+# ASCII diagrams), unlike pdflatex.
+latex_engine = 'xelatex'
+
+# `xindy` is not shipped with BasicTeX on macOS — fall back to the
+# bundled `makeindex` instead.
+latex_use_xindy = False

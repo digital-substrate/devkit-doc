@@ -12,7 +12,7 @@ BUILDDIR      = build
 help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-.PHONY: help Makefile notebooklm distzip
+.PHONY: help Makefile notebooklm distzip pdf
 
 # Documentation version (from conf.py `release` — keep in sync).
 DOC_VERSION ?= 1.2
@@ -31,6 +31,15 @@ distzip: html
 	@cd "$(BUILDDIR)" && zip -qr "dist/devkit-$(DOC_VERSION)-doc.zip" html -x "html/.buildinfo"
 	@echo "wrote $(BUILDDIR)/dist/devkit-$(DOC_VERSION)-doc.zip"
 	@du -sh "$(BUILDDIR)/dist/devkit-$(DOC_VERSION)-doc.zip"
+
+# Build a release-ready PDF via xelatex (requires BasicTeX or full TeX Live).
+# The default `latexpdf` target writes to build/latex/devkit.pdf — we copy it
+# to build/dist/ alongside the zip for symmetric distribution artifacts.
+pdf: latexpdf
+	@mkdir -p "$(BUILDDIR)/dist"
+	@cp "$(BUILDDIR)/latex/devkit.pdf" "$(BUILDDIR)/dist/devkit-$(DOC_VERSION)-doc.pdf"
+	@echo "wrote $(BUILDDIR)/dist/devkit-$(DOC_VERSION)-doc.pdf"
+	@du -sh "$(BUILDDIR)/dist/devkit-$(DOC_VERSION)-doc.pdf"
 
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).

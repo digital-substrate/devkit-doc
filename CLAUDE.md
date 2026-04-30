@@ -34,6 +34,10 @@ make notebooklm
 
 # Build a release-ready offline doc archive (build/dist/devkit-1.2-doc.zip)
 make distzip
+
+# Build a release-ready PDF (build/dist/devkit-1.2-doc.pdf)
+# Requires BasicTeX + tex-gyre + gnu-freefont; uses xelatex.
+make pdf
 ```
 
 ## Structure

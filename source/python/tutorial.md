@@ -59,10 +59,10 @@ Open the database in Python and list the types and attachments it carries:
 
 ```{doctest}
 >>> sorted(str(t) for t in db.definitions().types())
-['Tuto::Identity', 'Tuto::Login', 'Tuto::Status', 'Tuto::Texture', 'Tuto::Thumbnail', 'Tuto::User']
+['Tuto::Account', 'Tuto::Identity', 'Tuto::Login', 'Tuto::Status', 'Tuto::Texture', 'Tuto::Thumbnail', 'Tuto::User']
 
 >>> sorted(str(a).split()[-1] for a in db.definitions().attachments())
-['Tuto::avatar', 'Tuto::identity', 'Tuto::login', 'Tuto::portrait']
+['Tuto::account', 'Tuto::avatar', 'Tuto::identity', 'Tuto::login', 'Tuto::portrait']
 ```
 
 ### Step 5: Inject Constants

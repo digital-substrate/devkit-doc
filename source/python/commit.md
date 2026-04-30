@@ -213,7 +213,7 @@ CommitDatabase stores its definitions:
 ```{doctest}
 >>> defs = db.definitions()
 >>> sorted(str(t) for t in defs.types())
-['Tuto::Identity', 'Tuto::Login', 'Tuto::Status', 'Tuto::Texture', 'Tuto::Thumbnail', 'Tuto::User']
+['Tuto::Account', 'Tuto::Identity', 'Tuto::Login', 'Tuto::Status', 'Tuto::Texture', 'Tuto::Thumbnail', 'Tuto::User']
 ```
 
 Calling `defs.inject()` makes `TUTO_A_USER_LOGIN`, `TUTO_S_LOGIN`, etc.

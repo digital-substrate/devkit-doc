@@ -37,9 +37,15 @@ enum Status {
     completed
 };
 
+"""Account state for a User."""
+struct Account {
+    Status state;
+};
+
 attachment<User, Login> login;
 attachment<User, Identity> identity;
 attachment<User, Thumbnail> avatar;
 attachment<User, Texture> portrait;
+attachment<User, Account> account;
 
 };

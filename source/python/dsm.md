@@ -81,13 +81,13 @@ The root container for all DSM elements:
 [Tuto::User]
 
 >>> sorted(str(s) for s in dsm_defs.structures())
-['Tuto::Identity', 'Tuto::Login', 'Tuto::Texture', 'Tuto::Thumbnail']
+['Tuto::Account', 'Tuto::Identity', 'Tuto::Login', 'Tuto::Texture', 'Tuto::Thumbnail']
 
 >>> dsm_defs.enumerations()
 [Tuto::Status]
 
 >>> sorted(str(a).split()[-1] for a in dsm_defs.attachments())
-['Tuto::avatar', 'Tuto::identity', 'Tuto::login', 'Tuto::portrait']
+['Tuto::account', 'Tuto::avatar', 'Tuto::identity', 'Tuto::login', 'Tuto::portrait']
 ```
 
 ### DSMConcept
@@ -139,6 +139,19 @@ Tuto::Status
 
 >>> [case.name() for case in enum.members()]
 ['pending', 'active', 'completed']
+```
+
+The Tuto fixture ties `Status` into a struct used by the `account`
+attachment, so the enum can be exercised end-to-end through the runtime:
+
+```{doctest}
+>>> account = TUTO_A_USER_ACCOUNT.create_document()
+>>> account
+{state=.pending}
+
+>>> account.state = ValueEnumeration(TUTO_E_STATUS, "active")
+>>> account
+{state=.active}
 ```
 
 ### DSMAttachment

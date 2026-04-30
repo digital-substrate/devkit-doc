@@ -24,6 +24,7 @@ extensions = [
 	'sphinx.ext.doctest',
 	'sphinx.ext.autodoc',
 	'sphinx.ext.autosummary',
+	'sphinx.ext.coverage',
 	'myst_parser',
 	'sphinx_copybutton',
 	'dsm_lexer',
@@ -58,6 +59,11 @@ doctest_default_flags = (
 # generated constants (TUTO_A_USER_LOGIN, TUTO_S_LOGIN, …) so Zone 2
 # examples can use them without depending on a Kibo-generated package.
 _FIXTURE_TUTO = os.path.join(os.path.dirname(__file__), '_fixtures', 'Tuto')
+# Coverage builder: report which symbols of `dsviper` are not referenced by
+# any autodoc/autosummary directive in the doc.
+coverage_modules = ['dsviper']
+coverage_show_missing_items = True
+
 doctest_global_setup = f'''
 from dsviper import *
 _builder = DSMBuilder.assemble({_FIXTURE_TUTO!r})

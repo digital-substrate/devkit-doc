@@ -25,7 +25,7 @@ pip install dsviper
 ## Installing from the DevKit
 
 If you also want the CLI tools, templates, and offline documentation,
-download the DevKit from the [Downloads](https://digitalsubstrate.io/downloads/) page, unzip, and run:
+download the DevKit from the [Downloads](https://devkit.digitalsubstrate.io/downloads/) page, unzip, and run:
 
 ```bash
 cd dsviper-*-devkit

@@ -177,7 +177,7 @@ JetBrains plugin showing syntax highlighting, code completion, Structure view, a
 ### Installation
 
 The JetBrains plugin is published on the [JetBrains
-Marketplace](https://plugins.jetbrains.com/plugin/com.digitalsubstrate.dsm).
+Marketplace](https://plugins.jetbrains.com/plugin/31186-dsm-language-support).
 
 1. Open your JetBrains IDE (IntelliJ IDEA, PyCharm, CLion, etc.)
 2. Go to: `Settings/Preferences > Plugins > Marketplace`

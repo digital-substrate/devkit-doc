@@ -28,6 +28,8 @@ sphinx-autobuild source build/html
 make doctest    # run all `{doctest}` examples (519 tests today)
 make linkcheck  # validate every external URL
 make coverage   # list dsviper symbols not referenced by autodoc/autosummary
+make check      # run the three above in sequence — exits non-zero on first failure
+                # (suitable for a git pre-commit hook)
 
 # Build NotebookLM-friendly Markdown bundles (build/notebooklm/*.md)
 make notebooklm

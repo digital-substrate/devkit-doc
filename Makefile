@@ -12,10 +12,18 @@ BUILDDIR      = build
 help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-.PHONY: help Makefile notebooklm distzip pdf
+.PHONY: help Makefile notebooklm distzip pdf check
 
 # Documentation version (from conf.py `release` — keep in sync).
 DOC_VERSION ?= 1.2
+
+# Run all quality gates in sequence. Exit non-zero on the first failure
+# so this target is suitable for a git pre-commit hook.
+check:
+	@$(SPHINXBUILD) -M doctest "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+	@$(SPHINXBUILD) -M linkcheck "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+	@$(SPHINXBUILD) -M coverage "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+	@echo "all checks passed"
 
 # Build text bundles for NotebookLM (one .txt per top-level section).
 notebooklm:

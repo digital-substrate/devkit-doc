@@ -28,8 +28,19 @@ if "%DOC_VERSION%" == "" set DOC_VERSION=1.2
 if "%1" == "" goto help
 if "%1" == "notebooklm" goto notebooklm
 if "%1" == "distzip" goto distzip
+if "%1" == "check" goto check
 
 %SPHINXBUILD% -M %1 %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
+goto end
+
+:check
+%SPHINXBUILD% -M doctest %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
+if errorlevel 1 goto end
+%SPHINXBUILD% -M linkcheck %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
+if errorlevel 1 goto end
+%SPHINXBUILD% -M coverage %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
+if errorlevel 1 goto end
+echo all checks passed
 goto end
 
 :notebooklm

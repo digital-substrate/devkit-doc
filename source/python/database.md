@@ -62,8 +62,8 @@ See [Server](../tools/server.md) for deployment details.
 
 ```{doctest}
 >>> _ = db.extend_definitions(_tuto_defs)
->>> db.definitions().attachments()
-[attachment<User, Login> Tuto::login, attachment<User, Identity> Tuto::identity]
+>>> sorted(str(a).split()[-1] for a in db.definitions().attachments())
+['Tuto::avatar', 'Tuto::identity', 'Tuto::login', 'Tuto::portrait']
 ```
 
 In your own code you would assemble definitions from your DSM model:

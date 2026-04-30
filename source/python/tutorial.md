@@ -58,11 +58,11 @@ python3 tools/dsm_util.py create_commit_database model.dsm model.cdb
 Open the database in Python and list the types and attachments it carries:
 
 ```{doctest}
->>> db.definitions().types()
-[Tuto::User, Tuto::Login, Tuto::Identity]
+>>> sorted(str(t) for t in db.definitions().types())
+['Tuto::Identity', 'Tuto::Login', 'Tuto::Status', 'Tuto::Texture', 'Tuto::Thumbnail', 'Tuto::User']
 
->>> db.definitions().attachments()
-[attachment<User, Login> Tuto::login, attachment<User, Identity> Tuto::identity]
+>>> sorted(str(a).split()[-1] for a in db.definitions().attachments())
+['Tuto::avatar', 'Tuto::identity', 'Tuto::login', 'Tuto::portrait']
 ```
 
 ### Step 5: Inject Constants

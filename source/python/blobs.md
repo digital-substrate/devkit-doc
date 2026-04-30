@@ -26,16 +26,23 @@ A `blob` field stores binary data directly in the document. No special API neede
 A `blob_id` is a SHA-1 hash referencing a blob managed by the Database blob API. This
 requires the dedicated blob API:
 
-```pycon
+```{doctest}
+>>> layout = BlobLayout()
+>>> content = ValueBlob(bytes([1, 2, 3, 4, 5]))
+
 >>> blob_id = db.create_blob(layout, content)
+>>> blob_id
+f07d73c81ed1a91165a75c5cc22253cc7895a8b2
 
->>> content = db.blob(blob_id)
+>>> db.blob(blob_id)
+blob(5)
 
->>> db.blob_ids()
+>>> blob_id in db.blob_ids()
+True
 
 >>> info = db.blob_info(blob_id)
 >>> info.size()
-1024
+5
 ```
 
 **Content-addressable**: The `blob_id` is computed from layout + content (SHA-1).
@@ -330,42 +337,61 @@ blob_id pixels;
 
 ### Inline Blobs
 
-Inline blobs are stored directly in the document:
+Inline blobs are stored directly in the document. The Tuto fixture
+exposes a `Thumbnail` struct with a `blob` field, attached to `User` as
+`avatar`:
 
-```pycon
->>> thumb = Value.create(t_thumbnail)
+```{doctest}
+>>> user_key = TUTO_A_USER_AVATAR.create_key()
+
+>>> thumb = TUTO_A_USER_AVATAR.create_document()
 >>> thumb.width = 64
 >>> thumb.height = 64
->>> thumb.data = ValueBlob(image_bytes)
+>>> thumb.data = ValueBlob(bytes([1, 2, 3, 4, 5]))
+>>> thumb
+{width=64, height=64, data=blob(5)}
 
->>> mutating.set(attachment, key, thumb)
+>>> ms = CommitMutableState(db.initial_state())
+>>> ms.attachment_mutating().set(TUTO_A_USER_AVATAR, user_key, thumb)
+>>> avatar_commit = db.commit_mutations("Add avatar", ms)
+
+>>> db.state(avatar_commit).attachment_getting().get(TUTO_A_USER_AVATAR, user_key)
+Optional({width=64, height=64, data=blob(5)})
 ```
 
 ### Referenced Blobs (blob_id)
 
-Use the database blob API to store and retrieve:
+Use the database blob API to store and retrieve. The Tuto fixture
+exposes a `Texture` struct with a `blob_id` field, attached to `User`
+as `portrait`:
 
-```pycon
->>> layout = BlobLayout('float', 3)
->>> content = ValueBlob(mesh_bytes)
->>> blob_id = db.create_blob(layout, content)
+```{doctest}
+>>> mesh_layout = BlobLayout()
+>>> mesh_content = ValueBlob(bytes([10, 20, 30, 40]))
+>>> texture_blob_id = db.create_blob(mesh_layout, mesh_content)
 
->>> texture = Value.create(t_texture)
+>>> texture = TUTO_A_USER_PORTRAIT.create_document()
 >>> texture.width = 1024
 >>> texture.height = 1024
->>> texture.pixels = blob_id
+>>> texture.pixels = texture_blob_id
 
->>> mutating.set(attachment, key, texture)
+>>> ms = CommitMutableState(db.state(avatar_commit))
+>>> ms.attachment_mutating().set(TUTO_A_USER_PORTRAIT, user_key, texture)
+>>> portrait_commit = db.commit_mutations("Add portrait", ms)
+
+>>> db.state(portrait_commit).attachment_getting().get(TUTO_A_USER_PORTRAIT, user_key)
+Optional({width=1024, height=1024, pixels=...})
 ```
 
 ### Retrieving Blobs
 
-```pycon
->>> content = db.blob(blob_id)
->>> bytes(content)
-b'...'
+```{doctest}
+>>> stored_id = db.create_blob(BlobLayout(), ValueBlob(bytes([10, 20, 30, 40, 50])))
+>>> bytes(db.blob(stored_id))
+b'\n\x14\x1e(2'
 
->>> chunk = db.read_blob(blob_id, size=1024, offset=0)
+>>> db.read_blob(stored_id, size=2, offset=0)
+blob(2)
 ```
 
 ### BlobStream (Large Blobs)
@@ -375,14 +401,15 @@ For very large blobs, use streaming to avoid loading everything in memory.
 **Required for blobs > 2GB**: The standard `create_blob()` API has a 2GB size limit. Use
 BlobStream for larger data:
 
-```pycon
->>> layout = BlobLayout('uchar', 1)
->>> stream = db.blob_stream_create(layout, size=100_000_000)
+```{doctest}
+>>> stream = db.blob_stream_create(BlobLayout('uchar', 1), size=10)
 
->>> for chunk in read_file_in_chunks("large_file.bin"):
-...     db.blob_stream_append(stream, ValueBlob(chunk))
+>>> db.blob_stream_append(stream, ValueBlob(bytes([1, 2, 3, 4, 5])))
+>>> db.blob_stream_append(stream, ValueBlob(bytes([6, 7, 8, 9, 10])))
 
->>> blob_id = db.blob_stream_close(stream)
+>>> stream_blob_id = db.blob_stream_close(stream)
+>>> bytes(db.blob(stream_blob_id))
+b'\x01\x02\x03\x04\x05\x06\x07\x08\t\n'
 ```
 
 This is essential for:

@@ -16,7 +16,30 @@ struct Identity {
     string lastname;
 };
 
+"""A small avatar image stored inline."""
+struct Thumbnail {
+    uint16 width;
+    uint16 height;
+    blob data;
+};
+
+"""A high-resolution texture stored by reference."""
+struct Texture {
+    uint16 width;
+    uint16 height;
+    blob_id pixels;
+};
+
+"""Lifecycle state of a User account."""
+enum Status {
+    pending,
+    active,
+    completed
+};
+
 attachment<User, Login> login;
 attachment<User, Identity> identity;
+attachment<User, Thumbnail> avatar;
+attachment<User, Texture> portrait;
 
 };

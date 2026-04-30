@@ -80,14 +80,14 @@ The root container for all DSM elements:
 >>> dsm_defs.concepts()
 [Tuto::User]
 
->>> dsm_defs.structures()
-[Tuto::Login, Tuto::Identity]
+>>> sorted(str(s) for s in dsm_defs.structures())
+['Tuto::Identity', 'Tuto::Login', 'Tuto::Texture', 'Tuto::Thumbnail']
 
 >>> dsm_defs.enumerations()
-[]
+[Tuto::Status]
 
->>> dsm_defs.attachments()
-[attachment<User, Login> Tuto::login, attachment<User, Identity> Tuto::identity]
+>>> sorted(str(a).split()[-1] for a in dsm_defs.attachments())
+['Tuto::avatar', 'Tuto::identity', 'Tuto::login', 'Tuto::portrait']
 ```
 
 ### DSMConcept
@@ -130,18 +130,15 @@ Tuto::Login
 
 ### DSMEnumeration
 
-For a model with an enumeration, you can inspect cases:
+Inspect enumeration definitions and their cases:
 
-```pycon
+```{doctest}
 >>> enum = dsm_defs.enumerations()[0]
 >>> enum.type_name()
 Tuto::Status
 
->>> for case in enum.members():
-...     print(case.name())
-pending
-active
-completed
+>>> [case.name() for case in enum.members()]
+['pending', 'active', 'completed']
 ```
 
 ### DSMAttachment

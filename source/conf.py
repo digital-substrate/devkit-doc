@@ -3,6 +3,7 @@
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+import doctest
 import os
 import sys
 sys.path.insert(0, os.path.abspath('./_ext'))
@@ -41,6 +42,17 @@ autosummary_imported_members = True
 copybutton_prompt_text = r">>> |\.\.\. |\$ "
 copybutton_prompt_is_regexp = True
 copybutton_only_copy_prompt_lines = True
+
+# Doctest defaults: ELLIPSIS lets `...` match arbitrary output (handy for
+# non-deterministic values like UUIDs and the host/pid prefix on ViperError
+# messages); IGNORE_EXCEPTION_DETAIL ignores the exception message text so
+# doctests survive harmless wording changes; NORMALIZE_WHITESPACE is forgiving
+# about line wrapping in expected output.
+doctest_default_flags = (
+    doctest.ELLIPSIS
+    | doctest.IGNORE_EXCEPTION_DETAIL
+    | doctest.NORMALIZE_WHITESPACE
+)
 
 
 

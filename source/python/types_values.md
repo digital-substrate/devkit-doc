@@ -7,7 +7,7 @@ all available types and how to create values.
 
 Create any value using `Value.create(type, [initial_value])`:
 
-```pycon
+```{doctest}
 >>> from dsviper import *
 
 >>> Value.create(TypeFloat())
@@ -63,53 +63,65 @@ Common types are available as constants on `Type`:
 
 ### Boolean
 
-```pycon
+Note that Viper values render with their own `repr` — booleans appear as
+`true`/`false`, not Python's `True`/`False`.
+
+```{doctest}
 >>> Value.create(Type.BOOL)
-False
+false
 
 >>> Value.create(Type.BOOL, True)
-True
+true
+```
 
-# Type checking
+Type checking is enforced:
+
+```{doctest}
 >>> Value.create(Type.BOOL, 4)
-ViperError: expected type 'bool', got 'int'
+Traceback (most recent call last):
+    ...
+dsviper.ViperError: ...expected type 'bool', got 'int'...
 ```
 
 ### Integers
 
 Signed and unsigned integers with range validation:
 
-```pycon
+```{doctest}
 >>> Value.create(Type.INT8)
 0
 
 >>> Value.create(Type.INT8, 42)
 42
 
->>> Value.create(Type.INT8, 256)  # Out of range
-ViperError: value is not in the range of 'int8'
+>>> Value.create(Type.INT8, 256)
+Traceback (most recent call last):
+    ...
+dsviper.ViperError: ...value is not in the range of 'int8'...
 ```
 
 Available types: `INT8`, `INT16`, `INT32`, `INT64`, `UINT8`, `UINT16`, `UINT32`, `UINT64`
 
 ### Floats
 
-```pycon
+```{doctest}
 >>> Value.create(Type.FLOAT)
 0.0
 
 >>> Value.create(Type.FLOAT, 42)
 42.0
 
->>> Value.create(Type.FLOAT, 1e300)  # Out of range
-ViperError: value is not in the range of 'float'
+>>> Value.create(Type.FLOAT, 1e300)
+Traceback (most recent call last):
+    ...
+dsviper.ViperError: ...value is not in the range of 'float'...
 ```
 
 ### String
 
 UTF-8 encoded strings:
 
-```pycon
+```{doctest}
 >>> Value.create(Type.STRING)
 ''
 
@@ -119,20 +131,29 @@ UTF-8 encoded strings:
 
 ### UUID
 
-Create UUIDs with `ValueUUId.create()`:
+Generate a fresh UUID — `ValueUUId.create()` returns a randomly-generated value:
 
-```pycon
-# Generate new UUID
+```{doctest}
 >>> uuid = ValueUUId.create()
->>> uuid
-'c98ddeec-0496-494c-b1e9-b470ff204be3'
+>>> isinstance(str(uuid), str) and str(uuid).count('-') == 4
+True
+```
 
-# Parse UUID string
+Parse a known UUID string:
+
+```{doctest}
 >>> uuid = ValueUUId.create("c98ddeec-0496-494c-b1e9-b470ff204be3")
+>>> uuid
+c98ddeec-0496-494c-b1e9-b470ff204be3
+```
 
-# Invalid UUID
+Malformed UUIDs are rejected:
+
+```{doctest}
 >>> ValueUUId.create("invalid")
-ViperError: The literal 'invalid' is a malformed UUId.
+Traceback (most recent call last):
+    ...
+dsviper.ViperError: ...malformed UUId...
 ```
 
 ## Mathematical Types
@@ -141,8 +162,7 @@ ViperError: The literal 'invalid' is a malformed UUId.
 
 Fixed-size numeric arrays:
 
-```pycon
-# vec<float, 3>
+```{doctest}
 >>> t = TypeVec(Type.FLOAT, 3)
 >>> Value.create(t)
 (0.0, 0.0, 0.0)
@@ -155,8 +175,7 @@ Fixed-size numeric arrays:
 
 Matrices with columns and rows:
 
-```pycon
-# mat<float, 2, 3>
+```{doctest}
 >>> t = TypeMat(Type.FLOAT, 2, 3)
 >>> Value.create(t)
 [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0)]
@@ -169,23 +188,21 @@ Matrices with columns and rows:
 
 Let Python infer the Viper type with `Value.deduce()`:
 
-```pycon
-# List of integers → vector<int64>
+```{doctest}
 >>> v = Value.deduce([1, 2, 3])
 >>> v.type()
 vector<int64>
 
-# Complex nested structure
 >>> v = Value.deduce([1, 2, (3, "string"), {1.0, 2.0}])
 >>> v.type()
-vector<int64 | set<double> | tuple<int64, string>>
+vector<int64|set<double>|tuple<int64, string>>
 ```
 
 ## Type Information
 
 Every value knows its type:
 
-```pycon
+```{doctest}
 >>> v = Value.create(TypeVector(Type.STRING), ["a", "b"])
 >>> v.type()
 vector<string>
@@ -198,25 +215,25 @@ vector<string>
 
 Viper validates types at runtime:
 
-```pycon
+```{doctest}
 >>> v = Value.create(TypeVector(Type.STRING))
 >>> v.append("valid")
->>> v.append(123)  # Wrong type
-ViperError: expected type 'str', got 'int'
+>>> v.append(123)
+Traceback (most recent call last):
+    ...
+dsviper.ViperError: ...expected type 'str', got 'int'...
 ```
 
 ## The Seamless Bridge
 
 Python natives are automatically converted:
 
-```pycon
-# Python list accepted as input
+```{doctest}
 >>> v = Value.create(TypeVector(Type.STRING))
 >>> v.extend(["from", "python", "list"])
 >>> v
 ['from', 'python', 'list']
 
-# Python dict accepted for map
 >>> m = Value.create(TypeMap(Type.STRING, Type.INT64), {"a": 1, "b": 2})
 >>> m
 {'a': 1, 'b': 2}

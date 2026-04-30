@@ -37,14 +37,15 @@ GUI/web dependencies needed by the bundled tools.
 
 ## Verifying Installation
 
-Verify that dsviper is correctly installed:
+Verify that dsviper is correctly installed. `version()` returns a
+`(major, minor, patch)` tuple:
 
-```pycon
+```{doctest}
 >>> import dsviper
->>> dsviper.version()
+>>> v = dsviper.version()
+>>> isinstance(v, tuple) and len(v) == 3
+True
 ```
-
-If the call returns the version tuple, dsviper is ready to use.
 
 ## Understanding dsviper
 
@@ -69,21 +70,25 @@ points:
 
 ## Quick Test
 
-Test the type system:
+Test the type system. Create a vector of strings:
 
-```pycon
+```{doctest}
 >>> from dsviper import *
 
-# Create a vector of strings
 >>> v = Value.create(TypeVector(Type.STRING))
 >>> v.append("hello")
 >>> v.append("world")
 >>> v
 ['hello', 'world']
+```
 
-# Type checking in action
+Type checking in action — adding the wrong type raises immediately:
+
+```{doctest}
 >>> v.append(42)
-dsviper.ViperError: expected type 'str', got 'int'
+Traceback (most recent call last):
+    ...
+dsviper.ViperError: ...expected type 'str', got 'int'...
 ```
 
 ## What's Next

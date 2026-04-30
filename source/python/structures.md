@@ -7,19 +7,20 @@ with `Definitions` before use. This chapter covers creating and working with bot
 
 Structures are defined within a `Definitions` context:
 
-```pycon
+```{doctest}
 >>> from dsviper import *
 
-# Create definitions
 >>> defs = Definitions()
 >>> ns = NameSpace(ValueUUId("f529bc42-0618-4f54-a3fb-d55f95c5ad03"), "Tuto")
+```
 
-# Define structure with descriptor
+Define a structure with a descriptor:
+
+```{doctest}
 >>> desc = TypeStructureDescriptor("Login")
 >>> desc.add_field("nickname", Type.STRING)
 >>> desc.add_field("password", Type.STRING)
 
-# Create the type
 >>> t_login = defs.create_structure(ns, desc)
 >>> t_login
 Tuto::Login
@@ -27,15 +28,18 @@ Tuto::Login
 
 ## Instantiating Structures
 
-Create structure instances with `Value.create()`:
+Create structure instances with `Value.create()`. Default values use the
+type's "zero":
 
-```pycon
-# Default values (zeros)
+```{doctest}
 >>> login = Value.create(t_login)
 >>> login
 {nickname='', password=''}
+```
 
-# Initialize from dict
+Initialize from a dict:
+
+```{doctest}
 >>> login = Value.create(t_login, {"nickname": "zoop"})
 >>> login
 {nickname='zoop', password=''}
@@ -45,12 +49,10 @@ Create structure instances with `Value.create()`:
 
 Access fields by name:
 
-```pycon
-# Get field
+```{doctest}
 >>> login.nickname
 'zoop'
 
-# Set field
 >>> login.password = "secret"
 >>> login
 {nickname='zoop', password='secret'}
@@ -60,16 +62,18 @@ Access fields by name:
 
 Field assignments are type-checked:
 
-```pycon
+```{doctest}
 >>> login.nickname = 42
-ViperError: expected type 'str', got 'int'
+Traceback (most recent call last):
+    ...
+dsviper.ViperError: ...expected type 'str', got 'int'...
 ```
 
 ## Default Values
 
 Specify default values when defining fields:
 
-```pycon
+```{doctest}
 >>> desc = TypeStructureDescriptor("Config")
 >>> desc.add_field("scale", ValueFloat(1.0))
 >>> desc.add_field("items", Value.create(TypeVector(Type.INT64), [1, 2, 3]))
@@ -83,24 +87,25 @@ Specify default values when defining fields:
 
 Structures can contain other structures:
 
-```pycon
-# Define Position
+```{doctest}
 >>> desc_pos = TypeStructureDescriptor("Position")
 >>> desc_pos.add_field("x", Type.FLOAT)
 >>> desc_pos.add_field("y", Type.FLOAT)
 >>> t_position = defs.create_structure(ns, desc_pos)
 
-# Define Vertex containing Position
 >>> desc_vertex = TypeStructureDescriptor("Vertex")
 >>> desc_vertex.add_field("position", t_position)
 >>> desc_vertex.add_field("label", Type.STRING)
 >>> t_vertex = defs.create_structure(ns, desc_vertex)
 
-# Create instance
 >>> vertex = Value.create(t_vertex)
 >>> vertex
 {position={x=0.0, y=0.0}, label=''}
+```
 
+Mutate a nested field:
+
+```{doctest}
 >>> vertex.position.x = 10.0
 >>> vertex.position.y = 20.0
 >>> vertex.label = "A"
@@ -112,17 +117,18 @@ Structures can contain other structures:
 
 A `Path` locates a piece of information within a value:
 
-```pycon
-# Create path to field
+```{doctest}
 >>> p = Path.from_field("nickname").const()
 >>> p
 .nickname
+```
 
-# Apply path to get value
+Apply a path to read or write the targeted field:
+
+```{doctest}
 >>> p.at(login)
 'zoop'
 
-# Apply path to set value
 >>> p.set(login, "new_nick")
 >>> login.nickname
 'new_nick'
@@ -132,8 +138,7 @@ A `Path` locates a piece of information within a value:
 
 Paths can traverse nested structures:
 
-```pycon
-# Path to nested field
+```{doctest}
 >>> p = Path.from_field("position").field("x").const()
 >>> p
 .position.x
@@ -152,15 +157,13 @@ Paths can include:
 - Unwrap: `.unwrap()`
 - Map key: `.key(key_value)`
 
-```pycon
-# Complex path
+```{doctest}
 >>> p = Path.from_field("items").index(0).const()
 >>> p
 .items[0]
 
 >>> p.components()
-[{type: Field, value: 'items'},
- {type: Index, value: 0}]
+[{type: Field, value: 'items':string}, {type: Index, value: 0:uint64}]
 ```
 
 ## Enumerations
@@ -169,7 +172,7 @@ Enumerations are types with a fixed set of named cases.
 
 ### Defining an Enumeration
 
-```pycon
+```{doctest}
 >>> desc = TypeEnumerationDescriptor("Status", documentation="Task status")
 >>> desc.add_case("pending", "Waiting to start")
 >>> desc.add_case("active", "In progress")
@@ -182,40 +185,48 @@ Tuto::Status
 
 ### Creating Enumeration Values
 
-Create values by case name, index, or default:
+By case name (most common):
 
-```pycon
-# By case name (most common)
+```{doctest}
 >>> status = ValueEnumeration(t_status, "active")
 >>> status.name()
 'active'
+```
 
-# By index (0-based)
+By index (0-based):
+
+```{doctest}
 >>> status = ValueEnumeration(t_status, 0)
 >>> status.name()
 'pending'
+```
 
-# Default (first case)
+Default (first case):
+
+```{doctest}
 >>> Value.create(t_status)
 .pending
+```
 
-# Specify case with Value.create()
+Specify case with `Value.create()`:
+
+```{doctest}
 >>> Value.create(t_status, "completed")
 .completed
 ```
 
 ### Properties
 
-```pycon
+```{doctest}
 >>> status = ValueEnumeration(t_status, "active")
 
->>> status.name()       # Case name
+>>> status.name()
 'active'
 
->>> status.index()      # Case index (0-based)
+>>> status.index()
 1
 
->>> status.type_enumeration()  # Type reference
+>>> status.type_enumeration()
 Tuto::Status
 ```
 
@@ -223,30 +234,38 @@ Tuto::Status
 
 Query available cases from the type:
 
-```pycon
+```{doctest}
 >>> cases = t_status.cases()
 >>> [c.name() for c in cases]
 ['pending', 'active', 'completed']
+```
 
-# Query by name
+Query a case by name:
+
+```{doctest}
 >>> case = t_status.query("active")
 >>> case.documentation()
 'In progress'
+```
 
-# Check existence (raises on invalid)
+Check existence (raises on invalid):
+
+```{doctest}
 >>> t_status.check("unknown")
-ViperError: UndefinedEnumerationCaseSymbol
+Traceback (most recent call last):
+    ...
+dsviper.ViperError: ...the case unknown is not defined for enum Tuto::Status...
 ```
 
 ### Comparison
 
 Enumerations compare lexicographically by name, not by index:
 
-```pycon
->>> pending = ValueEnumeration(t_status, "pending")   # index 0
->>> active = ValueEnumeration(t_status, "active")     # index 1
+```{doctest}
+>>> pending = ValueEnumeration(t_status, "pending")
+>>> active = ValueEnumeration(t_status, "active")
 
->>> active < pending   # "active" < "pending" alphabetically
+>>> active < pending
 True
 ```
 
@@ -258,11 +277,11 @@ True
 
 ## Type Information
 
-Introspect structure types:
+Introspect structure types. Field reprs include the field type:
 
-```pycon
+```{doctest}
 >>> t_login.fields()
-[nickname, password]
+[nickname:string, password:string]
 
 >>> field = t_login.fields()[0]
 >>> field.name()
@@ -276,7 +295,11 @@ string
 Structures are typically stored via attachments. See [DSM](dsm.md)
 for defining attachments and [Database](database.md) for persistence patterns.
 
-Quick preview:
+```{note}
+The "Quick preview" snippet below depends on a DSM model compiled by Kibo
+(`TUTO_A_USER_LOGIN` is generated). It is illustrative — see the
+[Tutorial](tutorial.md) for a self-contained working example.
+```
 
 ```pycon
 # With DSM definitions loaded

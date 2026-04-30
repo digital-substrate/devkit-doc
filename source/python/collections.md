@@ -7,73 +7,103 @@ enforcing type safety.
 
 `ValueVector` is compatible with Python's list API:
 
-```pycon
+```{doctest}
 >>> from dsviper import *
 
-# Create vector<string>
 >>> v = Value.create(TypeVector(Type.STRING), ["hello", "world"])
 >>> v
 ['hello', 'world']
+```
 
-# Append
+Append a single element:
+
+```{doctest}
 >>> v.append("!")
 >>> v
 ['hello', 'world', '!']
+```
 
-# Extend with Python list
+Extend with a Python list:
+
+```{doctest}
 >>> v.extend(["from", "python"])
+>>> v
+['hello', 'world', '!', 'from', 'python']
+```
 
-# Index access
+Index access (positive and negative):
+
+```{doctest}
 >>> v[0]
 'hello'
 >>> v[-1]
 'python'
+```
 
-# Slice
->>> v[1:3]
-['world', '!']
+Length:
 
-# Length
+```{doctest}
 >>> len(v)
 5
+```
 
-# Iterate
+Iterate:
+
+```{doctest}
 >>> for item in v:
 ...     print(item)
+hello
+world
+!
+from
+python
+```
+
+```{note}
+`ValueVector` does not currently support slice access (`v[1:3]`). Iterate
+explicitly or use `list(v)` to materialize a slice in Python.
 ```
 
 ### Type Safety
 
-```pycon
->>> v.append(42)  # Wrong type
-ViperError: expected type 'str', got 'int'
+```{doctest}
+>>> v.append(42)
+Traceback (most recent call last):
+    ...
+dsviper.ViperError: ...expected type 'str', got 'int'...
 ```
 
 ## Set
 
 `ValueSet` is compatible with Python's set API:
 
-```pycon
-# Create set<int64>
+```{doctest}
 >>> s = Value.create(TypeSet(Type.INT64), {1, 2, 3, 2, 1})
 >>> s
 {1, 2, 3}
+```
 
-# Add
+Add and remove:
+
+```{doctest}
 >>> s.add(4)
-
-# Remove
 >>> s.remove(1)
+>>> s
+{2, 3, 4}
+```
 
-# Membership
+Membership and length:
+
+```{doctest}
 >>> 2 in s
 True
-
-# Length
 >>> len(s)
 3
+```
 
-# Set operations
+Set operations:
+
+```{doctest}
 >>> s2 = Value.create(TypeSet(Type.INT64), {3, 4, 5})
 >>> s.union(s2)
 {2, 3, 4, 5}
@@ -85,29 +115,35 @@ True
 
 `ValueMap` is compatible with Python's dict API:
 
-```pycon
-# Create map<string, int64>
+```{doctest}
 >>> m = Value.create(TypeMap(Type.STRING, Type.INT64), {"a": 1, "b": 2})
 >>> m
 {'a': 1, 'b': 2}
+```
 
-# Get/Set
+Get and set:
+
+```{doctest}
 >>> m["c"] = 3
 >>> m["a"]
 1
+```
 
-# Keys, values, items
+Keys, values, items:
+
+```{doctest}
 >>> list(m.keys())
 ['a', 'b', 'c']
 >>> list(m.values())
 [1, 2, 3]
 >>> list(m.items())
 [('a', 1), ('b', 2), ('c', 3)]
+```
 
-# Delete
+Delete and length:
+
+```{doctest}
 >>> del m["a"]
-
-# Length
 >>> len(m)
 2
 ```
@@ -116,8 +152,7 @@ True
 
 Maps can use complex types as keys:
 
-```pycon
-# map<tuple<int64, int64>, string>
+```{doctest}
 >>> t = TypeMap(TypeTuple([Type.INT64, Type.INT64]), Type.STRING)
 >>> m = Value.create(t, {(1, 2): "one-two", (3, 4): "three-four"})
 >>> m[(1, 2)]
@@ -128,36 +163,46 @@ Maps can use complex types as keys:
 
 `ValueOptional` holds a value or nothing:
 
-```pycon
-# Create empty optional<string>
+```{doctest}
 >>> opt = Value.create(TypeOptional(Type.STRING))
 >>> opt
 nil
 
 >>> opt.is_nil()
 True
+```
 
-# Wrap a value
+Wrap a value:
+
+```{doctest}
 >>> opt.wrap("hello")
 >>> opt
 Optional('hello')
 
 >>> opt.is_nil()
 False
+```
 
-# Unwrap
+Unwrap:
+
+```{doctest}
 >>> opt.unwrap()
 'hello'
+```
 
-# Unwrap empty optional raises error
+Unwrapping an empty optional raises an error:
+
+```{doctest}
 >>> empty = Value.create(TypeOptional(Type.STRING))
 >>> empty.unwrap()
-ViperError: Try to unwrap empty optional<string>
+Traceback (most recent call last):
+    ...
+dsviper.ViperError: ...Try to unwrap empty optional<string>...
 ```
 
 ### Initialize with Value
 
-```pycon
+```{doctest}
 >>> opt = Value.create(TypeOptional(Type.INT64), 42)
 >>> opt
 Optional(42)
@@ -165,16 +210,19 @@ Optional(42)
 
 ## Tuple
 
-`ValueTuple` holds heterogeneous values:
+`ValueTuple` holds heterogeneous values. Note that booleans render with Viper's
+own repr (`true`/`false`), not Python's `True`/`False`:
 
-```pycon
-# tuple<string, int64, bool>
+```{doctest}
 >>> t = TypeTuple([Type.STRING, Type.INT64, Type.BOOL])
 >>> v = Value.create(t, ("hello", 42, True))
 >>> v
-('hello', 42, True)
+('hello', 42, true)
+```
 
-# Access by index
+Access by index:
+
+```{doctest}
 >>> v[0]
 'hello'
 >>> v[1]
@@ -185,21 +233,28 @@ Optional(42)
 
 `ValueVariant` holds one value from a set of possible types:
 
-```pycon
-# string | int64
+```{doctest}
 >>> t = TypeVariant([Type.STRING, Type.INT64])
 >>> v = Value.create(t, "a string")
 >>> v.type()
 string|int64
+```
 
-# Change the value
+Change the value:
+
+```{doctest}
 >>> v.wrap(42)
 >>> v.unwrap()
 42
+```
 
-# Wrong type
+Wrong type is rejected:
+
+```{doctest}
 >>> v.wrap(3.14)
-ViperError: expected type 'string|int64', got 'float'
+Traceback (most recent call last):
+    ...
+dsviper.ViperError: ...expected type 'string|int64', got 'float'...
 ```
 
 ## XArray
@@ -224,29 +279,75 @@ local computation buffer should use Vector.
 ### XArray Basics
 
 `ValueXArray` preserves order during concurrent mutations using UUID positions instead of
-indices:
+integer indices.
 
-```pycon
+Create and append. Note that `append()` returns `x.END` — the zero-UUID
+sentinel that means "the end of the array" — not the position of the
+just-appended element:
+
+```{doctest}
 >>> t = TypeXArray(Type.STRING)
 >>> x = Value.create(t)
 
-# Append returns the position
->>> pos1 = x.append("first")
->>> pos2 = x.append("second")
+>>> x.END
+00000000-0000-0000-0000-000000000000
 
-# Access by position (UUID)
->>> x[pos1]
+>>> x.append("first")
+00000000-0000-0000-0000-000000000000
+>>> x.append("second")
+00000000-0000-0000-0000-000000000000
+>>> x
+['first', 'second']
+```
+
+Recover the actual UUID position of an element with `position(index)` or
+`position_of(value)`, then access it with `at(pos)` (or `x[pos]`):
+
+```{doctest}
+>>> pos0 = x.position(0)
+>>> x.at(pos0)
+'first'
+>>> x[pos0]
 'first'
 
-# Insert at position
->>> x.insert(pos1, "inserted")
+>>> p = x.position_of("second")
+>>> x.at(p)
+'second'
+```
+
+`insert(pos, value)` inserts **before** the given position and returns the
+UUID position of the new element. Inserting at `x.END` is therefore
+equivalent to appending; inserting at `pos0` prepends:
+
+```{doctest}
+>>> p_third = x.insert(x.END, "third")
+>>> x.at(p_third)
+'third'
+
+>>> p_zero = x.insert(pos0, "zero")
+>>> x.at(p_zero)
+'zero'
+
+>>> x
+['zero', 'first', 'second', 'third']
+```
+
+Iterate over values, or over `(position, value)` pairs:
+
+```{doctest}
+>>> for item in x:
+...     print(item)
+zero
+first
+second
+third
 ```
 
 ## Any
 
 `TypeAny` accepts any value:
 
-```pycon
+```{doctest}
 >>> v = Value.create(TypeVector(Type.ANY))
 >>> v.append("a string")
 >>> v.append(42)
@@ -260,8 +361,7 @@ indices:
 
 Collections can be nested:
 
-```pycon
-# vector<map<string, int64>>
+```{doctest}
 >>> t = TypeVector(TypeMap(Type.STRING, Type.INT64))
 >>> v = Value.create(t)
 >>> v.append({"a": 1})

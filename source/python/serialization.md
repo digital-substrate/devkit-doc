@@ -9,15 +9,17 @@ chapter covers JSON and binary encoding.
 
 Encode any value to JSON:
 
-```pycon
+```{doctest}
 >>> from dsviper import *
 
-# Simple values
 >>> v = Value.deduce([1, 2, 3])
 >>> Value.json_encode(v)
 '[1,2,3]'
+```
 
-# Complex values
+Complex values — Python tuples become JSON arrays:
+
+```{doctest}
 >>> v = Value.deduce({(1, 2): "one", (3, 4): "two"})
 >>> Value.json_encode(v)
 '[[[1,2],"one"],[[3,4],"two"]]'
@@ -27,7 +29,7 @@ Encode any value to JSON:
 
 Decode JSON back to a value:
 
-```pycon
+```{doctest}
 >>> json_str = '[1,2,3]'
 >>> t = TypeVector(Type.INT64)
 >>> v = Value.json_decode(json_str, t, Definitions().const())
@@ -37,12 +39,22 @@ Decode JSON back to a value:
 
 ### Pretty Printing
 
+Define a small `Login` structure to demonstrate pretty printing:
+
+```{doctest}
+>>> defs = Definitions()
+>>> ns = NameSpace(ValueUUId("f529bc42-0618-4f54-a3fb-d55f95c5ad03"), "Tuto")
+>>> desc = TypeStructureDescriptor("Login")
+>>> desc.add_field("nickname", Type.STRING)
+>>> desc.add_field("password", Type.STRING)
+>>> t_login = defs.create_structure(ns, desc)
+```
+
 Format JSON with indentation:
 
-```pycon
+```{doctest}
 >>> v = Value.create(t_login, {"nickname": "alice", "password": "secret"})
->>> json_str = Value.json_encode(v, indent=2)
->>> print(json_str)
+>>> print(Value.json_encode(v, indent=2))
 {
   "nickname": "alice",
   "password": "secret"
@@ -53,38 +65,44 @@ Format JSON with indentation:
 
 ### To JSON
 
-```pycon
-# Create definitions
->>> defs = Definitions()
->>> ns = NameSpace(ValueUUId("f529bc42-..."), "Tuto")
->>> defs.create_concept(ns, "User")
+Convert `Definitions` to a `DSMDefinitions` snapshot, then encode to JSON:
 
-# Convert to DSM definitions
->>> dsm_defs = defs.const().to_dsm_definitions()
+```{doctest}
+>>> defs2 = Definitions()
+>>> ns2 = NameSpace(ValueUUId("aaaaaaaa-0000-0000-0000-000000000001"), "Demo")
+>>> defs2.create_concept(ns2, "User")
+Demo::User
 
-# Encode to JSON
+>>> dsm_defs = defs2.const().to_dsm_definitions()
 >>> json_str = dsm_defs.json_encode(indent=2)
->>> print(json_str)
-{
-  "namespaces": [...],
-  "concepts": [...],
-  ...
-}
+>>> "Demo" in json_str and "User" in json_str
+True
 ```
+
+The encoded JSON contains the standard DSM categories — namespaces,
+concepts, structures, enumerations, attachments, clubs, function pools, and
+attachment function pools.
 
 ### From JSON
 
-```pycon
->>> dsm_defs = DSMDefinitions.json_decode(json_str)
+```{doctest}
+>>> restored = DSMDefinitions.json_decode(json_str)
+>>> type(restored).__name__
+'DSMDefinitions'
 ```
 
 ### To DSM Language
 
-```pycon
+Render definitions back to DSM source:
+
+```{doctest}
 >>> print(dsm_defs.to_dsm())
-namespace Tuto {f529bc42-...} {
-    concept User;
-};
+namespace Demo {aaaaaaaa-0000-0000-0000-000000000001} {
+<BLANKLINE>
+concept User;
+<BLANKLINE>
+}; // ns Demo
+<BLANKLINE>
 ```
 
 ## Binary Encoding
@@ -93,22 +111,32 @@ Binary encoding is compact and fast, used for persistence and network transfer.
 
 ### Encoding Values
 
-```pycon
-# Encode to binary (returns bytes)
->>> data = Value.binary_encode(value)
+`Value.encode(value)` returns a `ValueBlob`; `Value.decode(blob, type, defs)`
+restores the value:
 
-# Decode from binary
->>> value = Value.binary_decode(data, value_type, definitions)
+```{doctest}
+>>> v = Value.deduce([1, 2, 3])
+>>> blob = Value.encode(v)
+>>> blob
+blob(...)
+
+>>> restored = Value.decode(blob, v.type(), Definitions().const())
+>>> restored == v
+True
 ```
 
 ### Encoding Definitions
 
-```pycon
-# Encode definitions to binary
->>> data = defs.binary_encode()
+`Definitions` are encoded via the const view:
 
-# Decode definitions from binary
->>> defs = Definitions.binary_decode(data)
+```{doctest}
+>>> blob = defs2.const().encode()
+>>> blob
+blob(...)
+
+>>> restored = Definitions.decode(blob)
+>>> type(restored).__name__
+'Definitions'
 ```
 
 ## Stream Codec
@@ -128,57 +156,56 @@ its type.
 
 ### Encoding
 
-```pycon
->>> from dsviper import *
+Create an encoder, write primitives, finalize:
 
-# Create encoder
+```{doctest}
 >>> encoder = Codec.STREAM_BINARY.create_encoder()
-
-# Write primitives
 >>> encoder.write_int64(42)
 >>> encoder.write_float(3.14)
 >>> encoder.write_string("hello")
 
-# Finalize and get blob
 >>> blob = encoder.end_encoding()
 >>> blob
-blob(21)
+blob(...)
 ```
 
 ### Decoding
 
-```pycon
-# Create decoder from blob
->>> decoder = Codec.STREAM_BINARY.create_decoder(blob)
+Read in the same order. Note that `write_float` / `read_float` round-trip
+through 32-bit float, so `3.14` comes back with float32 precision:
 
-# Read in same order
+```{doctest}
+>>> decoder = Codec.STREAM_BINARY.create_decoder(blob)
 >>> decoder.read_int64()
 42
 >>> decoder.read_float()
-3.14
+3.140000104904175
 >>> decoder.read_string()
 'hello'
 
-# Check if more data
 >>> decoder.has_more()
 False
 ```
 
 ### Type Safety with Tokens
 
-```pycon
+The token codec rejects mismatched reads:
+
+```{doctest}
 >>> encoder = Codec.STREAM_TOKEN_BINARY.create_encoder()
 >>> encoder.write_int64(42)
 >>> blob = encoder.end_encoding()
 
 >>> decoder = Codec.STREAM_TOKEN_BINARY.create_decoder(blob)
->>> decoder.read_bool()  # Wrong type!
-ViperError: Expected token 'bool', got 'int64'.
+>>> decoder.read_bool()
+Traceback (most recent call last):
+    ...
+dsviper.ViperError: ...Expected token bool, got int64...
 ```
 
 ### Computing Sizes
 
-```pycon
+```{doctest}
 >>> sizer = Codec.STREAM_BINARY.create_sizer()
 >>> sizer.size_of_float()
 4
@@ -190,7 +217,7 @@ ViperError: Expected token 'bool', got 'int64'.
 
 Get a descriptive string representation:
 
-```pycon
+```{doctest}
 >>> v = Value.deduce([1, 2, 3])
 >>> v.description()
 '[1, 2, 3]:vector<int64>'
@@ -207,11 +234,11 @@ DSM definitions can be saved in binary format (`.dsmb`):
 ```pycon
 # Write definitions to binary file
 >>> with open("model.dsmb", "wb") as f:
-...     f.write(defs.binary_encode())
+...     f.write(defs.const().encode())
 
 # Read definitions from binary file
 >>> with open("model.dsmb", "rb") as f:
-...     defs = Definitions.binary_decode(f.read())
+...     defs = Definitions.decode(f.read())
 ```
 
 ## Common Patterns
@@ -220,10 +247,10 @@ DSM definitions can be saved in binary format (`.dsmb`):
 
 Verify encoding/decoding preserves data:
 
-```pycon
+```{doctest}
 >>> original = Value.create(t_login, {"nickname": "test"})
 >>> json_str = Value.json_encode(original)
->>> decoded = Value.json_decode(json_str, t_login, defs)
+>>> decoded = Value.json_decode(json_str, t_login, defs.const())
 >>> original == decoded
 True
 ```
@@ -235,17 +262,23 @@ Export schema for external systems:
 ```pycon
 >>> defs = db.definitions()
 >>> dsm_defs = defs.to_dsm_definitions()
->>> print(dsm_defs.to_dsm())  # DSM language
->>> print(dsm_defs.json_encode(2))  # JSON schema
+>>> print(dsm_defs.to_dsm())          # DSM language
+>>> print(dsm_defs.json_encode(indent=2))  # JSON schema
+```
+
+```{note}
+The `Schema Export` snippet above pulls definitions from a live `db` and
+therefore requires a working database. See [Database](database.md) for a
+full walkthrough.
 ```
 
 ## Summary
 
-| Format | Use Case              | API                          |
-|--------|-----------------------|------------------------------|
-| JSON   | Debugging, interop    | `Value.json_encode/decode`   |
-| Binary | Persistence, RPC      | `Value.binary_encode/decode` |
-| DSM    | Human-readable schema | `dsm_defs.to_dsm()`          |
+| Format | Use Case              | API                            |
+|--------|-----------------------|--------------------------------|
+| JSON   | Debugging, interop    | `Value.json_encode/decode`     |
+| Binary | Persistence, RPC      | `Value.encode/decode`          |
+| DSM    | Human-readable schema | `dsm_defs.to_dsm()`            |
 
 ## What's Next
 

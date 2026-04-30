@@ -24,7 +24,12 @@ make clean && make html
 pip install sphinx-autobuild
 sphinx-autobuild source build/html
 
-# Build NotebookLM-friendly text bundles (build/notebooklm/*.txt)
+# Quality gates
+make doctest    # run all `{doctest}` examples (519 tests today)
+make linkcheck  # validate every external URL
+make coverage   # list dsviper symbols not referenced by autodoc/autosummary
+
+# Build NotebookLM-friendly Markdown bundles (build/notebooklm/*.md)
 make notebooklm
 ```
 
@@ -37,6 +42,7 @@ source/
 ├── _ext/             # Custom extensions (dsm_lexer, pyi_signatures)
 ├── _static/          # CSS and images
 ├── _templates/       # Autosummary templates
+├── _fixtures/        # Test fixtures consumed by `make doctest` (Tuto/model.dsm)
 ├── concepts/         # Viper architecture, philosophy, patterns
 ├── dsm/              # DSM language reference
 ├── python/           # Python guide + auto-generated API reference
@@ -62,7 +68,16 @@ autodoc-generated API pages. Resolves inherited methods via class hierarchy.
 ## Conventions
 
 - Use MyST Markdown (`.md`) for content pages, reStructuredText (`.rst`) for toctrees
-- Code examples: prefer Python, verify against real API
+- Code examples: prefer Python, wrap runnable snippets in ` ```{doctest} ` so
+  `make doctest` validates them against the real `dsviper` runtime. The Tuto
+  fixture (`source/_fixtures/Tuto/model.dsm`, kept in sync with the
+  `dsm-samples` canonical Tuto) is pre-loaded and `db`, `_tuto_defs`,
+  `TUTO_*` are in scope via `doctest_global_setup` in `conf.py`.
+- Doctest gotchas: continuation lines (`... `) inside an argument list
+  conflict with the global `ELLIPSIS` flag — keep multi-arg calls on a
+  single line. `commit_mutations()` does not auto-advance an implicit
+  current commit; capture the returned id explicitly. `inject(<dict>)`
+  does not wire the same type-bridge as `inject()` (no-arg → `__main__`).
 - Directives: `{note}`, `{tip}`, `{warning}` for callouts
 - After any file move or rename: `make clean && make html` (Sphinx caches old paths)
 

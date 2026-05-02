@@ -88,6 +88,15 @@ html_theme = 'furo'
 html_static_path = ['_static']
 html_css_files = ['custom.css']
 
+# Canonical URL — published on GitHub Pages at docs.digitalsubstrate.io
+# (Sphinx emits <link rel="canonical"> tags so duplicate hosts are
+# deprioritised by search engines).
+html_baseurl = 'https://docs.digitalsubstrate.io/'
+
+# Files copied verbatim to the root of build/html/.
+# CNAME tells GitHub Pages which custom domain to serve.
+html_extra_path = ['_static/CNAME']
+
 # Furo theme options
 html_theme_options = {
     'navigation_with_keys': True,

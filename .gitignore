@@ -4,3 +4,6 @@ source/_ext/__pycache__/
 .idea/
 
 .claude/settings.local.json
+
+# Claude Code instructions — local only, not for distribution
+CLAUDE.md

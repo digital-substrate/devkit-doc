@@ -34,6 +34,36 @@ pip install sphinx-autobuild
 sphinx-autobuild source build/html
 ```
 
+## Quality gates
+
+```bash
+make doctest    # run all `{doctest}` examples against the live dsviper runtime
+make linkcheck  # validate every external URL
+make coverage   # list dsviper symbols not referenced by autodoc/autosummary
+make check      # run the three above; exits non-zero on first failure
+```
+
+`make.bat` exposes the same targets on Windows.
+
+## Distribution artifacts
+
+```bash
+make distzip    # build/dist/devkit-<version>-doc.zip — multi-page HTML archive
+make pdf        # build/dist/devkit-<version>-doc.pdf — ~400-page PDF (xelatex)
+```
+
+`DOC_VERSION` defaults to `1.2`; override from the environment if needed.
+
+### PDF prerequisites
+
+The `pdf` target uses `xelatex`. Install a TeX distribution:
+
+| Platform | Recommended                                                     |
+|----------|-----------------------------------------------------------------|
+| macOS    | BasicTeX + `tex-gyre` + `gnu-freefont` (Homebrew)               |
+| Linux    | TeX Live (`texlive-xetex`, `texlive-fonts-extra`)               |
+| Windows  | [MiKTeX](https://miktex.org/) — auto-installs missing packages on first run, or TeX Live for Windows |
+
 ## Structure
 
 ```

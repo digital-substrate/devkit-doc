@@ -28,6 +28,7 @@ if "%DOC_VERSION%" == "" set DOC_VERSION=1.2
 if "%1" == "" goto help
 if "%1" == "notebooklm" goto notebooklm
 if "%1" == "distzip" goto distzip
+if "%1" == "pdf" goto pdf
 if "%1" == "check" goto check
 
 %SPHINXBUILD% -M %1 %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
@@ -54,8 +55,20 @@ goto end
 if errorlevel 1 goto end
 if not exist "%BUILDDIR%\dist" mkdir "%BUILDDIR%\dist"
 if exist "%BUILDDIR%\dist\devkit-%DOC_VERSION%-doc.zip" del "%BUILDDIR%\dist\devkit-%DOC_VERSION%-doc.zip"
+if exist "%BUILDDIR%\html\.buildinfo" del "%BUILDDIR%\html\.buildinfo"
 powershell -Command "Compress-Archive -Path '%BUILDDIR%\html' -DestinationPath '%BUILDDIR%\dist\devkit-%DOC_VERSION%-doc.zip'"
 echo wrote %BUILDDIR%\dist\devkit-%DOC_VERSION%-doc.zip
+goto end
+
+:pdf
+REM Requires a TeX distribution providing xelatex (MiKTeX recommended on
+REM Windows — it auto-installs missing packages like tex-gyre and freefont
+REM on first run). TeX Live also works.
+%SPHINXBUILD% -M latexpdf %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
+if errorlevel 1 goto end
+if not exist "%BUILDDIR%\dist" mkdir "%BUILDDIR%\dist"
+copy /Y "%BUILDDIR%\latex\devkit.pdf" "%BUILDDIR%\dist\devkit-%DOC_VERSION%-doc.pdf" >NUL
+echo wrote %BUILDDIR%\dist\devkit-%DOC_VERSION%-doc.pdf
 goto end
 
 :help

@@ -3,13 +3,14 @@ name: Build and deploy documentation
 on:
   push:
     branches: [main, "LTS-*"]
+    # Tag push triggers a Pages deploy — matches viper's publish.yml convention.
+    # Tag a release (e.g. `v1.2.8`) to publish docs.digitalsubstrate.io. Branch
+    # pushes only build (CI gate + downloadable review artifact).
+    tags: ["v*"]
   pull_request:
     branches: [main, "LTS-*"]
-  # Manual trigger for Pages deployment.
-  # Deploy is intentionally gated on a human action — matches the
-  # rest of the ecosystem's convention (devkit-website's deploy.py /
-  # /deploy-crying-byte for prod). Push to main only builds; deploy
-  # is via the GitHub UI "Run workflow" button or `gh workflow run`.
+  # Manual escape hatch — deploy whatever HEAD currently is on the chosen ref.
+  # Use for hotfixes (typo, broken link) when bumping a tag would be overkill.
   workflow_dispatch:
 
 # Allow only one concurrent deployment, skip queued, do not cancel in-progress.
@@ -42,16 +43,16 @@ jobs:
           name: devkit-doc-html
           path: build/html/
           retention-days: 7
-      # Pages artifact only when a deploy is requested manually from main
+      # Pages artifact only when this run will deploy (tag push or manual dispatch)
       - name: Upload Pages artifact
-        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+        if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
         uses: actions/upload-pages-artifact@v3
         with:
           path: build/html/
 
   deploy:
-    # Deploy only on manual trigger from main — explicit human gate, matches the ecosystem's prod-deploy convention
-    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    # Deploy on tag push (`v*` — canonical release) or manual dispatch (hotfix escape hatch).
+    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
     needs: build
     runs-on: ubuntu-latest
     permissions:

@@ -13,11 +13,6 @@ on:
   # Use for hotfixes (typo, broken link) when bumping a tag would be overkill.
   workflow_dispatch:
 
-# Allow only one concurrent deployment, skip queued, do not cancel in-progress.
-concurrency:
-  group: pages
-  cancel-in-progress: false
-
 permissions:
   contents: read
 
@@ -55,6 +50,11 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
     needs: build
     runs-on: ubuntu-latest
+    # Serialise Pages deploys only — branch builds (CI) run unconstrained.
+    # GitHub Pages allows a single concurrent deploy; queue rather than cancel.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
     permissions:
       pages: write
       id-token: write

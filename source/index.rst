@@ -88,6 +88,12 @@ Documentation
 
    tools/index
 
+.. toctree::
+   :maxdepth: 1
+   :caption: Legal
+
+   legal/index
+
 
 Indices
 -------

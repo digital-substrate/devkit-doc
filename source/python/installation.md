@@ -22,6 +22,13 @@ source ~/venv/bin/activate  # macOS/Linux
 pip install dsviper
 ```
 
+```{note}
+`dsviper` is distributed under the Digital Substrate Commercial License 1.2,
+which grants a free **Evaluation License** for assessment and training, and a
+paid **Commercial License** by written agreement. See [License](../legal/license.md)
+before any commercial use.
+```
+
 ## Installing from the DevKit
 
 If you also want the CLI tools, templates, and offline documentation,

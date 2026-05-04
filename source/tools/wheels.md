@@ -40,7 +40,8 @@ maintainers = [
 ]
 readme = "README.rst"
 requires-python = ">=3.14"
-license = {text = "Proprietary"}
+license = "LicenseRef-Proprietary"
+license-files = ["LICENSE"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python :: 3",

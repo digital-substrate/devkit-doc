@@ -3,7 +3,6 @@ source/_ext/__pycache__/
 .DS_Store
 .idea/
 
-.claude/settings.local.json
-
-# Claude Code instructions — local only, not for distribution
+# Claude Code workspace — local only, not for distribution
 CLAUDE.md
+.claude/

@@ -136,7 +136,7 @@ if arguments.package:
 A larger project distributes generated code across multiple targets:
 
 ```python
-# Extracted from com.digitalsubstrate.red/generate.py
+# Excerpt from a multi-target generation script
 if arguments.red:
     # Generate the framework Raptor
     render_templates(namespace=NAMESPACE, dsmb_path=DSMB_PATH, output=f'src/{NAMESPACE}')

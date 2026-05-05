@@ -105,7 +105,7 @@ Responsibilities of the Context:
 - Expose framework-agnostic notifications via `CommitStoreNotifying`
 
 ```cpp
-// Context pattern (C++) — see com.digitalsubstrate.ge / GE_Context.hpp
+// Context pattern (C++) — illustrative excerpt
 namespace GE {
 
 class Context final {

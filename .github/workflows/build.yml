@@ -5,11 +5,9 @@ on:
     branches: [main, "LTS-*"]
   pull_request:
     branches: [main, "LTS-*"]
-  # Manual trigger for Pages deployment — explicit human gate, matches the
-  # ecosystem's prod-deploy convention (devkit-website's deploy.py /
-  # /deploy-crying-byte). Branch pushes only build (CI gate + downloadable
-  # review artifact); deploy is via the GitHub UI "Run workflow" button or
-  # `gh workflow run`.
+  # Manual trigger for Pages deployment — explicit human gate. Branch
+  # pushes only build (CI gate + downloadable review artifact); deploy
+  # is via the GitHub UI "Run workflow" button or `gh workflow run`.
   workflow_dispatch:
 
 permissions:

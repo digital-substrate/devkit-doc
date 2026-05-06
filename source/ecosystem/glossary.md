@@ -24,6 +24,22 @@ Kibo template
    for which target. `kibo-template-viper` is the official template that
    targets the dsviper runtime; other templates can target other runtimes.
 
+Viper
+   The C++ runtime engine that dsviper wraps. Carries the type system, commit
+   DAG, and database tier. Currently not distributed standalone; the source
+   repository is private. See {doc}`naming`.
+
+dsviper-tools
+   Tooling for the Database / CommitDatabase workflow of the dsviper
+   ecosystem — `cdbe`, `dbe`, `dsm_util`, `commit_admin`, and the
+   commit-database server. Available as a Qt Widgets variant
+   (`dsviper-tools`) and a QML variant (`dsviper-tools-qml`).
+
+dsviper-components
+   Shared component library on top of dsviper — dialogs, views, helpers
+   reusable by applications. Available as a Qt Widgets variant
+   (`dsviper-components`) and a QML variant (`dsviper-components-qml`).
+
 concept
    An abstract entity declared in DSM. A concept has no implementation of its
    own — it exists only through its {term}`keys <key>` and the

@@ -29,12 +29,14 @@ templates can target other runtimes — kibo is not viper-specific.
 
 **dsviper-tools** also belongs to the toolchain side: CLI utilities
 (`dsm_util`) and GUI editors (`cdbe.py`, `dbe.py`) that operate on dsm models
-and dsviper databases throughout the development lifecycle.
+and dsviper databases throughout the development lifecycle. A QML variant
+(`dsviper-tools-qml`) provides Qt Quick versions of the same database
+browsers.
 
 ## The runtime (execution side)
 
 ```
-dsviper  →  dsviper-components  →  reference applications  (ge-py, ge-qml)
+dsviper  →  dsviper-components  →  reference applications
 ```
 
 **Goal.** Run a typed Python application with versioned, persistent data.
@@ -44,14 +46,21 @@ engine. The foundation: type system, value system, commit DAG, database tier.
 Distributed on PyPI (`pip install dsviper`) and bundled in the DevKit ZIP.
 
 **dsviper-components** — reusable building blocks built on top of dsviper.
-Consumed by applications.
+Consumed by applications. Comes in two parallel tracks: `dsviper-components`
+(Qt Widgets) and `dsviper-components-qml` (Qt Quick / QML). Most of the
+runtime stack mirrors this split.
 
-**ge-py** and **ge-qml** — reference applications that exercise the **whole
-ecosystem end-to-end**: DSM modeling, Kibo code generation, the viper template,
-dsviper-components, and the dsviper runtime. They are the canonical "putting
-it all together" exemplars — not products in their own right. The two variants
-showcase the same model driven through different UI runtimes (Python-side vs
-QML-side).
+**Reference applications.** Several applications exist as canonical "putting
+it all together" exemplars — they exercise the *whole* ecosystem end-to-end
+(DSM modeling, Kibo code generation, the viper template, dsviper-components,
+the dsviper runtime). They are not products in their own right:
+
+- `ge-py` — Graph Editor, PySide6 desktop app.
+- `ge-qml` — three QML desktop apps (`dbe`, `cdbe`, `graph_editor`).
+- `dsviper-blender` — Blender 4.x add-on bundling the dsviper runtime from
+  PyPI.
+- `web-cdbe` — Flask web application demonstrating a Commit Database Editor
+  (HTML5, no JavaScript).
 
 About **Viper** itself — the C++ engine behind dsviper — see [naming](naming.md).
 Viper is not currently distributed standalone.
@@ -78,15 +87,15 @@ The arrows go one way. A change at a lower level can ripple up; a change at a
 higher level cannot ripple down. Documentation, code, and tests for each
 component must respect the same direction.
 
-| Component               | Depends on                  | Must not assume          |
-|-------------------------|-----------------------------|--------------------------|
-| dsm                     | —                           | kibo, viper, dsviper     |
-| kibo                    | dsm                         | viper, dsviper           |
-| kibo-template-viper     | kibo, viper / dsviper       | applications             |
-| dsviper-tools           | dsm, dsviper                | applications             |
-| dsviper                 | Viper (C++ engine)          | applications, components |
-| dsviper-components      | dsviper                     | applications             |
-| applications            | dsviper, dsviper-components | —                        |
+| Component                              | Depends on                  | Must not assume          |
+|----------------------------------------|-----------------------------|--------------------------|
+| dsm                                    | —                           | kibo, viper, dsviper     |
+| kibo                                   | dsm                         | viper, dsviper           |
+| kibo-template-viper                    | kibo, viper / dsviper       | applications             |
+| dsviper-tools (Widgets and QML)        | dsm, dsviper                | applications             |
+| dsviper                                | Viper (C++ engine)          | applications, components |
+| dsviper-components (Widgets and QML)   | dsviper                     | applications             |
+| reference applications                 | dsviper, dsviper-components | —                        |
 
 This table is the contract per-component documentation must respect: a `dsm`
 page may not assume kibo is in the picture; a `kibo` page may assume dsm but

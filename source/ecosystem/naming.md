@@ -36,6 +36,12 @@ Distribution:
 
 Both paths give you the same dsviper.
 
+The `dsviper` PyPI package is built from the **Viper** source — there is no
+separate `dsviper` repository on GitHub. Searching the
+`digital-substrate` organisation for "dsviper" returns ecosystem repos that
+*depend on* dsviper (`dsviper-tools`, `dsviper-components`, `dsviper-blender`,
+…), not the runtime itself.
+
 ## Viper
 
 *The C++ engine behind dsviper.*
@@ -44,7 +50,8 @@ The metadata-driven C++ runtime that dsviper wraps. Carries the actual
 implementation of the type system, commit DAG, and database engine.
 
 Currently **not** distributed standalone — used internally and through
-dsviper. If a C++-side or alternate-language public binding ships in the
+dsviper. The Viper source repository is private to the `digital-substrate`
+organisation. If a C++-side or alternate-language public binding ships in the
 future, it would consume Viper directly.
 
 ## How they layer

@@ -10,12 +10,14 @@ here rather than re-explain.
 
 The Digital Substrate Python toolkit, distributed as a single ZIP. It bundles:
 
-- `dsviper` — the Python runtime
 - `kibo` — the code generator
 - `kibo-template-viper` — the template that targets the viper runtime
 - `dsviper-tools` — CLI utilities (`dsm_util`) and GUI editors (`cdbe.py`,
   `dbe.py`, `commit_database_server.py`, `commit_admin.py`)
 - offline documentation
+
+The `dsviper` runtime is **not** bundled in the DevKit ZIP — it is installed
+separately from PyPI (see below).
 
 Versioning tracks ecosystem releases (e.g. `1.2.x`). Distribution and
 download from the website (digitalsubstrate.io).
@@ -28,13 +30,11 @@ The Python runtime — a strongly typed Python API over the Viper C++ engine. It
 carries the type system, value system, commit DAG, database tier,
 serialization, and RPC, and exposes them as Python classes and functions.
 
-Distribution:
-
-- **PyPI** — `pip install dsviper`. Fine if you only need the runtime.
-- **DevKit ZIP** — bundled, alongside the toolchain. Use this if you also
-  want kibo, the editors, or offline docs.
-
-Both paths give you the same dsviper.
+**Distribution.** dsviper is published exclusively on
+`PyPI <https://pypi.org/project/dsviper/>`_ (``pip install dsviper``). It is
+*not* bundled in the DevKit ZIP — the ZIP carries the toolchain (kibo,
+kibo-template-viper, dsviper-tools, offline docs); installing dsviper itself
+is a separate ``pip`` step.
 
 The `dsviper` PyPI package is built from the **Viper** source — there is no
 separate `dsviper` repository on GitHub. Searching the
@@ -60,8 +60,9 @@ In practice:
 
 - You write Python code that imports `dsviper`.
 - `dsviper` calls into Viper under the hood (C++ through Python bindings).
-- You install one or both via **DevKit** (the bundle) or **PyPI** (for
-  `dsviper` alone).
+- You install **dsviper** from PyPI (`pip install dsviper`); the DevKit ZIP,
+  installed separately, gives you the rest of the toolchain (kibo, editors,
+  offline docs).
 
 Most developers only deal with **dsviper** in code and **DevKit** as a
 download path. Viper is the layer below — usually not touched directly today.

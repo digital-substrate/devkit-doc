@@ -42,8 +42,8 @@ Three names appear across this documentation. Here is how they layer.
 
 **dsviper** — *What runs in your Python apps.*
    The Python runtime distributed on PyPI. Strong-typed Python API over the
-   Viper C++ engine. Installed via ``pip install dsviper`` or pulled in by the
-   DevKit ZIP.
+   Viper C++ engine. Installed via ``pip install dsviper`` — *not* bundled in
+   the DevKit ZIP.
 
 **Viper** — *The C++ engine behind dsviper.*
    The underlying metadata-driven C++ runtime — type system, commit DAG,

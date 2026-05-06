@@ -66,6 +66,12 @@ Documentation
 
 .. toctree::
    :maxdepth: 2
+   :caption: Ecosystem
+
+   ecosystem/index
+
+.. toctree::
+   :maxdepth: 2
    :caption: DSM - Data Modeling
 
    dsm/index

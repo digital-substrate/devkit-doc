@@ -10,6 +10,10 @@ The toolkit covered here is the Qt Widgets variant (``dsviper-tools``). A
 parallel QML variant (``dsviper-tools-qml``) provides Qt Quick versions of
 the same database browsers — see its repository for status.
 
+For IDE integration (VS Code and JetBrains plugins for DSM syntax), see
+:doc:`../dsm/ide` — the plugins target the DSM language, not dsviper, so
+they live in the DSM section.
+
 
 Place in the ecosystem
 ----------------------
@@ -64,7 +68,6 @@ Topics
    :caption: Development
 
    dsm_util
-   ide
 
 .. toctree::
    :maxdepth: 2

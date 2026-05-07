@@ -264,4 +264,4 @@ vertex_key = pool.new_vertex(commit, graph_key, 42, position)
 ## What's Next
 
 - [Architecture](architecture.md) - Application structure with generated code
-- [Toolchain: Kibo](../tools/kibo.md) - Using the Kibo code generator
+- [Kibo](../kibo/usage.md) - Using the Kibo code generator

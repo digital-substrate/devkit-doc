@@ -284,4 +284,4 @@ full walkthrough.
 
 - [DSM Processing](dsm.md) - Loading and introspecting DSM files
 - [DSM Manual](../dsm/index.rst) - Data modeling language
-- [Toolchain](../tools/index.rst) - Development tools
+- [dsviper-tools](../dsviper-tools/index.rst) - Development tools

@@ -96,9 +96,9 @@ Documentation
 
 .. toctree::
    :maxdepth: 2
-   :caption: Toolchain
+   :caption: dsviper-tools
 
-   tools/index
+   dsviper-tools/index
 
 .. toctree::
    :maxdepth: 2

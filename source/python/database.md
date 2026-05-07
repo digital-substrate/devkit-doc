@@ -54,7 +54,7 @@ Database supports network access through a server:
 >>> db = Database.connect_local("cache", "/tmp/project.sock")
 ```
 
-See [Server](../tools/server.md) for deployment details.
+See [Server](../dsviper-tools/server.md) for deployment details.
 
 ---
 

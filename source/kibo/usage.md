@@ -246,5 +246,5 @@ Kibo typically generates 57-63x more code than the input DSM.
 
 ## What's Next
 
-- [IDE Integration](../tools/ide.md) - VS Code and JetBrains
+- [IDE Integration](../dsviper-tools/ide.md) - VS Code and JetBrains
 - [Templates](templates.md) - Understanding templated features

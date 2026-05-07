@@ -23,6 +23,7 @@ dsviper-components.
 
 * **Source repository** —
   `digital-substrate/ge-py <https://github.com/digital-substrate/ge-py>`_.
+* **Walk-through** — :doc:`ge-py`.
 
 ge-qml
 ~~~~~~
@@ -62,6 +63,12 @@ Status
 
 .. note::
 
-   Stub. Per-application walk-throughs (architecture, key code paths, what
-   each demonstrates about the ecosystem) are forthcoming. Until then,
-   refer to the GitHub repositories.
+   Per-application walk-throughs are being added incrementally. ``ge-py``
+   has one (:doc:`ge-py`); the others still point only to their GitHub
+   repository for now.
+
+
+.. toctree::
+   :hidden:
+
+   ge-py

@@ -79,6 +79,21 @@ metadata drives the bridge, so there is nothing to register and nothing to
 glue by hand.
 
 
+A complete wrapper
+------------------
+
+``dsviper`` is **not** a curated subset of Viper — it is a complete
+wrapper. The full surface of the C++ engine — types, values, runtime,
+database tier, commit engine, serialization, RPC — is reachable from
+Python, exposed as Python classes and functions. Learning ``dsviper``
+therefore teaches Viper itself, from the low-level type and value APIs up
+to the application-level model (commits, databases, attachments, function
+pools, RPC). A Python developer fluent in ``dsviper`` can read and reason
+about a Viper C++ application without learning a parallel API; conversely,
+a C++ engineer familiar with Viper finds the same vocabulary in this
+guide, transposed into Python.
+
+
 Topics
 ------
 

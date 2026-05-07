@@ -95,6 +95,24 @@ Documentation
    tools/index
 
 .. toctree::
+   :maxdepth: 2
+   :caption: kibo-template-viper
+
+   kibo-template-viper/index
+
+.. toctree::
+   :maxdepth: 2
+   :caption: dsviper-components
+
+   dsviper-components/index
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Reference Applications
+
+   reference-apps/index
+
+.. toctree::
    :maxdepth: 1
    :caption: Legal
 

@@ -126,14 +126,16 @@ Create a mutable state, associate the document with the key, and commit:
 True
 ```
 
-```{important}
-**The Dual-Layer Contract**
+```{note}
+**Scope of this tutorial**
 
-CommitDatabase guarantees structural integrity but NOT semantic integrity.
-When concurrent streams converge, mutations on non-existent documents or unresolved paths are silently ignored.
-Your application must validate business rules when consuming state.
-
-See [The Dual-Layer Contract](commit_contract.md).
+The single-author flow shown here does not exercise the convergent-merge
+behavior described in [The Dual-Layer Contract](commit_contract.md): with
+one author committing in sequence, mutations are never silently dropped and
+no LWW arbitration takes place. The contract becomes load-bearing once
+**multiple authors converge automatically** — see
+[Modes of Use](commit.md#modes-of-use) for the four regimes and which one
+applies to your application.
 ```
 
 ### Step 8: Read from Database

@@ -7,27 +7,29 @@ streams, and sync. Every change creates a commit, enabling undo/redo and concurr
 
 ---
 
+## Modes of Use
+
+How you exercise the commit DAG determines which guarantees you can rely on
+and where validation belongs. Four user-facing modes:
+
+| Mode                        | What you do                                                                | Engine guarantees that bite                          | Dual-layer contract                                              |
+|-----------------------------|----------------------------------------------------------------------------|------------------------------------------------------|------------------------------------------------------------------|
+| **Time travel** (read-only) | Reconstruct any past state from a `commitId`                               | Determinism, immutability, content-addressing        | Not applicable — no writes                                       |
+| **Single-user undo / redo** | Step back, branch, redo on a single author's chain                         | All structural guarantees + tombstone semantics      | Not load-bearing — you arbitrate every change                    |
+| **Single-user exploration** | Bifurcate the DAG, keep parallel sibling lines, merge on your own schedule | All structural guarantees + multi-head machinery     | Not load-bearing — you arbitrate merges                          |
+| **Automated multi-user**    | Concurrent commits from multiple authors converge without human review     | Structural only — semantic integrity is your problem | **Load-bearing** → see [Dual-Layer Contract](commit_contract.md) |
+
+The first three modes are what most desktop applications need. The fourth is
+where the contract on the next page becomes the centre of gravity.
+
+---
+
 ## CommitDatabase
 
 `CommitDatabase` provides versioned data storage:
 
 - History is preserved as a DAG of commits
 - You can read from any point in history
-
-```{important}
-**The Dual-Layer Contract**
-
-CommitDatabase guarantees **structural integrity** (deterministic merge, DAG consistency)
-but NOT **semantic integrity**. Best-effort merge means the state returned after convergence
-is **structurally sound but semantically untrusted**: mutations may have been silently dropped,
-and disjoint updates may have combined into a state that violates a cross-field invariant.
-
-Treat post-merge state like deserialized external input: re-validate it at read time, before
-acting on it. `dsviper.Error` covers only API misuse — it does not signal lost mutations or
-business-rule violations.
-
-See [The Dual-Layer Contract](commit_contract.md) for details.
-```
 
 ---
 

@@ -1,9 +1,17 @@
 # The Dual-Layer Contract
 
 This page documents the contract between the Commit engine (exposed in Python
-through `dsviper`) and your application code. Read it before relying on commit
-behavior to validate your data: the engine produces **structurally sound but
-untrusted output**, and your application is what turns it into trusted state.
+through `dsviper`) and your application code **in the regime where merges
+happen automatically, without human arbitration** — typically multiple authors
+writing concurrently into a shared database. In single-user use (desktop
+editors, scripting, read-only history), the engine still behaves the way this
+contract describes, but the failure modes below do not bite: there is no
+unsupervised convergence to worry about. See
+[Modes of Use](commit.md#modes-of-use) to locate your scenario.
+
+When the contract does apply, read it before relying on commit behavior to
+validate your data: the engine produces **structurally sound but untrusted
+output**, and your application is what turns it into trusted state.
 
 ## The Contract
 

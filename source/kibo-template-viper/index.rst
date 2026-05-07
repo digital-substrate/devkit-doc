@@ -2,7 +2,7 @@ kibo-template-viper
 ===================
 
 The first-party :term:`Kibo template` for the dsviper / Viper ecosystem.
-Consumed by Kibo to emit C++ and Python surfaces from a DSM model.
+Consumed by :term:`Kibo` to emit C++ and Python surfaces from a DSM model.
 
 This is the template that sits in the third slot of the
 :doc:`code-generation pipeline <../ecosystem/pipeline>`: ``DSM → Kibo →
@@ -25,11 +25,35 @@ Place in the ecosystem
   rest of the toolchain.
 
 
+What it produces
+----------------
+
+Two surfaces from one DSM model:
+
+* **A typed Python package** — classes, functions, and type hints mirroring
+  the model. Importable as ``import <namespace>`` and usable through the
+  :term:`dsviper` runtime.
+* **C++ surfaces** — headers and implementation files for type definitions,
+  attachments, persistence, serialization, and function pools, designed to
+  link against the Viper C++ engine.
+
+Each generated surface is the output of one or more **templated features**.
+The catalogue is in :doc:`features`.
+
+
+Topics
+------
+
+.. toctree::
+   :maxdepth: 2
+
+   features
+
+
 Status
 ------
 
-.. note::
-
-   Stub. Detailed documentation of the template's options, output structure,
-   and customization points is forthcoming. Until then, refer to the GitHub
-   repository and the :doc:`Kibo manual <../kibo/usage>`.
+Part of DevKit 1.2.x. Stable; new templated features are added to the pack
+as the ecosystem grows. For Kibo's CLI, the generic template format, and
+how to write your own template targeting another runtime, see the
+:doc:`Kibo section <../kibo/index>`.

@@ -37,49 +37,39 @@ java -jar kibo-1.2.7.jar \
 | `-h, --help`        | Show help                            |
 | `-v, --version`     | Show version                         |
 
-## C++ Templates
+## Available templates
 
-Available template groups in `templates/cpp/`:
+Kibo itself is template-agnostic — it does not bundle templates. The
+first-party template pack for the dsviper / Viper ecosystem is
+[`kibo-template-viper`](../kibo-template-viper/index.rst), which ships
+both C++ and Python templates. The full catalogue (which template
+generates which files, and for which purpose) is in
+[Templated Features](../kibo-template-viper/features.md).
 
-| Template                           | Generated Files                          | Purpose                                       |
-|------------------------------------|------------------------------------------|-----------------------------------------------|
-| `Data`                             | `*_Data.hpp/cpp`                         | Types for enum, struct, concept, club         |
-| `Model`                            | `*_Definitions.hpp/cpp`                  | DSM definitions, paths, fields                |
-| `Attachments`                      | `*_Attachments.hpp/cpp`                  | Attachment accessors                          |
-| `Database`                         | `*_Database*.hpp/cpp`                    | SQLite persistence layer                      |
-| `Stream`                           | `*_Reader/Writer.hpp/cpp`                | Binary serialization                          |
-| `Json`                             | `*_JsonEncoder/Decoder.hpp/cpp`          | JSON serialization                            |
-| `ValueType`                        | `*_ValueType.hpp/cpp`                    | Viper type mappings                           |
-| `ValueCodec`                       | `*_ValueEncoder/Decoder.hpp/cpp`         | Bridge C++ classes (static) ↔ Value (dynamic) |
-| `ValueHasher`                      | `*_ValueHasher.hpp/cpp`                  | Content hashing for values                    |
-| `FunctionPool`                     | `*_FunctionPools.hpp/cpp`                | Pure function bindings                        |
-| `FunctionPoolRemote`               | `*_FunctionPoolsRemote.hpp/cpp`          | Remote function call API                      |
-| `AttachmentFunctionPool`           | `*_AttachmentFunctionPools.hpp/cpp`      | Stateful pool bindings                        |
-| `AttachmentFunctionPoolRemote`     | `*_AttachmentFunctionPoolsRemote.hpp/cpp`| Remote stateful calls                         |
-| `AttachmentFunctionPool_Attachments`| `*_AttachmentFunctionPools_Attachments.hpp/cpp` | Pool exposing attachment API           |
-| `Python`                           | `*_Python.hpp/cpp`                       | Python module constants for types and paths   |
-| `Fuzz`                             | `*_Fuzz.hpp/cpp`                         | Random value generation                       |
-| `Test`                             | `*_Test*.hpp/cpp`                        | Unit tests                                    |
-| `TestApp`                          | `*_TestApp.cpp`                          | Test application entry points                 |
+## Generation strategy
 
-## Python Templates
+Before invoking Kibo, decide **what to generate** and **where to put it**.
+Each project tends to use generated code differently:
 
-Available template groups in `templates/python/`:
+- low-level serialization to insert into a framework,
+- unit tests to insert into a test infrastructure,
+- a part of a feature to insert into a framework,
+- a part of a feature to insert into an application,
+- a Python module embedded in a C++ application,
+- a Python package embedded in a C++ application,
+- a Python wheel to distribute.
 
-| Template                                    | Generated File                        | Purpose                           |
-|---------------------------------------------|---------------------------------------|-----------------------------------|
-| `package/__init__.py`                       | `__init__.py`                         | Package initialization            |
-| `package/definitions`                       | `definitions.py`                      | Viper type definitions            |
-| `package/data`                              | `data.py`                             | Concept, structure, enum classes  |
-| `package/attachments`                       | `attachments.py`                      | Attachment API wrappers           |
-| `package/database_attachments`              | `database_attachments.py`             | Database attachment API wrappers  |
-| `package/path`                              | `path.py`                             | Field path constants              |
-| `package/value_type`                        | `value_type.py`                       | Type mappings                     |
-| `package/function_pools`                    | `function_pools.py`                   | Function pool wrappers            |
-| `package/attachment_function_pools`         | `attachment_function_pools.py`        | Stateful pool wrappers            |
-| `package/function_pool_remotes`             | `function_pool_remotes.py`            | Remote function call wrappers     |
-| `package/attachment_function_pool_remotes`  | `attachment_function_pool_remotes.py` | Remote stateful call wrappers     |
-| `wheel/pyproject.toml`                      | `pyproject.toml`                      | Wheel configuration               |
+Each project usually has a `generate.py` script that encodes these
+choices and runs Kibo accordingly.
+
+```{note}
+You can also build your own generation tool using the C++ Viper API, or
+drive Kibo from custom rules in your build system (CMake, etc.).
+```
+
+For the catalogue of features available in the viper template pack, see
+[Templated Features](../kibo-template-viper/features.md). Pick the minimal
+set you need; Kibo will resolve dependencies between features for you.
 
 ## Usage Examples
 
@@ -246,5 +236,7 @@ Kibo typically generates 57-63x more code than the input DSM.
 
 ## What's Next
 
+- [Templates](templates.md) - What templates are and how they fit together
+- [Template Model Reference](template_model.md) - Write your own templates
+- [Templated Features](../kibo-template-viper/features.md) - Catalogue of the viper template pack
 - [IDE Integration](../dsviper-tools/ide.md) - VS Code and JetBrains
-- [Templates](templates.md) - Understanding templated features

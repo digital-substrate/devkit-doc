@@ -8,10 +8,9 @@ wired for the Viper runtime when used with ``kibo-template-viper``.
 Kibo is the second step of the :doc:`code-generation pipeline
 <../ecosystem/pipeline>`: ``DSM → Kibo → kibo-template-viper``. Kibo itself
 is template-agnostic — change the template and you change the target
-language and runtime. This section covers Kibo's CLI usage and the two
-concepts on which all templates rest: **Templated Features** (the unit of
-code generation) and the **Templated Model** (the type-suffix mechanism
-that drives the templates' string interpolation).
+language and runtime. This section covers Kibo's CLI usage. The catalogue
+of templated features it produces in the dsviper / Viper world lives in
+:doc:`../kibo-template-viper/index`.
 
 
 Place in the ecosystem
@@ -59,8 +58,8 @@ Topics
 .. toctree::
    :maxdepth: 2
 
-   usage
    templates
+   usage
    template_model
 
 

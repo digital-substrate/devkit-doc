@@ -50,8 +50,7 @@ The metadata-driven C++ runtime that dsviper wraps. Carries the actual
 implementation of the type system, commit DAG, and database engine.
 
 Currently **not** distributed standalone — used internally and through
-dsviper. The Viper source repository is private to the `digital-substrate`
-organisation. If a C++-side or alternate-language public binding ships in the
+dsviper. If a C++-side or alternate-language public binding ships in the
 future, it would consume Viper directly.
 
 ## How they layer

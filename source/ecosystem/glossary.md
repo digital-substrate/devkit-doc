@@ -32,8 +32,8 @@ dsviper
 
 Viper
    The C++ runtime engine that dsviper wraps. Carries the type system, commit
-   DAG, and database tier. Currently not distributed standalone; the source
-   repository is private. See {doc}`naming`.
+   DAG, and database tier. Currently not distributed standalone;
+   See {doc}`naming`.
 
 DevKit
    The Digital Substrate Python toolkit, distributed as a single ZIP. Carries

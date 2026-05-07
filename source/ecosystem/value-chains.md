@@ -22,7 +22,7 @@ contract between teams — without ever generating code from it.
 Kibo itself is template-agnostic: the target language and runtime are
 determined by the template you give it.
 
-**kibo-template-viper** — a kibo template that targets the viper runtime
+**kibo-template-viper** — a kibo template pack that targets the viper runtime
 (Python via dsviper, or C++ Viper directly). Choose this template when your
 generated code needs to run inside a viper-based application. Other kibo
 templates can target other runtimes — kibo is not viper-specific.
@@ -112,6 +112,6 @@ You do not have to adopt the whole stack. Common partial uses:
   template; viper and dsviper are out of the picture.
 - **Versioned data without code generation.** Use `dsviper`'s dynamic API
   directly, loading dsm definitions at runtime — no static package needed.
-- **Inspect or migrate a database.** `dsviper-tools` (`cdbe`, `dbe`,
+- **Inspect a database.** `dsviper-tools` (`cdbe`, `dbe`,
   `dsm_util`) work standalone against any compatible database, regardless of
   whether you authored its schema in dsm yourself.

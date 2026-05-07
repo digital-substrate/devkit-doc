@@ -1,15 +1,26 @@
 #!/usr/bin/env python3
-"""Build NotebookLM-friendly Markdown bundles from Sphinx markdown output.
+"""Build a Markdown corpus tuned for LLM ingestion (NotebookLM, agents).
 
 Produces a small set of concatenated .md files under build/notebooklm/, one
-per top-level section of the documentation. Each original page is preceded by
-a `<!-- FILE: <relative-path> -->` marker so NotebookLM can cite precise
-sources while keeping the bundle valid Markdown.
+per maillon of the value chain. Bundles are numerically prefixed so the
+intended reading order — orientation first, then dependency-ordered deep
+dives — is conveyed even when a tool ingests them out of order:
 
-Auto-generated API stub pages under python/api/generated/ are excluded: they
-are noisy reference material that does not help conversational Q&A. The 11
-curated python/api/*.md category pages are kept inside the Python guide
-bundle.
+    00-devkit-ecosystem  Map: naming, value-chains, pipeline, glossary,
+                         and reference-app GitHub URLs (an agent fetches
+                         the actual app code from those repos on demand)
+    10-devkit-dsm        The modeling language (chain entry point)
+    20-devkit-kibo       Code generation (DSM → C++ / Python)
+    30-devkit-dsviper    Python runtime: API and concepts
+    40-devkit-tools      Tools and UI components consuming dsviper
+
+Each original page is preceded by a `<!-- FILE: <relative-path> -->` marker
+so an LLM can cite precise sources while keeping the bundle valid Markdown.
+
+Auto-generated API stub pages under dsviper/api/generated/ are excluded:
+they are noisy reference material that does not help conversational Q&A.
+The curated dsviper/api/*.md category pages are kept inside the dsviper
+bundle. Legal notices are excluded entirely (not useful for Q&A).
 
 Usage:
     python tools/build_notebooklm.py
@@ -34,14 +45,15 @@ class Bundle:
 
 
 BUNDLES: tuple[Bundle, ...] = (
-    Bundle("devkit-overview", ("index.md",)),
-    Bundle("devkit-dsm", ("dsm",)),
+    Bundle("00-devkit-ecosystem", ("index.md", "ecosystem", "reference-apps")),
+    Bundle("10-devkit-dsm", ("dsm",)),
+    Bundle("20-devkit-kibo", ("kibo", "kibo-template-viper")),
     Bundle(
-        "devkit-python-guide",
-        ("python",),
+        "30-devkit-dsviper",
+        ("dsviper",),
         exclude=lambda p: "api/generated" in p.as_posix(),
     ),
-    Bundle("devkit-tools", ("tools",)),
+    Bundle("40-devkit-tools", ("dsviper-tools", "dsviper-components")),
 )
 
 

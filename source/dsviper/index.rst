@@ -86,6 +86,7 @@ Topics
    :maxdepth: 2
 
    installation
+   hello
    tutorial
    types_values
    collections

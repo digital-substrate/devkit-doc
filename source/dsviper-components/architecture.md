@@ -10,6 +10,14 @@ store injection**.
 
 ## The Notifier Bridge
 
+```{seealso}
+This page describes the **Python / Qt implementation**. For the
+language-agnostic statement of the same pattern — UI-framework
+notifications layered over the runtime's `CommitStoreNotifying`
+interface, with parallel adapters for AppKit, Qt C++ and Python — see
+[DSM — The Notifier Pattern](../dsm/architecture.md#the-notifier-pattern).
+```
+
 The dsviper runtime exposes change notifications through the
 `CommitStoreNotifying` protocol — a plain Python interface with methods
 like `notify_state_did_change()` and `notify_database_did_open()`.

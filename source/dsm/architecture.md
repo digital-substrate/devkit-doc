@@ -228,6 +228,14 @@ The core C++ engine providing:
 UI frameworks have different notification mechanisms. The **Notifier** pattern bridges
 this gap:
 
+```{seealso}
+For the Python / Qt incarnation of this pattern (the actual
+`DSCommitStoreNotifier` class shipped by `dsviper-components`,
+with its full Qt Signal surface), see
+[dsviper-components — The Notifier Bridge](../dsviper-components/architecture.md#the-notifier-bridge).
+```
+
+
 ```text
 CommitStore (C++ core)
         │

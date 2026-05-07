@@ -346,7 +346,7 @@ editor = self._code_editor_dialog.editor
 editor_menu = self.menuBar().addMenu(self.tr("&Editor"))
 editor_menu.addAction(editor.open_script_action)
 editor_menu.addAction(editor.save_script_action)
-…
+# ...
 editor_menu.addAction(editor.run_script_action)
 editor_menu.addAction(editor.show_description_action)
 ```

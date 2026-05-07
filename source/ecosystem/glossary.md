@@ -92,7 +92,7 @@ static API / dynamic API
 commit
    A node in the versioned-data DAG. Captures a set of {term}`mutations
    <mutation>` against a parent commit. Conceptually similar to a git commit,
-   but for typed data rather than text. See {doc}`../python/commit`.
+   but for typed data rather than text. See {doc}`../dsviper/commit`.
 
 commit DAG
    The directed acyclic graph formed by commits and their parent links.
@@ -107,7 +107,7 @@ blob
    Large opaque binary data stored alongside DSM-typed values. Indexed by a
    `BlobId`; stored through blob layouts and packs. Used for images, files,
    serialized assets, or any payload that does not benefit from typed
-   structure. See {doc}`../python/blobs`.
+   structure. See {doc}`../dsviper/blobs`.
 
 codec
    A serialization strategy — how typed values are encoded to and from bytes.

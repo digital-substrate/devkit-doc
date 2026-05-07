@@ -57,7 +57,7 @@ commit DAG, and remote synchronization.
 by versioned, persistent storage — without writing the type system,
 serialization layer, or version control yourself.
 
-→ Reference: {doc}`../python/index`.
+→ Reference: {doc}`../dsviper/index`.
 
 ## What sits around the pipeline
 

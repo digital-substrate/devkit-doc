@@ -336,5 +336,5 @@ minimizing duplicated code.
 
 ## What's Next
 
-- [Python Guide](../python/index.rst) - Use the dsviper Python API
+- [dsviper](../dsviper/index.rst) - Use the dsviper Python API
 - [dsviper-tools](../dsviper-tools/index.rst) - Master the development tools

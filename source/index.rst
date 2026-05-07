@@ -84,15 +84,15 @@ Documentation
 
 .. toctree::
    :maxdepth: 2
-   :caption: Python Guide
+   :caption: dsviper
 
-   python/index
+   dsviper/index
 
 .. toctree::
    :maxdepth: 2
-   :caption: Python API
+   :caption: dsviper API
 
-   python/api/index
+   dsviper/api/index
 
 .. toctree::
    :maxdepth: 2

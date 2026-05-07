@@ -79,7 +79,7 @@ template):
    python3 tools/dsm_util.py create_python_package model.dsm
 
 To use a model without code generation — load it through dsviper's dynamic
-API at runtime — see :doc:`../python/dsm`.
+API at runtime — see :doc:`../dsviper/dsm`.
 
 
 Topics

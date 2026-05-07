@@ -1,15 +1,37 @@
 dsviper-components
 ==================
 
-Shared component library on top of :term:`dsviper` — dialogs, views, and
-helpers reusable by any Python application built on the runtime. Available
-as two parallel variants:
+Shared component library on top of :term:`dsviper` — the **standard
+administrative, collaborative and scripting surface** of any Commit
+application, ready to compose into a domain-specific UI. Available as
+two parallel variants:
 
-* **Qt Widgets** — `dsviper-components`
-* **Qt Quick / QML** — `dsviper-components-qml`
+* **Qt Widgets** — ``dsviper-components``
+* **Qt Quick / QML** — ``dsviper-components-qml``
 
-Most :term:`reference applications <reference application>` use one or both
-of these to avoid re-implementing common UI for typed-data manipulation.
+Most :term:`reference applications <reference application>` use one or
+both of these to avoid re-implementing common UI for typed-data
+manipulation.
+
+
+What it provides
+----------------
+
+The library covers the four areas every Commit application ends up
+needing:
+
+* **Administration / introspection** — commit-DAG browser, undo-stack
+  navigator, attachment inspector, blob browser, per-commit document
+  and settings dialogs.
+* **Collaboration** — connect-to-server dialog, threaded synchroniser,
+  fetch / push / sync log.
+* **Embedded scripting** — Python script editor with a runtime model
+  that exposes the live application context to user scripts.
+* **Conventions / helpers** — the ``DSCommitStoreNotifier`` adapter,
+  geometry persistence, item delegates, settings wrapper.
+
+See :doc:`architecture` for the design pattern that ties these
+together, and :doc:`widgets` for the full catalogue.
 
 
 Place in the ecosystem
@@ -33,12 +55,11 @@ Place in the ecosystem
   ``dsviper``.
 
 
-Status
+Topics
 ------
 
-.. note::
+.. toctree::
+   :maxdepth: 2
 
-   Stub. The component catalogue, usage examples, and integration patterns
-   are forthcoming. Until then, refer to the GitHub repositories and to the
-   :term:`reference applications <reference application>` that consume
-   them.
+   architecture
+   widgets

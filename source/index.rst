@@ -72,7 +72,7 @@ Documentation
 
 .. toctree::
    :maxdepth: 2
-   :caption: DSM - Data Modeling
+   :caption: DSM
 
    dsm/index
 
@@ -81,6 +81,12 @@ Documentation
    :caption: Kibo
 
    kibo/index
+
+.. toctree::
+   :maxdepth: 2
+   :caption: kibo-template-viper
+
+   kibo-template-viper/index
 
 .. toctree::
    :maxdepth: 2
@@ -99,12 +105,6 @@ Documentation
    :caption: dsviper-tools
 
    dsviper-tools/index
-
-.. toctree::
-   :maxdepth: 2
-   :caption: kibo-template-viper
-
-   kibo-template-viper/index
 
 .. toctree::
    :maxdepth: 2

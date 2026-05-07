@@ -16,7 +16,7 @@ of templated features it produces in the dsviper / Viper world lives in
 Place in the ecosystem
 ----------------------
 
-* **Depends on** — :term:`DSM` (consumes ``.dsm`` and ``.dsmb`` files), a
+* **Depends on** — :term:`DSM` (consumes ``.dsm`` and ``.dsm.json`` files), a
   Kibo template directory.
 * **Consumed by** — developer toolchains directly (Java CLI), and
   indirectly through ``dsm_util.py create_python_package``, which invokes
@@ -43,7 +43,7 @@ Direct Kibo invocation, for finer control:
 
    java -jar tools/kibo-1.2.7.jar \
        -c python -n MyApp \
-       -d model.dsmb \
+       -d model.dsm.json \
        -t templates/python/package \
        -o ./generated
 

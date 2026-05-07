@@ -9,19 +9,19 @@ template files.
 
 ## Code Generation Pipeline
 
-Kibo generates code from a binary representation of DSM definitions. The pipeline is:
+Kibo generates code from a JSON representation of DSM definitions. The pipeline is:
 
 1. **Assemble** — Merge multiple `.dsm` files into a single definition set.
 2. **Parse** — Produce the AST from the assembled definitions.
 3. **Validate** — Check the semantics of the AST.
-4. **Encode** — Convert the validated definitions to a binary representation (`.dsmb`).
+4. **Encode** — Serialize the validated definitions to JSON (`.dsm.json`).
 
 ```bash
-dsm_util.py encode model.dsm model.dsmb
+dsm_util.py encode model.dsm model.dsm.json
 ```
 
-5. **Load** — Kibo reads the `.dsmb` file to construct a hierarchy of objects where the
-   root object is an instance of `DSMDefinitions`.
+5. **Load** — Kibo reads the `.dsm.json` file to construct a hierarchy of objects where
+   the root object is an instance of `DSMDefinitions`.
 6. **Convert** — The Object-Oriented representation is not suited for the StringTemplate
    engine, so Kibo converts it to a **Template Model** representation that drastically
    simplifies feature implementation with templates.
@@ -149,7 +149,7 @@ the code generation.
 
 ### TemplateDefinitions
 
-The root class exposes all the DSM definitions of the `model.dsmb` from the Template
+The root class exposes all the DSM definitions of the `model.dsm.json` from the Template
 Model perspective.
 
 ```java
@@ -970,7 +970,7 @@ For example, `TemplateConcept.dsmConcept` gives access to the underlying `DSMCon
 
 ### DSMDefinitions
 
-The root class references all the DSM definitions found in the `model.dsmb`.
+The root class references all the DSM definitions found in the `model.dsm.json`.
 
 ```java
 public class DSMDefinitions {

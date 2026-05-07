@@ -234,19 +234,9 @@ attachment<User, Login> Tuto::login
 
 DSMDefinitions can be serialized for distribution.
 
-### Binary (DSMB)
+### JSON (`.dsm.json`)
 
-```{doctest}
->>> blob = dsm_defs.encode()
->>> blob
-blob(...)
-
->>> restored = DSMDefinitions.decode(blob)
->>> type(restored).__name__
-'DSMDefinitions'
-```
-
-### JSON
+The canonical on-disk form consumed by Kibo and `dsm_util`:
 
 ```{doctest}
 >>> json_str = dsm_defs.json_encode()
@@ -254,6 +244,21 @@ blob(...)
 True
 
 >>> restored = DSMDefinitions.json_decode(json_str)
+>>> type(restored).__name__
+'DSMDefinitions'
+```
+
+### Binary blob
+
+A compact in-memory representation, mainly used to embed definitions into a
+C++ resource header (via `blob.embed("definitions")`):
+
+```{doctest}
+>>> blob = dsm_defs.encode()
+>>> blob
+blob(...)
+
+>>> restored = DSMDefinitions.decode(blob)
 >>> type(restored).__name__
 'DSMDefinitions'
 ```

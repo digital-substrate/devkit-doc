@@ -19,23 +19,23 @@ Kibo uses StringTemplate files (`.stg`) to generate code from DSM models.
 java -jar kibo-1.2.7.jar \
   -c [converter] \
   -n [namespace] \
-  -d [definitions.dsmb] \
+  -d [definitions.dsm.json] \
   -t [template] \
   -o [output]
 ```
 
 ## Options
 
-| Option              | Description                          |
-|---------------------|--------------------------------------|
-| `-c, --converter`   | Target language: `cpp` or `python`   |
-| `-n, --namespace`   | Namespace for generated files        |
-| `-d, --definitions` | Path to binary definitions (`.dsmb`) |
-| `-t, --template`    | Template directory or file           |
-| `-o, --output`      | Output directory or file             |
-| `-q, --quiet`       | Disable output messages              |
-| `-h, --help`        | Show help                            |
-| `-v, --version`     | Show version                         |
+| Option              | Description                        |
+|---------------------|------------------------------------|
+| `-c, --converter`   | Target language: `cpp` or `python` |
+| `-n, --namespace`   | Namespace for generated files      |
+| `-d, --definitions` | Path to definitions (`.dsm.json`)  |
+| `-t, --template`    | Template directory or file         |
+| `-o, --output`      | Output directory or file           |
+| `-q, --quiet`       | Disable output messages            |
+| `-h, --help`        | Show help                          |
+| `-v, --version`     | Show version                       |
 
 ## Available templates
 
@@ -69,7 +69,7 @@ drive Kibo from custom rules in your build system (CMake, etc.).
 
 For the catalogue of features available in the viper template pack, see
 [Templated Features](../kibo-template-viper/features.md). Pick the minimal
-set you need; Kibo will resolve dependencies between features for you.
+set you need;
 
 ## Usage Examples
 
@@ -78,21 +78,24 @@ set you need; Kibo will resolve dependencies between features for you.
 ```python
 # From generate.py
 templates = [
-    'Model', 'Data',
-    'Attachments', 'Stream', 'Json',
+    'Model',
+    'Data',
+    'Stream', 'Json',
     'Database',
+    'Attachments', 'AttachmentFunctionPool_Attachments',
     'ValueType', 'ValueCodec', 'ValueHasher',
-    'Fuzz', 'Test'
+    'Fuzz',
+    'Test',
 ]
 
 for template in templates:
     subprocess.run([
-        'java', '-jar', 'kibo-1.2.7.jar',
+        'java', '-jar', JAR,
         '-c', 'cpp',
-        '-n', 'MyApp',
-        '-d', 'model.dsmb',
-        '-t', f'templates/cpp/{template}',
-        '-o', 'src/MyApp'
+        '-n', 'Features',
+        '-d', 'Features.dsm.json',
+        '-t', f'{TEMPLATES}/cpp/{template}',
+        '-o', 'Features',
     ])
 ```
 
@@ -100,116 +103,219 @@ for template in templates:
 
 ```python
 subprocess.run([
-    'java', '-jar', 'kibo-1.2.7.jar',
+    'java', '-jar', JAR,
     '-c', 'python',
-    '-n', 'mymodel',
-    '-d', 'model.dsmb',
-    '-t', 'templates/python/package',
-    '-o', 'python/mymodel'
+    '-n', 'features',
+    '-d', 'Features.dsm.json',
+    '-t', f'{TEMPLATES}/python/package',
+    '-o', 'python/features',
 ])
+```
+
+### Mixing the viper template pack with custom templates
+
+Real projects often combine the shared `kibo-template-viper` pack with
+project-local templates that emit code for a custom framework or surface.
+Two distinct `-t` paths follow this convention:
+
+| Source             | `-t` argument                | Purpose                                    |
+|--------------------|------------------------------|--------------------------------------------|
+| Shared viper pack  | `{TEMPLATES}/cpp/{template}` | Standard viper code (`Model`, `Data`, …)   |
+| Project-local pack | `templates/{template}`       | Bindings for a custom framework or surface |
+
+```{tip}
+Project-local templates live in the project repo (e.g. `templates/RaptorLogic/`)
+and are versioned with the code they target. The viper pack lives in its own
+repo so it can evolve independently of any consumer.
 ```
 
 ### Complete generate.py Example
 
-A production-ready script combining all generation steps:
+A production-ready script combining the viper pack and a project-local
+template pack. This mirrors the script used by the Raptor Editor, which
+generates four artefacts from a single DSM:
+
+- viper C++ code under `src/RE/` (shared pack),
+- a custom `RaptorLogic` C++ binding under `src/RaptorLogic/` (project-local pack),
+- viper Python embedded into the editor, and
+- a Python package shipped to the editor's `Scripts/` directory and to a `demo/`.
 
 ```python
 #!/usr/bin/env python3
-"""Complete code generation script for a Viper project."""
-import subprocess
 import argparse
 import base64
+import glob
+import os
+import subprocess
 import zlib
-from dsviper import DSMBuilder
 
-# Configuration
-JAR = 'tools/kibo-1.2.7.jar'
+from dsviper import DSMBuilder, DSMDefinitions, DefinitionsConst
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-r", "--re", action="store_true",
+                    help="Generate C++ for RE (viper pack)")
+parser.add_argument("-l", "--logic", action="store_true",
+                    help="Generate C++ for RaptorLogic (custom pack)")
+parser.add_argument("-e", "--editor", action="store_true",
+                    help="Generate C++ for RaptorEditor")
+parser.add_argument("-p", "--python", action="store_true",
+                    help="Generate Python for RaptorEditor")
+arguments = parser.parse_args()
+
+# Sibling-checkout convention: kibo and the viper template pack live in
+# their own repos next to this one under a common parent. Project-local
+# templates (templates/RaptorLogic/) stay in this repo.
+SIBLING_KIBO = '../kibo'
+SIBLING_TEMPLATES = '../kibo-template-viper'
+
+
+def _resolve_jar():
+    env = os.environ.get('KIBO_JAR')
+    if env:
+        return env
+    matches = sorted(glob.glob(f'{SIBLING_KIBO}/target/kibo-*.jar'))
+    if not matches:
+        raise SystemExit(f"No kibo jar at {SIBLING_KIBO}/target/. "
+                         f"Run `mvn package` in {SIBLING_KIBO} or set KIBO_JAR.")
+    return matches[-1]
+
+
+JAR = _resolve_jar()
+TEMPLATES = os.environ.get('KIBO_TEMPLATES') or SIBLING_TEMPLATES
 KIBO = ['java', '-jar', JAR]
-TEMPLATES_CPP = 'templates/cpp'
-TEMPLATES_PY = 'templates/python/package'
+
+
+def generate_viper(namespace, dsm_path, template, output, *args):
+    """Render a template from the shared viper pack."""
+    cmd = KIBO + [
+        '-c', 'cpp', '-n', namespace,
+        '-d', dsm_path, '-t', f'{TEMPLATES}/cpp/{template}',
+        '-o', output,
+    ] + list(args)
+    subprocess.run(cmd)
+
+
+def generate_raptor_logic(namespace, dsm_path, template, output, *args):
+    """Render a project-local template (here: bindings for RaptorLogic)."""
+    cmd = KIBO + [
+        '-c', 'cpp', '-n', namespace,
+        '-d', dsm_path, '-t', f'templates/{template}',
+        '-o', output,
+    ] + list(args)
+    subprocess.run(cmd)
+
+
+def render_viper_templates(namespace, dsm_path, output):
+    templates = [
+        'Model', 'Data',
+        'Stream',
+        'Database',
+        'Attachments',
+        'ValueType', 'ValueCodec',
+        'FunctionPool', 'AttachmentFunctionPool',
+        'AttachmentFunctionPool_Attachments',
+    ]
+    for template in templates:
+        generate_viper(namespace, dsm_path, template, output)
+
+
+def generate_resource(definitions: DefinitionsConst, output: str):
+    blob = definitions.encode()
+    with open(output, 'w') as file:
+        file.write(blob.embed("definitions"))
+
+
+def generate_package(name: str, dsm_path: str,
+                     definitions: DefinitionsConst, output: str):
+    cmd = KIBO + [
+        '-c', 'python', '-n', name,
+        '-d', dsm_path, '-t', f'{TEMPLATES}/python/package',
+        '-o', output,
+    ]
+    subprocess.run(cmd)
+    blob = definitions.encode()
+    encoded = base64.b64encode(zlib.compress(blob))
+    with open(f'{output}/resources.py', 'w') as file:
+        file.write(f"B64_DEFINITIONS = {encoded}")
+
 
 def check_report(report):
-    """Exit on parse errors."""
     if report.has_error():
         for err in report.errors():
             print(repr(err))
         exit(1)
 
-def generate_cpp(namespace, dsmb, template, output):
-    """Generate C++ code from a template."""
-    subprocess.run(KIBO + [
-        '-c', 'cpp', '-n', namespace,
-        '-d', dsmb, '-t', f'{TEMPLATES_CPP}/{template}',
-        '-o', output
-    ])
 
-def generate_resource(definitions, output):
-    """Generate embedded C++ resource."""
-    blob = definitions.encode()
-    with open(output, 'w') as f:
-        f.write(blob.embed("definitions"))
+def save_dsm_definitions(dsm_definitions: DSMDefinitions, dsm_path: str):
+    with open(dsm_path, "w") as file:
+        file.write(dsm_definitions.json_encode())
 
-def generate_python(name, dsmb, definitions, output):
-    """Generate Python package with embedded definitions."""
-    subprocess.run(KIBO + [
-        '-c', 'python', '-n', name,
-        '-d', dsmb, '-t', TEMPLATES_PY,
-        '-o', output
-    ])
-    # Embed definitions as base64
-    blob = definitions.encode()
-    encoded = base64.b64encode(zlib.compress(blob))
-    with open(f'{output}/resources.py', 'w') as f:
-        f.write(f"B64_DEFINITIONS = {encoded}")
 
-# Parse DSM
-builder = DSMBuilder.assemble("definitions/MyApp")
-report, dsm_defs, definitions = builder.parse()
+PROJECT = 'RE'
+DSM_SOURCE = 'definitions/RE'
+DSM_PATH = f'{PROJECT}.dsm.json'
+
+if not os.path.exists(JAR):
+    raise SystemExit(f'{JAR} not found. Read the documentation to build the jar.')
+
+print(f'using kibo: {KIBO}')
+
+builder = DSMBuilder.assemble(DSM_SOURCE)
+report, dsm_definitions, definitions = builder.parse()
 check_report(report)
+save_dsm_definitions(dsm_definitions, DSM_PATH)
 
-# Save binary definitions
-with open("MyApp.dsmb", "wb") as f:
-    f.write(dsm_defs.encode())
+if not (arguments.re or arguments.logic or arguments.editor or arguments.python):
+    parser.print_help()
+    exit(0)
 
-# Generate C++ (standard templates)
-for template in ['Model', 'Data', 'Attachments', 'Stream', 'Database',
-                 'ValueType', 'ValueCodec', 'ValueHasher', 'FunctionPool']:
-    generate_cpp('MyApp', 'MyApp.dsmb', template, 'src/MyApp')
+if arguments.re:
+    print('** Render C++ viper templates')
+    render_viper_templates('RE', DSM_PATH, 'src/RE')
+    generate_resource(definitions, 'src/RE/RE_Resources.hpp')
 
-# Generate embedded resource
-generate_resource(definitions, 'src/MyApp/MyApp_Resources.hpp')
+if arguments.logic:
+    print('** Render C++ for RaptorLogic (custom pack)')
+    generate_raptor_logic('RaptorLogic', DSM_PATH, 'RaptorLogic', 'src/RaptorLogic')
 
-# Generate Python package
-generate_python('myapp', 'MyApp.dsmb', definitions, 'python/myapp')
+if arguments.editor:
+    print('** Render C++ Python bridge for RaptorEditor')
+    generate_viper('RE', DSM_PATH, 'Python', 'RaptorEditor/RaptorEditor')
 
-print("Generation complete!")
+if arguments.python:
+    print('** Render Python package for RaptorEditor')
+    generate_package('red', DSM_PATH, definitions,
+                     'RaptorEditor/RaptorEditor/Scripts/red')
+    print('** Render Python package for demo')
+    generate_package('red', DSM_PATH, definitions, 'demo/red')
 ```
 
 ## Workflow
 
-### Step 1: Parse and Encode DSM
+### Step 1: Parse and Persist DSM
 
 ```python
 from dsviper import DSMBuilder
 
-# Parse DSM file
+# Parse DSM source
 builder = DSMBuilder.assemble("model.dsm")
-report, dsm_defs, definitions = builder.parse()
+report, dsm_definitions, definitions = builder.parse()
 
 # Check for errors
-if report.has_errors():
-    print(report.errors())
+if report.has_error():
+    for err in report.errors():
+        print(repr(err))
     exit(1)
 
-# Save binary format
-with open("model.dsmb", "wb") as f:
-    f.write(dsm_defs.encode().encoded())
+# Persist the JSON definitions Kibo will read
+with open("model.dsm.json", "w") as f:
+    f.write(dsm_definitions.json_encode())
 ```
 
 ### Step 2: Generate Embedded Definitions
 
 ```python
-# Generate C++ resource for Definitions.cpp
+# Generate C++ resource header consumed by the runtime
 blob = definitions.encode()
 with open("Resources.hpp", "w") as f:
     f.write(blob.embed("definitions"))
@@ -218,7 +324,7 @@ with open("Resources.hpp", "w") as f:
 ### Step 3: Run Kibo
 
 ```bash
-java -jar kibo-1.2.7.jar -c cpp -n MyApp -d model.dsmb -t templates/cpp/Data -o src/
+java -jar kibo-1.2.7.jar -c cpp -n MyApp -d model.dsm.json -t templates/cpp/Data -o src/
 ```
 
 ### Step 4: Compile and Link

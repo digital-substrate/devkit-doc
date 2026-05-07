@@ -227,18 +227,19 @@ Get a descriptive string representation:
 "{nickname='alice':string, password='':string}:Tuto::Login"
 ```
 
-## Binary File Format
+## DSM Definitions File Format
 
-DSM definitions can be saved in binary format (`.dsmb`):
+DSM definitions are saved as JSON (`.dsm.json`) — the canonical on-disk
+form consumed by Kibo and the dsviper toolchain:
 
 ```pycon
-# Write definitions to binary file
->>> with open("model.dsmb", "wb") as f:
-...     f.write(defs.const().encode())
+# Write definitions to a JSON file
+>>> with open("model.dsm.json", "w") as f:
+...     f.write(dsm_defs.json_encode())
 
-# Read definitions from binary file
->>> with open("model.dsmb", "rb") as f:
-...     defs = Definitions.decode(f.read())
+# Read definitions from a JSON file
+>>> with open("model.dsm.json", "r") as f:
+...     dsm_defs = DSMDefinitions.json_decode(f.read())
 ```
 
 ## Common Patterns

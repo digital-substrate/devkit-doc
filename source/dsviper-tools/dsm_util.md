@@ -103,26 +103,24 @@ python3 tools/dsm_util.py create_python_package model.dsm --repos /path/to/repos
 | `--kibo`     | Path to kibo JAR file                      |
 | `--template` | Path to template folder                    |
 
-## Encode to Binary
+## Encode to JSON
 
-Convert DSM definitions to binary format (`.dsmb`):
+Convert DSM definitions to JSON (`.dsm.json`):
 
 ```bash
-python3 tools/dsm_util.py encode model.dsm model.dsmb
+python3 tools/dsm_util.py encode model.dsm model.dsm.json
 ```
 
-The binary format is:
+The JSON format is the canonical input consumed by the Kibo code generator
+(`-d <file>.dsm.json`). It is human-inspectable, diff-friendly, and
+platform-independent.
 
-- Faster to load
-- Used by Kibo code generator
-- Platform-independent
+## Decode from JSON
 
-## Decode from Binary
-
-Convert binary definitions back to DSM format:
+Rewrite JSON definitions back to the DSM language:
 
 ```bash
-python3 tools/dsm_util.py decode model.dsmb decoded_model.dsm
+python3 tools/dsm_util.py decode model.dsm.json decoded_model.dsm
 ```
 
 ## Workflow Example

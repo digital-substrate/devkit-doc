@@ -30,24 +30,14 @@ dsviper runtime gives you:
    db.commit_mutations("Add user", state)
 
 
-DevKit, dsviper, Viper — what's what?
--------------------------------------
+DevKit, dsviper, Viper
+----------------------
 
-Three names appear across this documentation. Here is how they layer.
-
-**DevKit** — *What you download.*
-   The Digital Substrate Python toolkit, distributed as a single ZIP — bundles
-   dsviper, the Kibo code generator, templates, CLI tools, and offline
-   documentation.
-
-**dsviper** — *What runs in your Python apps.*
-   The Python runtime distributed on PyPI. Strong-typed Python API over the
-   Viper C++ engine. Installed via ``pip install dsviper`` — *not* bundled in
-   the DevKit ZIP.
-
-**Viper** — *The C++ engine behind dsviper.*
-   The underlying metadata-driven C++ runtime — type system, commit DAG,
-   database tier. Currently used internally; not yet distributed standalone.
+Three names appear across this documentation, referring to different things —
+the **distribution** (DevKit), the **Python runtime** (dsviper), and the
+**C++ engine** (Viper). See :doc:`ecosystem/naming` for the canonical
+disambiguation, and :doc:`ecosystem/value-chains` for how every component
+fits together.
 
 
 Two Ways to Work

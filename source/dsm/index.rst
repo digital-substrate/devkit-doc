@@ -17,7 +17,7 @@ Place in the ecosystem
 
 * **Depends on** — nothing. DSM is the root of the toolchain value chain.
 * **Consumed by** — :term:`Kibo` (generates code from ``.dsm`` plus a
-  template), :term:`dsviper <DSM>` (loads ``.dsm`` through its
+  template), :term:`dsviper` (loads ``.dsm`` through its
   :term:`dynamic API <static API / dynamic API>`),
   :term:`reference applications <reference application>` such as ``ge-py`` and
   ``ge-qml``.

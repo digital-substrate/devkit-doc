@@ -24,10 +24,22 @@ Kibo template
    for which target. `kibo-template-viper` is the official template that
    targets the dsviper runtime; other templates can target other runtimes.
 
+dsviper
+   The Python runtime — strongly typed Python API over the
+   {term}`Viper` engine. Distributed exclusively on PyPI
+   (`pip install dsviper`). See {doc}`naming` for how dsviper relates to
+   DevKit and Viper.
+
 Viper
    The C++ runtime engine that dsviper wraps. Carries the type system, commit
    DAG, and database tier. Currently not distributed standalone; the source
    repository is private. See {doc}`naming`.
+
+DevKit
+   The Digital Substrate Python toolkit, distributed as a single ZIP. Carries
+   the toolchain (Kibo, kibo-template-viper, dsviper-tools, offline docs) —
+   not the dsviper runtime itself, which is fetched from PyPI. See
+   {doc}`naming`.
 
 dsviper-tools
    Tooling for the Database / CommitDatabase workflow of the dsviper

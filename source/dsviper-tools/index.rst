@@ -12,7 +12,9 @@ the same database browsers — see its repository for status.
 
 For IDE integration (VS Code and JetBrains plugins for DSM syntax), see
 :doc:`../dsm/ide` — the plugins target the DSM language, not dsviper, so
-they live in the DSM section.
+they live in the DSM section. For Python wheel packaging, see
+:doc:`../kibo-template-viper/wheels` — the wheel layout is one of the
+features emitted by the viper template pack.
 
 
 Place in the ecosystem
@@ -75,12 +77,6 @@ Topics
 
    editors
    server
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Packaging
-
-   wheels
 
 
 Status

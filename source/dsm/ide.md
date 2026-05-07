@@ -247,5 +247,5 @@ my_project/
 
 ## What's Next
 
-- [Wheels](../dsviper-tools/wheels.md) - Creating Python wheels
+- [Wheels](../kibo-template-viper/wheels.md) - Creating Python wheels
 - [Templates](../kibo/templates.md) - What templates are and how they fit together

@@ -32,4 +32,4 @@ Status
 
    Stub. Detailed documentation of the template's options, output structure,
    and customization points is forthcoming. Until then, refer to the GitHub
-   repository and the :doc:`Kibo manual <../tools/kibo>`.
+   repository and the :doc:`Kibo manual <../kibo/usage>`.

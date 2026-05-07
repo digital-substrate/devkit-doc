@@ -43,7 +43,7 @@ Python application.
 (Other Kibo templates exist for other runtimes; Kibo itself is not
 viper-specific.)
 
-→ Reference: {doc}`../tools/kibo`.
+→ Reference: {doc}`../kibo/usage`.
 
 ## 3. Use — dsviper
 

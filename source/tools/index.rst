@@ -1,20 +1,22 @@
 Toolchain Manual
 ================
 
-This manual covers the complete development toolkit for DSM and Viper:
+This manual covers the runtime-side developer toolkit:
 
 - **dsm_util.py** - Model validation and database creation
-- **Kibo** - Code generation from DSM definitions
 - **IDE Integration** - VS Code and JetBrains plugins
 - **Database Editors** - GUI tools (cdbe.py, dbe.py)
 - **Server & Admin** - Network deployment and administration
+- **Wheels** - Packaging dsviper for distribution
+
+For the code generator itself (Kibo) and its template concepts, see
+:doc:`/kibo/index`.
 
 .. toctree::
    :maxdepth: 2
    :caption: Development
 
    dsm_util
-   kibo
    ide
 
 .. toctree::
@@ -26,8 +28,6 @@ This manual covers the complete development toolkit for DSM and Viper:
 
 .. toctree::
    :maxdepth: 2
-   :caption: Advanced
+   :caption: Packaging
 
    wheels
-   templates
-   template_model

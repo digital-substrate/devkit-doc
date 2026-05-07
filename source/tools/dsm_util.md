@@ -146,5 +146,5 @@ python3 -c "import model; print(model)"
 
 ## What's Next
 
-- [Kibo](kibo.md) - The code generator
+- [Kibo](../kibo/usage.md) - The code generator
 - [IDE Integration](ide.md) - VS Code and JetBrains

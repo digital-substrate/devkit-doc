@@ -78,6 +78,12 @@ Documentation
 
 .. toctree::
    :maxdepth: 2
+   :caption: Kibo
+
+   kibo/index
+
+.. toctree::
+   :maxdepth: 2
    :caption: Python Guide
 
    python/index

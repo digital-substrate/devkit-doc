@@ -17,7 +17,7 @@ DSM
 Kibo
    The code generator. Reads a DSM model plus a {term}`Kibo template` and
    emits source code. Template-agnostic — the target language and runtime are
-   determined by the template. See {doc}`../tools/kibo`.
+   determined by the template. See {doc}`../kibo/usage`.
 
 Kibo template
    A parameterized recipe consumed by Kibo. Defines what code is emitted and

@@ -149,4 +149,4 @@ Follow semantic versioning:
 
 ## What's Next
 
-- [Templates](templates.md) - Understanding templated features
+- [Templates](../kibo/templates.md) - Understanding templated features

@@ -248,4 +248,4 @@ my_project/
 ## What's Next
 
 - [Wheels](wheels.md) - Creating Python wheels
-- [Templates](templates.md) - Understanding templated features
+- [Templates](../kibo/templates.md) - Understanding templated features

@@ -233,7 +233,7 @@ This creates a Python package with:
 ```{note}
 The Static API snippet above requires running Kibo first to generate the
 `model.attachments` package. It is illustrative — see the
-[Kibo](../tools/kibo.md) chapter for the full code-generation workflow.
+[Kibo](../kibo/usage.md) chapter for the full code-generation workflow.
 ```
 
 Both approaches use the same underlying Viper runtime.

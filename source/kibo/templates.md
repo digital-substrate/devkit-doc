@@ -333,7 +333,7 @@ The steps for C++:
 3. Call `kibo-1.2.7.jar` for each feature.
 
 For Python, you can use `dsm_util.py create_python_package` as a shortcut
-(see [dsm_util](dsm_util.md)).
+(see [dsm_util](../tools/dsm_util.md)).
 
 ```{tip}
 Read the [Template Model Reference](template_model.md) to write your own templates.

@@ -12,7 +12,7 @@ BUILDDIR      = build
 help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-.PHONY: help Makefile notebooklm distzip pdf check
+.PHONY: help Makefile notebooklm notebooklmzip distzip pdf check
 
 # Documentation version (from conf.py `release` — keep in sync).
 DOC_VERSION ?= 1.2
@@ -25,9 +25,19 @@ check:
 	@$(SPHINXBUILD) -M coverage "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 	@echo "all checks passed"
 
-# Build text bundles for NotebookLM (one .txt per top-level section).
+# Build markdown bundles for NotebookLM and autonomous LLM agents.
+# Produces one .md per maillon of the value chain in build/notebooklm/.
 notebooklm:
 	@SOURCE_DIR="$(SOURCEDIR)" BUILD_DIR="$(BUILDDIR)" python tools/build_notebooklm.py
+
+# Pack the NotebookLM bundles into a single release-ready archive,
+# symmetric with `distzip` and `pdf`.
+notebooklmzip: notebooklm
+	@mkdir -p "$(BUILDDIR)/dist"
+	@rm -f "$(BUILDDIR)/dist/devkit-$(DOC_VERSION)-notebooklm.zip"
+	@cd "$(BUILDDIR)" && zip -qj "dist/devkit-$(DOC_VERSION)-notebooklm.zip" notebooklm/*.md
+	@echo "wrote $(BUILDDIR)/dist/devkit-$(DOC_VERSION)-notebooklm.zip"
+	@du -sh "$(BUILDDIR)/dist/devkit-$(DOC_VERSION)-notebooklm.zip"
 
 # Build a release-ready offline doc archive (multi-page HTML).
 # Uses multi-page HTML rather than singlehtml because autosummary's

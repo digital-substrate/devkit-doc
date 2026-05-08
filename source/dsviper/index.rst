@@ -94,6 +94,18 @@ a C++ engineer familiar with Viper finds the same vocabulary in this
 guide, transposed into Python.
 
 
+Further examples
+----------------
+
+This guide and its API reference cover the curated, doctested surface. For
+a broader corpus of runnable usage examples — covering edge cases and
+combinations not shown here — see the public test suite at
+`digital-substrate/dsviper-tests
+<https://github.com/digital-substrate/dsviper-tests>`_. It exercises every
+API surface and is a useful grounding source for both human readers and
+LLM-driven assistants exploring ``dsviper`` patterns.
+
+
 Topics
 ------
 

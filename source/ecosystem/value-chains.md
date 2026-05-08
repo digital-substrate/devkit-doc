@@ -44,7 +44,10 @@ dsviper  →  dsviper-components  →  reference applications
 **dsviper** — the Python runtime. Strong-typed Python API over the Viper C++
 engine. The foundation: type system, value system, commit DAG, database tier.
 Distributed exclusively on PyPI (`pip install dsviper`) — not bundled in the
-DevKit ZIP.
+DevKit ZIP. Its public test suite lives in
+[`digital-substrate/dsviper-tests`](https://github.com/digital-substrate/dsviper-tests)
+and exercises every API surface — a useful corpus of runnable usage
+examples beyond the doctested snippets in this guide.
 
 **dsviper-components** — reusable building blocks built on top of dsviper.
 Consumed by applications. Comes in two parallel tracks: `dsviper-components`

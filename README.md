@@ -48,8 +48,9 @@ make check      # run the three above; exits non-zero on first failure
 ## Distribution artifacts
 
 ```bash
-make distzip    # build/dist/devkit-<version>-doc.zip — multi-page HTML archive
-make pdf        # build/dist/devkit-<version>-doc.pdf — ~400-page PDF (xelatex)
+make distzip        # build/dist/devkit-<version>-doc.zip — multi-page HTML archive
+make pdf            # build/dist/devkit-<version>-doc.pdf — ~400-page PDF (xelatex)
+make notebooklmzip  # build/dist/devkit-<version>-notebooklm.zip — Markdown bundles for LLMs / agents
 ```
 
 `DOC_VERSION` defaults to `1.2`; override from the environment if needed.
@@ -69,18 +70,26 @@ The `pdf` target uses `xelatex`. Install a TeX distribution:
 ```
 devkit-doc/
 ├── source/
-│   ├── conf.py           # Sphinx configuration
-│   ├── index.rst         # Main page
-│   ├── _ext/             # Custom extensions (DSM lexer, .pyi signatures)
-│   ├── _static/          # CSS overrides
-│   ├── _templates/       # Autosummary templates
-│   ├── concepts/         # Viper architecture and design
-│   ├── dsm/              # DSM language reference
-│   ├── python/           # Python guide + API reference
-│   └── tools/            # Toolchain (Kibo, dsm_util, IDE, templates)
-├── Makefile              # macOS/Linux
-├── make.bat              # Windows
-└── requirements.txt      # Python dependencies
+│   ├── conf.py                 # Sphinx configuration
+│   ├── index.rst               # Main page and top-level toctree
+│   ├── _ext/                   # Custom extensions (dsm_lexer, pyi_signatures)
+│   ├── _static/                # CSS and images
+│   ├── _templates/             # Autosummary templates
+│   ├── _fixtures/              # Doctest fixtures (Tuto/model.dsm)
+│   ├── ecosystem/              # Cross-cutting ecosystem narrative
+│   ├── dsm/                    # DSM language reference
+│   ├── kibo/                   # Kibo code generator
+│   ├── kibo-template-viper/    # Kibo first-party templates
+│   ├── dsviper/                # dsviper Python API
+│   ├── dsviper-tools/          # Database / CommitDatabase tooling
+│   ├── dsviper-components/     # Qt Widgets / QML component library
+│   ├── reference-apps/         # ge-py, ge-qml, web-cdbe, dsviper-blender
+│   └── legal/                  # License and legal content
+├── tools/
+│   └── build_notebooklm.py     # Bundles Sphinx output into NotebookLM .md
+├── Makefile                    # macOS/Linux
+├── make.bat                    # Windows
+└── requirements.txt            # Python dependencies
 ```
 
 ## Custom Extensions

@@ -3,7 +3,7 @@
 Sphinx documentation for the [dsviper](https://pypi.org/project/dsviper/) ecosystem:
 DSM language, Python API, Kibo code generator, and developer toolchain.
 
-The generated HTML is served on the DevKit website.
+The generated HTML is published at <https://docs.digitalsubstrate.io/>.
 
 ## Prerequisites
 
@@ -93,3 +93,7 @@ Pygments lexer for DSM syntax highlighting in code blocks.
 
 Extracts type hints from the installed `dsviper` package (`.pyi` stub file) and
 injects them into autodoc-generated API documentation. Supports inheritance lookup.
+
+## License
+
+Dual-licensed: **CC-BY 4.0** for prose, **MIT** for code samples and Sphinx machinery. See [LICENSE](LICENSE).

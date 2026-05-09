@@ -2,9 +2,11 @@ name: Build and deploy documentation
 
 on:
   push:
-    branches: [main, "LTS-*"]
     # Pushing a `v*` tag is the canonical deploy trigger — posed
     # manually once dsviper / kibo / doc / website are co-validated.
+    # Branch pushes are NOT built in CI: local `make check` is the
+    # pre-commit gate, and the tag build itself catches any regression
+    # before publishing.
     tags: ["v*"]
   pull_request:
     branches: [main, "LTS-*"]

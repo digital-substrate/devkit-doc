@@ -85,15 +85,18 @@ After generation, your package looks like:
 
 ```
 model/
-├── __init__.py
-├── data.py              # Concept, struct, enum classes
-├── commit.py            # Commit API
-├── database.py          # Database API
-├── definitions.py       # Type definitions
-├── value_types.py       # Type mappings
-├── path.py              # Field paths
-└── resources/
-    └── definitions.bin  # Embedded definitions
+├── __init__.py                          # Re-exports data
+├── data.py                              # Concept, struct, enum, key classes
+├── attachments.py                       # Attachment getters/setters (incl. collaborative variants)
+├── database_attachments.py              # Database-side attachment getters/setters
+├── function_pools.py                    # Function pool API
+├── attachment_function_pools.py         # Function pools tied to attachments
+├── function_pool_remotes.py             # Remote function pools
+├── attachment_function_pool_remotes.py  # Remote function pools (attachment-bound)
+├── definitions.py                       # DSM type definitions
+├── value_type.py                        # Type bindings
+├── path.py                              # Field paths
+└── resources.py                         # Embedded definitions (base64 blob)
 ```
 
 ## Dependencies

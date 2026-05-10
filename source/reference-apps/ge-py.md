@@ -1,4 +1,4 @@
-# ge-py — Graph Editor (Qt Widgets)
+# ge-py — Graph Editor
 
 PySide6 desktop application that exercises the **whole DevKit value chain**
 from a single DSM model: code generation with Kibo, persistence and
@@ -371,6 +371,21 @@ inspection — is acquired by composition.
 For the catalogue of what `dsviper-components` exposes and the
 conventions for instantiating each widget, see
 [dsviper-components](../dsviper-components/index.rst).
+
+```{note}
+**The limit case — generic database editors.** The same composition recipe
+powers the model-agnostic editors `cdbe` and `dbe` in
+[`dsviper-tools`](https://github.com/digital-substrate/dsviper-tools) (Qt
+Widgets) and
+[`dsviper-tools-qml`](https://github.com/digital-substrate/dsviper-tools-qml)
+(Qt Quick). They follow exactly the same principles as ge-py / ge-qml,
+but because they are not specialised for any particular DSM model, the
+**central widget is itself a shared component** —
+`DSDocumentsCommitStore` in Widgets, `DS.DocumentsPanel` driven by
+`DocumentsPanelModel` in QML. There are no domain panels at all: when
+the model is unknown at compile time, the entire UI collapses to what
+the shared library already provides.
+```
 
 ## Where to read first
 

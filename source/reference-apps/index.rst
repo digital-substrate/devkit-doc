@@ -28,12 +28,14 @@ dsviper-components.
 ge-qml
 ~~~~~~
 
-Three QML desktop apps (``dbe``, ``cdbe``, ``graph_editor``) — the QML
-counterpart of ge-py and the QML database browsers, built on the Qt Quick
-variant of dsviper-components.
+Graph Editor — QML port of ge-py, built on the Qt Quick variant of
+dsviper-components. Same value chain, same business logic, same
+``CommitStore`` facade — the UI is QML driven by Python ``QObject``
+models registered as QML context properties.
 
 * **Source repository** —
   `digital-substrate/ge-qml <https://github.com/digital-substrate/ge-qml>`_.
+* **Walk-through** — :doc:`ge-qml`.
 
 dsviper-blender
 ~~~~~~~~~~~~~~~
@@ -64,11 +66,12 @@ Status
 .. note::
 
    Per-application walk-throughs are being added incrementally. ``ge-py``
-   has one (:doc:`ge-py`); the others still point only to their GitHub
-   repository for now.
+   and ``ge-qml`` have one (:doc:`ge-py`, :doc:`ge-qml`); the others still
+   point only to their GitHub repository for now.
 
 
 .. toctree::
    :hidden:
 
    ge-py
+   ge-qml

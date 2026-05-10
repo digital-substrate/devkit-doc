@@ -60,9 +60,7 @@ it all together" exemplars — they exercise the *whole* ecosystem end-to-end
 the dsviper runtime). They are not products in their own right:
 
 - `ge-py` — Graph Editor, PySide6 desktop app.
-- `ge-qml` — three QML desktop apps (`dbe`, `cdbe`, `graph_editor`).
-- `dsviper-blender` — Blender 4.x add-on bundling the dsviper runtime from
-  PyPI.
+- `ge-qml` — Graph Editor, PySide6 desktop app (Qt Quick / QML).
 - `web-cdbe` — Flask web application demonstrating a Commit Database Editor
   (HTML5, no JavaScript).
 
@@ -115,6 +113,6 @@ You do not have to adopt the whole stack. Common partial uses:
   template; viper and dsviper are out of the picture.
 - **Versioned data without code generation.** Use `dsviper`'s dynamic API
   directly, loading dsm definitions at runtime — no static package needed.
-- **Inspect a database.** `dsviper-tools` (`cdbe`, `dbe`,
-  `dsm_util`) work standalone against any compatible database, regardless of
+- **Inspect a database.** `dsviper-tools` (`cdbe`, `dbe`) 
+  work standalone against any compatible database, regardless of
   whether you authored its schema in dsm yourself.

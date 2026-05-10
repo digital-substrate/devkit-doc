@@ -28,7 +28,7 @@ The generated infrastructure handles:
 - Attachment accessors (get/set/keys via abstract interfaces)
 - Database persistence layer
 - Binary and JSON serialization
-- Python bindings
+- Python proxies with type hints
 - RPC marshalling
 
 ## The Double Reality
@@ -43,6 +43,7 @@ What you see and code:
 - STL containers (`std::vector`, `std::map`)
 - Compile-time type errors
 - Idiomatic, readable code
+- Python proxies with type hints
 
 ```cpp
 // Developer writes natural C++

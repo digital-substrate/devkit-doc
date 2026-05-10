@@ -28,11 +28,11 @@ Applications built with Viper follow a 3-tier pattern:
 
 ### Tier Responsibilities
 
-| Tier             | Responsibility                                                | Platform-Specific? |
-|------------------|---------------------------------------------------------------|--------------------|
-| **Presentation** | UI framework, windows, dialogs                                | Yes                |
-| **Logic**        | Application Context, bridges, business components             | Partially          |
-| **Data**         | Viper runtime (CommitDatabase, CommitStore), persistence      | No (shared)        |
+| Tier             | Responsibility                                           | Platform-Specific? |
+|------------------|----------------------------------------------------------|--------------------|
+| **Presentation** | UI framework, windows, dialogs                           | Yes                |
+| **Logic**        | Application Context, bridges, business components        | Partially          |
+| **Data**         | Viper runtime (CommitDatabase, CommitStore), persistence | No (shared)        |
 
 ## The Full Application Stack
 
@@ -235,7 +235,6 @@ with its full Qt Signal surface), see
 [dsviper-components — The Notifier Bridge](../dsviper-components/architecture.md#the-notifier-bridge).
 ```
 
-
 ```text
 CommitStore (C++ core)
         │
@@ -265,13 +264,13 @@ All implementations expose the same signals:
 
 The architecture supports multiple languages:
 
-| Layer          | C++ Application                  | Python Application       |
-|----------------|----------------------------------|--------------------------|
-| UI             | AppKit/Qt C++                    | PySide/Qt Python         |
-| Context        | C++ singleton (owns CommitStore) | Python class (owns store)|
-| Business       | C++                              | Python or dsviper        |
-| Infrastructure | C++ generated                    | Python generated         |
-| Runtime        | Viper C++ (CommitStore, ...)     | dsviper                  |
+| Layer          | C++ Application                  | Python Application        |
+|----------------|----------------------------------|---------------------------|
+| UI             | AppKit/Qt C++                    | PySide/Qt Python          |
+| Context        | C++ singleton (owns CommitStore) | Python class (owns store) |
+| Business       | C++                              | Python or dsviper         |
+| Infrastructure | C++ generated                    | Python generated          |
+| Runtime        | Viper C++ (CommitStore, ...)     | dsviper                   |
 
 ### Python Integration
 

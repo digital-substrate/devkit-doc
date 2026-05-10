@@ -87,8 +87,8 @@ In practice, it is an art to elaborate the patterns used to implement a template
 
 ```{tip}
 The best way to learn is by studying the templates:
-- `templates/cpp/Model/*.stg`
-- `templates/cpp/Stream/*.stg`
+- `kibo-template-viper/cpp/Model/*.stg`
+- `kibo-template-viper/cpp/Stream/*.stg`
 ```
 
 ## Template Naming Convention

@@ -224,7 +224,7 @@ struct BezierPathProperties {
 
 ### Set
 
-The `set<T>` type is an unordered collection of unique values.
+The `set<T>` type is an ordered collection of unique values.
 
 ```dsm
 // From Raptor Editor: Surface tags for filtering

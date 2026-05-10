@@ -223,6 +223,32 @@ available as constants in the calling namespace.
 
 ---
 
+## Safe Usage
+
+A checklist for the operational gotchas. None of this is enforced by the
+engine — it's on the application.
+
+- **Identify your mode first.** The four [Modes of Use](#modes-of-use) carry
+  different burdens. Only automated multi-user makes the
+  [Dual-Layer Contract](commit_contract.md) load-bearing; the other three
+  are safe to use without it.
+- **Capture `commit_id` explicitly.** `commit_mutations()` returns the new
+  id; there is no implicit current commit to auto-advance. Chain further
+  mutations and reads from the captured value.
+- **Prefer path-based mutators over `set()`** for fields edited
+  concurrently. `set()` replaces the whole document, so disjoint edits
+  collide. `update`, `union_in_set`, `update_in_map`, etc. merge cleanly on
+  disjoint paths — see [Why Paths Matter](#why-paths-matter).
+- **Do not assume a mutation landed.** After convergence, mutations
+  targeting non-existent documents or unresolved paths are silently
+  dropped. If the outcome matters, read the state back and check.
+- **Validate on read, not on write,** when the contract applies. Engine
+  output is structurally sound but semantically untrusted — enforce
+  uniqueness, referential integrity, and cross-field invariants when you
+  consume the state, not when you build the mutations.
+
+---
+
 ## What's Next
 
 - [Blobs](blobs.md) - Binary data storage

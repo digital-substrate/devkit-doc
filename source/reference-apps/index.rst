@@ -7,8 +7,8 @@ the dsviper runtime. They are canonical "putting it all together" exemplars,
 **not** products in their own right.
 
 Use them as worked examples when learning how the pieces fit together. Each
-wires the full chain in real code, in a different shell — desktop, Blender
-add-on, web.
+wires the full chain in real code, in a different shell — Qt Widgets
+desktop, QML desktop, and a server-rendered web app.
 
 
 Applications
@@ -37,37 +37,17 @@ models registered as QML context properties.
   `digital-substrate/ge-qml <https://github.com/digital-substrate/ge-qml>`_.
 * **Walk-through** — :doc:`ge-qml`.
 
-dsviper-blender
-~~~~~~~~~~~~~~~
-
-Blender 4.x add-on that bundles the ``dsviper`` runtime from PyPI inside
-Blender, so the type system and commit DAG are usable from Blender's Python
-console and operators.
-
-* **Source repository** —
-  `digital-substrate/dsviper-blender
-  <https://github.com/digital-substrate/dsviper-blender>`_.
-* **License** — GPL-3.0-or-later (Blender add-on constraint).
-
 web-cdbe
 ~~~~~~~~
 
-Flask web application demonstrating a Commit Database Editor on top of
-dsviper. HTML5, no JavaScript — illustrates how the runtime integrates into
-a server-rendered web app.
+Flask web application — a generic Commit Database Editor. Pure HTML5,
+no JavaScript. Opens any commit database, walks it through dsviper's
+introspection API (no domain code, no Kibo output), and renders editable
+HTML forms that ``POST`` back to a commit mutation.
 
 * **Source repository** —
   `digital-substrate/web-cdbe <https://github.com/digital-substrate/web-cdbe>`_.
-
-
-Status
-------
-
-.. note::
-
-   Per-application walk-throughs are being added incrementally. ``ge-py``
-   and ``ge-qml`` have one (:doc:`ge-py`, :doc:`ge-qml`); the others still
-   point only to their GitHub repository for now.
+* **Walk-through** — :doc:`web-cdbe`.
 
 
 .. toctree::
@@ -75,3 +55,4 @@ Status
 
    ge-py
    ge-qml
+   web-cdbe

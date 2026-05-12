@@ -94,8 +94,10 @@ html_css_files = ['custom.css']
 html_baseurl = 'https://docs.digitalsubstrate.io/'
 
 # Files copied verbatim to the root of build/html/.
-# CNAME tells GitHub Pages which custom domain to serve.
-html_extra_path = ['_static/CNAME']
+# - CNAME tells GitHub Pages which custom domain to serve.
+# - llms.txt follows the emerging convention (https://llmstxt.org) so LLM
+#   agents crawling docs.digitalsubstrate.io discover the corpus structure.
+html_extra_path = ['_static/CNAME', '_static/llms.txt']
 
 # Furo theme options
 html_theme_options = {

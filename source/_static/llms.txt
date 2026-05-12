@@ -1,0 +1,68 @@
+# DevKit Documentation
+
+> Digital Substrate's Python toolkit for metadata-driven data modeling. Define data structures in DSM (a purpose-built DSL), and the dsviper runtime gives you strong typing, a versioned commit DAG over your data, and seamless Python integration.
+
+DevKit is the **distribution** that bundles **DSM** (the modeling language), **Kibo** (the code generator), **dsviper** (the Python runtime, published on PyPI), and a set of editors, components and reference apps. The names **DevKit / dsviper / Viper** are not interchangeable — see the naming page for the canonical disambiguation. This documentation is the canonical source, published at https://docs.digitalsubstrate.io/.
+
+## Orientation
+
+- [Ecosystem naming](https://docs.digitalsubstrate.io/ecosystem/naming.html): Canonical disambiguation of DevKit, dsviper, Viper and surrounding terms.
+- [Value chains](https://docs.digitalsubstrate.io/ecosystem/value-chains.html): How DSM, Kibo, dsviper, components and tools fit together end-to-end.
+- [Pipeline](https://docs.digitalsubstrate.io/ecosystem/pipeline.html): Day-to-day modeling-to-app workflow.
+- [Glossary](https://docs.digitalsubstrate.io/ecosystem/glossary.html): Terms used across the documentation.
+
+## DSM — the modeling language
+
+- [Introduction](https://docs.digitalsubstrate.io/dsm/introduction.html): What DSM is and why it exists.
+- [Concepts](https://docs.digitalsubstrate.io/dsm/concepts.html): Core abstractions.
+- [Types](https://docs.digitalsubstrate.io/dsm/types.html): Primitive and composite types.
+- [Attachments](https://docs.digitalsubstrate.io/dsm/attachments.html): The attachment mechanism.
+- [Function pools](https://docs.digitalsubstrate.io/dsm/function_pools.html): Functional surfaces over the model.
+- [Code generation](https://docs.digitalsubstrate.io/dsm/code_generation.html): How DSM maps to C++ and Python.
+- [Architecture](https://docs.digitalsubstrate.io/dsm/architecture.html): How the DSM compiler is structured.
+- [IDE support](https://docs.digitalsubstrate.io/dsm/ide.html): Editor integration.
+
+## Kibo — code generation
+
+- [Usage](https://docs.digitalsubstrate.io/kibo/usage.html): Running Kibo to produce per-app Bridge code.
+- [Templates](https://docs.digitalsubstrate.io/kibo/templates.html): Available templates.
+- [Template model](https://docs.digitalsubstrate.io/kibo/template_model.html): How to author or extend a template.
+
+## dsviper — Python runtime
+
+- [Installation](https://docs.digitalsubstrate.io/dsviper/installation.html): `pip install dsviper`.
+- [Hello, dsviper](https://docs.digitalsubstrate.io/dsviper/hello.html): Minimal first program.
+- [Tutorial](https://docs.digitalsubstrate.io/dsviper/tutorial.html): End-to-end walkthrough.
+- [Database](https://docs.digitalsubstrate.io/dsviper/database.html): Opening and managing a CommitDatabase.
+- [Commit](https://docs.digitalsubstrate.io/dsviper/commit.html): The commit DAG over your data.
+- [Commit contract](https://docs.digitalsubstrate.io/dsviper/commit_contract.html): Mutation rules and invariants.
+- [Structures](https://docs.digitalsubstrate.io/dsviper/structures.html): Records and aggregates.
+- [Collections](https://docs.digitalsubstrate.io/dsviper/collections.html): Lists, sets, maps.
+- [Types and values](https://docs.digitalsubstrate.io/dsviper/types_values.html): Type system at runtime.
+- [Blobs](https://docs.digitalsubstrate.io/dsviper/blobs.html): Binary payload handling.
+- [Serialization](https://docs.digitalsubstrate.io/dsviper/serialization.html): On-disk and wire formats.
+- [DSM from Python](https://docs.digitalsubstrate.io/dsviper/dsm.html): Loading DSM definitions dynamically.
+- [Errors](https://docs.digitalsubstrate.io/dsviper/errors.html): Error model and exceptions.
+
+## Tools and components
+
+- [Editors](https://docs.digitalsubstrate.io/dsviper-tools/editors.html): Standalone editor applications.
+- [dsm_util](https://docs.digitalsubstrate.io/dsviper-tools/dsm_util.html): CLI utility for DSM model inspection.
+- [Server](https://docs.digitalsubstrate.io/dsviper-tools/server.html): The dsviper server component.
+- [Widgets](https://docs.digitalsubstrate.io/dsviper-components/widgets.html): Reusable UI widgets over dsviper.
+- [Component architecture](https://docs.digitalsubstrate.io/dsviper-components/architecture.html): How components are structured.
+
+## Reference applications
+
+- [ge-py](https://docs.digitalsubstrate.io/reference-apps/ge-py.html): Pure-Python reference application.
+- [ge-qml](https://docs.digitalsubstrate.io/reference-apps/ge-qml.html): Qt/QML reference application.
+- [web-cdbe](https://docs.digitalsubstrate.io/reference-apps/web-cdbe.html): Web-based commit-database editor.
+
+## For LLM agents and RAG pipelines
+
+A concatenated Markdown corpus of the full documentation, organised as five bundles tuned for LLM ingestion (NotebookLM, agents, RAG), is published with each DevKit release as `devkit-X.Y-notebooklm.zip`. Available at https://devkit.digitalsubstrate.io/downloads/.
+
+## Optional
+
+- [License](https://docs.digitalsubstrate.io/legal/license.html): Digital Substrate Commercial License 1.2 (SPDX `LicenseRef-DigitalSubstrate-Commercial-1.2`) — Evaluation and Commercial modes.
+- [Third-party notices](https://docs.digitalsubstrate.io/legal/third_party_notices.html): Embedded BSD-3-Clause / MIT / zlib-style / public-domain components.

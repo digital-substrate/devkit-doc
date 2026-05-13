@@ -20,8 +20,8 @@ Place in the ecosystem
 * **Depends on** — Viper (the C++ engine — see :doc:`../ecosystem/naming`).
 * **Consumed by** — :term:`dsviper-components` (Qt Widgets and QML variants),
   :term:`dsviper-tools` (Qt Widgets and QML variants),
-  :term:`reference applications <reference application>` (``ge-py``,
-  ``ge-qml``, ``dsviper-blender``, ``web-cdbe``).
+  :term:`Commit Applications <Commit Application>` (``ge-py``,
+  ``ge-qml``, ``web-cdbe``).
 * **Source repository** — the ``dsviper`` PyPI package is built from the
   Viper source. There is no separate ``dsviper`` repository on GitHub. See
   :doc:`../ecosystem/naming` for the distinction between distribution names

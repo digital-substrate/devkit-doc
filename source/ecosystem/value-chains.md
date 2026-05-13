@@ -33,13 +33,13 @@ Commit Database Editor: a full-featured Qt Widgets tool for any
 `CommitDatabase`) and `dbe.py` (a standard CRUD inspector for the
 non-versioned `Database` backend). A QML variant (`dsviper-tools-qml`)
 provides Qt Quick versions of the same database browsers. The
-[`web-cdbe`](../reference-apps/web-cdbe.md) reference app is a web demo
+[`web-cdbe`](../commit-apps/web-cdbe.md) Commit App is a web demo
 that ports the same generic-editor idea to a browser.
 
 ## The runtime (execution side)
 
 ```
-dsviper  →  dsviper-components  →  reference applications
+dsviper  →  dsviper-components  →  Commit Applications
 ```
 
 **Goal.** Run a typed Python application with versioned, persistent data.
@@ -57,10 +57,11 @@ Consumed by applications. Comes in two parallel tracks: `dsviper-components`
 (Qt Widgets) and `dsviper-components-qml` (Qt Quick / QML). Most of the
 runtime stack mirrors this split.
 
-**Reference applications.** Several applications exist as canonical "putting
-it all together" exemplars — they exercise the *whole* ecosystem end-to-end
-(DSM modeling, Kibo code generation, the viper template, dsviper-components,
-the dsviper runtime). They are not products in their own right:
+**Commit Applications.** Several applications exist as canonical "putting
+it all together" exemplars of the Commit Application Model — they exercise
+the *whole* ecosystem end-to-end (DSM modeling, Kibo code generation, the
+viper template, dsviper-components, the dsviper runtime). They are not
+products in their own right:
 
 - `ge-py` — Graph Editor, PySide6 desktop app.
 - `ge-qml` — Graph Editor, PySide6 desktop app (Qt Quick / QML).
@@ -100,7 +101,7 @@ component must respect the same direction.
 | dsviper-tools (Widgets and QML)        | dsm, dsviper                | applications             |
 | dsviper                                | Viper (C++ engine)          | applications, components |
 | dsviper-components (Widgets and QML)   | dsviper                     | applications             |
-| reference applications                 | dsviper, dsviper-components | —                        |
+| Commit Applications                    | dsviper, dsviper-components | —                        |
 
 This table is the contract per-component documentation must respect: a `dsm`
 page may not assume kibo is in the picture; a `kibo` page may assume dsm but

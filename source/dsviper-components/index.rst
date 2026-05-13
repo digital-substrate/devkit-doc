@@ -9,7 +9,7 @@ two parallel variants:
 * **Qt Widgets** — ``dsviper-components``
 * **Qt Quick / QML** — ``dsviper-components-qml``
 
-Most :term:`reference applications <reference application>` use one or
+Most :term:`Commit Applications <Commit Application>` use one or
 both of these to avoid re-implementing common UI for typed-data
 manipulation.
 
@@ -39,9 +39,9 @@ Place in the ecosystem
 
 * **Depends on** — :term:`dsviper`, Qt (Widgets or Quick depending on
   variant).
-* **Consumed by** — :term:`reference applications <reference application>`
-  (``ge-py``, ``ge-qml``, ``dsviper-blender``) and any custom Python
-  application built on dsviper.
+* **Consumed by** — :term:`Commit Applications <Commit Application>`
+  (``ge-py``, ``ge-qml``) and any custom Python application built on
+  dsviper.
 * **Source repositories** —
 
   * `digital-substrate/dsviper-components

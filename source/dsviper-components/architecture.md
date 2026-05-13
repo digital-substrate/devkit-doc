@@ -151,4 +151,4 @@ domain-specific.
 For the catalogue of what the library exposes, see
 [Widgets](widgets.md). For a worked example of the integration in a
 real application, see the
-[ge-py walk-through](../reference-apps/ge-py.md).
+[ge-py walk-through](../commit-apps/ge-py.md).

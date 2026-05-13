@@ -110,9 +110,9 @@ Documentation
 
 .. toctree::
    :maxdepth: 2
-   :caption: Reference Applications
+   :caption: Commit Applications
 
-   reference-apps/index
+   commit-apps/index
 
 .. toctree::
    :maxdepth: 1

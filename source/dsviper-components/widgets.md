@@ -113,5 +113,5 @@ to script against) through `namespace_vars`. ge-py exposes
 
 - [Architecture](architecture.md) — the Notifier Bridge and the integration
   recipe each widget assumes.
-- [ge-py walk-through](../reference-apps/ge-py.md) — a real application that
+- [ge-py walk-through](../commit-apps/ge-py.md) — a real application that
   uses most of these widgets, with the wiring code visible.

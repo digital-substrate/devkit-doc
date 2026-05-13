@@ -41,6 +41,34 @@ Each generated surface is the output of one or more **templated features**.
 The catalogue is in :doc:`features`.
 
 
+The Dual Reality
+----------------
+
+The code produced by kibo-template-viper is not a runtime in its own
+right — it is a typed **adapter layer** over Viper's dynamic API. The
+runtime is metadata-driven and dynamic ; the generated code gives
+developers and IDEs a static, idiomatic surface (typed classes, STL in
+C++, type hints in Python) that delegates to the dynamic runtime
+transparently.
+
+This split is the :term:`Dual Reality` pattern :
+
+* **Developer Reality** — static, typed, what the IDE sees.
+* **Runtime Reality** — dynamic, metadata-driven, what the engine
+  actually manipulates.
+
+Both realities coexist for the same data ; the generated adapters
+translate between them. The two share the same engine — there is no
+parallel implementation to keep in sync, in either direction, and no
+divergence possible between the C++ and Python sides.
+
+Applications that do not need the typed comfort can bypass the static
+side entirely and work directly against the dynamic runtime (see
+:term:`static API / dynamic API`). That is what generic tools like
+:doc:`cdbe.py <../dsviper-tools/editors>` do — they introspect any
+opened database without ever traversing the bridge.
+
+
 Topics
 ------
 

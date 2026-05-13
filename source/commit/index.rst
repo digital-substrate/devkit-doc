@@ -26,7 +26,7 @@ Place in the ecosystem
   :term:`dsviper-tools` (server, editors, ``dsm_util``),
   :term:`dsviper-components` (Qt Widgets and QML observers of a
   ``CommitStore``),
-  :term:`reference applications <reference application>` (all three are
+  :term:`Commit Applications <Commit Application>` (all three are
   commit-based — see below).
 * **Distribution** — no standalone package. The engine ships inside Viper
   and reaches Python through
@@ -83,25 +83,25 @@ CRUD editor for the non-versioned ``Database`` backend and does not
 touch the Commit Engine.
 
 
-Reference applications built on the Commit Engine
--------------------------------------------------
+Commit Applications built on the Commit Engine
+----------------------------------------------
 
-Three reference applications demonstrate distinct usage regimes on top
+Three Commit Applications demonstrate distinct usage regimes on top
 of the engine:
 
-* :doc:`ge-py <../reference-apps/ge-py>` — Graph Editor (Qt Widgets):
+* :doc:`ge-py <../commit-apps/ge-py>` — Graph Editor (Qt Widgets):
   a desktop application built on a ``CommitStore`` facade, exercising
   undo/redo and a typed domain on top of the engine.
-* :doc:`ge-qml <../reference-apps/ge-qml>` — Graph Editor (QML): same
+* :doc:`ge-qml <../commit-apps/ge-qml>` — Graph Editor (QML): same
   domain and ``CommitStore`` facade as ``ge-py``, ported to the Qt Quick
   variant of ``dsviper-components``.
-* :doc:`web-cdbe <../reference-apps/web-cdbe>` — a Flask web demo that
+* :doc:`web-cdbe <../commit-apps/web-cdbe>` — a Flask web demo that
   ports the generic Commit-database-editor idea (the same role ``cdbe.py``
   plays in Qt Widgets) to a browser context, with deliberately minimal
   surface — HTML5, no JavaScript. Useful as a worked example, not as a
   substitute for ``cdbe.py``.
 
-See :doc:`../reference-apps/index` for the full list and the engineering
+See :doc:`../commit-apps/index` for the full list and the engineering
 context around each app.
 
 

@@ -1,5 +1,5 @@
-Reference Applications
-======================
+Commit Applications
+===================
 
 Applications that exercise the **whole ecosystem end-to-end** — DSM
 modeling, Kibo code generation, the viper template, dsviper-components, and

@@ -13,7 +13,7 @@ backends** and play different roles:
   the dynamic API and exposes the full commit DAG (history, undo/redo,
   divergence, head convergence, sync, embedded Python scripting). It is
   the working tool the DevKit ships for everyday Commit Engine inspection.
-  [`web-cdbe`](../reference-apps/web-cdbe.md) is a derived demo that ports
+  [`web-cdbe`](../commit-apps/web-cdbe.md) is a derived demo that ports
   the same idea to a browser — useful as a minimum-surface example, not
   a substitute.
 - **`dbe.py` is a standard CRUD editor.** It targets the non-versioned
@@ -32,7 +32,7 @@ through the dynamic API, and exposes its full commit DAG — history,
 document browsing, mutations, undo/redo, synchronisation with a remote
 commit server, and embedded Python scripting. This is the canonical
 Commit Engine editor; the web demo
-[`web-cdbe`](../reference-apps/web-cdbe.md) is a derivative aimed at
+[`web-cdbe`](../commit-apps/web-cdbe.md) is a derivative aimed at
 showing the same idea with a deliberately minimal surface (HTML5, no
 JavaScript).
 

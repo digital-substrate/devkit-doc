@@ -7,8 +7,9 @@ intended reading order — orientation first, then dependency-ordered deep
 dives — is conveyed even when a tool ingests them out of order:
 
     00-devkit-ecosystem  Map: naming, value-chains, pipeline, glossary,
-                         and reference-app GitHub URLs (an agent fetches
-                         the actual app code from those repos on demand)
+                         and Commit Application GitHub URLs (an agent
+                         fetches the actual app code from those repos
+                         on demand)
     10-devkit-dsm        The modeling language (chain entry point)
     20-devkit-kibo       Code generation (DSM → C++ / Python)
     30-devkit-dsviper    Python runtime: API and concepts
@@ -60,8 +61,8 @@ class Bundle:
 BUNDLES: tuple[Bundle, ...] = (
     Bundle(
         "00-devkit-ecosystem",
-        "Orientation — naming, value chains, pipeline, glossary, reference-app pointers. Start here.",
-        ("index.md", "ecosystem", "reference-apps"),
+        "Orientation — naming, value chains, pipeline, glossary, Commit Application pointers. Start here.",
+        ("index.md", "ecosystem", "commit-apps"),
     ),
     Bundle(
         "10-devkit-dsm",

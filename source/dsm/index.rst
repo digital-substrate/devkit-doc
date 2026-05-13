@@ -19,7 +19,7 @@ Place in the ecosystem
 * **Consumed by** — :term:`Kibo` (generates code from ``.dsm`` plus a
   template), :term:`dsviper` (loads ``.dsm`` through its
   :term:`dynamic API <static API / dynamic API>`),
-  :term:`reference applications <reference application>` such as ``ge-py`` and
+  :term:`Commit Applications <Commit Application>` such as ``ge-py`` and
   ``ge-qml``.
 * **Source repository** —
   `digital-substrate/dsm <https://github.com/digital-substrate/dsm>`_. Carries

@@ -1,10 +1,10 @@
-Commit System
+Commit Engine
 =============
 
-The commit system provides transactional persistence with history tracking.
+The Commit Engine provides transactional persistence with history tracking.
 
 **When to use**: Use ``CommitDatabase`` for versioned persistence with history,
-branching, and sync. Every change creates a commit, enabling undo/redo
+divergence, and sync. Every change creates a commit, enabling undo/redo
 and concurrent editing.
 
 Quick Start

@@ -1,6 +1,6 @@
 # The Dual-Layer Contract
 
-This page documents the contract between the Commit engine (exposed in Python
+This page documents the contract between the Commit Engine (exposed in Python
 through `dsviper`) and your application code **in the regime where merges
 happen automatically, without human arbitration** — typically multiple authors
 writing concurrently into a shared database. In single-user use (desktop
@@ -76,8 +76,15 @@ read the state, not when you build the mutations**.
 |-------------------------|---------------------------------------------|
 | **DAG Consistency**     | Commits form a valid directed acyclic graph |
 | **Immutability**        | Once committed, data cannot be modified     |
-| **Deterministic Merge** | Same inputs always produce the same output  |
+| **Deterministic Convergence** | Same inputs always produce the same output  |
 | **Content-Addressable** | `CommitId = SHA-1(content)`, tamper-evident |
+
+```{note}
+**From git intuition to engine mechanics** — *merge* here means
+*"take the other stream into account"*: a deterministic linearisation
+of the streams, not a reconciliation. Hence *Convergence*, not
+*Merge*: reproducible, but no semantic arbitration has happened.
+```
 
 ## What Commit Does NOT Provide
 

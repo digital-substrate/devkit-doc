@@ -1,6 +1,6 @@
-# Commit System
+# Commit Engine
 
-The commit system provides transactional persistence with history tracking.
+The Commit Engine provides transactional persistence with history tracking.
 
 **When to use**: Use `CommitDatabase` for versioned persistence with history, concurrent
 streams, and sync. Every change creates a commit, enabling undo/redo and concurrent editing.
@@ -10,17 +10,56 @@ streams, and sync. Every change creates a commit, enabling undo/redo and concurr
 ## Modes of Use
 
 How you exercise the commit DAG determines which guarantees you can rely on
-and where validation belongs. Four user-facing modes:
+and where validation belongs. Four user-facing modes — the first three are
+single-author, so the application arbitrates every change or merge and the
+dual-layer contract is not load-bearing. The fourth is where the contract
+on the next page becomes the centre of gravity.
 
-| Mode                        | What you do                                                                | Engine guarantees that bite                          | Dual-layer contract                                              |
-|-----------------------------|----------------------------------------------------------------------------|------------------------------------------------------|------------------------------------------------------------------|
-| **Time travel** (read-only) | Reconstruct any past state from a `commitId`                               | Determinism, immutability, content-addressing        | Not applicable — no writes                                       |
-| **Single-user undo / redo** | Step back, branch, redo on a single author's chain                         | All structural guarantees + tombstone semantics      | Not load-bearing — you arbitrate every change                    |
-| **Single-user exploration** | Bifurcate the DAG, keep parallel sibling lines, merge on your own schedule | All structural guarantees + multi-head machinery     | Not load-bearing — you arbitrate merges                          |
-| **Automated multi-user**    | Concurrent commits from multiple authors converge without human review     | Structural only — semantic integrity is your problem | **Load-bearing** → see [Dual-Layer Contract](commit_contract.md) |
+### Time travel (read-only)
 
-The first three modes are what most desktop applications need. The fourth is
-where the contract on the next page becomes the centre of gravity.
+Reconstruct any past state from a `commitId`. No writes, so only the
+read-side structural guarantees apply: determinism, immutability,
+content-addressing.
+
+### Single-user undo / redo
+
+Step back along the chain, diverge, redo. *Intent: revise history* —
+correct or replay past decisions on a single author's line. All structural
+guarantees apply, plus tombstone semantics.
+
+### Single-user exploration
+
+Diverge the DAG and keep parallel heads alive, merging on your own
+schedule. *Intent: explore alternatives in parallel* — same machinery as
+undo/redo, but you maintain multiple heads concurrently instead of
+replaying one. All structural guarantees apply, plus multi-head machinery.
+
+### Automated multi-user
+
+Concurrent commits from multiple authors converge without human review.
+The engine guarantees structural soundness only; semantic integrity
+(uniqueness, referential integrity, cross-field invariants) is your
+problem. This is where the
+[Dual-Layer Contract](commit_contract.md) becomes load-bearing.
+
+```{note}
+**Three regimes of multi-author work** — only one is what the engine
+provides:
+
+- **Collaboration** — humans reconcile intentions: conflicts are
+  identified, surfaced, resolved (the git-merge / review model).
+- **Cooperation** — disjoint contributions assemble without conflict
+  by construction.
+- **Mechanical convergence** — the engine merges deterministically with
+  no notion of "conflict": clashing intentions are silently reconciled
+  by structural rules. Structurally sound, semantically untrusted.
+
+dsviper offers mechanical convergence. Cooperation is achievable by
+structuring work along disjoint paths
+([Why Paths Matter](#why-paths-matter)). Collaboration requires an
+explicit application layer on top — that is what the
+[Dual-Layer Contract](commit_contract.md) formalises.
+```
 
 ---
 
@@ -243,9 +282,10 @@ engine — it's on the application.
   targeting non-existent documents or unresolved paths are silently
   dropped. If the outcome matters, read the state back and check.
 - **Validate on read, not on write,** when the contract applies. Engine
-  output is structurally sound but semantically untrusted — enforce
-  uniqueness, referential integrity, and cross-field invariants when you
-  consume the state, not when you build the mutations.
+  output is structurally sound but semantically untrusted
+  ([why](commit_contract.md#why-the-engines-output-is-untrusted-data)) —
+  enforce uniqueness, referential integrity, and cross-field invariants
+  when you consume the state, not when you build the mutations.
 
 ---
 

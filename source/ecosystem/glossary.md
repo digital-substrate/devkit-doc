@@ -96,8 +96,8 @@ commit
 
 commit DAG
    The directed acyclic graph formed by commits and their parent links.
-   Storage and history of versioned data; supports branching, merging, and
-   synchronization across clients.
+   Storage and history of versioned data; supports divergence, merging
+   of heads, and synchronization across clients.
 
 mutation
    An opcode-level change applied to a value (`set`, `update`, `insert`,

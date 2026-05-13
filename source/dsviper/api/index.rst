@@ -49,12 +49,20 @@ Overview
    * - :doc:`core`
      - Core utilities (``Definitions``, ``NameSpace``, ``Path``, etc.)
 
-Reference Applications
-----------------------
+Working examples
+----------------
 
-To see the full dsviper API in action, explore ``cdbe.py`` (CDB Editor) and
-``dbe.py`` (Database Editor) in the ``tools/`` directory. These Qt/PySide6
-applications demonstrate the complete capabilities of dsviper:
+To see this API in action, the two GUI editors shipped with
+``dsviper-tools`` exercise complementary parts of the surface:
+
+- ``cdbe.py`` (Commit Database Editor) — covers the **Commit Engine**
+  side: ``CommitDatabase``, ``CommitMutableState``, ``CommitStore``,
+  ``CommitSynchronizer``, undo/redo, and live sync.
+- ``dbe.py`` (Database Editor, plain CRUD) — covers the non-versioned
+  ``Database`` side and the read/inspection surface (definitions,
+  blobs, HTML rendering).
+
+Between them they cover the table below:
 
 .. list-table::
    :header-rows: 1
@@ -89,4 +97,7 @@ applications demonstrate the complete capabilities of dsviper:
    * - **Logging**
      - ``Logging``, ``LoggerConsole`` for operation tracing
 
-These tools serve as comprehensive examples for building your own dsviper applications.
+These two editors serve as comprehensive examples for building your own
+dsviper applications — ``cdbe.py`` is the natural reference when building
+a commit-based application, ``dbe.py`` when you only need plain CRUD on a
+``Database``.

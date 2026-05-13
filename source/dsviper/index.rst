@@ -93,6 +93,15 @@ about a Viper C++ application without learning a parallel API; conversely,
 a C++ engineer familiar with Viper finds the same vocabulary in this
 guide, transposed into Python.
 
+The Commit Engine
+-----------------
+
+``dsviper`` exposes Viper's **Commit Engine** — the versioned, content-
+addressed persistence layer that ``CommitDatabase`` and
+``CommitMutableState`` belong to. Its guarantees, its modes of use, and
+the dual-layer contract it asks of consuming code are documented in the
+dedicated :doc:`Commit <../commit/index>` section, peer to this one.
+
 
 Further examples
 ----------------
@@ -121,8 +130,6 @@ Topics
    errors
    dsm
    database
-   commit
-   commit_contract
    blobs
    serialization
 

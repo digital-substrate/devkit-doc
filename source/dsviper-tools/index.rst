@@ -1,8 +1,10 @@
 dsviper-tools
 =============
 
-**dsviper-tools** is the runtime-side developer toolkit: CLI utilities, GUI
-database editors, and the server that exposes a CommitDatabase over the
+**dsviper-tools** is the runtime-side developer toolkit: CLI utilities, two
+GUI editors (``cdbe.py`` for the commit-based ``CommitDatabase`` and
+``dbe.py`` for the plain ``Database`` — see :doc:`editors` for the
+distinction), and the server that exposes a ``CommitDatabase`` over the
 network. Together with :doc:`Kibo <../kibo/index>`, it forms the day-to-day
 developer experience around the dsviper runtime.
 

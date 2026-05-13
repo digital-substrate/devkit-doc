@@ -17,8 +17,8 @@ output**, and your application is what turns it into trusted state.
 
 | Layer           | Guarantees                                         |
 |-----------------|----------------------------------------------------|
-| **Commit**      | Deterministic merge, DAG consistency, immutability |
-| **Application** | Re-validates engine output before acting on it     |
+| **Commit**      | Deterministic convergence, DAG consistency, immutability |
+| **Application** | Re-validates engine output before acting on it           |
 
 When concurrent streams converge, mutations are applied using a **best-effort**
 algorithm:
@@ -30,7 +30,7 @@ algorithm:
   produced.
 
 This is by design. The engine is intentionally agnostic to your domain rules
-and never refuses a merge — it picks a deterministic outcome and moves on.
+and never refuses to converge — it picks a deterministic outcome and moves on.
 
 ## Why the Engine's Output Is Untrusted Data
 
@@ -40,7 +40,7 @@ This is the load-bearing point of the contract.
 network input, a deserialized file, an external API. The natural reflex is to
 validate at that boundary and then trust the data internally.
 
-Best-effort merge breaks that reflex. **The state returned by
+Best-effort convergence breaks that reflex. **The state returned by
 `state(commitId)` is itself a boundary**, even though the data never left the
 process:
 
@@ -63,7 +63,7 @@ distinct places, not one:
 | Family                     | Origin                                              | Detected by                         |
 |----------------------------|-----------------------------------------------------|-------------------------------------|
 | **Untrusted (external)**   | I/O, deserialization, type mismatch, malformed path | Engine, fail-fast → `dsviper.Error` |
-| **Untrusted (post-merge)** | State returned by the engine after convergence      | Application, at read time           |
+| **Untrusted (post-convergence)** | State returned by the engine after convergence      | Application, at read time     |
 | **Invalid (semantic)**     | Business-rule violation on otherwise sound data     | Application, at read time           |
 
 The first family is what `dsviper.Error` covers. The other two are entirely
@@ -80,10 +80,13 @@ read the state, not when you build the mutations**.
 | **Content-Addressable** | `CommitId = SHA-1(content)`, tamper-evident |
 
 ```{note}
-**From git intuition to engine mechanics** — *merge* here means
-*"take the other stream into account"*: a deterministic linearisation
-of the streams, not a reconciliation. Hence *Convergence*, not
-*Merge*: reproducible, but no semantic arbitration has happened.
+**Why *convergence*, not *merge*** — what git calls a *merge* is a
+reconciliation step that may surface conflicts and ask a human to
+arbitrate. The engine does no such thing: when concurrent streams meet,
+it linearises them by deterministic structural rules, never refuses,
+and never reports a conflict. We call this *convergence* to keep the
+two operations distinct: reproducible, but no semantic arbitration has
+happened.
 ```
 
 ## What Commit Does NOT Provide
@@ -93,16 +96,17 @@ of the streams, not a reconciliation. Hence *Convergence*, not
 | **Intent Preservation**   | Deterministic arbitration (LWW), not your intent |
 | **Semantic Validation**   | No business rule checking                        |
 | **Mutation Notification** | No alert when mutations are silently ignored     |
-| **Conflict Detection**    | No notion of conflict — just deterministic merge |
+| **Conflict Detection**    | No notion of conflict — just deterministic convergence |
 
 ## Implications for `dsviper` Code
 
 The contract shapes how you should write code on top of `dsviper.Commit*`:
 
-- **Treat the post-merge state as a boundary.** It is the symmetric equivalent
-  of deserialized network input: structurally sound, semantically unverified.
+- **Treat the post-convergence state as a boundary.** It is the symmetric
+  equivalent of deserialized network input: structurally sound, semantically
+  unverified.
 - **Do not assume** that every operation you build into a `CommitMutableState`
-  will land. After merging concurrent commits, some operations may have been
+  will land. After concurrent streams converge, some operations may have been
   silently dropped because their targets disappeared.
 - **Validate at the application boundary,** which means 
   the engine output. If your domain has invariants (uniqueness,
@@ -120,4 +124,4 @@ The contract shapes how you should write code on top of `dsviper.Commit*`:
 ## See Also
 
 - [Commit](commit.md) — using the commit API from Python
-- [Errors](errors.md) — `dsviper.Error` and exception handling
+- [Errors](../dsviper/errors.md) — `dsviper.Error` and exception handling

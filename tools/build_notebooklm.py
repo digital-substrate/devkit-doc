@@ -12,6 +12,8 @@ dives — is conveyed even when a tool ingests them out of order:
     10-devkit-dsm        The modeling language (chain entry point)
     20-devkit-kibo       Code generation (DSM → C++ / Python)
     30-devkit-dsviper    Python runtime: API and concepts
+    35-devkit-commit     The Commit Engine: versioned persistence,
+                         modes of use, dual-layer contract
     40-devkit-tools      Tools and UI components consuming dsviper
 
 Each original page is preceded by a `<!-- FILE: <relative-path> -->` marker
@@ -73,9 +75,14 @@ BUNDLES: tuple[Bundle, ...] = (
     ),
     Bundle(
         "30-devkit-dsviper",
-        "dsviper — Python runtime: commit DAG, structures, collections, serialization, error model.",
+        "dsviper — Python runtime: types, structures, collections, serialization, error model.",
         ("dsviper",),
         exclude=lambda p: "api/generated" in p.as_posix(),
+    ),
+    Bundle(
+        "35-devkit-commit",
+        "The Commit Engine — versioned persistence: DAG, modes of use, dual-layer contract.",
+        ("commit",),
     ),
     Bundle(
         "40-devkit-tools",

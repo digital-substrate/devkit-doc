@@ -8,7 +8,7 @@ Viper provides two database types for persistence:
 | `CommitDatabase` | Versioned data           | Yes (DAG) |
 
 This page covers the simple `Database`. For versioned storage,
-see [CommitDatabase](commit.md).
+see [CommitDatabase](../commit/commit.md).
 
 ---
 
@@ -229,5 +229,5 @@ returns the string passed to `Database.create(..., documentation=...)`.
 
 ## What's Next
 
-- [CommitDatabase](commit.md) - Versioned database with history
+- [CommitDatabase](../commit/commit.md) - Versioned database with history
 - [Blobs](blobs.md) - Binary data storage

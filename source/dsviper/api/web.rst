@@ -182,8 +182,9 @@ The same ``Html`` helpers work in Qt/PySide6 applications via ``QTextEdit``:
            document = Html.document("Value", Html.style(), Html.body(content))
            self.text_edit.setHtml(document)
 
-This pattern is used by ``cdbe.py`` (CDB Editor) and ``dbe.py`` (Database Editor)
-to display definitions and values with syntax highlighting.
+This pattern is used by both ``cdbe.py`` (Commit Database Editor) and
+``dbe.py`` (Database Editor) to display definitions and values with
+syntax highlighting.
 
 Choosing the Right Approach
 ---------------------------

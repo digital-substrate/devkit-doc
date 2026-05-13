@@ -12,8 +12,10 @@ The Digital Substrate Python toolkit, distributed as a single ZIP. It bundles:
 
 - `kibo` — the code generator
 - `kibo-template-viper` — the template that targets the viper runtime
-- `dsviper-tools` — CLI utilities (`dsm_util`,  `commit_database_server.py`, `commit_admin.py`) 
-   and GUI editors (`cdbe.py`, `dbe.py`)
+- `dsviper-tools` — CLI utilities (`dsm_util`, `commit_database_server.py`,
+   `commit_admin.py`) and two GUI editors: `cdbe.py` (Commit Database
+   Editor, for `CommitDatabase`) and `dbe.py` (Database Editor, plain
+   CRUD for the non-versioned `Database` backend)
 
 The `dsviper` runtime is **not** bundled in the DevKit ZIP — it is installed
 separately from PyPI (see below).

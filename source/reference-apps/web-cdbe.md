@@ -4,6 +4,13 @@ Flask web application that demonstrates a **generic Commit Database
 Editor** built directly on top of `dsviper`. Pure HTML5, no JavaScript:
 every interaction is a normal browser navigation or a `POST` form.
 
+The canonical generic Commit Database Editor is the Qt Widgets tool
+[`cdbe.py`](../dsviper-tools/editors.md), shipped in `dsviper-tools` —
+that is the full-featured production editor. `web-cdbe` is a derived
+demonstration of the same idea, deliberately reduced to a minimum
+surface so the runtime API is visible without the framework noise of a
+desktop GUI.
+
 * **Source repository** —
   [`digital-substrate/web-cdbe`](https://github.com/digital-substrate/web-cdbe).
 * **Entry point** — `app.py`.
@@ -25,8 +32,8 @@ package, no hand-written business logic, no domain widgets.
 
 The takeaway: a working editor for **any** commit database in ~450
 lines of Python plus three Jinja templates. The same introspection API
-powers `dsviper-tools-py` and `dsviper-tools-qml`; web-cdbe is the
-browser-shaped sibling.
+powers `dsviper-tools` (Qt Widgets, including `cdbe.py`) and
+`dsviper-tools-qml`; web-cdbe is the browser-shaped sibling.
 
 ## Architecture
 
@@ -236,7 +243,7 @@ typed `update(...)` call enforces the rest at the dsviper layer.
 
 After commit, the response is a `redirect` back to
 `/documents_node/<a>/<c>/<i>/<node_uuid>`. This rerenders the document
-with the edited node's branch left `open`, so the user keeps their
+with the edited node's subtree left `open`, so the user keeps their
 place in the tree — without a single line of JavaScript.
 
 ## Why "no JavaScript" is the point

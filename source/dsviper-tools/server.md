@@ -6,7 +6,7 @@ operations.
 | Tool                          | Type   | Purpose                                      |
 |-------------------------------|--------|----------------------------------------------|
 | **commit_database_server.py** | Server | Expose CommitDatabase over RPC               |
-| **commit_admin.py**           | CLI    | Database administration (reset, sync, merge) |
+| **commit_admin.py**           | CLI    | Database administration (reset, sync, converge heads) |
 
 ---
 
@@ -86,7 +86,7 @@ db = CommitDatabase.connect_local("/tmp/project.sock")
 
 ## commit_admin.py
 
-Administration tool for CommitDatabase operations: reset, sync, and merge heads.
+Administration tool for CommitDatabase operations: reset, sync, and converge heads.
 
 ### Reset Database
 
@@ -101,16 +101,16 @@ This operation is destructive and cannot be undone. All commits except the
 initial commit will be deleted.
 ```
 
-### Reduce Heads (Merge)
+### Reduce Heads
 
 When multiple clients commit concurrently, the database may have multiple "heads"
-(concurrent streams). Use `reduce_heads` to merge them:
+(concurrent streams). Use `reduce_heads` to converge them:
 
 ```bash
-# Single merge pass
+# Single convergence pass
 python3 tools/commit_admin.py --database project.cdb reduce_heads
 
-# Continuous merge (loop mode)
+# Continuous convergence (loop mode)
 python3 tools/commit_admin.py --database project.cdb reduce_heads \
     --loop --update-interval 5
 ```

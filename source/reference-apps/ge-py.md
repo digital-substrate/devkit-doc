@@ -297,12 +297,12 @@ progress signals consumed by `DSCommitSyncLogDialog` (the sync log
 visible from the Admin menu). Three menu actions drive the workflow:
 
 - **Fetch** — pull remote commits into the local DAG without applying them.
-- **Push** — send unmerged local commits to the server.
+- **Push** — send local commits that the server does not yet have.
 - **Sync** — fetch + push in one step.
 
-The collaborative DAG itself is a property of the `CommitDatabase` — there
-is no separate "merge" step in the application. Merging is what the
-commit DAG is for.
+The shared DAG itself is a property of the `CommitDatabase` — there is no
+separate "merge" step in the application. Convergence is what the commit
+DAG is for.
 
 ### Embedded Python scripting — DSCodeEditorDialog
 

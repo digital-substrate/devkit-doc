@@ -92,7 +92,7 @@ static API / dynamic API
 commit
    A node in the versioned-data DAG. Captures a set of {term}`mutations
    <mutation>` against a parent commit. Conceptually similar to a git commit,
-   but for typed data rather than text. See {doc}`../dsviper/commit`.
+   but for typed data rather than text. See {doc}`../commit/index`.
 
 commit DAG
    The directed acyclic graph formed by commits and their parent links.
@@ -115,8 +115,11 @@ codec
 
 reference application
    An application bundled or distributed for the purpose of demonstrating
-   ecosystem usage end-to-end. `cdbe.py` and `dbe.py` exercise the dsviper
-   API; `ge-py` and `ge-qml` exercise the *whole* chain (DSM, Kibo, template,
-   components, runtime). Not products in their own right.
+   ecosystem usage end-to-end. `ge-py`, `ge-qml`, and `web-cdbe` exercise
+   the *whole* chain (DSM, Kibo, template, components, runtime) and live
+   in {doc}`reference-apps/index <../reference-apps/index>`. The generic
+   editors `cdbe.py` (commit-based) and `dbe.py` (plain CRUD) ship inside
+   `dsviper-tools` instead — they are tools, not reference applications.
+   None of these are products in their own right.
 
 ```

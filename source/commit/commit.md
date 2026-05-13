@@ -11,8 +11,8 @@ streams, and sync. Every change creates a commit, enabling undo/redo and concurr
 
 How you exercise the commit DAG determines which guarantees you can rely on
 and where validation belongs. Four user-facing modes — the first three are
-single-author, so the application arbitrates every change or merge and the
-dual-layer contract is not load-bearing. The fourth is where the contract
+single-author, so the application arbitrates every change or head merge and
+the dual-layer contract is not load-bearing. The fourth is where the contract
 on the next page becomes the centre of gravity.
 
 ### Time travel (read-only)
@@ -29,7 +29,7 @@ guarantees apply, plus tombstone semantics.
 
 ### Single-user exploration
 
-Diverge the DAG and keep parallel heads alive, merging on your own
+Diverge the DAG and keep parallel heads alive, merging heads on your own
 schedule. *Intent: explore alternatives in parallel* — same machinery as
 undo/redo, but you maintain multiple heads concurrently instead of
 replaying one. All structural guarantees apply, plus multi-head machinery.
@@ -50,9 +50,10 @@ provides:
   identified, surfaced, resolved (the git-merge / review model).
 - **Cooperation** — disjoint contributions assemble without conflict
   by construction.
-- **Mechanical convergence** — the engine merges deterministically with
-  no notion of "conflict": clashing intentions are silently reconciled
-  by structural rules. Structurally sound, semantically untrusted.
+- **Mechanical convergence** — the engine linearises streams
+  deterministically with no notion of "conflict": clashing intentions
+  are silently reconciled by structural rules. Structurally sound,
+  semantically untrusted.
 
 dsviper offers mechanical convergence. Cooperation is achievable by
 structuring work along disjoint paths
@@ -217,7 +218,7 @@ When two users edit different fields simultaneously:
 User A: update(attachment, key, path_to_name, "Alice")
 User B: update(attachment, key, path_to_email, "bob@example.com")
 
-After merge: Both updates apply (disjoint paths)
+After convergence: Both updates apply (disjoint paths)
 ```
 
 With `set()`, one user's changes would overwrite the other's.
@@ -276,8 +277,8 @@ engine — it's on the application.
   mutations and reads from the captured value.
 - **Prefer path-based mutators over `set()`** for fields edited
   concurrently. `set()` replaces the whole document, so disjoint edits
-  collide. `update`, `union_in_set`, `update_in_map`, etc. merge cleanly on
-  disjoint paths — see [Why Paths Matter](#why-paths-matter).
+  collide. `update`, `union_in_set`, `update_in_map`, etc. converge
+  cleanly on disjoint paths — see [Why Paths Matter](#why-paths-matter).
 - **Do not assume a mutation landed.** After convergence, mutations
   targeting non-existent documents or unresolved paths are silently
   dropped. If the outcome matters, read the state back and check.
@@ -291,5 +292,5 @@ engine — it's on the application.
 
 ## What's Next
 
-- [Blobs](blobs.md) - Binary data storage
-- [Serialization](serialization.md) - JSON and binary encoding
+- [Blobs](../dsviper/blobs.md) - Binary data storage
+- [Serialization](../dsviper/serialization.md) - JSON and binary encoding

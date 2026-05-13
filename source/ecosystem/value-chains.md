@@ -28,10 +28,13 @@ generated code needs to run inside a viper-based application. Other kibo
 templates can target other runtimes — kibo is not viper-specific.
 
 **dsviper-tools** also belongs to the toolchain side: CLI utilities
-(`dsm_util`) and GUI editors (`cdbe.py`, `dbe.py`) that operate on dsm models
-and dsviper databases throughout the development lifecycle. A QML variant
-(`dsviper-tools-qml`) provides Qt Quick versions of the same database
-browsers.
+(`dsm_util`) and two distinct GUI editors — `cdbe.py` (the canonical
+Commit Database Editor: a full-featured Qt Widgets tool for any
+`CommitDatabase`) and `dbe.py` (a standard CRUD inspector for the
+non-versioned `Database` backend). A QML variant (`dsviper-tools-qml`)
+provides Qt Quick versions of the same database browsers. The
+[`web-cdbe`](../reference-apps/web-cdbe.md) reference app is a web demo
+that ports the same generic-editor idea to a browser.
 
 ## The runtime (execution side)
 

@@ -56,74 +56,18 @@ Documentation
 
 .. toctree::
    :maxdepth: 2
-   :caption: Ecosystem
 
    ecosystem/index
-
-.. toctree::
-   :maxdepth: 2
-   :caption: DSM
-
    dsm/index
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Kibo
-
    kibo/index
-
-.. toctree::
-   :maxdepth: 2
-   :caption: kibo-template-viper
-
    kibo-template-viper/index
-
-.. toctree::
-   :maxdepth: 2
-   :caption: dsviper
-
    dsviper/index
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Commit
-
    commit/index
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Services
-
    services/index
-
-.. toctree::
-   :maxdepth: 2
-   :caption: dsviper API
-
    dsviper/api/index
-
-.. toctree::
-   :maxdepth: 2
-   :caption: dsviper-tools
-
    dsviper-tools/index
-
-.. toctree::
-   :maxdepth: 2
-   :caption: dsviper-components
-
    dsviper-components/index
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Commit Applications
-
    commit-apps/index
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Legal
-
    legal/index
 
 

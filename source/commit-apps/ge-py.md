@@ -1,4 +1,4 @@
-# ge-py — Graph Editor
+# ge-py
 
 PySide6 desktop application that exercises the **whole DevKit value chain**
 from a single DSM model: code generation with Kibo, persistence and

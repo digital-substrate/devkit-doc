@@ -1,4 +1,4 @@
-# The Pipeline: Describe → Generate → Use
+# The Pipeline
 
 The simplest mental model of the dsviper toolchain is a three-step pipeline.
 You **describe** your data model in DSM, **generate** typed code with Kibo,

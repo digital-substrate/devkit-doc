@@ -1,4 +1,4 @@
-# ge-qml — Graph Editor (QML)
+# ge-qml
 
 PySide6 + QML desktop application — the QML port of [ge-py](ge-py.md). Same
 DSM model, same generated `ge/` package, same hand-written `model/`

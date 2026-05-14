@@ -1,4 +1,4 @@
-# web-cdbe — Commit Database Editor (web)
+# web-cdbe
 
 Flask web application that demonstrates a **generic Commit Database
 Editor** built directly on top of `dsviper`. Pure HTML5, no JavaScript:

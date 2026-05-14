@@ -1,4 +1,4 @@
-# DevKit, dsviper, Viper — what's what
+# Naming
 
 Three names appear across the documentation and they refer to different
 things.

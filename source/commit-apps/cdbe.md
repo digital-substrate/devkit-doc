@@ -1,4 +1,4 @@
-# cdbe.py — Commit Database Editor
+# cdbe.py
 
 PySide6 desktop application that opens **any** commit database — no
 domain, no Kibo output, no business logic. Built almost entirely by

@@ -1,4 +1,4 @@
-# Database Server & Administration
+# Database Server
 
 Tools for running CommitDatabase as a network service and performing administrative
 operations.

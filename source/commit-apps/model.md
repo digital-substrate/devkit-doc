@@ -83,12 +83,160 @@ Python scripting, the Application Context exposes generated
 
 Function pools (and their bridges) exist for **two reasons**:
 
-* They expose C++ business logic to Python scripting through a typed
-  surface — the Python interpreter calls into pool functions, which
-  delegate to hand-written C++ code through generated bridges.
+* They expose C++ business logic to the **Viper runtime** through a
+  typed surface — typed methods registered with Viper's type system,
+  whose implementations are routed to hand-written C++ code through
+  the generated pool bridges.
 * They give the dispatch layer a uniform handle on actions —
   `store->dispatch("label", pool.function, args...)` — without
   knowing where the implementation lives.
+
+Once a pool is registered with Viper, **its Python availability is
+free**. Viper's "Metadata Everywhere" principle means every value
+and every function carries its type metadata at runtime; `dsviper`
+(the hand-maintained Python wrapper of Viper, shipped as a wheel on
+PyPI) introspects registered pools and calls them with automatic
+marshalling between Python values and Viper values. No per-pool
+Python binding is generated, none is written by hand — the same
+mechanism that lets `dsviper` expose any Viper type to Python
+exposes the pools too.
+
+#### How pools reach Python — Context injection + Viper introspection
+
+There is no per-pool Python binding to write or to generate. The
+application only needs to (1) embed a CPython interpreter, (2)
+import the `dsviper` and `app` extension modules — `dsviper`
+provides the introspection-driven Python view of the Viper runtime,
+and `app` is a thin application-side entry point that publishes the
+hand-written Python wrapper of the Application Context — and (3)
+inject the Context singleton as a Python global. From there, the
+pools held by the Context become callable from Python automatically:
+`dsviper` introspects the registered pool methods and marshalls
+arguments and return values through Viper's metadata.
+
+A real example, from the AppKit Graph Editor's
+`WorkspaceViewController.mm`:
+
+```objc
+// 1) Before Py_Initialize() — register the C++ extension modules
+//    that expose dsviper and the application's Context to Python.
+- (void)pythonInitTab {
+    PyImport_AppendInittab("dsviper", PyInit_dsviper);
+    PyImport_AppendInittab("app",     PyInit_app);
+}
+
+// 2) Initialize CPython and import the modules so they are ready in
+//    every script run from the embedded editor.
+- (void)pythonInit {
+    Py_Initialize();
+    // ... add the application's scripts/ folder to sys.path ...
+    PyImport_ImportModule("dsviper");
+    PyImport_ImportModule("app");
+}
+
+// 3) Expose the Application Context as `ctx` in the __main__ namespace.
+//    P_App_Context_New is generated — it wraps the C++ singleton in the
+//    typed Python class published by the `app` extension module.
+- (void)pythonInitMainModule {
+    auto const pb_main = PyImport_AddModule("__main__");
+    auto const context = GE::Context::Instance();
+    PyObject_SetAttrString(pb_main, "ctx", P_App_Context_New(context));
+}
+```
+
+From a script run inside the application's embedded Python editor,
+the Context is `ctx` and the pools held by the Context are reachable
+as its attributes. Calling `ctx.modelGraph.new_vertex(...)` reaches
+the hand-written C++ implementation through the generated pool
+bridge — with marshalling Python ↔ Viper handled automatically by
+`dsviper` from the runtime metadata, not by per-method generated
+glue:
+
+```python
+# A user script inside the embedded Python editor (Graph Editor)
+mutable = CommitMutableState(ctx.store.state())
+v = ctx.modelGraph.new_vertex(mutable.mutating(), ctx.graphKey, 42, position)
+ctx.store.commit_mutations("Random Vertex", mutable)
+```
+
+This is the C++-profile equivalent of what `PythonEditorModel(...,
+namespace_vars={...})` does for the Python profile (see ge-py,
+ge-qml, cdbe). The two profiles converge on the same scripting
+model — same `dispatch` semantics, same access to the store and to
+business operations — but they get there differently:
+
+* **Python profile** — business logic is already in Python; the
+  embedded editor receives `model.*` modules and the `Context` as
+  namespace globals. No bridge needed.
+* **C++ profile** — business logic is in C++; the Context (and its
+  hand-written Python wrapper `P_App_Context`) are published by the
+  application's `app` extension module and injected into `__main__`
+  as `ctx`. The pools held by the Context are Kibo-generated C++
+  classes registered with the Viper runtime; once registered, their
+  Python availability is automatic through `dsviper`'s introspection
+  of Viper's metadata. So the user reaches
+  `ctx.modelGraph.new_vertex(...)` through one hand-written hop (the
+  Context) and Viper's universal metadata-driven marshalling for
+  everything DSM-derived — no per-pool Python binding anywhere.
+
+#### The same mechanism: Dual Reality extended to functions
+
+This whole chain is the {term}`Dual Reality` pattern applied to
+**functions**, not just data. Where the data side of Dual Reality
+gives the developer typed classes (`Vertex`, `Edge`, …) over
+Viper's dynamic value tree, the function side gives the developer
+typed pool methods (`ctx.modelGraph.new_vertex(...)`) over Viper's
+dynamic, metadata-driven function registry. Same machinery on both
+sides: a static surface generated from the DSM for IDE comfort,
+bridged automatically to a dynamic Viper underneath for the
+language-agnostic substrate.
+
+Operational evidence is the **universal dynamic client** for Viper
+services. The entire scaffold in `dsviper-tools/service_client.py` is
+just two functional lines on top of the imports:
+
+```python
+# dsviper-tools/service_client.py
+from dsviper import Definitions
+from dsviper import ServiceRemote
+
+defs = Definitions()
+s = ServiceRemote.connect("localhost", "54328", defs)
+# From here: s.function_pool_funcs("Tools")["add"](32, 10), etc.
+```
+
+`ServiceRemote.connect(...)` returns a handle that exposes each
+pool's functions through a runtime-introspected dispatch dictionary
+(`s.function_pool_funcs(...)`, `s.attachment_function_pool_funcs(...)`).
+The same five-line scaffold connects to **any** Viper service — no
+per-service module, no compile-time schema, no codegen on the client
+side. Typed proxies generated by Kibo (per-pool Python and C++
+classes) layer optional ergonomics on top of the same dispatch — the
+{term}`Dual Reality` pattern's static side, available for IDE
+comfort but never required to call the service.
+
+For the full mechanism — how to expose pools as a network service,
+the Remote-Local protocol that lets stateful pools execute on the
+server but mutate on the client, and the safety guarantees that fall
+out of `CommitMutableState` isolation — see
+[Services](../services/services.md).
+
+```{tip}
+In the C++ profile, the path from a hand-written domain function in
+C++ to a callable Python expression involves **no per-pool binding
+code at all** — neither hand-written nor generated. Three layers
+combine: **Kibo generates** the C++ pool classes (e.g. `ModelGraph`)
+and the typed data classes (`Vertex`, `Edge`, …) from the DSM, all
+registered with the Viper runtime; **Viper's "Metadata Everywhere"
+principle** makes every registered type and method introspectable at
+runtime; **`dsviper`** uses that introspection to expose any Viper
+type and method to Python with automatic marshalling, once and for
+all. The application only writes the Context (`GE::Context`), its
+Python wrapper (`P_App_Context`), and the `app` extension module
+entry point — a few hundred lines that publish the Context. The
+`dsviper` wheel is hand-maintained but shared across applications
+(it wraps the Viper C++ runtime, not anything DSM-derived).
+```
 
 A real Application Context, abridged from the Graph Editor C++
 reference (`GE::Context`):

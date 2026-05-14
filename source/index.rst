@@ -92,6 +92,12 @@ Documentation
 
 .. toctree::
    :maxdepth: 2
+   :caption: Services
+
+   services/index
+
+.. toctree::
+   :maxdepth: 2
    :caption: dsviper API
 
    dsviper/api/index

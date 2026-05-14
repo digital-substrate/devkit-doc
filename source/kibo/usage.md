@@ -132,8 +132,9 @@ repo so it can evolve independently of any consumer.
 ### Complete generate.py Example
 
 A production-ready script combining the viper pack and a project-local
-template pack. This mirrors the script used by the Raptor Editor, which
-generates four artefacts from a single DSM:
+template pack. This mirrors the script used by the
+[Raptor Editor](../dsm/samples/raptor_editor.rst), which generates
+four artefacts from a single DSM:
 
 - viper C++ code under `src/RE/` (shared pack),
 - a custom `RaptorLogic` C++ binding under `src/RaptorLogic/` (project-local pack),

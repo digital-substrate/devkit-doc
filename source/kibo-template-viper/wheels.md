@@ -1,11 +1,6 @@
 # Python Wheels
 
-This chapter covers creating distributable Python wheels from your DSM model.
-
-## What is a Wheel?
-
-A wheel is Python's standard distribution format. It packages your generated
-code for easy installation via pip.
+Creating distributable Python wheels from your DSM model.
 
 ## Quick Start
 
@@ -32,23 +27,8 @@ build-backend = "setuptools.build_meta"
 name = "model"
 version = "1.0.0"
 description = "Python wrapper for model"
-authors = [
-    {name = "Your Name", email = "you@example.com"}
-]
-maintainers = [
-    {name = "Your Name", email = "you@example.com"}
-]
-readme = "README.rst"
 requires-python = ">=3.14"
-license = "LicenseRef-Proprietary"
-license-files = ["LICENSE"]
-classifiers = [
-    "Development Status :: 5 - Production/Stable",
-    "Programming Language :: Python :: 3",
-    "Intended Audience :: Developers",
-    "Topic :: Software Development",
-]
-keywords = ["model"]
+dependencies = ["dsviper>=1.2.0"]
 
 [tool.setuptools.packages.find]
 include = ["model"]
@@ -99,24 +79,7 @@ model/
 └── resources.py                         # Embedded definitions (base64 blob)
 ```
 
-## Dependencies
-
-Your wheel depends on `dsviper`. Add to `pyproject.toml`:
-
-```toml
-[project]
-dependencies = [
-    "dsviper>=1.2.0"
-]
-```
-
 ## Distribution
-
-### Local Installation
-
-```bash
-pip3 install model-1.0.0-py3-none-any.whl
-```
 
 ### Private PyPI
 
@@ -138,18 +101,5 @@ dsviper>=1.2.0
 
 ## Version Management
 
-Update version in `pyproject.toml` for each release:
-
-```toml
-[project]
-version = "1.1.0"  # Bump for new releases
-```
-
-Follow semantic versioning:
-- **Major** (2.0.0): Breaking changes to DSM model
-- **Minor** (1.1.0): New concepts, structures, or attachments
-- **Patch** (1.0.1): Bug fixes, documentation
-
-## What's Next
-
-- [Templates](../kibo/templates.md) - What templates are and how they fit together
+Bump the `version` field in `pyproject.toml` for each release; follow semver
+against your DSM model surface.

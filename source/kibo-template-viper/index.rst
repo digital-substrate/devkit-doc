@@ -57,16 +57,12 @@ This split is the :term:`Dual Reality` pattern :
 * **Runtime Reality** — dynamic, metadata-driven, what the engine
   actually manipulates.
 
-Both realities coexist for the same data ; the generated adapters
-translate between them. The two share the same engine — there is no
-parallel implementation to keep in sync, in either direction, and no
-divergence possible between the C++ and Python sides.
-
-Applications that do not need the typed comfort can bypass the static
-side entirely and work directly against the dynamic runtime (see
-:term:`static API / dynamic API`). That is what generic tools like
-:doc:`cdbe.py <../dsviper-tools/editors>` do — they introspect any
-opened database without ever traversing the bridge.
+Both realities coexist for the same data; the generated adapters translate
+between them, sharing one engine — no parallel implementation, no C++/Python
+divergence. Applications that do not need the typed comfort can bypass the
+static side and work directly against the dynamic runtime (see
+:term:`static API / dynamic API`) — that is what generic tools like
+:doc:`cdbe.py <../dsviper-tools/editors>` do.
 
 
 Topics
@@ -82,7 +78,6 @@ Topics
 Status
 ------
 
-Part of DevKit 1.2.x. Stable; new templated features are added to the pack
-as the ecosystem grows. For Kibo's CLI, the generic template format, and
-how to write your own template targeting another runtime, see the
-:doc:`Kibo section <../kibo/index>`.
+Part of DevKit 1.2.x (LTS, feature-locked). For Kibo's CLI, the generic
+template format, and how to write your own template targeting another
+runtime, see the :doc:`Kibo section <../kibo/index>`.

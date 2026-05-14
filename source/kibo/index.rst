@@ -66,6 +66,4 @@ Topics
 Status
 ------
 
-Part of DevKit 1.2.x. Kibo itself is stable; new templated features are
-added in :doc:`kibo-template-viper <../kibo-template-viper/index>` and
-other templates as the ecosystem grows.
+Part of DevKit 1.2.x (LTS, feature-locked).

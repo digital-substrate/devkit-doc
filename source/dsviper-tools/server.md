@@ -153,7 +153,3 @@ python3 tools/commit_admin.py --socket-path /tmp/project.sock sync local.cdb
 
 ---
 
-## What's Next
-
-- [Editors](editors.md) - GUI tools for database exploration
-- [dsm_util](dsm_util.md) - Creating databases from DSM

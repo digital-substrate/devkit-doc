@@ -142,7 +142,3 @@ python3 tools/dsm_util.py create_python_package model.dsm
 python3 -c "import model; print(model)"
 ```
 
-## What's Next
-
-- [Kibo](../kibo/usage.md) - The code generator
-- [IDE Integration](../dsm/ide.md) - VS Code and JetBrains

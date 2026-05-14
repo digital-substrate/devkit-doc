@@ -8,33 +8,19 @@ backends** and play different roles:
 | **cdbe.py** | Commit Database Editor                 | `CommitDatabase` | Commit-based application                |
 | **dbe.py**  | Database Editor (standard CRUD)        | `Database`       | Plain CRUD inspector                    |
 
-- **`cdbe.py` is the canonical generic editor for any `CommitDatabase`.**
-  Full-featured Qt Widgets desktop tool: introspects the database through
-  the dynamic API and exposes the full commit DAG (history, undo/redo,
-  divergence, head convergence, sync, embedded Python scripting). It is
-  the working tool the DevKit ships for everyday Commit Engine inspection.
-  [`web-cdbe`](../commit-apps/web-cdbe.md) is a derived demo that ports
-  the same idea to a browser — useful as a minimum-surface example, not
-  a substitute.
-- **`dbe.py` is a standard CRUD editor.** It targets the non-versioned
-  `Database` ([see `database.md`](../dsviper/database.md)) — no commits, no
-  history, no DAG. Use it for plain key-value inspection of `.vpr` files.
-
 Both are built with PySide6 and share components from
 [`dsviper-components`](../dsviper-components/index.rst).
+[`web-cdbe`](../commit-apps/web-cdbe.md) is a browser-side demo of the
+same generic-editor idea — minimum-surface example, not a substitute for
+`cdbe.py`.
 
 ---
 
 ## cdbe.py - Commit Database Editor
 
-A generic Qt Widgets GUI that opens any `CommitDatabase`, introspects it
-through the dynamic API, and exposes its full commit DAG — history,
-document browsing, mutations, undo/redo, synchronisation with a remote
-commit server, and embedded Python scripting. This is the canonical
-Commit Engine editor; the web demo
-[`web-cdbe`](../commit-apps/web-cdbe.md) is a derivative aimed at
-showing the same idea with a deliberately minimal surface (HTML5, no
-JavaScript).
+A generic Qt Widgets GUI that opens any `CommitDatabase` and exposes its
+full commit DAG: history, document browsing, mutations, undo/redo,
+synchronisation with a remote commit server, embedded Python scripting.
 
 ```{figure} /_static/images/tools/cdbe.png
 :alt: CommitDatabase Editor GUI showing commit history tree, attachment browser, and document inspector panels
@@ -139,19 +125,6 @@ python3 tools/dbe.py project.vpr           # Open specific database
 | **Database Inspector** | View UUID, codec, definitions     |
 | **Network Connection** | Connect to remote Database server |
 
-### When to Use dbe.py vs cdbe.py
-
-The choice is dictated by the **backend** of the file you have. Reach
-for `cdbe.py` whenever there is a commit DAG; reach for `dbe.py` when
-there is not.
-
-| Scenario                                      | Tool    |
-|-----------------------------------------------|---------|
-| Inspect or edit a `CommitDatabase` (any case) | cdbe.py |
-| Undo/redo, commit history, head convergence   | cdbe.py |
-| Synchronise with a remote commit server       | cdbe.py |
-| Inspect a plain `Database` (`.vpr`)           | dbe.py  |
-
 ---
 
 ## ds_components - Shared GUI Library
@@ -172,7 +145,3 @@ These components can be reused in custom applications built on Viper.
 
 ---
 
-## What's Next
-
-- [Server](server.md) - Running a CommitDatabase server
-- [dsm_util](dsm_util.md) - Creating databases from DSM

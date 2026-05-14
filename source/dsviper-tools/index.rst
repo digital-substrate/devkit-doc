@@ -8,15 +8,11 @@ distinction), and the server that exposes a ``CommitDatabase`` over the
 network. Together with :doc:`Kibo <../kibo/index>`, it forms the day-to-day
 developer experience around the dsviper runtime.
 
-The toolkit covered here is the Qt Widgets variant (``dsviper-tools``). A
-parallel QML variant (``dsviper-tools-qml``) provides Qt Quick versions of
-the same database browsers — see its repository for status.
+The toolkit covered here is the Qt Widgets variant; ``dsviper-tools-qml``
+provides Qt Quick versions of the same database browsers.
 
-For IDE integration (VS Code and JetBrains plugins for DSM syntax), see
-:doc:`../dsm/ide` — the plugins target the DSM language, not dsviper, so
-they live in the DSM section. For Python wheel packaging, see
-:doc:`../kibo-template-viper/wheels` — the wheel layout is one of the
-features emitted by the viper template pack.
+See also :doc:`../dsm/ide` (VS Code / JetBrains plugins) and
+:doc:`../kibo-template-viper/wheels` (Python wheel packaging).
 
 
 Place in the ecosystem
@@ -84,5 +80,4 @@ Topics
 Status
 ------
 
-Part of DevKit 1.2.x. The toolkit evolves alongside the dsviper runtime
-and the Kibo template ecosystem.
+Part of DevKit 1.2.x (LTS, feature-locked).

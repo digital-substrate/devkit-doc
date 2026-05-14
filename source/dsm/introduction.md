@@ -94,15 +94,10 @@ attachment<Vertex, Vertex2DAttributes> render2DAttributes;
 
 ## Data Definitions Extracted from Code
 
-DSM extracts data definitions from the programming language. Instead of scattering
-struct definitions across C++ headers, DSM captures the data model in a single,
-language-independent notation — enabling Kibo to generate infrastructure for
-multiple targets from one source of truth.
-
-This means DSM can adapt to an existing codebase: translating C++ data structures
-into DSM is a straightforward extraction of what already exists. The
-[Raptor Editor sample](samples/raptor_editor.rst) demonstrates this approach, where
-an industrial C++ data model was translated directly into DSM.
+DSM captures the data model in a single, language-independent notation — Kibo
+then generates infrastructure for multiple targets from it. The
+[Raptor Editor sample](samples/raptor_editor.rst) shows the approach applied
+to an industrial C++ codebase.
 
 ## The Data Model is a Set of Sealed Definitions
 
@@ -115,94 +110,7 @@ Unlike traditional databases where schemas have versions, DSM takes a different 
 This enables schema evolution through adding new attachments rather than migrating
 existing data (see [Attachments](attachments.md) for details).
 
-## Example: A Complete Data Model
+## A Complete Data Model
 
-Here is a complete data model from the Graph Editor, demonstrating the **recommended
-pattern** with multiple attachments per concept:
-
-```dsm
-namespace Graph {27c49329-a399-415c-baf0-db42949d2ba2} {
-
-// Concepts
-concept Graph;
-concept Vertex;
-concept Edge;
-
-// Documents for Graph
-struct GraphTopology {
-    set<key<Vertex>> vertexKeys;
-    set<key<Edge>> edgeKeys;
-};
-
-struct GraphSelection {
-    set<key<Vertex>> vertexKeys;
-    set<key<Edge>> edgeKeys;
-};
-
-struct GraphDescription {
-    string name;
-    string author;
-    string createDate;
-};
-
-// Documents for Vertex
-struct Position {
-    float x;
-    float y;
-};
-
-struct Color {
-    float red;
-    float green;
-    float blue;
-};
-
-struct Vertex2DAttributes {
-    Position position;
-};
-
-struct VertexVisualAttributes {
-    int64 value;
-    Color color;
-};
-
-// Document for Edge
-struct EdgeTopology {
-    key<Vertex> vaKey;
-    key<Vertex> vbKey;
-};
-
-// Graph attachments - each concern is separate
-attachment<Graph, GraphTopology> topology;         // Structure
-attachment<Graph, GraphSelection> selection;       // UI state
-attachment<Graph, GraphDescription> description;   // Metadata
-attachment<Graph, map<string, string>> tags;       // User-defined tags
-attachment<Graph, xarray<string>> comments;        // Ordered comments
-
-// Vertex attachments - rendering and appearance are separate
-attachment<Vertex, Vertex2DAttributes> render2DAttributes;
-attachment<Vertex, VertexVisualAttributes> visualAttributes;
-
-// Edge attachment
-attachment<Edge, EdgeTopology> topology;
-
-};
-```
-
-**Why multiple attachments matter:**
-
-- A Vertex can exist with only position data (no visual attributes)
-- Selection state is separate from topology (UI concern vs data concern)
-- Adding a new feature (e.g., `physicsAttributes`) requires **no migration**
-- Each attachment is independent and optional
-
-This model defines:
-- Three concepts (Graph, Vertex, Edge)
-- Eight document types (structures for different concerns)
-- Eight attachments (five for Graph, two for Vertex, one for Edge)
-
-## What's Next
-
-- [Types and Structures](types.md) - Learn about all available types in DSM
-- [Concepts and Hierarchies](concepts.md) - Understand concept inheritance with `is a`
-- [Attachments](attachments.md) - Master the recommended patterns for schema design
+For a complete model that exercises these notions, see the Graph Editor
+example in [Attachments](attachments.md#graph-editor-example).

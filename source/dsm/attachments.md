@@ -192,41 +192,6 @@ if topology.is_nil():
     mutating.set(a_topology, graph_key, topology)
 ```
 
-## Real-World Comparison
-
-### Graph Editor (Recommended)
-
-```dsm
-// Vertex can have:
-// - render2DAttributes only (topology-only vertex)
-// - visualAttributes only (invisible vertex with metadata)
-// - Both (fully rendered vertex)
-// - Neither (just a key reference)
-
-attachment<Vertex, Vertex2DAttributes> render2DAttributes;
-attachment<Vertex, VertexVisualAttributes> visualAttributes;
-```
-
-### Raptor Editor (Single-Attachment)
-
-```dsm
-// Surface MUST have all properties defined
-// No way to have a "lightweight" surface
-
-struct SurfaceProperties {
-    string name = "Surface";
-    map<key<LightingLayer>, key<Texture>> lightmaps;
-    key<Mesh> meshKey;
-    Vector color = {1.0, 1.0, 1.0};
-    set<string> tags;
-    SurfaceBillboardMode billboardMode;
-    optional<key<MeshAnimation>> meshAnimationKey;
-    SurfaceMirrorPlane mirrorPlane;
-};
-
-attachment<Surface, SurfaceProperties> properties;
-```
-
 ## Design Guidelines
 
 ### Do
@@ -260,7 +225,3 @@ attachment<Vertex, VertexPhysics> physics;      // New feature
 attachment<Vertex, VertexAnnotation> annotation; // New feature
 ```
 
-## What's Next
-
-- [Function Pools](function_pools.md) - Define operations on your data model
-- [Code Generation](code_generation.md) - Generate infrastructure from DSM

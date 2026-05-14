@@ -4,39 +4,9 @@ This chapter describes how to structure applications built with DSM and Viper. T
 architecture separates concerns into layers, enabling code reuse across platforms and
 languages.
 
-## The 3-Tier Architecture
+## The Application Stack
 
-Applications built with Viper follow a 3-tier pattern:
-
-```text
-┌────────────────────────────────────────────────────────────┐
-│  TIER 1: PRESENTATION (Platform-Specific UI)               │
-│  AppKit (macOS) / Qt (cross-platform) / PySide (Python)    │
-└────────────────────────────┬───────────────────────────────┘
-                             │
-┌────────────────────────────▼───────────────────────────────┐
-│  TIER 2: LOGIC (Context + Bridges + Components)            │
-│  Application Context (orchestration), generated pools,     │
-│  hand-written business code                                │
-└────────────────────────────┬───────────────────────────────┘
-                             │
-┌────────────────────────────▼───────────────────────────────┐
-│  TIER 3: DATA (Viper Runtime)                              │
-│  CommitDatabase, CommitStore, persistence, dsviper binding │
-└────────────────────────────────────────────────────────────┘
-```
-
-### Tier Responsibilities
-
-| Tier             | Responsibility                                           | Platform-Specific? |
-|------------------|----------------------------------------------------------|--------------------|
-| **Presentation** | UI framework, windows, dialogs                           | Yes                |
-| **Logic**        | Application Context, bridges, business components        | Partially          |
-| **Data**         | Viper runtime (CommitDatabase, CommitStore), persistence | No (shared)        |
-
-## The Full Application Stack
-
-For business applications with domain logic, the stack expands:
+Applications built on the Viper runtime follow a layered pattern:
 
 ```text
 ┌────────────────────────────────────────────────────────────┐
@@ -152,11 +122,6 @@ void Context::dispatchAction(std::string const & label,
     store->commitMutations(label, ms);
 }
 ```
-
-The previous "Store-as-application-singleton" pattern is superseded: the
-generic store concerns (database, state, undo/redo, notifications) live in
-`Viper::CommitStore`, and the application-specific concerns (which pools,
-which domain state, which actions) live in the application's `Context`.
 
 ### Layer 3: Bridges
 
@@ -294,54 +259,8 @@ if store.can_undo():
 
 ## Design Principles
 
-### Separation of Concerns
-
-Each layer has a single responsibility:
-
-- **UI**: Only presentation, no business logic
-- **Context**: Orchestration only — owns the `CommitStore` and the pools, does
-  not reimplement them
-- **Bridges**: Connection, not logic
-- **Business**: Domain rules, not infrastructure
-- **Generated**: Infrastructure, not business
-
-### Platform Isolation
-
-Platform-specific code lives only in Layer 1. The other layers are shared or generated.
-
-### Generated vs Hand-Written
-
-| Generated (Kibo) | Hand-Written        |
-|------------------|---------------------|
-| Data types       | Business logic      |
-| Serialization    | Bridges             |
-| Persistence      | Store orchestration |
-| Pool marshalling | UI layer            |
-
-### Minimal Porting Effort
-
-To port to a new platform:
-
-1. Implement the Notifier adapter (~50 lines)
-2. Create UI components matching existing patterns
-3. Wire up the main window
-
-The business logic and infrastructure remain unchanged.
-
-## Summary
-
-| Principle              | Implementation                                |
-|------------------------|-----------------------------------------------|
-| **Separation**         | 6 distinct layers with clear responsibilities |
-| **Reuse**              | Layers 3-6 shared across platforms            |
-| **Generation**         | Kibo generates infrastructure (Layer 5)       |
-| **Multi-language**     | Same architecture for C++ and Python          |
-| **Platform isolation** | Only Layer 1 is platform-specific             |
-
-This architecture enables building complex applications that work across platforms while
-minimizing duplicated code.
-
-## What's Next
-
-- [dsviper](../dsviper/index.rst) - Use the dsviper Python API
-- [dsviper-tools](../dsviper-tools/index.rst) - Master the development tools
+Each layer has a single concern: UI is presentation only, Context is
+orchestration only, Bridges connect rather than implement, Business carries
+domain rules, Generated provides infrastructure. Only Layer 1 is
+platform-specific; Layers 3-6 are reused across platforms. Porting to a new
+UI framework reduces to a Notifier adapter and a fresh UI layer.

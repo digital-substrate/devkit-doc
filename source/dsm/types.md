@@ -21,23 +21,21 @@ struct CameraDepthOfField {
 
 DSM supports both signed and unsigned integers of various sizes:
 
-| Type     | Range                   | C++ Mapping     |
-|----------|-------------------------|-----------------|
-| `uint8`  | 0 to 255                | `std::uint8_t`  |
-| `uint16` | 0 to 65,535             | `std::uint16_t` |
-| `uint32` | 0 to 4 billion          | `std::uint32_t` |
-| `uint64` | 0 to 18 quintillion     | `std::uint64_t` |
-| `int8`   | -128 to 127             | `std::int8_t`   |
-| `int16`  | -32,768 to 32,767       | `std::int16_t`  |
-| `int32`  | -2 billion to 2 billion | `std::int32_t`  |
-| `int64`  | ±9 quintillion          | `std::int64_t`  |
+| Type     | Range                   |
+|----------|-------------------------|
+| `uint8`  | 0 to 255                |
+| `uint16` | 0 to 65,535             |
+| `uint32` | 0 to 4 billion          |
+| `uint64` | 0 to 18 quintillion     |
+| `int8`   | -128 to 127             |
+| `int16`  | -32,768 to 32,767       |
+| `int32`  | -2 billion to 2 billion |
+| `int64`  | ±9 quintillion          |
 
 ```dsm
-// From Raptor Editor: Iray rendering settings
-struct IraySettingsProperties {
+struct Settings {
     uint32 maxSamples = 512;
     uint32 maxPathLength = 12;
-    float maxRenderTime = 3600.0;  // In seconds
 };
 ```
 
@@ -46,11 +44,9 @@ struct IraySettingsProperties {
 The `float` and `double` types represent floating-point numbers.
 
 ```dsm
-// From Raptor Editor: Camera optical properties
-struct CameraOpticalProperties {
-    float fov = 0.785398;  // Field of view in radians
-    CameraDepthOfField depthOfField;
-    CameraMotionBlur motionBlur;
+struct OpticalProperties {
+    float fov = 0.785398;  // radians
+    float aperture;
 };
 ```
 
@@ -84,7 +80,7 @@ DSM provides two types for binary data:
 - `blob_id`: Reference to external binary data (for large payloads like textures)
 
 ```dsm
-// From Raptor Editor: Mesh geometry data
+// Mesh geometry data
 struct MeshProperties {
     Aabb aabb;
     int32 triangleCount;
@@ -110,14 +106,14 @@ The `enum` type defines a fixed set of named values. Enumerations are limited to
 256 cases.
 
 ```dsm
-// From Raptor Editor: Material types
+// Material types
 enum MaterialStandardType {
     diffuse,
     diffuseSpecular,
     transparent
 };
 
-// From Raptor Editor: Light attenuation models
+// Light attenuation models
 enum LightAttenuationType {
     none,
     linearSlow,
@@ -143,20 +139,20 @@ struct MaterialStandardProperties {
 Structures aggregate fields into composite types. Fields can have default values.
 
 ```dsm
-// From Raptor Editor: Basic 3D vector
+// Basic 3D vector
 struct Vector {
     float x;
     float y;
     float z;
 };
 
-// From Raptor Editor: Axis-aligned bounding box
+// Axis-aligned bounding box
 struct Aabb {
     Vector min;
     Vector max;
 };
 
-// From Raptor Editor: 3D transformation
+// 3D transformation
 struct Transform {
     Vector translation;
     Vector orientation;
@@ -168,7 +164,7 @@ Structures can be nested but **cannot be recursive**. For recursive relationship
 use `optional<key<T>>`:
 
 ```dsm
-// From Raptor Editor: Configuration expression tree
+// Configuration expression tree
 struct ConfigurationExpressionProperties {
     ConfigurationExpressionOperationType operationType = .defined;
     optional<key<ConfigurationExpression>> leftExpressionKey;   // Recursive via key
@@ -207,14 +203,14 @@ struct S {
 The `vector<T>` type is a dynamic array.
 
 ```dsm
-// From Raptor Editor: Camera groups contain cameras
+// Camera groups contain cameras
 struct CameraGroupProperties {
     string name = "Camera Group";
     vector<key<CameraGroup>> groupKeys;  // Child groups
     vector<key<Camera>> cameraKeys;      // Cameras in this group
 };
 
-// From Raptor Editor: Bezier path with control points
+// Bezier path with control points
 struct BezierPathProperties {
     string name = "BezierPath";
     Vector color = {1.0, 1.0, 1.0};
@@ -227,14 +223,14 @@ struct BezierPathProperties {
 The `set<T>` type is an ordered collection of unique values.
 
 ```dsm
-// From Raptor Editor: Surface tags for filtering
+// Surface tags for filtering
 struct SurfaceProperties {
     string name = "Surface";
     set<string> tags;
     // ...
 };
 
-// From Raptor Editor: Configuration defines
+// Configuration defines
 struct ProductProperties {
     // ...
     set<string> configurationDefines;
@@ -247,7 +243,7 @@ struct ProductProperties {
 The `map<K, V>` type associates keys with values.
 
 ```dsm
-// From Raptor Editor: Material assignments per surface
+// Material assignments per surface
 struct AspectLayerProperties {
     string name = "AspectLayer";
     bool enabled;
@@ -255,7 +251,7 @@ struct AspectLayerProperties {
     map<key<Surface>, vector<LabelAssignment>> labelAssignments;
 };
 
-// From Raptor Editor: Environment assignments
+// Environment assignments
 struct EnvironmentLayerProperties {
     string name = "EnvironmentLayer";
     bool enabled = true;
@@ -269,7 +265,7 @@ struct EnvironmentLayerProperties {
 The `optional<T>` type represents a value that may or may not be present.
 
 ```dsm
-// From Raptor Editor: Optional references
+// Optional references
 struct CameraProperties {
     string name = "Camera";
     PointOfView pointOfView;
@@ -326,7 +322,7 @@ The `key<T>` type references an instance of a concept. It acts like a strongly-t
 UUID:
 
 ```dsm
-// From Raptor Editor: Model references various concepts
+// Model references various concepts
 struct ModelProperties {
     string name = "Model";
     vector<key<LightingLayer>> lightingLayerKeys;
@@ -368,14 +364,14 @@ to the type's "zero":
 | struct            | all fields at zero  |
 
 ```dsm
-// From Raptor Editor: Transform with sensible defaults
+// Transform with sensible defaults
 struct Transform {
     Vector translation;              // {0, 0, 0}
     Vector orientation;              // {0, 0, 0}
     Vector scaling = {1.0, 1.0, 1.0}; // Identity scale
 };
 
-// From Raptor Editor: Camera view defaults
+// Camera view defaults
 struct PointOfView {
     Vector target;                    // {0, 0, 0}
     Vector eye = {2.0, 2.0, 2.0};    // Offset from origin
@@ -383,7 +379,3 @@ struct PointOfView {
 };
 ```
 
-## What's Next
-
-- [Concepts and Hierarchies](concepts.md) - Learn about concept inheritance
-- [Attachments](attachments.md) - Associate documents with keys

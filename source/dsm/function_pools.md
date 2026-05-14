@@ -118,26 +118,6 @@ set<key<Edge>> selectedEdges(key<Graph> graphKey);
 };
 ```
 
-### Integrity Pool
-
-Demonstrates referential integrity repair strategies:
-
-```dsm
-// From Graph Editor: Integrity repair operations
-attachment_function_pool ModelIntegrity {95e0f859-65e0-419e-8b81-77547c73b759} {
-
-"""Restore the graph integrity by creating missing elements."""
-mutable void restoreIntegrityByCreating(key<Graph> graphKey);
-
-"""Restore the graph integrity by removing elements."""
-mutable void restoreIntegrityByDeleting(key<Graph> graphKey);
-
-"""Restore the graph integrity by respawning elements."""
-mutable void restoreIntegrityByRestoring(key<Graph> graphKey);
-
-};
-```
-
 ## Raptor Editor Pool Example
 
 ### Material Assignment Pool
@@ -231,19 +211,8 @@ mutable void updateGraphComment(key<Graph> graphKey, uuid position, string comme
 Each pool has a UUID that identifies it uniquely:
 
 ```dsm
-// Different pools for different concerns
-attachment_function_pool ModelGraph {9bdcbb5b-76e9-426f-b8a6-a10ed2d949e6} {
-...
-};
-attachment_function_pool ModelSelection {5318ad8d-79d8-498e-b080-eccf15e4a74d} {
-...
-};
-attachment_function_pool ModelIntegrity {95e0f859-65e0-419e-8b81-77547c73b759} {
-...
-};
-function_pool Tools {dc9740c9-9d1d-4c1e-9caa-4c8843b91e82} {
-...
-};
+attachment_function_pool ModelGraph {9bdcbb5b-76e9-426f-b8a6-a10ed2d949e6} { ... };
+function_pool             Tools      {dc9740c9-9d1d-4c1e-9caa-4c8843b91e82} { ... };
 ```
 
 ## Design Guidelines
@@ -283,7 +252,3 @@ set<key<Vertex>> selectedVertices(key<Graph> graphKey);
 mutable void selectAll(key<Graph> graphKey);
 ```
 
-## What's Next
-
-- [Code Generation](code_generation.md) - Generate infrastructure from DSM
-- [Architecture](architecture.md) - Application structure with generated code

@@ -28,19 +28,14 @@ Place in the ecosystem
 * **Related repositories** —
 
   * `digital-substrate/dsm-samples
-    <https://github.com/digital-substrate/dsm-samples>`_ — canonical reference
-    DSM models (``Tuto``, ``Ge``, ``Re``). The ``Tuto`` model used in this
-    documentation is mirrored here.
+    <https://github.com/digital-substrate/dsm-samples>`_ — reference DSM
+    models (``Tuto``, ``Ge``, ``Re``).
   * `digital-substrate/dsm-vscode
-    <https://github.com/digital-substrate/dsm-vscode>`_ — VS Code plugin for
-    DSM syntax. Install from the
-    `VS Code Marketplace
-    <https://marketplace.visualstudio.com/items?itemName=DigitalSubstrate.ds-dsm>`_.
+    <https://github.com/digital-substrate/dsm-vscode>`_ — VS Code plugin.
   * `digital-substrate/dsm-jetbrains
-    <https://github.com/digital-substrate/dsm-jetbrains>`_ — JetBrains plugin
-    for DSM syntax. Install from the
-    `JetBrains Marketplace
-    <https://plugins.jetbrains.com/plugin/31186-dsm-language-support>`_.
+    <https://github.com/digital-substrate/dsm-jetbrains>`_ — JetBrains plugin.
+
+  Install instructions: see :doc:`ide`.
 
 
 Quickstart
@@ -102,5 +97,4 @@ Topics
 Status
 ------
 
-Part of DevKit 1.2.x. The language is stable; additions are made
-conservatively with backward compatibility in mind.
+Part of DevKit 1.2.x (LTS, feature-locked).

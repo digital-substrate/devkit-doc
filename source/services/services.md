@@ -6,12 +6,6 @@ an immutable container that can be exposed over a network socket. The
 clients use the same typed pool API whether they are calling local or
 remote functions — the network is hidden by the runtime.
 
-This page documents the mechanism end to end: the two pool types
-services accept, the server-side composition, the two client profiles
-(Python and C++), the **Remote-Local protocol** that makes stateful
-pools safe over RPC, and the safety guarantees the design carries.
-
-
 ## Two pool types
 
 A service exposes two kinds of typed pool, each with distinct
@@ -140,12 +134,8 @@ s = ServiceRemote.connect("localhost", "54328", defs)
 result = s.function_pool_funcs("Tools")["add"](32, 10)   # returns 42
 ```
 
-This is **the generic universal client**: connect to any Viper
-service, discover its pools and functions through Viper's metadata,
-call them through the dispatch dictionary. No per-service binding,
-no schema known at compile time, no module to install per target
-service. The minimal connection scaffold ships with `dsviper-tools`
-as `service_client.py` — five lines from which any diagnostic, REPL
+The minimal connection scaffold ships with `dsviper-tools` as
+`service_client.py` — five lines from which any diagnostic, REPL
 exploration, or schema-agnostic adapter extends.
 
 ### The static Python path — Kibo-generated typed proxies
@@ -338,22 +328,6 @@ CLIENT                                         SERVER
 | Client crash before persist   | Client-local state lost                | Impossible      |
 | Server sends invalid data     | Client validates before persisting     | Impossible      |
 | Partial mutations             | Never reach the backing store          | Impossible      |
-
-Four mechanisms compose this guarantee:
-
-* **Isolation** — mutations only touch the client's
-  `AttachmentMutating`; no path crosses to a persistent backing store
-  without the client's own action.
-* **Client control** — only the client invokes whatever persistence
-  primitive its backend provides. The server has no path to the
-  client's storage.
-* **Atomicity** — the backing store decides what "persisting" means
-  (and what is atomic). Partial server-driven mutations are bounded
-  by what the client chooses to flush.
-* **Stateless server** — the server only sees an
-  `AttachmentMutatingRemote` proxy; it has no view of the client's
-  storage tier and could not write to it if it wanted to.
-
 
 ## When to use a service
 

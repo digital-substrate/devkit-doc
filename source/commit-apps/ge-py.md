@@ -358,34 +358,11 @@ means **every script ends up as a single commit in the DAG**, replayable
 and undoable like any other operation.
 ```
 
-### Why this matters for any new Commit application
-
-The value the shared library provides is not "widgets you can re-use" — it
-is **the full administrative surface of a Commit-based application,
-already implemented**. The work left to a new application is the part
-that is genuinely domain-specific: the DSM model, the business functions
-in `model/`, and the rendering of the domain in
-`components/`. Everything else — history browsing, undo, sync, scripting,
-inspection — is acquired by composition.
-
 For the catalogue of what `dsviper-components` exposes and the
 conventions for instantiating each widget, see
-[dsviper-components](../dsviper-components/index.rst).
-
-```{note}
-**The limit case — generic database editors.** The same composition recipe
-powers the model-agnostic editors `cdbe` and `dbe` in
-[`dsviper-tools`](https://github.com/digital-substrate/dsviper-tools) (Qt
-Widgets) and
-[`dsviper-tools-qml`](https://github.com/digital-substrate/dsviper-tools-qml)
-(Qt Quick). They follow exactly the same principles as ge-py / ge-qml,
-but because they are not specialised for any particular DSM model, the
-**central widget is itself a shared component** —
-`DSDocumentsCommitStore` in Widgets, `DS.DocumentsPanel` driven by
-`DocumentsPanelModel` in QML. There are no domain panels at all: when
-the model is unknown at compile time, the entire UI collapses to what
-the shared library already provides.
-```
+[dsviper-components](../dsviper-components/index.rst). The model-agnostic
+limit case — generic database editors with no DSM model of their own —
+is walked through in [cdbe](cdbe.md).
 
 ## Where to read first
 

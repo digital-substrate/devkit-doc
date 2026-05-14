@@ -394,36 +394,10 @@ through `ctx.dispatch("label", lambda m: …)` — every script ends up as a
 single commit in the DAG, replayable and undoable like any other
 operation.
 
-### Why this matters for any new QML Commit application
-
-The library does the same job in QML that the Widgets variant does in
-ge-py: **the full administrative surface of a Commit-based application is
-already implemented**, exposed as `QObject` models that the application
-registers and that QML files bind against by name. The work left to a new
-QML application is the part that is genuinely domain-specific — DSM
-model, business functions in `model/`, domain bridge models
-(`vertex_model.py`, `list_model.py`, …) and the QML panels that bind to
-them. Everything else — history browsing, undo, sync, scripting,
-inspection — is acquired by composition.
-
 For the catalogue of model classes and the conventions for instantiating
-each one, see
-[dsviper-components](../dsviper-components/index.rst).
-
-```{note}
-**The limit case — generic database editors.** The same composition recipe
-powers the model-agnostic editors `cdbe` and `dbe` in
-[`dsviper-tools-qml`](https://github.com/digital-substrate/dsviper-tools-qml)
-(Qt Quick) and
-[`dsviper-tools`](https://github.com/digital-substrate/dsviper-tools)
-(Qt Widgets). They follow exactly the same principles as ge-qml / ge-py,
-but because they are not specialised for any particular DSM model, the
-**central widget is itself a shared component** —
-`DS.DocumentsPanel` driven by `DocumentsPanelModel` in QML,
-`DSDocumentsCommitStore` in Widgets. There are no domain panels at all:
-when the model is unknown at compile time, the entire UI collapses to
-what the shared library already provides.
-```
+each one, see [dsviper-components](../dsviper-components/index.rst). The
+model-agnostic limit case — generic database editors with no DSM model of
+their own — is walked through in [cdbe](cdbe.md).
 
 ## Where to read first
 

@@ -16,9 +16,7 @@ Each component retains its own copyright. Inclusion in dsviper does not
 re-license these components — the Digital Substrate Commercial License
 applies to dsviper itself, not to the embedded third-party code.
 
-The full attribution and license texts are reproduced below, also shipped
-inside every wheel under
-`dsviper-<version>.dist-info/licenses/THIRD-PARTY-NOTICES.txt`.
+Full texts below.
 
 ```{literalinclude} THIRD-PARTY-NOTICES.txt
 :language: text

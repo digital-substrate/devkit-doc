@@ -88,8 +88,6 @@ Topics
    concepts
    attachments
    function_pools
-   code_generation
-   architecture
    ide
    samples/index
 

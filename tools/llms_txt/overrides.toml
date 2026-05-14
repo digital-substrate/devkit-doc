@@ -65,16 +65,6 @@ title = "Function pools"
 description = "Functional surfaces over the model."
 sort = 50
 
-[overrides."https://docs.digitalsubstrate.io/dsm/code_generation.html"]
-title = "Code generation"
-description = "How DSM maps to C++ and Python."
-sort = 60
-
-[overrides."https://docs.digitalsubstrate.io/dsm/architecture.html"]
-title = "Architecture"
-description = "How the DSM compiler is structured."
-sort = 70
-
 [overrides."https://docs.digitalsubstrate.io/dsm/ide.html"]
 title = "IDE support"
 description = "Editor integration."

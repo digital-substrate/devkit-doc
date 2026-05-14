@@ -21,8 +21,6 @@ DevKit is the **distribution** that bundles **DSM** (the modeling language), **K
 - [Types](https://docs.digitalsubstrate.io/dsm/types.html): Primitive and composite types.
 - [Attachments](https://docs.digitalsubstrate.io/dsm/attachments.html): The attachment mechanism.
 - [Function pools](https://docs.digitalsubstrate.io/dsm/function_pools.html): Functional surfaces over the model.
-- [Code generation](https://docs.digitalsubstrate.io/dsm/code_generation.html): How DSM maps to C++ and Python.
-- [Architecture](https://docs.digitalsubstrate.io/dsm/architecture.html): How the DSM compiler is structured.
 - [IDE support](https://docs.digitalsubstrate.io/dsm/ide.html): Editor integration.
 
 ## Kibo — code generation

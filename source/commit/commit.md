@@ -64,15 +64,6 @@ explicit application layer on top — that is what the
 
 ---
 
-## CommitDatabase
-
-`CommitDatabase` provides versioned data storage:
-
-- History is preserved as a DAG of commits
-- You can read from any point in history
-
----
-
 ## Opening a CommitDatabase
 
 ```pycon
@@ -196,20 +187,6 @@ users edit concurrently.
 >>> mutating.update(TUTO_A_USER_LOGIN, key, TUTO_P_LOGIN_NICKNAME, "alice_updated")
 ```
 
-### Set Operations
-
-```pycon
->>> mutating.union_in_set(GRAPH_A_TOPOLOGY, graph_key, GRAPH_P_TOPOLOGY_VERTEX_KEYS, {new_vertex_key})
-
->>> mutating.subtract_in_set(GRAPH_A_TOPOLOGY, graph_key, GRAPH_P_TOPOLOGY_VERTEX_KEYS, {deleted_vertex_key})
-```
-
-### Map Operations
-
-```pycon
->>> mutating.union_in_map(attachment, key, path_to_map, {"new_key": "new_value"})
-```
-
 ### Why Paths Matter
 
 When two users edit different fields simultaneously:
@@ -288,9 +265,3 @@ engine — it's on the application.
   enforce uniqueness, referential integrity, and cross-field invariants
   when you consume the state, not when you build the mutations.
 
----
-
-## What's Next
-
-- [Blobs](../dsviper/blobs.md) - Binary data storage
-- [Serialization](../dsviper/serialization.md) - JSON and binary encoding

@@ -36,73 +36,32 @@ Place in the ecosystem
 Where it sits in the value chain
 --------------------------------
 
-The four links of the toolchain compose as follows:
-
-1. **DSM** declares the *shape* of the data — concepts, structures,
-   attachments, function pools.
-2. **The Commit Engine** persists that data as a versioned, content-
-   addressed DAG, with deterministic convergence between concurrent
-   streams.
-3. **dsviper** (Python) and Viper (C++) expose the engine to application
-   code, plus the supporting type and value systems.
-4. **Applications** consume the result — typed editors, web tools,
-   reference apps.
-
-Without the Commit Engine, ``dsviper`` reads and writes typed data
-against the plain ``Database`` backend — flat key-value, no history,
-no DAG. The Commit Engine is what adds versioning on top: an immutable
-commit DAG, undo/redo, multi-head exploration, and deterministic
-convergence between concurrent streams.
+Without the Commit Engine, ``dsviper`` reads and writes against the plain
+``Database`` backend — flat key-value, no history. The Commit Engine adds
+versioning: an immutable DAG, undo/redo, multi-head exploration, and
+deterministic convergence between concurrent streams. See
+:doc:`../ecosystem/value-chains` for the broader picture.
 
 
 Tools that ship with the DevKit
 -------------------------------
 
-Several artefacts in the DevKit operate directly on the Commit Engine.
-The canonical generic editor is the Qt Widgets tool ``cdbe.py``; the rest
-are infrastructure around it.
+Several DevKit artefacts operate directly on the Commit Engine:
 
-* :doc:`cdbe.py <../dsviper-tools/editors>` — the canonical **Commit
-  Database Editor**. A full-featured Qt Widgets GUI that opens any
-  ``CommitDatabase``, browses the commit DAG, applies typed mutations,
-  drives undo/redo, syncs with a remote commit server, and embeds a
-  Python editor. This is the production editor the DevKit ships for
-  Commit Engine inspection.
-* :doc:`commit_database_server.py <../dsviper-tools/server>` — exposes a
-  ``CommitDatabase`` over the network for multi-client synchronisation,
-  paired with ``commit_admin.py`` for head-convergence and reset
-  operations.
-* :doc:`dsm_util.py create_commit_database <../dsviper-tools/dsm_util>` —
-  creates a new ``CommitDatabase`` from a DSM model.
-* :doc:`dsviper-components <../dsviper-components/index>` — Qt-side
-  observers built on the ``CommitStore`` notifier pattern, reused by
-  ``cdbe.py``, ``ge-py``, and ``ge-qml``.
+* :doc:`cdbe.py <../dsviper-tools/editors>` — Commit Database Editor (Qt Widgets).
+* :doc:`commit_database_server.py <../dsviper-tools/server>` — network access + ``commit_admin.py``.
+* :doc:`dsm_util.py create_commit_database <../dsviper-tools/dsm_util>` — create a ``CommitDatabase`` from DSM.
+* :doc:`dsviper-components <../dsviper-components/index>` — Qt-side observers on the ``CommitStore`` notifier.
 
-Note that ``dbe.py`` is **not** part of this list: it is the standard
-CRUD editor for the non-versioned ``Database`` backend and does not
-touch the Commit Engine.
+``dbe.py`` is *not* in this list — it targets the non-versioned ``Database``
+backend.
 
 
-Commit Applications built on the Commit Engine
-----------------------------------------------
+Commit Applications
+-------------------
 
-Three Commit Applications demonstrate distinct usage regimes on top
-of the engine:
-
-* :doc:`ge-py <../commit-apps/ge-py>` — Graph Editor (Qt Widgets):
-  a desktop application built on a ``CommitStore`` facade, exercising
-  undo/redo and a typed domain on top of the engine.
-* :doc:`ge-qml <../commit-apps/ge-qml>` — Graph Editor (QML): same
-  domain and ``CommitStore`` facade as ``ge-py``, ported to the Qt Quick
-  variant of ``dsviper-components``.
-* :doc:`web-cdbe <../commit-apps/web-cdbe>` — a Flask web demo that
-  ports the generic Commit-database-editor idea (the same role ``cdbe.py``
-  plays in Qt Widgets) to a browser context, with deliberately minimal
-  surface — HTML5, no JavaScript. Useful as a worked example, not as a
-  substitute for ``cdbe.py``.
-
-See :doc:`../commit-apps/index` for the full list and the engineering
-context around each app.
+For Commit Applications built on the engine (``ge-py``, ``ge-qml``,
+``web-cdbe``), see :doc:`../commit-apps/index`.
 
 
 Topics
@@ -118,6 +77,4 @@ Topics
 Status
 ------
 
-Part of DevKit 1.2.x. The engine is stable; the dual-layer contract and
-modes-of-use vocabulary above are the canonical framing for any code that
-relies on the engine's guarantees.
+Part of DevKit 1.2.x (LTS, feature-locked).

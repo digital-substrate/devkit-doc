@@ -1,12 +1,8 @@
 # Architecture
 
-`dsviper-components` is what every Commit-based application built on
-`dsviper` ends up needing: the **standard administrative, collaborative
-and scripting surface** of a Commit application, already implemented and
-ready to compose into a domain-specific UI. Rather than a collection of
-loose widgets, it is a coherent set of components that share two
-conventions: **signal-based state updates** and **constructor-based
-store injection**.
+The library's components share two conventions: **signal-based state
+updates** (the Notifier Bridge) and **constructor-based store injection**
+(composition over inheritance).
 
 ## The Notifier Bridge
 
@@ -139,14 +135,11 @@ notifications.
 
 ## Why this matters
 
-The library's value is **not** "widgets you can re-use". It is the
-realisation that the administrative surface of a Commit application —
-DAG browsing, undo navigation, blob inspection, remote sync, embedded
-scripting — is **identical across applications**, because it operates
-on the runtime concepts, not on any specific domain. Adopting
-`dsviper-components` means delegating that entire surface to the
-shared library and writing only the part that is genuinely
-domain-specific.
+The administrative surface of a Commit application — DAG browsing, undo
+navigation, blob inspection, remote sync, embedded scripting — operates on
+the runtime concepts, not on any specific domain, so it is identical
+across applications. Adopting `dsviper-components` delegates that surface
+and leaves only the domain-specific part to write.
 
 For the catalogue of what the library exposes, see
 [Widgets](widgets.md). For a worked example of the integration in a

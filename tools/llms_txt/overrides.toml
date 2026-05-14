@@ -1,0 +1,251 @@
+# Per-URL overrides applied by tools/build_llms_txt.py when expanding
+# {{auto:...}} markers in tools/llms_txt/template.md.
+#
+# Defaults: title comes from the first `# Heading` in each .md file;
+# description comes from the paragraph immediately following the H1.
+# Override here when the page's first paragraph is the wrong shape
+# (too long, too narrative) for an llms.txt entry. Keep one-liners
+# tight — ≤ 100 chars where possible.
+#
+# Fields:
+#   title        — short label for the bullet text
+#   description  — one-liner after the colon
+#   sort         — integer order key within an auto block (lower = earlier)
+#   skip         — exclude from any auto block
+#
+# URL keys are the full https://docs.digitalsubstrate.io/.../*.html
+# emitted by _url_from_path() — match exactly.
+
+# ---- Orientation -----------------------------------------------------
+
+[overrides."https://docs.digitalsubstrate.io/ecosystem/naming.html"]
+title = "Ecosystem naming"
+description = "Canonical disambiguation of DevKit, dsviper, Viper and surrounding terms."
+sort = 10
+
+[overrides."https://docs.digitalsubstrate.io/ecosystem/value-chains.html"]
+title = "Value chains"
+description = "How DSM, Kibo, dsviper, components and tools fit together end-to-end."
+sort = 20
+
+[overrides."https://docs.digitalsubstrate.io/ecosystem/pipeline.html"]
+title = "Pipeline"
+description = "Day-to-day modeling-to-app workflow."
+sort = 30
+
+[overrides."https://docs.digitalsubstrate.io/ecosystem/glossary.html"]
+title = "Glossary"
+description = "Terms used across the documentation."
+sort = 40
+
+# ---- DSM -------------------------------------------------------------
+
+[overrides."https://docs.digitalsubstrate.io/dsm/introduction.html"]
+title = "Introduction"
+description = "What DSM is and why it exists."
+sort = 10
+
+[overrides."https://docs.digitalsubstrate.io/dsm/concepts.html"]
+title = "Concepts"
+description = "Core abstractions."
+sort = 20
+
+[overrides."https://docs.digitalsubstrate.io/dsm/types.html"]
+title = "Types"
+description = "Primitive and composite types."
+sort = 30
+
+[overrides."https://docs.digitalsubstrate.io/dsm/attachments.html"]
+title = "Attachments"
+description = "The attachment mechanism."
+sort = 40
+
+[overrides."https://docs.digitalsubstrate.io/dsm/function_pools.html"]
+title = "Function pools"
+description = "Functional surfaces over the model."
+sort = 50
+
+[overrides."https://docs.digitalsubstrate.io/dsm/code_generation.html"]
+title = "Code generation"
+description = "How DSM maps to C++ and Python."
+sort = 60
+
+[overrides."https://docs.digitalsubstrate.io/dsm/architecture.html"]
+title = "Architecture"
+description = "How the DSM compiler is structured."
+sort = 70
+
+[overrides."https://docs.digitalsubstrate.io/dsm/ide.html"]
+title = "IDE support"
+description = "Editor integration."
+sort = 80
+
+# ---- Kibo ------------------------------------------------------------
+
+[overrides."https://docs.digitalsubstrate.io/kibo/usage.html"]
+title = "Usage"
+description = "Running Kibo to produce per-app Bridge code."
+sort = 10
+
+[overrides."https://docs.digitalsubstrate.io/kibo/templates.html"]
+title = "Templates"
+description = "Available templates."
+sort = 20
+
+[overrides."https://docs.digitalsubstrate.io/kibo/template_model.html"]
+title = "Template model"
+description = "How to author or extend a template."
+sort = 30
+
+# ---- kibo-template-viper ---------------------------------------------
+
+[overrides."https://docs.digitalsubstrate.io/kibo-template-viper/features.html"]
+title = "Features"
+description = "What the first-party template pack emits — C++/Python surfaces, RPC, dispatch."
+sort = 10
+
+[overrides."https://docs.digitalsubstrate.io/kibo-template-viper/wheels.html"]
+title = "Wheels"
+description = "Generated wheel layout and build options."
+sort = 20
+
+# ---- dsviper ---------------------------------------------------------
+
+[overrides."https://docs.digitalsubstrate.io/dsviper/installation.html"]
+title = "Installation"
+description = "`pip install dsviper`."
+sort = 10
+
+[overrides."https://docs.digitalsubstrate.io/dsviper/hello.html"]
+title = "Hello, dsviper"
+description = "Minimal first program."
+sort = 20
+
+[overrides."https://docs.digitalsubstrate.io/dsviper/tutorial.html"]
+title = "Tutorial"
+description = "End-to-end walkthrough."
+sort = 30
+
+[overrides."https://docs.digitalsubstrate.io/dsviper/database.html"]
+title = "Database"
+description = "Opening and managing a CommitDatabase."
+sort = 40
+
+[overrides."https://docs.digitalsubstrate.io/dsviper/structures.html"]
+title = "Structures"
+description = "Records and aggregates."
+sort = 50
+
+[overrides."https://docs.digitalsubstrate.io/dsviper/collections.html"]
+title = "Collections"
+description = "Lists, sets, maps."
+sort = 60
+
+[overrides."https://docs.digitalsubstrate.io/dsviper/types_values.html"]
+title = "Types and values"
+description = "Type system at runtime."
+sort = 70
+
+[overrides."https://docs.digitalsubstrate.io/dsviper/blobs.html"]
+title = "Blobs"
+description = "Binary payload handling."
+sort = 80
+
+[overrides."https://docs.digitalsubstrate.io/dsviper/serialization.html"]
+title = "Serialization"
+description = "On-disk and wire formats."
+sort = 90
+
+[overrides."https://docs.digitalsubstrate.io/dsviper/dsm.html"]
+title = "DSM from Python"
+description = "Loading DSM definitions dynamically."
+sort = 100
+
+[overrides."https://docs.digitalsubstrate.io/dsviper/errors.html"]
+title = "Errors"
+description = "Error model and exceptions."
+sort = 110
+
+# ---- Commit Engine ---------------------------------------------------
+
+[overrides."https://docs.digitalsubstrate.io/commit/commit.html"]
+title = "Commit"
+description = "The commit DAG over your data — modes of use, dual-layer contract."
+sort = 10
+
+[overrides."https://docs.digitalsubstrate.io/commit/commit_contract.html"]
+title = "Commit contract"
+description = "Mutation rules and invariants."
+sort = 20
+
+# ---- Services --------------------------------------------------------
+
+[overrides."https://docs.digitalsubstrate.io/services/services.html"]
+title = "Services"
+description = "Typed business logic across the wire — function pools, Remote-Local protocol, Dual Reality client paths."
+
+# ---- Commit Application Model ----------------------------------------
+
+[overrides."https://docs.digitalsubstrate.io/commit-apps/model.html"]
+title = "Model"
+description = "The architectural pattern — Application Context, dispatch surface, notifier, two language profiles."
+sort = 10
+
+[overrides."https://docs.digitalsubstrate.io/commit-apps/cdbe.html"]
+title = "cdbe"
+description = "Commit Database Editor — generic Commit Application reference."
+sort = 20
+
+[overrides."https://docs.digitalsubstrate.io/commit-apps/ge-py.html"]
+title = "ge-py"
+description = "Pure-Python reference application (Graph Editor)."
+sort = 30
+
+[overrides."https://docs.digitalsubstrate.io/commit-apps/ge-qml.html"]
+title = "ge-qml"
+description = "Qt Quick / QML reference application (Graph Editor)."
+sort = 40
+
+[overrides."https://docs.digitalsubstrate.io/commit-apps/web-cdbe.html"]
+title = "web-cdbe"
+description = "Web-based commit-database editor."
+sort = 50
+
+# ---- Tools and components --------------------------------------------
+
+[overrides."https://docs.digitalsubstrate.io/dsviper-tools/editors.html"]
+title = "Editors"
+description = "Standalone editor applications."
+sort = 10
+
+[overrides."https://docs.digitalsubstrate.io/dsviper-tools/dsm_util.html"]
+title = "dsm_util"
+description = "CLI utility for DSM model inspection."
+sort = 20
+
+[overrides."https://docs.digitalsubstrate.io/dsviper-tools/server.html"]
+title = "Server"
+description = "The dsviper server component."
+sort = 30
+
+[overrides."https://docs.digitalsubstrate.io/dsviper-components/widgets.html"]
+title = "Widgets"
+description = "Reusable UI widgets over dsviper."
+sort = 40
+
+[overrides."https://docs.digitalsubstrate.io/dsviper-components/architecture.html"]
+title = "Component architecture"
+description = "How components are structured."
+sort = 50
+
+# ---- Optional --------------------------------------------------------
+
+[overrides."https://docs.digitalsubstrate.io/legal/license.html"]
+title = "License"
+description = "Digital Substrate Commercial License 1.2 (SPDX `LicenseRef-DigitalSubstrate-Commercial-1.2`) — Evaluation and Commercial modes."
+sort = 10
+
+[overrides."https://docs.digitalsubstrate.io/legal/third_party_notices.html"]
+title = "Third-party notices"
+description = "Embedded BSD-3-Clause / MIT / zlib-style / public-domain components."
+sort = 20

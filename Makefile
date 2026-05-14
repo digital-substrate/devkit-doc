@@ -12,18 +12,29 @@ BUILDDIR      = build
 help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-.PHONY: help Makefile notebooklm notebooklmzip distzip pdf check
+.PHONY: help Makefile notebooklm notebooklmzip distzip pdf check llmstxt llmstxt-check
 
 # Documentation version (from conf.py `release` — keep in sync).
 DOC_VERSION ?= 1.2
 
 # Run all quality gates in sequence. Exit non-zero on the first failure
 # so this target is suitable for a git pre-commit hook.
-check:
+check: llmstxt-check
 	@$(SPHINXBUILD) -M doctest "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 	@$(SPHINXBUILD) -M linkcheck "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 	@$(SPHINXBUILD) -M coverage "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 	@echo "all checks passed"
+
+# Regenerate the canonical $(SOURCEDIR)/_static/llms.txt from template +
+# overrides + per-page front-matter. Idempotent on a clean tree.
+llmstxt:
+	@python tools/build_llms_txt.py
+
+# Gate for `make check`: regenerate to memory and diff against the
+# committed file. Fails if the dev edited a .md page (changing its H1
+# or first paragraph) without re-running `make llmstxt`.
+llmstxt-check:
+	@python tools/build_llms_txt.py --check
 
 # Build markdown bundles for NotebookLM and autonomous LLM agents.
 # Produces one .md per maillon of the value chain in build/notebooklm/.

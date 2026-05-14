@@ -96,8 +96,3 @@ Between them they cover the table below:
      - ``ViperError``, ``Error.parse()`` for structured error reporting
    * - **Logging**
      - ``Logging``, ``LoggerConsole`` for operation tracing
-
-These two editors serve as comprehensive examples for building your own
-dsviper applications — ``cdbe.py`` is the natural reference when building
-a commit-based application, ``dbe.py`` when you only need plain CRUD on a
-``Database``.

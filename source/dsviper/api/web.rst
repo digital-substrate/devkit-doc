@@ -152,39 +152,10 @@ The ``Html`` class provides ready-to-use rendering:
 Qt Desktop Integration
 ----------------------
 
-The same ``Html`` helpers work in Qt/PySide6 applications via ``QTextEdit``:
-
-.. code-block:: python
-
-   from PySide6.QtWidgets import QTextEdit
-   from dsviper import Html, CommitDatabase
-
-   # In a Qt dialog or widget
-   class InspectDialog:
-       def __init__(self):
-           self.text_edit = QTextEdit()
-
-       def show_definitions(self, db: CommitDatabase):
-           # Get DSM definitions with HTML formatting
-           dsm_defs = db.definitions().to_dsm_definitions()
-           content = Html.dsm_definitions(dsm_defs, show_documentation=True)
-
-           # Build complete HTML document
-           style = Html.style()
-           body = Html.body(content)
-           document = Html.document("DSM Definitions", style, body)
-
-           # Display in QTextEdit
-           self.text_edit.setHtml(document)
-
-       def show_value(self, value):
-           content = Html.value(value, use_description=True)
-           document = Html.document("Value", Html.style(), Html.body(content))
-           self.text_edit.setHtml(document)
-
-This pattern is used by both ``cdbe.py`` (Commit Database Editor) and
-``dbe.py`` (Database Editor) to display definitions and values with
-syntax highlighting.
+The same ``Html`` helpers work in Qt/PySide6 applications: build an
+``Html.document(...)`` and pass it to ``QTextEdit.setHtml()``. Used by both
+``cdbe.py`` and ``dbe.py`` to display definitions and values with syntax
+highlighting.
 
 Choosing the Right Approach
 ---------------------------

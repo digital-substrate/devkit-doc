@@ -1,8 +1,7 @@
 # DevKit, dsviper, Viper — what's what
 
 Three names appear across the documentation and they refer to different
-things. This page is the canonical disambiguation; other sections should link
-here rather than re-explain.
+things.
 
 ## DevKit
 
@@ -37,12 +36,6 @@ serialization, and RPC, and exposes them as Python classes and functions.
 kibo-template-viper, dsviper-tools, offline docs); installing dsviper itself
 is a separate ``pip`` step.
 
-The `dsviper` PyPI package is built from the **Viper** source — there is no
-separate `dsviper` repository on GitHub. Searching the
-`digital-substrate` organisation for "dsviper" returns ecosystem repos that
-*depend on* dsviper (`dsviper-tools`, `dsviper-components`, `dsviper-blender`,
-…), not the runtime itself.
-
 ## Viper
 
 *The C++ engine behind dsviper.*
@@ -56,13 +49,9 @@ future, it would consume Viper directly.
 
 ## How they layer
 
-In practice:
-
-- You write Python code that imports `dsviper`.
-- `dsviper` calls into Viper under the hood (C++ through Python bindings).
-- You install **dsviper** from PyPI (`pip install dsviper`); the DevKit ZIP,
-  installed separately, gives you the rest of the toolchain (kibo, editors,
-  offline docs).
+You write Python that imports `dsviper`; `dsviper` calls into Viper (C++)
+through Python bindings. Install `dsviper` from PyPI; the DevKit ZIP gives
+you the toolchain around it (kibo, editors, offline docs).
 
 Most developers only deal with **dsviper** in code and **DevKit** as a
 download path. Viper is the layer below — usually not touched directly today.

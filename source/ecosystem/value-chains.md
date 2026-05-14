@@ -28,13 +28,9 @@ generated code needs to run inside a viper-based application. Other kibo
 templates can target other runtimes — kibo is not viper-specific.
 
 **dsviper-tools** also belongs to the toolchain side: CLI utilities
-(`dsm_util`) and two distinct GUI editors — `cdbe.py` (the
-Commit Database Editor: a full-featured Qt Widgets tool for any
-`CommitDatabase`) and `dbe.py` (a standard CRUD inspector for the
-non-versioned `Database` backend). A QML variant (`dsviper-tools-qml`)
-provides Qt Quick versions of the same database browsers. The
-[`web-cdbe`](../commit-apps/web-cdbe.md) Commit Application is a web
-demo that ports the same generic-editor idea to a browser.
+(`dsm_util`) and two Qt Widgets editors — `cdbe.py` for `CommitDatabase`,
+`dbe.py` for the non-versioned `Database`. A QML variant
+(`dsviper-tools-qml`) mirrors them in Qt Quick.
 
 ## The runtime (execution side)
 
@@ -47,10 +43,8 @@ dsviper  →  dsviper-components  →  Commit Application Model
 **dsviper** — the Python runtime. Strong-typed Python API over the Viper C++
 engine. The foundation: type system, value system, commit DAG, database tier.
 Distributed exclusively on PyPI (`pip install dsviper`) — not bundled in the
-DevKit ZIP. Its public test suite lives in
-[`digital-substrate/dsviper-tests`](https://github.com/digital-substrate/dsviper-tests)
-and exercises every API surface — a useful corpus of runnable usage
-examples beyond the doctested snippets in this guide.
+DevKit ZIP. Public test suite at
+[`digital-substrate/dsviper-tests`](https://github.com/digital-substrate/dsviper-tests).
 
 **dsviper-components** — reusable building blocks built on top of dsviper.
 Consumed by applications. Comes in two parallel tracks: `dsviper-components`
@@ -71,24 +65,11 @@ end-to-end (DSM, Kibo, template, dsviper-components, runtime) are:
 - `ge-qml` — Graph Editor, PySide6 desktop app (Qt Quick / QML).
 - `web-cdbe` — Flask web application, server-rendered HTML5.
 
-About **Viper** itself — the C++ engine behind dsviper — see [naming](naming.md).
-Viper is not currently distributed standalone.
-
 ## Where the chains meet
 
-The two chains converge at the **artifact**: the toolchain produces a typed
-Python package (and optionally a database schema); the runtime consumes it.
-
-A typical project flow:
-
-1. Author a `model.dsm` describing your data model.
-2. Run `kibo` with `kibo-template-viper` to emit a typed Python package.
-3. Build an application that imports that package and uses dsviper at runtime.
-4. Throughout, use `dsviper-tools` (`cdbe`, `dbe`, `dsm_util`) to inspect,
-   validate, and manage databases.
-
-For the visual 3-step pipeline framing (Describe → Generate → Use), see
-[pipeline](pipeline.md).
+The two chains meet at the **artifact**: the toolchain produces a typed
+Python package; the runtime consumes it. See [pipeline](pipeline.md) for the
+step-by-step view.
 
 ## Dependency rules
 

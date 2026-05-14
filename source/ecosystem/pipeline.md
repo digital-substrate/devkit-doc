@@ -59,17 +59,5 @@ serialization layer, or version control yourself.
 
 → Reference: {doc}`../dsviper/index`.
 
-## What sits around the pipeline
-
-The three-step framing is the simplest view. In practice the ecosystem layers
-two more dimensions on top:
-
-- **dsviper-tools** intervene at any step — validate models (`dsm_util`),
-  inspect generated databases (`cdbe`, `dbe`), expose a database over the
-  network (`commit_database_server`).
-- **dsviper-components** sit above the pipeline at runtime — applications
-  consume them alongside the generated package.
-- **Reference applications** (`ge-py`, `ge-qml`) wire the entire chain
-  end-to-end as worked examples — model + generation + components + runtime.
-
-When the pipeline view becomes too narrow, jump to [value-chains](value-chains.md).
+When you need the structural view — components, dependency rules, partial
+uses — see [value-chains](value-chains.md).

@@ -6,15 +6,17 @@ per maillon of the value chain. Bundles are numerically prefixed so the
 intended reading order — orientation first, then dependency-ordered deep
 dives — is conveyed even when a tool ingests them out of order:
 
-    00-devkit-ecosystem  Map: naming, value-chains, pipeline, glossary,
-                         and Commit Application GitHub URLs (an agent
-                         fetches the actual app code from those repos
-                         on demand)
+    00-devkit-ecosystem  Map: naming, value-chains, pipeline, glossary
     10-devkit-dsm        The modeling language (chain entry point)
     20-devkit-kibo       Code generation (DSM → C++ / Python)
     30-devkit-dsviper    Python runtime: API and concepts
     35-devkit-commit     The Commit Engine: versioned persistence,
                          modes of use, dual-layer contract
+    36-devkit-commit-apps  The Commit Application Model: pattern, two
+                         language profiles, instances (cdbe, ge-py,
+                         ge-qml, web-cdbe)
+    37-devkit-services   The Service mechanism: function pools across
+                         the wire, Remote-Local protocol, safety
     40-devkit-tools      Tools and UI components consuming dsviper
 
 Each original page is preceded by a `<!-- FILE: <relative-path> -->` marker
@@ -61,8 +63,8 @@ class Bundle:
 BUNDLES: tuple[Bundle, ...] = (
     Bundle(
         "00-devkit-ecosystem",
-        "Orientation — naming, value chains, pipeline, glossary, Commit Application pointers. Start here.",
-        ("index.md", "ecosystem", "commit-apps"),
+        "Orientation — naming, value chains, pipeline, glossary. Start here.",
+        ("index.md", "ecosystem"),
     ),
     Bundle(
         "10-devkit-dsm",
@@ -84,6 +86,16 @@ BUNDLES: tuple[Bundle, ...] = (
         "35-devkit-commit",
         "The Commit Engine — versioned persistence: DAG, modes of use, dual-layer contract.",
         ("commit",),
+    ),
+    Bundle(
+        "36-devkit-commit-apps",
+        "The Commit Application Model — pattern (Application Context, two language profiles, dispatch, notification, dual-layer contract) and walkthroughs (cdbe, ge-py, ge-qml, web-cdbe).",
+        ("commit-apps",),
+    ),
+    Bundle(
+        "37-devkit-services",
+        "The Service mechanism — function pools promoted over the wire: server composition, Dual Reality client paths (universal dynamic client + Kibo-generated typed proxies), Remote-Local protocol, safety by AttachmentMutating isolation.",
+        ("services",),
     ),
     Bundle(
         "40-devkit-tools",

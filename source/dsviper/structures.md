@@ -292,27 +292,5 @@ string
 
 ## Using Structures with Databases
 
-Structures are typically stored via attachments. See [DSM](dsm.md)
-for defining attachments and [Database](database.md) for persistence patterns.
-
-```{note}
-The "Quick preview" snippet below depends on a DSM model compiled by Kibo
-(`TUTO_A_USER_LOGIN` is generated). It is illustrative — see the
-[Tutorial](tutorial.md) for a self-contained working example.
-```
-
-```pycon
-# With DSM definitions loaded
->>> key = TUTO_A_USER_LOGIN.create_key()
->>> login = TUTO_A_USER_LOGIN.create_document()
->>> login.nickname = "alice"
-
-# Store in database
->>> db.set(TUTO_A_USER_LOGIN, key, login)
-```
-
-## What's Next
-
-- [DSM](dsm.md) - Define data models with attachments
-- [Database](database.md) - Persisting structures
-- [Serialization](serialization.md) - JSON and binary encoding
+Structures are typically stored via attachments — see the
+[Tutorial](tutorial.md) for an end-to-end example.

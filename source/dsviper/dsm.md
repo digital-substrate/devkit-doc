@@ -263,8 +263,3 @@ blob(...)
 'DSMDefinitions'
 ```
 
-## What's Next
-
-- [Tutorial](tutorial.md) - Complete workflow using DSM with CommitDatabase
-- [Database](database.md) - Persistence with Database and CommitDatabase
-- [Serialization](serialization.md) - Binary and JSON encoding

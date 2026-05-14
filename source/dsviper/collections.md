@@ -370,7 +370,3 @@ Collections can be nested:
 [{'a': 1}, {'b': 2, 'c': 3}]
 ```
 
-## What's Next
-
-- [Structures and Enumerations](structures.md) - User-defined types
-- [Database](database.md) - Persisting collections

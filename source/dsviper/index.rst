@@ -82,37 +82,18 @@ glue by hand.
 A complete wrapper
 ------------------
 
-``dsviper`` is **not** a curated subset of Viper — it is a complete
-wrapper. The full surface of the C++ engine — types, values, runtime,
-database tier, commit engine, serialization, RPC — is reachable from
-Python, exposed as Python classes and functions. Learning ``dsviper``
-therefore teaches Viper itself, from the low-level type and value APIs up
-to the application-level model (commits, databases, attachments, function
-pools, RPC). A Python developer fluent in ``dsviper`` can read and reason
-about a Viper C++ application without learning a parallel API; conversely,
-a C++ engineer familiar with Viper finds the same vocabulary in this
-guide, transposed into Python.
-
-The Commit Engine
------------------
-
-``dsviper`` exposes Viper's **Commit Engine** — the versioned, content-
-addressed persistence layer that ``CommitDatabase`` and
-``CommitMutableState`` belong to. Its guarantees, its modes of use, and
-the dual-layer contract it asks of consuming code are documented in the
-dedicated :doc:`Commit <../commit/index>` section, peer to this one.
+``dsviper`` is a complete wrapper over Viper — the full C++ surface
+(types, values, runtime, database tier, commit engine, serialization, RPC)
+is reachable from Python. The Commit Engine in particular is documented in
+the peer :doc:`Commit <../commit/index>` section.
 
 
 Further examples
 ----------------
 
-This guide and its API reference cover the curated, doctested surface. For
-a broader corpus of runnable usage examples — covering edge cases and
-combinations not shown here — see the public test suite at
-`digital-substrate/dsviper-tests
-<https://github.com/digital-substrate/dsviper-tests>`_. It exercises every
-API surface and is a useful grounding source for both human readers and
-LLM-driven assistants exploring ``dsviper`` patterns.
+For a broader corpus of runnable usage examples, see the public test
+suite at `digital-substrate/dsviper-tests
+<https://github.com/digital-substrate/dsviper-tests>`_.
 
 
 Topics
@@ -145,5 +126,4 @@ introspection, web rendering, and core utilities.
 Status
 ------
 
-Part of DevKit 1.2.x. The runtime is stable; new APIs are added carefully
-with backward compatibility in mind.
+Part of DevKit 1.2.x (LTS, feature-locked).

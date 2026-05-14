@@ -214,20 +214,3 @@ returns the string passed to `Database.create(..., documentation=...)`.
 
 ---
 
-## Choosing Between Database and CommitDatabase
-
-| Feature              | Database             | CommitDatabase   |
-|----------------------|----------------------|------------------|
-| Simple CRUD          | ✓                    | ✓                |
-| History              | ✗                    | ✓                |
-| Sync                 | ✗                    | ✓                |
-| Embedded definitions | ✓                    | ✓                |
-| Remote access        | ✓                    | ✓                |
-| Blob storage         | ✓                    | ✓                |
-
----
-
-## What's Next
-
-- [CommitDatabase](../commit/commit.md) - Versioned database with history
-- [Blobs](blobs.md) - Binary data storage

@@ -241,7 +241,3 @@ Python natives are automatically converted:
 
 The bridge uses type metadata to validate and convert Python objects.
 
-## What's Next
-
-- [Collections](collections.md) - Vectors, Maps, Sets, and more
-- [Structures and Enumerations](structures.md) - User-defined types

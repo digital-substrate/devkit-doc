@@ -273,16 +273,3 @@ therefore requires a working database. See [Database](database.md) for a
 full walkthrough.
 ```
 
-## Summary
-
-| Format | Use Case              | API                            |
-|--------|-----------------------|--------------------------------|
-| JSON   | Debugging, interop    | `Value.json_encode/decode`     |
-| Binary | Persistence, RPC      | `Value.encode/decode`          |
-| DSM    | Human-readable schema | `dsm_defs.to_dsm()`            |
-
-## What's Next
-
-- [DSM Processing](dsm.md) - Loading and introspecting DSM files
-- [DSM Manual](../dsm/index.rst) - Data modeling language
-- [dsviper-tools](../dsviper-tools/index.rst) - Development tools

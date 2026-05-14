@@ -228,15 +228,6 @@ False
 48
 ```
 
-### Why BlobPack?
-
-| Benefit             | Description                        |
-|---------------------|------------------------------------|
-| **Single blob**     | All mesh data in one blob_id       |
-| **Typed regions**   | Each region has its own layout     |
-| **Self-describing** | Layout metadata embedded in header |
-| **Efficient**       | Direct memory mapping, no parsing  |
-
 ## NumPy Integration
 
 `BlobArray` implements the Python Buffer Protocol, enabling zero-copy interoperability
@@ -302,14 +293,6 @@ idiom:
 >>> positions_np[0].tolist()
 [-2.0, -2.0, 0.0]
 ```
-
-### Why Zero-Copy Matters
-
-| Scenario           | Without Zero-Copy   | With Zero-Copy |
-|--------------------|---------------------|----------------|
-| 1M vertices        | Copy 12MB           | Share pointer  |
-| GPU upload         | Python → copy → C++ | Direct access  |
-| Scientific compute | Data duplication    | In-place ops   |
 
 ## Blob in Attachments
 
@@ -427,6 +410,3 @@ This is essential for:
 | Icons, small images | Use `blob` (inline)               |
 | Audio/video         | Use `blob_id` (Database blob API) |
 
-## What's Next
-
-- [Serialization](serialization.md) - JSON and binary encoding

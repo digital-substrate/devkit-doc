@@ -206,81 +206,11 @@ to collect multiple errors at once.
 
 ## Best Practices
 
-### 1. Catch Specific Errors
-
-Always catch `ViperError` specifically, not bare `Exception`:
-
-```python
-# Good
-try:
-    v = ValueInt8(value)
-except ViperError as e:
-    handle_viper_error(e)
-
-# Bad - catches too much
-try:
-    v = ValueInt8(value)
-except Exception:
-    pass
-```
-
-### 2. Check Before You Leap
-
-For performance-critical code, validate inputs before calling Viper:
-
-```python
-# Check range before creating value
-def safe_int8(value: int) -> ValueInt8:
-    if not (-128 <= value <= 127):
-        raise ValueError(f"Value {value} out of int8 range")
-    return ValueInt8(value)
-```
-
-### 3. Use Optionals Correctly
-
-Never assume an optional contains a value:
-
-```python
-# Good - check before unwrap
-result = db.get(attachment, key)
-if not result.is_nil():
-    value = result.unwrap()
-else:
-    value = default
-
-# Bad - will raise if nil
-value = db.get(attachment, key).unwrap()
-```
-
-### 4. Handle DSM Errors Gracefully
-
-Always check the parse report before using definitions:
-
-```python
-builder = DSMBuilder.assemble(dsm_path)
-report, dsm_defs, defs = builder.parse()
-
-if report.has_error():
-    for err in report.errors():
-        print(f"Error at line {err.line()}: {err.message()}")
-    raise RuntimeError("DSM parsing failed")
-
-# Safe to use defs here
-```
-
-### 5. Transaction Error Handling
-
-Wrap database transactions with proper error handling:
-
-```python
-db.begin_transaction()
-try:
-    db.set(attachment, key, value)
-    db.commit()
-except ViperError as e:
-    db.rollback()
-    raise
-```
+- Catch `ViperError` specifically rather than bare `Exception`.
+- Check `is_nil()` before calling `unwrap()` on an optional.
+- Check `report.has_error()` after `DSMBuilder.parse()` before using the
+  returned definitions.
+- Wrap multi-step transactions in `try/except/rollback`.
 
 ---
 
@@ -305,22 +235,6 @@ logging.error("Operation failed")
 Available log levels: `LEVEL_ALL`, `LEVEL_DEBUG`, `LEVEL_INFO`, `LEVEL_WARNING`,
 `LEVEL_ERROR`, `LEVEL_CRITICAL`.
 
-### Inspect Error Fields
-
-When debugging, parse and print all error fields:
-
-```python
-except ViperError as e:
-    error = Error.parse(str(e))
-    if error:
-        print(f"Host: {error.hostname()}")
-        print(f"Process: {error.process_name()}")
-        print(f"Component: {error.component()}")
-        print(f"Domain: {error.domain()}")
-        print(f"Code: {error.code()}")
-        print(f"Message: {error.message()}")
-```
-
 ### Remote Errors
 
 When using `DatabaseRemote` or `ServiceRemote`, errors include the remote host
@@ -329,10 +243,3 @@ information, helping you identify where the error occurred:
 ```
 [remote-server@db-process]:Viper:Database:3:Connection timeout
 ```
-
----
-
-## What's Next
-
-- [Types and Values](types_values.md) - Learn the type system
-- [Collections](collections.md) - Work with containers

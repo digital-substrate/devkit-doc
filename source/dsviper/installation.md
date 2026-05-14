@@ -54,27 +54,6 @@ Verify that dsviper is correctly installed. `version()` returns a
 True
 ```
 
-## Understanding dsviper
-
-**dsviper** is the Python extension module that provides access to the Viper runtime. Key
-points:
-
-- **dsviper = Viper**: Learning dsviper means learning Viper. The Python API mirrors the
-  C++ API.
-
-- **Strong typing**: Unlike typical Python, dsviper raises exceptions immediately on type
-  mismatches. This enforces data integrity.
-
-- **Seamless bridge**: Python natives (lists, dicts, tuples) are accepted as input since
-  Viper's metadata drives automatic conversion.
-
-## Strong-Typed Layer Over Python
-
-> Unlike Python's permissive duck typing, dsviper enforces types immediately.
-> When you create a `Vector<Int64>`, only integers can be added. Type mismatches
-> raise `ViperError` exceptions at the point of error, not downstream when data
-> is corrupted. See [Error Handling](errors.md) for details.
-
 ## Quick Test
 
 Test the type system. Create a vector of strings:
@@ -98,9 +77,3 @@ Traceback (most recent call last):
 dsviper.ViperError: ...expected type 'str', got 'int'...
 ```
 
-## What's Next
-
-- [Error Handling](errors.md) - Understanding ViperError exceptions
-- [Types and Values](types_values.md) - Understanding the type system
-- [DSM](dsm.md) - Define data models with DSM
-- [Tutorial](tutorial.md) - Complete walkthrough with User/Login example

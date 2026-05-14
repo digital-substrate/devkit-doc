@@ -126,14 +126,17 @@ codec
    Different codecs trade readability against size and speed.
 
 Commit Application
-   An application built on the Commit Application Model — Application
-   Context composing the engine coordinator, function pools, and domain
-   state. `ge-py`, `ge-qml`, and `web-cdbe` are illustrative walk-throughs
-   that exercise the *whole* chain (DSM, Kibo, template, components,
-   runtime) end-to-end and live in
-   {doc}`commit-apps/index <../commit-apps/index>`. The shipped
-   canonical generic instance is `cdbe.py` (inside `dsviper-tools`);
-   `dbe.py` is *not* a Commit Application — it is a plain CRUD inspector
-   for the non-versioned `Database` backend, outside the pattern.
+   An application built on the
+   {doc}`Commit Application Model <../commit-apps/model>` —
+   Application Context composing the `CommitStore`, the domain state,
+   the dispatch surface, and a platform-agnostic notifier (and, in
+   C++, generated function pools to cross the language boundary). The
+   walkthroughs in {doc}`commit-apps/index <../commit-apps/index>`
+   show four instances : `cdbe` (the minimal, generic incarnation,
+   shipped inside `dsviper-tools`), `ge-py` and `ge-qml` (the
+   domain-specific Graph Editor on Qt Widgets and Qt Quick / QML),
+   and `web-cdbe` (server-rendered HTML/CSS). `dbe.py` is *not* a
+   Commit Application — it is a plain CRUD inspector for the
+   non-versioned `Database` backend, outside the pattern.
 
 ```

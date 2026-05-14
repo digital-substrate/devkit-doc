@@ -28,18 +28,18 @@ generated code needs to run inside a viper-based application. Other kibo
 templates can target other runtimes — kibo is not viper-specific.
 
 **dsviper-tools** also belongs to the toolchain side: CLI utilities
-(`dsm_util`) and two distinct GUI editors — `cdbe.py` (the canonical
+(`dsm_util`) and two distinct GUI editors — `cdbe.py` (the
 Commit Database Editor: a full-featured Qt Widgets tool for any
 `CommitDatabase`) and `dbe.py` (a standard CRUD inspector for the
 non-versioned `Database` backend). A QML variant (`dsviper-tools-qml`)
 provides Qt Quick versions of the same database browsers. The
-[`web-cdbe`](../commit-apps/web-cdbe.md) Commit App is a web demo
-that ports the same generic-editor idea to a browser.
+[`web-cdbe`](../commit-apps/web-cdbe.md) Commit Application is a web
+demo that ports the same generic-editor idea to a browser.
 
 ## The runtime (execution side)
 
 ```
-dsviper  →  dsviper-components  →  Commit Applications
+dsviper  →  dsviper-components  →  Commit Application Model
 ```
 
 **Goal.** Run a typed Python application with versioned, persistent data.
@@ -57,16 +57,19 @@ Consumed by applications. Comes in two parallel tracks: `dsviper-components`
 (Qt Widgets) and `dsviper-components-qml` (Qt Quick / QML). Most of the
 runtime stack mirrors this split.
 
-**Commit Applications.** Several applications exist as canonical "putting
-it all together" exemplars of the Commit Application Model — they exercise
-the *whole* ecosystem end-to-end (DSM modeling, Kibo code generation, the
-viper template, dsviper-components, the dsviper runtime). They are not
-products in their own right:
+**Commit Application Model** — the apex of the runtime chain. The
+architectural pattern for building applications on top of the Commit
+Engine: an Application Context composing a `CommitStore`, the domain
+state, the dispatch surface, and a platform-agnostic notifier. See
+[Commit Application Model](../commit-apps/model.md) for the pattern
+itself; the walkthroughs that exercise the *whole* ecosystem
+end-to-end (DSM, Kibo, template, dsviper-components, runtime) are:
 
-- `ge-py` — Graph Editor, PySide6 desktop app.
+- `cdbe` — the minimal, generic incarnation, shipped inside
+  `dsviper-tools` as the Commit Database Editor.
+- `ge-py` — Graph Editor, PySide6 desktop app (Qt Widgets).
 - `ge-qml` — Graph Editor, PySide6 desktop app (Qt Quick / QML).
-- `web-cdbe` — Flask web application demonstrating a Commit Database Editor
-  (HTML5, no JavaScript).
+- `web-cdbe` — Flask web application, server-rendered HTML5.
 
 About **Viper** itself — the C++ engine behind dsviper — see [naming](naming.md).
 Viper is not currently distributed standalone.
@@ -101,7 +104,7 @@ component must respect the same direction.
 | dsviper-tools (Widgets and QML)        | dsm, dsviper                | applications             |
 | dsviper                                | Viper (C++ engine)          | applications, components |
 | dsviper-components (Widgets and QML)   | dsviper                     | applications             |
-| Commit Applications                    | dsviper, dsviper-components | —                        |
+| Commit Application Model (instances)   | dsviper, dsviper-components | —                        |
 
 This table is the contract per-component documentation must respect: a `dsm`
 page may not assume kibo is in the picture; a `kibo` page may assume dsm but

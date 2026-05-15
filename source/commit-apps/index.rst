@@ -80,6 +80,17 @@ a server-rendered HTML/CSS surface.
 * **Walk-through** — :doc:`web-cdbe`.
 
 
+C++ realizations
+~~~~~~~~~~~~~~~~
+
+Concrete C++ realizations of the same pattern exist in parallel — a Qt
+profile and an AppKit (macOS) profile, with a generic Commit Database
+Editor and a Graph Editor mirroring ``cdbe`` and ``ge-py``. They follow
+the six-layer C++ profile described in :doc:`model` and ship alongside
+:term:`Viper` (commercial license, NDA). Details on
+:doc:`contact <../ecosystem/naming>`.
+
+
 .. toctree::
    :hidden:
 

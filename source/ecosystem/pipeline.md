@@ -11,9 +11,10 @@ components, reference apps, and dsviper-tools — see
 ```
    ┌─────────────┐      ┌─────────────┐      ┌─────────────┐
    │  Describe   │ ───→ │  Generate   │ ───→ │     Use     │
-   │     DSM     │      │    Kibo     │      │   dsviper   │
+   │     DSM     │      │    Kibo     │      │ Viper/dsviper│
    └─────────────┘      └─────────────┘      └─────────────┘
-       .dsm file        typed Python package    typed runtime
+       .dsm file       typed C++/Python      typed runtime
+                            surfaces
 ```
 
 ## 1. Describe — DSM
@@ -33,31 +34,42 @@ across teams as a spec.
 
 You feed your `.dsm` file plus a Kibo **template** to the `kibo` CLI. Kibo is
 the code generator; the template determines the target language and runtime.
-For the dsviper world, that template is `kibo-template-viper`, which emits a
-Python package wired for the dsviper runtime.
+For the Viper / dsviper world, that template is `kibo-template-viper`, which
+emits two parallel surfaces from a single DSM model: C++ headers and
+implementations for Viper, and a typed Python package for dsviper.
 
-**What you have at the end of this step.** A typed Python package — classes,
-functions, type hints — that mirrors your DSM model. Importable from any
-Python application.
+**What you have at the end of this step.** Two typed surfaces of your DSM
+model — a **C++ surface** (headers + `.cpp`) for embedding in Viper, and a
+typed **Python package** importable from any Python application. Both are
+generated from the same metadata.
 
 (Other Kibo templates exist for other runtimes; Kibo itself is not
 viper-specific.)
 
 → Reference: {doc}`../kibo/usage`.
 
-## 3. Use — dsviper
+## 3. Use — Viper or dsviper
 
-You import the generated package into your application and use it through the
-**dsviper** runtime. Your data is strongly typed end-to-end: type mismatches
-raise exceptions immediately rather than silently corrupting state. The same
-metadata that drove generation now drives serialization, persistence, the
-commit DAG, and remote synchronization.
+Two paths, one model:
 
-**What you have at the end of this step.** A running, typed application backed
-by versioned, persistent storage — without writing the type system,
+- **Python** — import the generated package and use it through the
+  **dsviper** runtime (`pip install dsviper`).
+- **C++** — link the generated headers and implementations against the
+  **Viper** runtime (commercial license, NDA required — see
+  {doc}`naming` for distribution).
+
+Both paths share the same metadata that drove generation, so type checking,
+serialization, persistence, the commit DAG, and remote synchronization
+behave identically across surfaces. Your data is strongly typed end-to-end;
+type mismatches raise exceptions immediately rather than silently corrupting
+state.
+
+**What you have at the end of this step.** A running, typed application
+backed by versioned, persistent storage — without writing the type system,
 serialization layer, or version control yourself.
 
-→ Reference: {doc}`../dsviper/index`.
+→ Reference: {doc}`../dsviper/index` (Python),
+{doc}`naming` (Viper distribution).
 
 When you need the structural view — components, dependency rules, partial
 uses — see [value-chains](value-chains.md).

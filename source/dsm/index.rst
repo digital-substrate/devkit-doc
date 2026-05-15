@@ -24,7 +24,7 @@ Place in the ecosystem
 * **Source repository** —
   `digital-substrate/dsm <https://github.com/digital-substrate/dsm>`_. Carries
   the ANTLR4 grammar (``DSM.g4``) and the canonical JSON wire format —
-  producer-neutral, implemented by viper, kibo, and the IDE plugins.
+  producer-neutral, implemented by Viper, Kibo, and the IDE plugins.
 * **Related repositories** —
 
   * `digital-substrate/dsm-samples
@@ -72,6 +72,11 @@ template):
 .. code-block:: bash
 
    python3 tools/dsm_util.py create_python_package model.dsm
+
+For C++ generation against the :term:`Viper` runtime, invoke Kibo directly
+with the C++ templates from ``kibo-template-viper``. See :doc:`../kibo/usage`
+for the invocation patterns and :doc:`../kibo-template-viper/features` for
+the C++ feature catalogue.
 
 To use a model without code generation — load it through dsviper's dynamic
 API at runtime — see :doc:`../dsviper/dsm`.

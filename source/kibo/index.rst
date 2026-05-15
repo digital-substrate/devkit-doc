@@ -31,25 +31,36 @@ Place in the ecosystem
 Quickstart
 ----------
 
-The common case (DSM → typed Python package) is wrapped by ``dsm_util.py``:
+The common Python case (DSM → typed Python package) is wrapped by
+``dsm_util.py``:
 
 .. code-block:: bash
 
    python3 tools/dsm_util.py create_python_package model.dsm
 
-Direct Kibo invocation, for finer control:
+Direct Kibo invocation, for finer control or for the C++ surface:
 
 .. code-block:: bash
 
+   # Python package — consumed by dsviper
    java -jar tools/kibo-1.2.7.jar \
        -c python -n MyApp \
        -d model.dsm.json \
        -t templates/python/package \
        -o ./generated
 
-The result is a typed Python package importable as
+   # C++ surface — consumed by Viper
+   java -jar tools/kibo-1.2.7.jar \
+       -c cpp -n MyApp \
+       -d model.dsm.json \
+       -t templates/cpp/Data \
+       -o ./generated
+
+The Python result is a typed package importable as
 ``import MyApp.attachments`` (or whatever namespace your DSM model
-declares), ready to be used through :term:`dsviper`.
+declares), ready to be used through :term:`dsviper`. The C++ result is
+headers and ``.cpp`` files designed to link against the :term:`Viper`
+runtime — see :doc:`../ecosystem/naming` for Viper distribution.
 
 
 Topics

@@ -29,7 +29,7 @@ Place in the ecosystem
 * **Distribution** —
   `dsviper on PyPI <https://pypi.org/project/dsviper/>`_
   (``pip install dsviper``). Not bundled in the DevKit ZIP — the ZIP carries
-  the toolchain (kibo, dsviper-tools, offline docs), but ``dsviper`` itself
+  the toolchain (Kibo, kibo-template-viper, dsviper-tools), but ``dsviper`` itself
   must be installed separately from PyPI.
 
 

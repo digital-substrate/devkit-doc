@@ -16,25 +16,8 @@ information.
 
 Create a file `model.dsm`:
 
-```dsm
-namespace Tuto {f529bc42-0618-4f54-a3fb-d55f95c5ad03} {
-
-concept User;
-
-struct Login {
-    string nickname;
-    string password;
-};
-
-struct Identity {
-    string firstname;
-    string lastname;
-};
-
-attachment<User, Login> login;
-attachment<User, Identity> identity;
-
-};
+```{literalinclude} ../_fixtures/Tuto/model.dsm
+:language: dsm
 ```
 
 ### Step 2: Validate the Model

@@ -32,8 +32,8 @@ serialization, and RPC, and exposes them as Python classes and functions.
 
 **Distribution.** dsviper is published exclusively on
 `PyPI <https://pypi.org/project/dsviper/>`_ (``pip install dsviper``). It is
-*not* bundled in the DevKit ZIP — the ZIP carries the toolchain (kibo,
-kibo-template-viper, dsviper-tools, offline docs); installing dsviper itself
+*not* bundled in the DevKit ZIP — the ZIP carries the toolchain (Kibo,
+kibo-template-viper, dsviper-tools); installing dsviper itself
 is a separate ``pip`` step.
 
 ## Viper
@@ -43,15 +43,16 @@ is a separate ``pip`` step.
 The metadata-driven C++ runtime that dsviper wraps. Carries the actual
 implementation of the type system, commit DAG, and database engine.
 
-Currently **not** distributed standalone — used internally and through
-dsviper. If a C++-side or alternate-language public binding ships in the
-future, it would consume Viper directly.
+Distributed under commercial license; NDA required before access.
+[Contact Digital Substrate](https://devkit.digitalsubstrate.io/contact/)
+to start the process. The Python wrapper `dsviper` carries the runtime
+transparently for Python users (no NDA needed).
 
 ## How they layer
 
 You write Python that imports `dsviper`; `dsviper` calls into Viper (C++)
 through Python bindings. Install `dsviper` from PyPI; the DevKit ZIP gives
-you the toolchain around it (kibo, editors, offline docs).
+you the toolchain around it (Kibo, kibo-template-viper, dsviper-tools).
 
 Most developers only deal with **dsviper** in code and **DevKit** as a
 download path. Viper is the layer below — usually not touched directly today.

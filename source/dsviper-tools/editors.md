@@ -143,5 +143,3 @@ Both editors use `ds_components/`, a PySide6 widget library:
 
 These components can be reused in custom applications built on Viper.
 
----
-

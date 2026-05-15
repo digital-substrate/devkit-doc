@@ -31,7 +31,7 @@ before any commercial use.
 
 ## Installing from the DevKit
 
-If you also want the CLI tools, templates, and offline documentation,
+If you also want Kibo, kibo-template-viper, dsviper-tools
 download the DevKit from the [Downloads](https://devkit.digitalsubstrate.io/downloads/) page, unzip, and run:
 
 ```bash

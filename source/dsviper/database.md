@@ -212,5 +212,3 @@ True
 For an on-disk database, `path()` returns the file path and `documentation()`
 returns the string passed to `Database.create(..., documentation=...)`.
 
----
-

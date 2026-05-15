@@ -58,6 +58,14 @@ When business logic is written in C++ and needs to be reachable from
 Python scripting, the Application Context exposes generated
 **function pools** that bridge the two languages.
 
+```{note}
+Concrete C++ realizations of this profile exist in parallel to the
+Python walkthroughs — a Qt and an AppKit (macOS) profile, with both
+a generic Commit Database Editor and a Graph Editor. They ship
+alongside [Viper](../ecosystem/naming.md#viper) (commercial license,
+NDA); details on contact.
+```
+
 ```text
 ┌─────────────────────────────────────────────────────────────┐
 │  1. UI Layer (AppKit / Qt Widgets / QML / …)                │

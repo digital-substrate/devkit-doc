@@ -19,7 +19,7 @@ viper.** You can use dsm for spec-only purposes — sharing a typed data
 contract between teams — without ever generating code from it.
 
 **kibo** — the code generator. Reads a dsm model plus a template, emits code.
-Kibo itself is template-agnostic: the target language and runtime are
+kibo itself is template-agnostic: the target language and runtime are
 determined by the template you give it.
 
 **kibo-template-viper** — a kibo template pack that targets the viper runtime
@@ -34,8 +34,18 @@ templates can target other runtimes — kibo is not viper-specific.
 
 ## The runtime (execution side)
 
+The runtime side has two parallel paths. **Python** applications import
+the Kibo-emitted Python package and consume it through **dsviper** (PyPI);
+the rest of this section — `dsviper-components`, the Commit Application
+Model — describes the Python path. **C++** applications link the
+Kibo-emitted C++ surfaces directly against **Viper** (commercial license,
+NDA — see [naming](naming.md#viper)). A parallel C++ component and Commit
+Application layer (Qt and AppKit profiles) follows the same patterns
+described in this section; details on contact.
+
 ```
-dsviper  →  dsviper-components  →  Commit Application Model
+dsviper  →  ┌── dsviper-components  →  Commit Application Model
+            └── Services
 ```
 
 **Goal.** Run a typed Python application with versioned, persistent data.
@@ -57,13 +67,20 @@ Engine: an Application Context composing a `CommitStore`, the domain
 state, the dispatch surface, and a platform-agnostic notifier. See
 [Commit Application Model](../commit-apps/model.md) for the pattern
 itself; the walkthroughs that exercise the *whole* ecosystem
-end-to-end (DSM, Kibo, template, dsviper-components, runtime) are:
+end-to-end (dsm, kibo, template, dsviper-components, runtime) are:
 
 - `cdbe` — the minimal, generic incarnation, shipped inside
   `dsviper-tools` as the Commit Database Editor.
 - `ge-py` — Graph Editor, PySide6 desktop app (Qt Widgets).
 - `ge-qml` — Graph Editor, PySide6 desktop app (Qt Quick / QML).
 - `web-cdbe` — Flask web application, server-rendered HTML5.
+
+**Services** — the parallel branch off `dsviper`. A Service composes DSM
+function-pool definitions (stateless `FunctionPool` and stateful
+`AttachmentFunctionPool`) into an immutable bundle exposed as typed RPC
+over a socket. Independent of the Commit Application Model — applications
+can use either, both, or neither. See
+[Services](../services/index.rst).
 
 ## Where the chains meet
 
@@ -85,6 +102,7 @@ component must respect the same direction.
 | dsviper-tools (Widgets and QML)        | dsm, dsviper                | applications             |
 | dsviper                                | Viper (C++ engine)          | applications, components |
 | dsviper-components (Widgets and QML)   | dsviper                     | applications             |
+| Services                               | dsm, dsviper                | applications             |
 | Commit Application Model (instances)   | dsviper, dsviper-components | —                        |
 
 This table is the contract per-component documentation must respect: a `dsm`

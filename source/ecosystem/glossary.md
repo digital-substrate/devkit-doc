@@ -39,7 +39,7 @@ Viper
 
 DevKit
    The Digital Substrate Python toolkit, distributed as a single ZIP. Carries
-   the toolchain (Kibo, kibo-template-viper, dsviper-tools, offline docs) —
+   the toolchain (Kibo, kibo-template-viper, dsviper-tools) —
    not the dsviper runtime itself, which is fetched from PyPI. See
    {doc}`naming`.
 

@@ -6,8 +6,9 @@ Consumed by :term:`Kibo` to emit C++ and Python surfaces from a DSM model.
 
 This is the template that sits in the third slot of the
 :doc:`code-generation pipeline <../ecosystem/pipeline>`: ``DSM → Kibo →
-kibo-template-viper`` produces a typed Python package usable from
-:term:`dsviper`, plus C++ surfaces for embedding in a Viper application.
+kibo-template-viper`` produces both **C++ surfaces** for embedding in a
+:term:`Viper` application and a typed **Python package** usable from
+:term:`dsviper`.
 
 
 Place in the ecosystem
@@ -30,12 +31,13 @@ What it produces
 
 Two surfaces from one DSM model:
 
-* **A typed Python package** — classes, functions, and type hints mirroring
-  the model. Importable as ``import <namespace>`` and usable through the
-  :term:`dsviper` runtime.
 * **C++ surfaces** — headers and implementation files for type definitions,
   attachments, persistence, serialization, and function pools, designed to
-  link against the Viper C++ engine.
+  link against the :term:`Viper` C++ engine (commercial license, NDA — see
+  :doc:`../ecosystem/naming`).
+* **A typed Python package** — classes, functions, and type hints mirroring
+  the model. Importable as ``import <namespace>`` and usable through the
+  :term:`dsviper` runtime (PyPI).
 
 Each generated surface is the output of one or more **templated features**.
 The catalogue is in :doc:`features`.

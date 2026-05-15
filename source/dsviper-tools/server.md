@@ -151,5 +151,3 @@ python3 tools/commit_admin.py --socket-path /tmp/project.sock sync local.cdb
 | `reduce_heads` | Merge multiple heads into one               |
 | `sync`         | Synchronize local database with source      |
 
----
-

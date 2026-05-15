@@ -33,8 +33,8 @@ Two surfaces from one DSM model:
 
 * **C++ surfaces** — headers and implementation files for type definitions,
   attachments, persistence, serialization, and function pools, designed to
-  link against the :term:`Viper` C++ engine (commercial license, NDA — see
-  :doc:`../ecosystem/naming`).
+  link against the :term:`Viper` C++ engine (commercial — see
+  :doc:`../ecosystem/naming` to contact us).
 * **A typed Python package** — classes, functions, and type hints mirroring
   the model. Importable as ``import <namespace>`` and usable through the
   :term:`dsviper` runtime (PyPI).

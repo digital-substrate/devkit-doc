@@ -60,21 +60,23 @@ Templates in `templates/cpp/` are organised by theme:
 ## Python Templates
 
 Templates in `templates/python/package/`. All Python features are emitted
-as a single Python package:
+as a single Python package — **typed proxy classes (with type hints) that
+delegate to the `dsviper` runtime**. No C bindings, no extension module:
+pure Python on top of `dsviper`'s dynamic API.
 
 | Feature                                    | Purpose                                        |
 |--------------------------------------------|------------------------------------------------|
 | `package/__init__.py`                      | Package initialization                         |
 | `package/definitions`                      | Type definitions for Viper                     |
 | `package/data`                             | Classes for concepts, clubs, enums, structures |
-| `package/attachments`                      | Attachment API wrappers                        |
-| `package/database_attachments`             | Database attachment API wrappers               |
+| `package/attachments`                      | Typed attachment proxies (over `dsviper`)      |
+| `package/database_attachments`             | Typed database-attachment proxies              |
 | `package/path`                             | Field path constants                           |
 | `package/value_type`                       | Dynamic type definitions                       |
-| `package/function_pools`                   | Function pool wrappers                         |
-| `package/attachment_function_pools`        | Stateful pool wrappers                         |
-| `package/function_pool_remotes`            | Remote function call wrappers                  |
-| `package/attachment_function_pool_remotes` | Remote stateful call wrappers                  |
+| `package/function_pools`                   | Typed function-pool proxies                    |
+| `package/attachment_function_pools`        | Typed stateful-pool proxies                    |
+| `package/function_pool_remotes`            | Typed remote-call proxies                      |
+| `package/attachment_function_pool_remotes` | Typed remote stateful-call proxies             |
 | `wheel/pyproject.toml`                     | Minimal `pyproject.toml` to build a wheel      |
 
 ## Picking a feature set

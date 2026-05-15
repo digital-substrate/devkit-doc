@@ -18,7 +18,6 @@ different presentation tiers. The Model is what they have in common.
 > a `CommitStore` and does not flow through a commit DAG. Outside the
 > pattern.
 
-
 ## The Application Context
 
 The pattern is centred on an **Application Context** — a
@@ -44,13 +43,11 @@ In C++, the Context additionally holds the generated **function
 pools** (see below). In Python, function pools are unnecessary and
 the Context holds direct references to the business-logic modules.
 
-
 ## Two language profiles
 
 The same Model takes two slightly different shapes depending on the
 language of the business logic. The difference is **whether function
 pools are needed to cross a language boundary**.
-
 
 ### C++ profile — six layers, with function pools
 
@@ -62,8 +59,8 @@ Python scripting, the Application Context exposes generated
 Concrete C++ realizations of this profile exist in parallel to the
 Python walkthroughs — a Qt and an AppKit (macOS) profile, with both
 a generic Commit Database Editor and a Graph Editor. They ship
-alongside [Viper](../ecosystem/naming.md#viper) (commercial license,
-NDA); details on contact.
+alongside [Viper](../ecosystem/naming.md#viper);
+[contact us](../ecosystem/naming.md#viper) for access.
 ```
 
 ```text
@@ -173,7 +170,6 @@ Note the four ingredients of the pattern in plain sight: the
 typed function pools, and the domain state (`graphKey`). The
 notification adapter is held by the store itself.
 
-
 ### Python profile — five layers, no function pools
 
 When business logic is **already in Python**, there is no language
@@ -216,12 +212,16 @@ class Context:
 
     # Database lifecycle
     def use(self, database: CommitDatabase): ...
+
     def close(self): ...
+
     def load(self): ...
+
     def reset(self): ...
 
     # Domain actions
     def new_graph(self): ...
+
     def use_new_graph(self, label: str): ...
 
     # Dispatch — direct, no pool indirection
@@ -237,12 +237,12 @@ from the dispatch lambda.
 This profile applies to all four Commit Applications shipped or
 walked through in the DevKit:
 
-| Application                | Domain                | UI tier                  |
-|----------------------------|-----------------------|--------------------------|
-| `cdbe.py`                  | Generic (no domain)   | Qt Widgets (PySide6)     |
-| [ge-py](ge-py.md)          | Graph                 | Qt Widgets (PySide6)     |
-| [ge-qml](ge-qml.md)        | Graph                 | Qt Quick / QML (PySide6) |
-| [web-cdbe](web-cdbe.md)    | Generic (no domain)   | Server-rendered HTML/CSS |
+| Application             | Domain              | UI tier                  |
+|-------------------------|---------------------|--------------------------|
+| `cdbe.py`               | Generic (no domain) | Qt Widgets (PySide6)     |
+| [ge-py](ge-py.md)       | Graph               | Qt Widgets (PySide6)     |
+| [ge-qml](ge-qml.md)     | Graph               | Qt Quick / QML (PySide6) |
+| [web-cdbe](web-cdbe.md) | Generic (no domain) | Server-rendered HTML/CSS |
 
 `cdbe.py` and `web-cdbe` are **generic** — they have no DSM model
 of their own and no Kibo-generated infrastructure. They open any
@@ -255,7 +255,6 @@ with three layers in practice instead of five.
 (`Graph`, `Vertex`, `Edge`), Kibo-generated typed accessors, and
 hand-written Python business logic. They are the full five-layer
 instances of the Model.
-
 
 ## The dispatch pattern
 
@@ -277,7 +276,7 @@ In Python, dispatch takes a lambda calling business logic directly
 
 ```python
 store.dispatch("Create Vertex",
-    lambda m: model.vertex.add(m, graph_key, value, position))
+               lambda m: model.vertex.add(m, graph_key, value, position))
 ```
 
 After the lambda returns, the store has:
@@ -285,7 +284,6 @@ After the lambda returns, the store has:
 * Created an immutable `CommitState` snapshot from the mutations.
 * Persisted the commit into the DAG.
 * Notified observers via the notification contract (below).
-
 
 ## The notification contract
 
@@ -306,7 +304,6 @@ Qt signals (Qt C++ and PySide), or any other observer mechanism.
 The Application Context never imports a UI framework — it speaks
 `CommitStoreNotifying` and lets a per-platform adapter publish.
 
-
 ## The dual-layer contract
 
 The Commit Engine guarantees **structural integrity** — typed
@@ -323,7 +320,6 @@ discovered locally on sync.
 
 See [The Dual-Layer Contract](../commit/commit_contract.md) for the
 full rationale and the where-to-validate decision tree.
-
 
 ## Generic versus domain-specific instances
 
@@ -344,22 +340,20 @@ Both instantiate the same Model. The difference is what fills layers
 3 and 4: glue over the dynamic API, or generated typed code over the
 domain.
 
-
 ## Pattern lineage
 
 The Commit Application Model is a disciplined synthesis of three
 established application patterns:
 
-| Pattern                | What it contributes                            |
-|------------------------|------------------------------------------------|
-| **Redux / Flux**       | Single store, dispatch, unidirectional flow   |
+| Pattern                | What it contributes                             |
+|------------------------|-------------------------------------------------|
+| **Redux / Flux**       | Single store, dispatch, unidirectional flow     |
 | **CQRS** (CQS-leaning) | Read interface and mutation interface separated |
-| **Observer (Adapter)** | Notifier bridge to the platform UI            |
+| **Observer (Adapter)** | Notifier bridge to the platform UI              |
 
 What's specific is the integration with the Commit Engine: persistence,
 history, branching, and multi-author convergence are intrinsic rather than
 bolted on.
-
 
 ## Implementing your own
 

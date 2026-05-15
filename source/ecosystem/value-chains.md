@@ -38,10 +38,10 @@ The runtime side has two parallel paths. **Python** applications import
 the Kibo-emitted Python package and consume it through **dsviper** (PyPI);
 the rest of this section — `dsviper-components`, the Commit Application
 Model — describes the Python path. **C++** applications link the
-Kibo-emitted C++ surfaces directly against **Viper** (commercial license,
-NDA — see [naming](naming.md#viper)). A parallel C++ component and Commit
-Application layer (Qt and AppKit profiles) follows the same patterns
-described in this section; details on contact.
+Kibo-emitted C++ surfaces directly against **Viper** (commercial — see
+[naming](naming.md#viper) to contact us). A parallel C++ component and
+Commit Application layer (Qt and AppKit profiles) follows the same
+patterns described in this section; details on contact.
 
 ```
 dsviper  →  ┌── dsviper-components  →  Commit Application Model

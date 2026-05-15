@@ -143,7 +143,7 @@ exploration, or schema-agnostic adapter extends.
 Kibo emits per-service Python modules: `function_pool_remotes.py`
 (one class per `function_pool`) and
 `attachment_function_pool_remotes.py` (one class per
-`attachment_function_pool`). Each class is a thin typed wrapper over
+`attachment_function_pool`). Each class is a thin typed proxy over
 the dynamic `function_pool_funcs(...)` dispatch.
 
 Sketch, derived from `devkit-codegen-test/service/python/service_client.py`:

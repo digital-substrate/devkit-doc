@@ -9,11 +9,11 @@ components, reference apps, and dsviper-tools — see
 [value-chains](value-chains.md).
 
 ```
-   ┌─────────────┐      ┌─────────────┐      ┌─────────────┐
-   │  Describe   │ ───→ │  Generate   │ ───→ │     Use     │
-   │     DSM     │      │    Kibo     │      │ Viper/dsviper│
-   └─────────────┘      └─────────────┘      └─────────────┘
-       .dsm file       typed C++/Python      typed runtime
+   ┌────────────┐      ┌────────────┐      ┌───────────────┐
+   │  Describe  │ ───→ │  Generate  │ ───→ │     Use       │
+   │    DSM     │      │    Kibo    │      │ Viper/dsviper │
+   └────────────┘      └────────────┘      └───────────────┘
+       .dsm file            C++/Python            runtime
                             surfaces
 ```
 
@@ -55,8 +55,8 @@ Two paths, one model:
 - **Python** — import the generated package and use it through the
   **dsviper** runtime (`pip install dsviper`).
 - **C++** — link the generated headers and implementations against the
-  **Viper** runtime (commercial license, NDA required — see
-  {doc}`naming` for distribution).
+  **Viper** runtime (commercial license — see {doc}`naming` to contact
+  us).
 
 Both paths share the same metadata that drove generation, so type checking,
 serialization, persistence, the commit DAG, and remote synchronization

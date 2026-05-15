@@ -43,10 +43,10 @@ is a separate ``pip`` step.
 The metadata-driven C++ runtime that dsviper wraps. Carries the actual
 implementation of the type system, commit DAG, and database engine.
 
-Distributed under commercial license; NDA required before access.
-[Contact Digital Substrate](https://devkit.digitalsubstrate.io/contact/)
-to start the process. The Python wrapper `dsviper` carries the runtime
-transparently for Python users (no NDA needed).
+Distributed under commercial license.
+[Contact us](https://devkit.digitalsubstrate.io/contact/) for access to
+the C++ runtime. Python users get the runtime transparently through the
+`dsviper` wrapper — no contact needed.
 
 ## How they layer
 

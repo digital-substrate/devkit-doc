@@ -2,7 +2,7 @@
 
 A `Viper::Service` aggregates DSM definitions and function pools into
 an immutable container that can be exposed over a network socket. The
-**Transparent Remote Access** principle of the Viper C++ runtime means
+**Transparent Remote Access** principle of the Viper runtime means
 clients use the same typed pool API whether they are calling local or
 remote functions — the network is hidden by the runtime.
 
@@ -102,9 +102,9 @@ Three things to note:
 
 ## Client side — Dual Reality, two languages
 
-The Python and C++ clients consume the same Viper C++ RPC protocol
+The Python and C++ clients consume the same Viper RPC protocol
 through the {term}`Dual Reality` pattern: an **adapter** between
-Viper C++'s dynamic, metadata-driven runtime and the static API world
+Viper's dynamic, metadata-driven runtime and the static API world
 where developers and IDEs are most productive.
 
 Two paths reach the same RPC layer:
@@ -283,7 +283,7 @@ PlayerKey create(std::shared_ptr<Viper::AttachmentMutating> const & mutating,
 }
 ```
 
-The Viper C++ RPC layer defines fifteen callback packet types covering
+The Viper RPC layer defines fifteen callback packet types covering
 every read and mutation operation an `AttachmentMutating` can
 perform — three reads (`Keys`, `Has`, `Get`) and twelve mutations
 (`Set`, `Diff`, `Update` on documents; `UnionInSet`, `SubtractInSet`

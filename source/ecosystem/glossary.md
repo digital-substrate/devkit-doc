@@ -30,6 +30,12 @@ dsviper
    {term}`Viper C++` engine. Distributed exclusively on PyPI
    (`pip install dsviper`).
 
+Viper
+   Umbrella term covering both {term}`Viper C++` and {term}`dsviper`.
+   Use it when a concept applies across the C++ and Python surfaces
+   indifferently — RPC, Services, Metadata Everywhere, the runtime as
+   an ecosystem.
+
 Viper C++
    The C++ runtime that carries the type system, commit
    DAG, and database tier. Currently not distributed standalone;

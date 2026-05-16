@@ -97,7 +97,7 @@ Function pools (and their bridges) exist for **two reasons**:
   knowing where the implementation lives.
 
 Once a pool is registered with Viper C++, **its Python availability is
-free**. Viper C++'s "Metadata Everywhere" principle means every value
+free**. Viper's "Metadata Everywhere" principle means every value
 and every function carries its type metadata at runtime; `dsviper`
 (the hand-maintained Python wrapper of Viper C++, shipped as a wheel on
 PyPI) introspects registered pools and calls them with automatic
@@ -106,7 +106,7 @@ Python binding is generated, none is written by hand — the same
 mechanism that lets `dsviper` expose any Viper C++ type to Python
 exposes the pools too.
 
-#### How pools reach Python — Context injection + Viper C++ introspection
+#### How pools reach Python — Context injection + Viper introspection
 
 The application embeds CPython, imports `dsviper` and a thin `app`
 extension module that publishes the Python wrapper of the Context, and

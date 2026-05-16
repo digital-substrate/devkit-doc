@@ -30,7 +30,7 @@ java -jar kibo-1.2.7.jar \
 ## Available templates
 
 Kibo itself is template-agnostic — it does not bundle templates. The
-first-party template pack for the dsviper / Viper C++ ecosystem is
+first-party template pack for the Viper ecosystem is
 [`kibo-template-viper`](../kibo-template-viper/index.rst), which ships
 both C++ and Python templates. The full catalogue (which template
 generates which files, and for which purpose) is in

@@ -3,14 +3,14 @@ kibo-template-viper
 
 The first-party :term:`Kibo template`. From a DSM model, it produces
 **C++ surfaces** for :term:`Viper C++` and a typed **Python package**
-for :term:`dsviper`.
+for :term:`dsviper` — the two sides of the :term:`Viper` runtime.
 
 
 Place in the ecosystem
 ----------------------
 
 * **Depends on** — :term:`Kibo`, :term:`DSM`, the Viper C++ runtime.
-* **Consumed by** — ``kibo`` invocations targeting the dsviper / Viper C++ runtime.
+* **Consumed by** — ``kibo`` invocations targeting the Viper runtime.
 * **Source repository** —
   `digital-substrate/kibo-template-viper
   <https://github.com/digital-substrate/kibo-template-viper>`_.
@@ -37,7 +37,7 @@ The Dual Reality
 ----------------
 
 The code produced by kibo-template-viper is not a runtime in its own
-right — it is a typed **adapter layer** over Viper C++'s dynamic API. The
+right — it is a typed **adapter layer** over Viper's dynamic API. The
 runtime is metadata-driven and dynamic ; the generated code gives
 developers and IDEs a static, idiomatic surface (typed classes, STL in
 C++, type hints in Python) that delegates to the dynamic runtime

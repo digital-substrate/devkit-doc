@@ -3,13 +3,13 @@ Kibo
 
 **Kibo** is the code generator. It reads a :term:`DSM` model plus a
 :term:`Kibo template` and emits source code — typed Python and C++ surfaces
-wired for the Viper C++ runtime when used with ``kibo-template-viper``.
+wired for the Viper runtime when used with ``kibo-template-viper``.
 
 Kibo is the second step of the :doc:`code-generation pipeline
 <../ecosystem/pipeline>`: ``DSM → Kibo → kibo-template-viper``. Kibo itself
 is template-agnostic — change the template and you change the target
 language and runtime. This section covers Kibo's CLI usage. The catalogue
-of templated features it produces in the dsviper / Viper C++ world lives in
+of templated features it produces in the Viper world lives in
 :doc:`../kibo-template-viper/index`.
 
 

@@ -62,7 +62,7 @@ runtime), see :doc:`dsm`.
 The Metadata Everywhere Principle
 ---------------------------------
 
-Viper C++ carries its type information as runtime metadata, and every subsystem
+Viper carries its type information as runtime metadata, and every subsystem
 draws on the same source: types, values, functions, serialization, database
 persistence, and RPC. You describe your data once — either through the
 static API generated from a DSM model, or directly through the dynamic

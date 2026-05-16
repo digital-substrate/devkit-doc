@@ -1,7 +1,7 @@
 Commit Engine
 =============
 
-The **Commit Engine** is Viper C++'s versioned persistence layer. It turns a
+The **Commit Engine** is Viper's versioned persistence layer. It turns a
 state described in :doc:`DSM <../dsm/index>` into an immutable, content-addressed
 DAG of commits — the substrate that makes time travel, undo/redo,
 multi-head exploration, and mechanical convergence between concurrent
@@ -22,7 +22,7 @@ Place in the ecosystem
 * **Depends on** — :doc:`DSM <../dsm/index>` (defines the shape of the
   data being committed) and the :term:`Viper C++` engine.
 * **Consumed by** — :term:`dsviper`, :term:`dsviper-tools`, :term:`dsviper-components`, :term:`Commit Applications <Commit Application>`
-* **Distribution** — no standalone package. The engine ships inside Viper C++ and reaches Python through
+* **Distribution** — no standalone package. The engine ships inside Viper and reaches Python through
   `dsviper on PyPI <https://pypi.org/project/dsviper/>`_.
 
 

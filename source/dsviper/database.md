@@ -1,6 +1,6 @@
 # Database
 
-Viper provides two database types for persistence:
+Viper C++ provides two database types for persistence:
 
 | Type             | Use Case                 | History   |
 |------------------|--------------------------|-----------|

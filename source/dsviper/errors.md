@@ -1,11 +1,11 @@
 # Error Handling
 
-Viper uses a single exception type for all errors: `ViperError`. This chapter explains how
+Viper C++ uses a single exception type for all errors: `ViperError`. This chapter explains how
 to catch, interpret, and recover from errors in your Python code.
 
 ## The ViperError Exception
 
-All Viper operations that fail raise a `ViperError` exception:
+All Viper C++ operations that fail raise a `ViperError` exception:
 
 ```python
 from dsviper import ViperError, ValueInt8
@@ -77,7 +77,7 @@ except ViperError as e:
     print(str(e))  # "...expected type 'long', got 'str'..."
 ```
 
-**Recovery**: Check your input types before calling Viper functions.
+**Recovery**: Check your input types before calling Viper C++ functions.
 
 ### Range Validation Errors
 
@@ -159,7 +159,7 @@ if v_str.type() == Type.INT64:
 
 ### Key Not Found (Not an Error)
 
-When accessing non-existent keys in databases, Viper does **not** raise an exception.
+When accessing non-existent keys in databases, Viper C++ does **not** raise an exception.
 Instead, `get()` returns a `ValueOptional` that is nil:
 
 ```python
@@ -173,7 +173,7 @@ else:
     value = result.unwrap()
 ```
 
-> **Note**: `ValueOptional` is a Viper container type, unrelated to Python's
+> **Note**: `ValueOptional` is a Viper C++ container type, unrelated to Python's
 > `typing.Optional`. It wraps a value with nil/non-nil semantics and provides
 > `is_nil()`, `unwrap()`, and `wrap()` methods.
 
@@ -218,7 +218,7 @@ to collect multiple errors at once.
 
 ### Enable Verbose Logging
 
-Use Viper's logging system to trace operations:
+Use Viper C++'s logging system to trace operations:
 
 ```python
 from dsviper import LoggerConsole, Logging

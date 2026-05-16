@@ -3,10 +3,10 @@
 Two GUI applications ship with `dsviper-tools` — they target **different
 backends** and play different roles:
 
-| Tool        | Purpose                                | Backend          | Family                                  |
-|-------------|----------------------------------------|------------------|-----------------------------------------|
-| **cdbe.py** | Commit Database Editor                 | `CommitDatabase` | Commit-based application                |
-| **dbe.py**  | Database Editor (standard CRUD)        | `Database`       | Plain CRUD inspector                    |
+| Tool        | Purpose                         | Backend          | Family                   |
+|-------------|---------------------------------|------------------|--------------------------|
+| **cdbe.py** | Commit Database Editor          | `CommitDatabase` | Commit-based application |
+| **dbe.py**  | Database Editor (standard CRUD) | `Database`       | Plain CRUD inspector     |
 
 Both are built with PySide6 and share components from
 [`dsviper-components`](../dsviper-components/index.rst).
@@ -124,22 +124,4 @@ python3 tools/dbe.py project.vpr           # Open specific database
 | **Blob Viewer**        | Inspect binary blob content       |
 | **Database Inspector** | View UUID, codec, definitions     |
 | **Network Connection** | Connect to remote Database server |
-
----
-
-## ds_components - Shared GUI Library
-
-Both editors use `ds_components/`, a PySide6 widget library:
-
-| Component                | Description                      |
-|--------------------------|----------------------------------|
-| `DSDocumentsCommitStore` | Document browser for CommitStore |
-| `DSDocumentsDatabasing`  | Document browser for Database    |
-| `DSCommitsDialog`        | Commit history panel             |
-| `DSValueProgramDialog`   | Program viewer                   |
-| `DSInspectDialog`        | Database inspector               |
-| `DSBlobsDialog`          | Blob storage viewer              |
-| `DSSettings`             | User preferences management      |
-
-These components can be reused in custom applications built on Viper.
 

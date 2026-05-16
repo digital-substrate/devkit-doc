@@ -10,7 +10,7 @@ integration.
 
 ## Blob vs BlobId
 
-Viper offers two DSM types for binary data:
+Viper C++ offers two DSM types for binary data:
 
 | Type      | Use Case                       | Storage            |
 |-----------|--------------------------------|--------------------|

@@ -37,11 +37,8 @@ together, and :doc:`widgets` for the full catalogue.
 Place in the ecosystem
 ----------------------
 
-* **Depends on** — :term:`dsviper`, Qt (Widgets or Quick depending on
-  variant).
+* **Depends on** — :term:`dsviper`, PySide.
 * **Consumed by** — :term:`Commit Applications <Commit Application>`
-  (``ge-py``, ``ge-qml``) and any custom Python application built on
-  dsviper.
 * **Source repositories** —
 
   * `digital-substrate/dsviper-components

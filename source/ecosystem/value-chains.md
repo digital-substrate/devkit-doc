@@ -1,7 +1,7 @@
 # Value Chains
 
 Two value chains structure the dsviper ecosystem. **Toolchain** turns a data
-model into runnable code; **Runtime** runs your typed Python application backed
+model into runnable code; **Runtime** runs your application backed
 by versioned, persistent storage. Each chain composes from independent
 components — you can engage at any link without adopting the rest.
 
@@ -22,30 +22,19 @@ contract between teams — without ever generating code from it.
 kibo itself is template-agnostic: the target language and runtime are
 determined by the template you give it.
 
-**kibo-template-viper** — a kibo template pack that targets the viper runtime
-(Python via dsviper, or C++ Viper directly). Choose this template when your
-generated code needs to run inside a viper-based application. Other kibo
-templates can target other runtimes — kibo is not viper-specific.
-
-**dsviper-tools** also belongs to the toolchain side: CLI utilities
-(`dsm_util`) and two Qt Widgets editors — `cdbe.py` for `CommitDatabase`,
-`dbe.py` for the non-versioned `Database`. A QML variant
-(`dsviper-tools-qml`) mirrors them in Qt Quick.
+**kibo-template-viper** — the kibo template pack for the viper runtime
+(Python via dsviper, Viper C++).
 
 ## The runtime (execution side)
 
-The runtime side has two parallel paths. **Python** applications import
-the Kibo-emitted Python package and consume it through **dsviper** (PyPI);
-the rest of this section — `dsviper-components`, the Commit Application
-Model — describes the Python path. **C++** applications link the
-Kibo-emitted C++ surfaces directly against **Viper** (commercial — see
-[naming](naming.md#viper) to contact us). A parallel C++ component and
-Commit Application layer (Qt and AppKit profiles) follows the same
-patterns described in this section; details on contact.
+The runtime has two paths. **Python** imports the Kibo-emitted Python
+package and consumes it through **dsviper** (PyPI). **C++** links the
+Kibo-emitted C++ surfaces directly against **Viper C++** (commercial).
+What follows describes the Python path;
+the C++ side mirrors it with Qt and AppKit component profiles.
 
 ```
-dsviper  →  ┌── dsviper-components  →  Commit Application Model
-            └── Services
+dsviper  →  dsviper-components  →  Commit Application Model
 ```
 
 **Goal.** Run a typed Python application with versioned, persistent data.
@@ -61,26 +50,25 @@ Consumed by applications. Comes in two parallel tracks: `dsviper-components`
 (Qt Widgets) and `dsviper-components-qml` (Qt Quick / QML). Most of the
 runtime stack mirrors this split.
 
-**Commit Application Model** — the apex of the runtime chain. The
-architectural pattern for building applications on top of the Commit
-Engine: an Application Context composing a `CommitStore`, the domain
-state, the dispatch surface, and a platform-agnostic notifier. See
+**Commit Application Model** — the application pattern on top of the
+Commit Engine. An Application Context composing a `CommitStore`, the
+domain state, the dispatch surface, and a platform-agnostic notifier. See
 [Commit Application Model](../commit-apps/model.md) for the pattern
 itself; the walkthroughs that exercise the *whole* ecosystem
 end-to-end (dsm, kibo, template, dsviper-components, runtime) are:
 
-- `cdbe` — the minimal, generic incarnation, shipped inside
-  `dsviper-tools` as the Commit Database Editor.
+- `cdbe` — the Commit Database Editor.
 - `ge-py` — Graph Editor, PySide6 desktop app (Qt Widgets).
 - `ge-qml` — Graph Editor, PySide6 desktop app (Qt Quick / QML).
 - `web-cdbe` — Flask web application, server-rendered HTML5.
 
-**Services** — the parallel branch off `dsviper`. A Service composes DSM
-function-pool definitions (stateless `FunctionPool` and stateful
+## Services
+
+A **Service** is a Viper C++ Runtime feature, hosted C++-side: it composes
+DSM function-pool definitions (stateless `FunctionPool` and stateful
 `AttachmentFunctionPool`) into an immutable bundle exposed as typed RPC
-over a socket. Independent of the Commit Application Model — applications
-can use either, both, or neither. See
-[Services](../services/index.rst).
+over a socket. Both `dsviper` (Python) and `Viper C++` can act as
+clients. See [Services](../services/index.rst).
 
 ## Where the chains meet
 
@@ -100,7 +88,7 @@ component must respect the same direction.
 | kibo                                   | dsm                         | viper, dsviper           |
 | kibo-template-viper                    | kibo, viper / dsviper       | applications             |
 | dsviper-tools (Widgets and QML)        | dsm, dsviper                | applications             |
-| dsviper                                | Viper (C++ engine)          | applications, components |
+| dsviper                                | Viper C++                   | applications, components |
 | dsviper-components (Widgets and QML)   | dsviper                     | applications             |
 | Services                               | dsm, dsviper                | applications             |
 | Commit Application Model (instances)   | dsviper, dsviper-components | —                        |

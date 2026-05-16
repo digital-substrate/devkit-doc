@@ -29,9 +29,9 @@ Templates in `templates/cpp/` are organised by theme:
 |---------------|----------------------------------------------------|
 | `Stream`      | Binary encoder / decoder                           |
 | `Json`        | JSON encoder / decoder                             |
-| `ValueCodec`  | Bridge between static C++ and dynamic Viper values |
+| `ValueCodec`  | Bridge between static C++ and dynamic Viper C++ values |
 | `ValueHasher` | Content hashing for values                         |
-| `ValueType`   | Viper type mappings                                |
+| `ValueType`   | Viper C++ type mappings                                |
 
 ### Function Pools
 
@@ -67,7 +67,7 @@ pure Python on top of `dsviper`'s dynamic API.
 | Feature                                    | Purpose                                        |
 |--------------------------------------------|------------------------------------------------|
 | `package/__init__.py`                      | Package initialization                         |
-| `package/definitions`                      | Type definitions for Viper                     |
+| `package/definitions`                      | Type definitions for Viper C++                     |
 | `package/data`                             | Classes for concepts, clubs, enums, structures |
 | `package/attachments`                      | Typed attachment proxies (over `dsviper`)      |
 | `package/database_attachments`             | Typed database-attachment proxies              |

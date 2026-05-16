@@ -1,7 +1,7 @@
 Database
 ========
 
-Database classes provide persistence for Viper documents using SQLite or remote
+Database classes provide persistence for Viper C++ documents using SQLite or remote
 connections.
 
 **When to use**: Use ``Database`` for simple key-value persistence without

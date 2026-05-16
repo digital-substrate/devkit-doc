@@ -2,7 +2,7 @@
 
 The **Commit Application Model** is the architectural pattern shared
 by every application built on the Commit Engine. It defines how an
-application composes a `CommitStore` (provided by the Viper runtime)
+application composes a `CommitStore` (provided by the Viper C++ runtime)
 with its own domain state, dispatch surface, and platform
 notifications, so that all state changes flow through the
 [commit DAG](../commit/commit.md) with built-in undo/redo, multi-author
@@ -59,8 +59,8 @@ Python scripting, the Application Context exposes generated
 Concrete C++ realizations of this profile exist in parallel to the
 Python walkthroughs — a Qt and an AppKit (macOS) profile, with both
 a generic Commit Database Editor and a Graph Editor. They ship
-alongside [Viper](../ecosystem/naming.md#viper);
-[contact us](../ecosystem/naming.md#viper) for access.
+alongside [Viper C++](../ecosystem/naming.md#viper-c);
+[contact us](../ecosystem/naming.md#viper-c) for access.
 ```
 
 ```text
@@ -81,39 +81,39 @@ alongside [Viper](../ecosystem/naming.md#viper);
 │  5. Generated Infrastructure (Kibo)                         │
 │     Data, Database, ValueEncoder, FunctionPools             │
 ├─────────────────────────────────────────────────────────────┤
-│  6. Viper Runtime (C++)                                     │
+│  6. Viper C++ Runtime                                       │
 │     Type, Value, Commit, Database, RPC                      │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 Function pools (and their bridges) exist for **two reasons**:
 
-* They expose C++ business logic to the **Viper runtime** through a
-  typed surface — typed methods registered with Viper's type system,
+* They expose C++ business logic to the **Viper C++ runtime** through a
+  typed surface — typed methods registered with Viper C++'s type system,
   whose implementations are routed to hand-written C++ code through
   the generated pool bridges.
 * They give the dispatch layer a uniform handle on actions —
   `store->dispatch("label", pool.function, args...)` — without
   knowing where the implementation lives.
 
-Once a pool is registered with Viper, **its Python availability is
-free**. Viper's "Metadata Everywhere" principle means every value
+Once a pool is registered with Viper C++, **its Python availability is
+free**. Viper C++'s "Metadata Everywhere" principle means every value
 and every function carries its type metadata at runtime; `dsviper`
-(the hand-maintained Python wrapper of Viper, shipped as a wheel on
+(the hand-maintained Python wrapper of Viper C++, shipped as a wheel on
 PyPI) introspects registered pools and calls them with automatic
-marshalling between Python values and Viper values. No per-pool
+marshalling between Python values and Viper C++ values. No per-pool
 Python binding is generated, none is written by hand — the same
-mechanism that lets `dsviper` expose any Viper type to Python
+mechanism that lets `dsviper` expose any Viper C++ type to Python
 exposes the pools too.
 
-#### How pools reach Python — Context injection + Viper introspection
+#### How pools reach Python — Context injection + Viper C++ introspection
 
 The application embeds CPython, imports `dsviper` and a thin `app`
 extension module that publishes the Python wrapper of the Context, and
 injects the Context singleton as a Python global (typically `ctx`). From
 there, every pool held by the Context is callable directly:
 `ctx.modelGraph.new_vertex(...)` reaches the hand-written C++
-implementation through the generated pool bridge, with Python ↔ Viper
+implementation through the generated pool bridge, with Python ↔ Viper C++
 marshalling handled automatically by `dsviper` from the runtime metadata.
 No per-pool binding code is written or generated.
 

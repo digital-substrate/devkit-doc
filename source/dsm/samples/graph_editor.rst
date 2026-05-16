@@ -13,7 +13,7 @@ Graph.dsm
 **Domain:** Graph, Vertex, Edge
 
 This file defines the core data model for a graph editor application. It demonstrates the
-**recommended Viper pattern** with multiple attachments per concept, separating concerns
+**recommended Viper C++ pattern** with multiple attachments per concept, separating concerns
 cleanly.
 
 Data Model Design
@@ -285,7 +285,7 @@ Three Repair Strategies
 Why This Matters
 ^^^^^^^^^^^^^^^^
 
-In Viper, concepts (Vertex, Edge) are identified by keys. If you
+In Viper C++, concepts (Vertex, Edge) are identified by keys. If you
 delete a Vertex without updating Edge references, edges become "orphaned". This pool shows
 how to detect and repair such inconsistencies.
 

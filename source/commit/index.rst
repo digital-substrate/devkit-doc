@@ -1,13 +1,13 @@
 Commit Engine
 =============
 
-The **Commit Engine** is Viper's versioned persistence layer. It turns a
+The **Commit Engine** is Viper C++'s versioned persistence layer. It turns a
 state described in :doc:`DSM <../dsm/index>` into an immutable, content-addressed
 DAG of commits — the substrate that makes time travel, undo/redo,
 multi-head exploration, and mechanical convergence between concurrent
 streams possible.
 
-It is a Viper subsystem first and a Python API second. The Python
+It is a Viper C++ subsystem first and a Python API second. The Python
 exposure lives in :doc:`dsviper <../dsviper/index>` (``CommitDatabase``,
 ``CommitMutableState``, ``commit_mutations``); Qt-side tools live in
 :doc:`dsviper-tools <../dsviper-tools/index>` and
@@ -20,16 +20,9 @@ Place in the ecosystem
 ----------------------
 
 * **Depends on** — :doc:`DSM <../dsm/index>` (defines the shape of the
-  data being committed) and the Viper C++ engine (see
-  :doc:`../ecosystem/naming`).
-* **Consumed by** — :term:`dsviper` (Python exposure of the commit API),
-  :term:`dsviper-tools` (server, editors, ``dsm_util``),
-  :term:`dsviper-components` (Qt Widgets and QML observers of a
-  ``CommitStore``),
-  :term:`Commit Applications <Commit Application>` (all three are
-  commit-based — see below).
-* **Distribution** — no standalone package. The engine ships inside Viper
-  and reaches Python through
+  data being committed) and the :term:`Viper C++` engine.
+* **Consumed by** — :term:`dsviper`, :term:`dsviper-tools`, :term:`dsviper-components`, :term:`Commit Applications <Commit Application>`
+* **Distribution** — no standalone package. The engine ships inside Viper C++ and reaches Python through
   `dsviper on PyPI <https://pypi.org/project/dsviper/>`_.
 
 
@@ -48,7 +41,7 @@ Tools that ship with the DevKit
 
 Several DevKit artefacts operate directly on the Commit Engine:
 
-* :doc:`cdbe.py <../dsviper-tools/editors>` — Commit Database Editor (Qt Widgets).
+* :doc:`cdbe.py <../dsviper-tools/editors>` — Commit Database Editor.
 * :doc:`commit_database_server.py <../dsviper-tools/server>` — network access + ``commit_admin.py``.
 * :doc:`dsm_util.py create_commit_database <../dsviper-tools/dsm_util>` — create a ``CommitDatabase`` from DSM.
 * :doc:`dsviper-components <../dsviper-components/index>` — Qt-side observers on the ``CommitStore`` notifier.

@@ -10,22 +10,16 @@ built on top of it.
 dsviper is the **runtime layer** of the ecosystem. It consumes typed Python
 packages produced by Kibo (the static API), or loads DSM models directly at
 runtime (the dynamic API). See :doc:`../ecosystem/value-chains` for the
-broader picture and :doc:`../ecosystem/naming` for how dsviper relates to
-DevKit and the Viper engine.
+broader picture.
 
 
 Place in the ecosystem
 ----------------------
 
-* **Depends on** — Viper (the C++ engine — see :doc:`../ecosystem/naming`).
-* **Consumed by** — :term:`dsviper-components` (Qt Widgets and QML variants),
-  :term:`dsviper-tools` (Qt Widgets and QML variants),
-  :term:`Commit Applications <Commit Application>` (``ge-py``,
-  ``ge-qml``, ``web-cdbe``).
+* **Depends on** — :term:`Viper C++`.
+* **Consumed by** — :term:`dsviper-components`, :term:`dsviper-tools`, :term:`Commit Applications <Commit Application>`
 * **Source repository** — the ``dsviper`` PyPI package is built from the
-  Viper source. There is no separate ``dsviper`` repository on GitHub. See
-  :doc:`../ecosystem/naming` for the distinction between distribution names
-  and repository names.
+  Viper C++ source. There is no separate ``dsviper`` repository on GitHub.
 * **Distribution** —
   `dsviper on PyPI <https://pypi.org/project/dsviper/>`_
   (``pip install dsviper``). Not bundled in the DevKit ZIP — the ZIP carries
@@ -68,7 +62,7 @@ runtime), see :doc:`dsm`.
 The Metadata Everywhere Principle
 ---------------------------------
 
-Viper carries its type information as runtime metadata, and every subsystem
+Viper C++ carries its type information as runtime metadata, and every subsystem
 draws on the same source: types, values, functions, serialization, database
 persistence, and RPC. You describe your data once — either through the
 static API generated from a DSM model, or directly through the dynamic
@@ -82,7 +76,7 @@ glue by hand.
 A complete wrapper
 ------------------
 
-``dsviper`` is a complete wrapper over Viper — the full C++ surface
+``dsviper`` is a complete wrapper over Viper C++ — the full C++ surface
 (types, values, runtime, database tier, commit engine, serialization, RPC)
 is reachable from Python. The Commit Engine in particular is documented in
 the peer :doc:`Commit <../commit/index>` section.

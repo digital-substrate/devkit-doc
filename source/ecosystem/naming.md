@@ -10,7 +10,7 @@ things.
 The Digital Substrate Python toolkit, distributed as a single ZIP. It bundles:
 
 - `kibo` — the code generator
-- `kibo-template-viper` — the template that targets the viper runtime
+- `kibo-template-viper` — the template pack that targets the viper runtime
 - `dsviper-tools` — CLI utilities (`dsm_util`, `commit_database_server.py`,
    `commit_admin.py`) and two GUI editors: `cdbe.py` (Commit Database
    Editor, for `CommitDatabase`) and `dbe.py` (Database Editor, plain
@@ -36,34 +36,10 @@ serialization, and RPC, and exposes them as Python classes and functions.
 kibo-template-viper, dsviper-tools); installing dsviper itself
 is a separate ``pip`` step.
 
-## Viper
+## Viper C++
 
 *The C++ engine behind dsviper.*
 
-The metadata-driven C++ runtime that dsviper wraps. Carries the actual
-implementation of the type system, commit DAG, and database engine.
-
 Distributed under commercial license.
 [Contact us](https://devkit.digitalsubstrate.io/contact/) for access to
-the C++ runtime. Python users get the runtime transparently through the
-`dsviper` wrapper — no contact needed.
-
-## How they layer
-
-You write Python that imports `dsviper`; `dsviper` calls into Viper (C++)
-through Python bindings. Install `dsviper` from PyPI; the DevKit ZIP gives
-you the toolchain around it (Kibo, kibo-template-viper, dsviper-tools).
-
-Most developers only deal with **dsviper** in code and **DevKit** as a
-download path. Viper is the layer below — usually not touched directly today.
-
-## Other names you'll meet
-
-These three are the *distribution* names. The ecosystem also has component
-names and domain vocabulary:
-
-- **DSM**, **Kibo**, **kibo-template-viper**, **dsviper-tools**,
-  **dsviper-components** — components in their own right. See
-  [value-chains](value-chains.md).
-- **attachment**, **commit DAG**, **function pool**, **blob**, … — domain
-  terms. See the [glossary](glossary.md).
+the C++ runtime.

@@ -1,6 +1,6 @@
 # Serialization
 
-Viper provides multiple serialization formats for values and definitions. This
+Viper C++ provides multiple serialization formats for values and definitions. This
 chapter covers JSON and binary encoding.
 
 ## JSON Encoding
@@ -141,7 +141,7 @@ blob(...)
 
 ## Stream Codec
 
-For custom binary formats and RPC, Viper provides low-level stream codecs that
+For custom binary formats and RPC, Viper C++ provides low-level stream codecs that
 encode/decode primitive types directly.
 
 ### Available Codecs

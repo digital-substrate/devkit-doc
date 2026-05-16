@@ -87,7 +87,7 @@ Concrete C++ realizations of the same pattern exist in parallel — a Qt
 profile and an AppKit (macOS) profile, with a generic Commit Database
 Editor and a Graph Editor mirroring ``cdbe`` and ``ge-py``. They follow
 the six-layer C++ profile described in :doc:`model` and ship alongside
-:term:`Viper`. :doc:`Contact us <../ecosystem/naming>` for access.
+:term:`Viper C++`. :doc:`Contact us <../ecosystem/naming>` for access.
 
 
 .. toctree::

@@ -15,8 +15,8 @@ output**, and your application is what turns it into trusted state.
 
 ## The Contract
 
-| Layer           | Guarantees                                         |
-|-----------------|----------------------------------------------------|
+| Layer           | Guarantees                                               |
+|-----------------|----------------------------------------------------------|
 | **Commit**      | Deterministic convergence, DAG consistency, immutability |
 | **Application** | Re-validates engine output before acting on it           |
 
@@ -60,11 +60,11 @@ data from the application's perspective.
 Because of this, validation in a `dsviper`-based system happens at three
 distinct places, not one:
 
-| Family                     | Origin                                              | Detected by                         |
-|----------------------------|-----------------------------------------------------|-------------------------------------|
-| **Untrusted (external)**   | I/O, deserialization, type mismatch, malformed path | Engine, fail-fast → `dsviper.Error` |
-| **Untrusted (post-convergence)** | State returned by the engine after convergence      | Application, at read time     |
-| **Invalid (semantic)**     | Business-rule violation on otherwise sound data     | Application, at read time           |
+| Family                           | Origin                                              | Detected by                         |
+|----------------------------------|-----------------------------------------------------|-------------------------------------|
+| **Untrusted (external)**         | I/O, deserialization, type mismatch, malformed path | Engine, fail-fast → `dsviper.Error` |
+| **Untrusted (post-convergence)** | State returned by the engine after convergence      | Application, at read time           |
+| **Invalid (semantic)**           | Business-rule violation on otherwise sound data     | Application, at read time           |
 
 The first family is what `dsviper.Error` covers. The other two are entirely
 your responsibility — and they share a remediation: **re-validate when you
@@ -72,12 +72,12 @@ read the state, not when you build the mutations**.
 
 ## What Commit Provides
 
-| Guarantee               | Description                                 |
-|-------------------------|---------------------------------------------|
-| **DAG Consistency**     | Commits form a valid directed acyclic graph |
-| **Immutability**        | Once committed, data cannot be modified     |
+| Guarantee                     | Description                                 |
+|-------------------------------|---------------------------------------------|
+| **DAG Consistency**           | Commits form a valid directed acyclic graph |
+| **Immutability**              | Once committed, data cannot be modified     |
 | **Deterministic Convergence** | Same inputs always produce the same output  |
-| **Content-Addressable** | `CommitId = SHA-1(content)`, tamper-evident |
+| **Content-Addressable**       | `CommitId = SHA-1(content)`, tamper-evident |
 
 ```{note}
 **Why *convergence*, not *merge*** — what git calls a *merge* is a
@@ -91,11 +91,11 @@ happened.
 
 ## What Commit Does NOT Provide
 
-| Not Provided              | Description                                      |
-|---------------------------|--------------------------------------------------|
-| **Intent Preservation**   | Deterministic arbitration (LWW), not your intent |
-| **Semantic Validation**   | No business rule checking                        |
-| **Mutation Notification** | No alert when mutations are silently ignored     |
+| Not Provided              | Description                                            |
+|---------------------------|--------------------------------------------------------|
+| **Intent Preservation**   | Deterministic arbitration (LWW), not your intent       |
+| **Semantic Validation**   | No business rule checking                              |
+| **Mutation Notification** | No alert when mutations are silently ignored           |
 | **Conflict Detection**    | No notion of conflict — just deterministic convergence |
 
 ## Implications for `dsviper` Code
@@ -108,7 +108,7 @@ The contract shapes how you should write code on top of `dsviper.Commit*`:
 - **Do not assume** that every operation you build into a `CommitMutableState`
   will land. After concurrent streams converge, some operations may have been
   silently dropped because their targets disappeared.
-- **Validate at the application boundary,** which means 
+- **Validate at the application boundary,** which means
   the engine output. If your domain has invariants (uniqueness,
   referential integrity, cross-field consistency), enforce them when consuming
   the state.

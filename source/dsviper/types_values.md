@@ -1,6 +1,6 @@
 # Types and Values
 
-The Viper type system provides strong typing with runtime validation. This chapter covers
+The Viper C++ type system provides strong typing with runtime validation. This chapter covers
 all available types and how to create values.
 
 ## The Universal Constructor
@@ -24,7 +24,7 @@ If `initial_value` is omitted, the value is initialized to the type's "zero".
 
 ## Choosing the Right Constructor
 
-Viper offers multiple ways to create values. Use this guide to pick the right one:
+Viper C++ offers multiple ways to create values. Use this guide to pick the right one:
 
 | Pattern              | When to Use               | Example                                         |
 |----------------------|---------------------------|-------------------------------------------------|
@@ -32,7 +32,7 @@ Viper offers multiple ways to create values. Use this guide to pick the right on
 | `TypeVector(...)`    | Parameterized container   | `Value.create(TypeVector(Type.INT64), [1,2,3])` |
 | `ValueString("...")` | Direct value (known type) | `ValueString("hello")`                          |
 | `Value.create(t, v)` | Universal factory         | `Value.create(t_struct, {"field": 1})`          |
-| `Value.deduce(v)`    | Let Viper infer type      | `Value.deduce([1, 2, 3])`                       |
+| `Value.deduce(v)`    | Let Viper C++ infer type      | `Value.deduce([1, 2, 3])`                       |
 | `ValueUUId.create()` | Factory with generation   | `ValueUUId.create()`                            |
 
 **Quick rules:**
@@ -63,7 +63,7 @@ Common types are available as constants on `Type`:
 
 ### Boolean
 
-Note that Viper values render with their own `repr` — booleans appear as
+Note that Viper C++ values render with their own `repr` — booleans appear as
 `true`/`false`, not Python's `True`/`False`.
 
 ```{doctest}
@@ -186,7 +186,7 @@ Matrices with columns and rows:
 
 ## Type Deduction
 
-Let Python infer the Viper type with `Value.deduce()`:
+Let Python infer the Viper C++ type with `Value.deduce()`:
 
 ```{doctest}
 >>> v = Value.deduce([1, 2, 3])
@@ -213,7 +213,7 @@ vector<string>
 
 ## Type Checking
 
-Viper validates types at runtime:
+Viper C++ validates types at runtime:
 
 ```{doctest}
 >>> v = Value.create(TypeVector(Type.STRING))

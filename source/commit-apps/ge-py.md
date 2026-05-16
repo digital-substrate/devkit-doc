@@ -246,12 +246,12 @@ The `Admin` menu of ge-py is assembled from eight pre-built dialogs:
 ```python
 # graph_editor.py — _setup_dialog
 store = Context.instance().store
-self._inspect_dialog        = DSInspectDialog()
-self._commits_dialog        = DSCommitsDialog(store)
+self._inspect_dialog = DSInspectDialog()
+self._commits_dialog = DSCommitsDialog(store)
 self._commit_documents_dialog = DSCommitDocumentsDialog(store)
 self._commit_program_dialog = DSCommitProgramDialog(store)
-self._commit_undo_dialog    = DSCommitUndoDialog(store)
-self._commit_blobs_dialog   = DSCommitBlobsDialog(store)
+self._commit_undo_dialog = DSCommitUndoDialog(store)
+self._commit_blobs_dialog = DSCommitBlobsDialog(store)
 self._commit_actions_dialog = DSCommitActionsDialog(store)
 self._commit_sync_log_dialog = DSCommitSyncLogDialog()
 ```
@@ -260,16 +260,16 @@ Each dialog is constructed with the running `CommitStore` and reacts on
 its own to `state_did_change` notifications — the application has nothing
 to do beyond toggling visibility.
 
-| Dialog                       | What it shows                                          |
-|------------------------------|--------------------------------------------------------|
-| `DSInspectDialog`            | Live tree of every attachment / structure in the state |
-| `DSCommitsDialog`            | The full commit DAG (browse, jump to, compare commits) |
-| `DSCommitDocumentsDialog`    | Documents + attachments grouped by commit              |
-| `DSCommitProgramDialog`      | Python program embedded in a commit (replayable)       |
-| `DSCommitSettingsDialog`     | Per-commit settings                                    |
-| `DSCommitUndoDialog`         | The undo stack as a navigable list                     |
-| `DSCommitBlobsDialog`        | Every blob referenced across commits                   |
-| `DSCommitActionsDialog`      | Enable / disable / reset commits in batch              |
+| Dialog                    | What it shows                                          |
+|---------------------------|--------------------------------------------------------|
+| `DSInspectDialog`         | Live tree of every attachment / structure in the state |
+| `DSCommitsDialog`         | The full commit DAG (browse, jump to, compare commits) |
+| `DSCommitDocumentsDialog` | Documents + attachments grouped by commit              |
+| `DSCommitProgramDialog`   | Python program embedded in a commit (replayable)       |
+| `DSCommitSettingsDialog`  | Per-commit settings                                    |
+| `DSCommitUndoDialog`      | The undo stack as a navigable list                     |
+| `DSCommitBlobsDialog`     | Every blob referenced across commits                   |
+| `DSCommitActionsDialog`   | Enable / disable / reset commits in batch              |
 
 Adopting these dialogs is what turns a domain editor into a
 fully-introspectable Commit application. The same set is consumed by
@@ -284,10 +284,10 @@ fully in `dsviper-components`:
 ```python
 # graph_editor.py
 from dsviper_components.ds_commit_synchronizer_thread import DSCommitSynchronizerThread
-from dsviper_components.ds_connect_to_server_dialog   import DSConnectToServerDialog
-from dsviper_components.ds_commit_sync_log_dialog     import DSCommitSyncLogDialog
+from dsviper_components.ds_connect_to_server_dialog import DSConnectToServerDialog
+from dsviper_components.ds_commit_sync_log_dialog import DSCommitSyncLogDialog
 
-self._sync_logger  = DSLogger(Logging.LEVEL_ALL)
+self._sync_logger = DSLogger(Logging.LEVEL_ALL)
 self._sync_logging = Logging.create(self._sync_logger)
 ```
 
@@ -318,9 +318,9 @@ scripts_folder = str(Path(__file__).parent / "scripts")
 self._python_editor_model = PythonEditorModel(
     scripts_folder,
     namespace_vars={
-        "ctx":              Context.instance(),
-        "store":            store,
-        "render_model":     self._render_component,
+        "ctx": Context.instance(),
+        "store": store,
+        "render_model": self._render_component,
         "_documents_panel": self._commit_documents_dialog,
     },
 )

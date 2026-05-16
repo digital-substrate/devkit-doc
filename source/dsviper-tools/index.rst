@@ -18,7 +18,7 @@ See also :doc:`../dsm/ide` (VS Code / JetBrains plugins) and
 Place in the ecosystem
 ----------------------
 
-* **Depends on** — :term:`DSM`, :term:`dsviper`, Qt (for the GUI editors).
+* **Depends on** — :term:`DSM`, :term:`dsviper`, PySide
 * **Consumed by** — developer toolchains. Not a runtime dependency of
   applications.
 * **Source repositories** —

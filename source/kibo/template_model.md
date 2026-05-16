@@ -287,7 +287,7 @@ public class TemplateConcept {
     // Attachments
     public ArrayList<TemplateAttachment> attachments;
 
-    // Viper
+    // Viper C++
     public String viperType;
     public String viperValue;
 
@@ -342,7 +342,7 @@ public class TemplateClub {
     public String type;
     public String typeSuffix;
 
-    // Viper
+    // Viper C++
     public String viperType;
     public String viperValue;
 
@@ -378,7 +378,7 @@ public class TemplateEnumeration {
     public String type;
     public String typeSuffix;
 
-    // Viper
+    // Viper C++
     public String viperType;
     public String viperValue;
 
@@ -417,7 +417,7 @@ public class TemplateStructure {
     public String type;
     public String typeSuffix;
 
-    // Viper
+    // Viper C++
     public String viperType;
     public String viperValue;
 
@@ -453,7 +453,7 @@ public class TemplateStructureField {
     // Field
     public TemplateField field;
 
-    // Viper
+    // Viper C++
     public String viperValue;
 
     // Python
@@ -506,7 +506,7 @@ public class TemplateAttachedKeyType {
     public String typeInNamespace;
     public String typeSuffix;
 
-    // Viper
+    // Viper C++
     public String viperValue;
 
     // Python
@@ -533,7 +533,7 @@ public class TemplateAttachedDocumentType {
     // Field
     public TemplateField field;
 
-    // Viper
+    // Viper C++
     public String viperValue;
 
     // Python
@@ -563,7 +563,7 @@ public class TemplateField {
     public String elementType;
     public String elementTypeSuffix;
 
-    // Viper
+    // Viper C++
     public String elementTypeViperValue;
 
     // Python
@@ -615,7 +615,7 @@ public class TemplateFunction {
     public String type;
     public String typeSuffix;
 
-    // Viper
+    // Viper C++
     public String returnViperValue;
 
     // Python
@@ -636,7 +636,7 @@ public class TemplateFunctionParameter {
     public String type;
     public String typeSuffix;
 
-    // Viper
+    // Viper C++
     public String viperValue;
 
     // Python
@@ -690,7 +690,7 @@ public class TemplateAttachmentFunction {
     // Type
     public String interfaceType;
 
-    // Viper
+    // Viper C++
     public String returnViperValue;
 
     // Python
@@ -713,7 +713,7 @@ public class TemplateVecFunction {
     public String typeSuffix;
     public String elementTypeSuffix;
 
-    // Viper
+    // Viper C++
     public String viperType;
     public String viperValue;
 
@@ -740,7 +740,7 @@ public class TemplateMatFunction {
     public String typeSuffix;
     public String elementTypeSuffix;
 
-    // Viper
+    // Viper C++
     public String viperType;
     public String viperValue;
 
@@ -780,7 +780,7 @@ public class TemplateTupleFunction {
     public String type;
     public String typeSuffix;
 
-    // Viper
+    // Viper C++
     public String viperType;
     public String viperValue;
 
@@ -805,7 +805,7 @@ public class TemplateOptionalFunction {
     public String elementType;
     public String elementTypeSuffix;
 
-    // Viper
+    // Viper C++
     public String viperType;
     public String viperValue;
 
@@ -830,7 +830,7 @@ public class TemplateVectorFunction {
     public String type;
     public String elementTypeSuffix;
 
-    // Viper
+    // Viper C++
     public String viperType;
     public String viperValue;
 
@@ -854,7 +854,7 @@ public class TemplateSetFunction {
     public String typeSuffix;
     public String elementTypeSuffix;
 
-    // Viper
+    // Viper C++
     public String viperType;
     public String viperValue;
 
@@ -879,7 +879,7 @@ public class TemplateMapFunction {
     public String keyTypeSuffix;
     public String elementTypeSuffix;
 
-    // Viper
+    // Viper C++
     public String viperType;
     public String viperValue;
 
@@ -906,7 +906,7 @@ public class TemplateVariantFunction {
     public String type;
     public String typeSuffix;
 
-    // Viper
+    // Viper C++
     public String viperType;
     public String viperValue;
 
@@ -930,7 +930,7 @@ public class TemplateXArrayFunction {
     public String typeSuffix;
     public String elementTypeSuffix;
 
-    // Viper
+    // Viper C++
     public String viperType;
     public String viperValue;
 
@@ -942,7 +942,7 @@ public class TemplateXArrayFunction {
 
 ### TemplatePythonType
 
-Used to generate Python proxy classes for Viper.
+Used to generate Python proxy classes for Viper C++.
 
 ```java
 public class TemplatePythonType {

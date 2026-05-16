@@ -1,9 +1,9 @@
 HTML Rendering
 ==============
 
-Classes for rendering Viper data as HTML in web and desktop applications.
+Classes for rendering Viper C++ data as HTML in web and desktop applications.
 
-**When to use**: Use ``DocumentNode`` to traverse nested Viper documents with
+**When to use**: Use ``DocumentNode`` to traverse nested Viper C++ documents with
 full metadata. Use ``Html`` to generate styled HTML output for Flask web apps
 or Qt desktop apps (via ``QTextEdit.setHtml()``).
 
@@ -36,7 +36,7 @@ Quick Start
 DocumentNode Tree
 -----------------
 
-``DocumentNode`` provides a recursive tree structure for navigating Viper documents:
+``DocumentNode`` provides a recursive tree structure for navigating Viper C++ documents:
 
 .. code-block:: python
 

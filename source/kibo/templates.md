@@ -18,7 +18,7 @@ repetitive, schema-shaped code that you would otherwise hand-write.
 Kibo carries a built-in mapping from DSM primitives to the target's native
 types: ``bool``, ``int8``, ``float``, … and from generic DSM collections
 (``vector<T>``, ``map<K, V>``, …) to the target language's standard
-containers and to the Viper type-and-value system. Authors of templates
+containers and to the Viper C++ type-and-value system. Authors of templates
 build on top of this mapping rather than re-implementing it.
 
 ## Templates form an ecosystem
@@ -37,7 +37,7 @@ for common selections by use case.
 
 ## Two ways to encounter templates
 
-* **Use an existing template pack** — for the dsviper / Viper world, that
+* **Use an existing template pack** — for the dsviper / Viper C++ world, that
   pack is [kibo-template-viper](../kibo-template-viper/index.rst), which
   ships C++ and Python templates for every layer of the stack.
 * **Write your own** — Kibo's template format is generic. You can build a

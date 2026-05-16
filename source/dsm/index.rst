@@ -7,7 +7,7 @@ function pools. It is the modeling layer of the dsviper ecosystem and the
 entry point of the :doc:`code-generation pipeline <../ecosystem/pipeline>`.
 
 DSM is **standalone**: authoring a ``.dsm`` file does not require Kibo, the
-Viper runtime, or dsviper. You can use it as a typed contract between teams,
+Viper C++ runtime, or dsviper. You can use it as a typed contract between teams,
 or feed it into code generation when typed code is needed. See
 :doc:`../ecosystem/value-chains` for where DSM sits in the broader picture.
 
@@ -15,16 +15,12 @@ or feed it into code generation when typed code is needed. See
 Place in the ecosystem
 ----------------------
 
-* **Depends on** — nothing. DSM is the root of the toolchain value chain.
-* **Consumed by** — :term:`Kibo` (generates code from ``.dsm`` plus a
-  template), :term:`dsviper` (loads ``.dsm`` through its
-  :term:`dynamic API <static API / dynamic API>`),
-  :term:`Commit Applications <Commit Application>` such as ``ge-py`` and
-  ``ge-qml``.
+* **Depends on** — DSM is the root of the toolchain value chain.
+* **Consumed by** — :term:`Kibo` and :term:`dsviper`
 * **Source repository** —
   `digital-substrate/dsm <https://github.com/digital-substrate/dsm>`_. Carries
   the ANTLR4 grammar (``DSM.g4``) and the canonical JSON wire format —
-  producer-neutral, implemented by Viper, Kibo, and the IDE plugins.
+  producer-neutral, implemented by Viper C++, Kibo, and the IDE plugins.
 * **Related repositories** —
 
   * `digital-substrate/dsm-samples
@@ -73,7 +69,7 @@ template):
 
    python3 tools/dsm_util.py create_python_package model.dsm
 
-For C++ generation against the :term:`Viper` runtime, invoke Kibo directly
+For C++ generation against the :term:`Viper C++` runtime, invoke Kibo directly
 with the C++ templates from ``kibo-template-viper``. See :doc:`../kibo/usage`
 for the invocation patterns and :doc:`../kibo-template-viper/features` for
 the C++ feature catalogue.

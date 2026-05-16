@@ -7,7 +7,7 @@ the network. It composes DSM definitions and one or more
 stateful ``AttachmentFunctionPool`` — into a single immutable bundle
 served over a socket.
 
-Services are a Viper Runtime feature. The protocol communicates
+Services are a Viper C++ Runtime feature. The protocol communicates
 through the ``AttachmentMutating`` interface: stateful pool
 functions read and mutate whatever the client passes as their
 ``AttachmentMutating`` — a value, a structure, an in-memory
@@ -19,13 +19,9 @@ assume any particular storage tier.
 Place in the ecosystem
 ----------------------
 
-* **Depends on** — :doc:`DSM <../dsm/index>` (the language used to
-  declare function pools and the typed schemas they consume),
-  :doc:`dsviper <../dsviper/index>` and the Viper C++ engine (the
-  runtime that registers pools, marshals values, and runs the RPC
-  protocol).
-* **Consumed by** — any Python or C++ client that imports ``dsviper``
-  (Python) or links Viper (C++).
+* **Depends on** — :doc:`DSM <../dsm/index>` and the Viper C++ engine
+  (the runtime that registers pools, marshals values, and runs the RPC protocol).
+* **Consumed by** — any Python or C++ client that imports ``dsviper`` (Python) or links Viper C++ (C++).
 
 
 Topics

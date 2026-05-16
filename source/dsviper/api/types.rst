@@ -1,7 +1,7 @@
 Type System
 ===========
 
-The type system defines all available types in Viper. ``Type`` is the base class
+The type system defines all available types in Viper C++. ``Type`` is the base class
 with static accessors for primitive types.
 
 **When to use**: Use types to define schemas, validate data, and create

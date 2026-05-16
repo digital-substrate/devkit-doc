@@ -50,7 +50,7 @@ For web integration and REST APIs, use ``Value.json_encode()`` and ``Value.json_
 Flask REST API Example
 ^^^^^^^^^^^^^^^^^^^^^^
 
-Real-world pattern for exposing Viper data via REST:
+Real-world pattern for exposing Viper C++ data via REST:
 
 .. code-block:: python
 

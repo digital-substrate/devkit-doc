@@ -73,7 +73,7 @@ python3 tools/dsm_util.py create_python_package model.dsm --repos /path/to/repos
 
 | Module              | Description                             |
 |---------------------|-----------------------------------------|
-| `model.definitions` | Type definitions for Viper              |
+| `model.definitions` | Type definitions for Viper C++              |
 | `model.data`        | Classes for concepts, structures, enums |
 | `model.attachments` | Attachment accessors with type hints    |
 | `model.database`    | Database API with type hints            |

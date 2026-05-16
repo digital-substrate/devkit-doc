@@ -23,12 +23,12 @@ DSM model**. It opens any commit database and reads its schema at
 runtime through dsviper's introspection API — there is no Kibo-generated
 package, no hand-written business logic, no domain widgets.
 
-| Layer        | Where in web-cdbe                            | DevKit doc                                          |
-|--------------|----------------------------------------------|-----------------------------------------------------|
-| Schema       | `definitions()` from any opened database     | [DSM](../dsm/index.rst) (the language behind it)    |
-| Runtime      | `CommitDatabase`, `CommitMutableState`       | [dsviper](../dsviper/index.rst)                     |
-| Rendering    | `DocumentNode` tree → HTML in Python         | [dsviper](../dsviper/index.rst) (DocumentNode API)  |
-| Mutation     | `attachment_mutating().update(...)` + commit | [dsviper](../dsviper/index.rst) (CommitMutableState)|
+| Layer     | Where in web-cdbe                            | DevKit doc                                           |
+|-----------|----------------------------------------------|------------------------------------------------------|
+| Schema    | `definitions()` from any opened database     | [DSM](../dsm/index.rst) (the language behind it)     |
+| Runtime   | `CommitDatabase`, `CommitMutableState`       | [dsviper](../dsviper/index.rst)                      |
+| Rendering | `DocumentNode` tree → HTML in Python         | [dsviper](../dsviper/index.rst) (DocumentNode API)   |
+| Mutation  | `attachment_mutating().update(...)` + commit | [dsviper](../dsviper/index.rst) (CommitMutableState) |
 
 The takeaway: a working editor for **any** commit database in ~450
 lines of Python plus three Jinja templates. The same introspection API
@@ -184,11 +184,16 @@ if editable:
     self.write(f'<input type="hidden" name="instance_id" …/>')
     self.write(f'<input type="hidden" name="node_uuid" …/>')
 
-    if node.is_boolean():     self.render_value_boolean(node)
-    elif node.is_integer():   self.render_value_integer(node)
-    elif node.is_real():      self.render_value_real(node)
-    elif node.is_string():    self.render_value_string(node)
-    elif node.is_enumeration(): self.render_value_enumeration(node)
+    if node.is_boolean():
+        self.render_value_boolean(node)
+    elif node.is_integer():
+        self.render_value_integer(node)
+    elif node.is_real():
+        self.render_value_real(node)
+    elif node.is_string():
+        self.render_value_string(node)
+    elif node.is_enumeration():
+        self.render_value_enumeration(node)
 
     self.write("<button type='submit' class='update'>Update</button>")
     self.write(f'</form>')

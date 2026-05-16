@@ -1,6 +1,6 @@
 # Collections
 
-Viper provides strongly-typed collections that mirror Python's built-in collections while
+Viper C++ provides strongly-typed collections that mirror Python's built-in collections while
 enforcing type safety.
 
 ## Vector
@@ -210,7 +210,7 @@ Optional(42)
 
 ## Tuple
 
-`ValueTuple` holds heterogeneous values. Note that booleans render with Viper's
+`ValueTuple` holds heterogeneous values. Note that booleans render with Viper C++'s
 own repr (`true`/`false`), not Python's `True`/`False`:
 
 ```{doctest}

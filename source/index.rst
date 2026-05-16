@@ -30,12 +30,12 @@ dsviper runtime gives you:
    db.commit_mutations("Add user", state)
 
 
-DevKit, dsviper, Viper
-----------------------
+DevKit, dsviper, Viper C++
+--------------------------
 
 Three names appear across this documentation, referring to different things —
 the **distribution** (DevKit), the **Python runtime** (dsviper), and the
-**C++ engine** (Viper). See :doc:`ecosystem/naming` for the canonical
+**C++ engine** (Viper C++). See :doc:`ecosystem/naming` for the canonical
 disambiguation, and :doc:`ecosystem/value-chains` for how every component
 fits together.
 
@@ -46,10 +46,10 @@ Two Ways to Work
 **Static API** - Generate type-safe Python packages from your DSM definitions.
 Get IDE autocompletion, type checking, and domain-specific APIs.
 
-**Dynamic API** - Use Viper's runtime metadata directly. No code generation needed.
+**Dynamic API** - Use Viper C++'s runtime metadata directly. No code generation needed.
 Load definitions at runtime, introspect types, build tools that work with any schema.
 
-Both approaches use the same Viper runtime. Choose based on your needs.
+Both approaches use the same Viper C++ runtime. Choose based on your needs.
 
 Documentation
 -------------

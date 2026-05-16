@@ -3,6 +3,7 @@
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+import datetime
 import doctest
 import os
 import sys
@@ -12,7 +13,7 @@ sys.path.insert(0, os.path.abspath('./_ext'))
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'DevKit'
-copyright = '2025, Digital Substrate'
+copyright = f'2025–{datetime.date.today().year}, Digital Substrate · Prose under CC-BY 4.0, code samples under MIT'
 author = 'Digital Substrate'
 release = '1.2'
 

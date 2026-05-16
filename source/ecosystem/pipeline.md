@@ -13,8 +13,8 @@ components, reference apps, and dsviper-tools — see
    │  Describe  │ ───→ │  Generate  │ ───→ │     Use       │
    │    DSM     │      │    Kibo    │      │ Viper/dsviper │
    └────────────┘      └────────────┘      └───────────────┘
-       .dsm file            C++/Python            runtime
-                            surfaces
+       .dsm file         C++/Python              runtime
+                          surfaces
 ```
 
 ## 1. Describe — DSM

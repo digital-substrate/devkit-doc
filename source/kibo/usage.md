@@ -1,4 +1,4 @@
-# Kibo
+# Command-line usage
 
 Kibo is the code generator that transforms DSM definitions into C++ and Python
 infrastructure code. See [Templates](templates.md) for the template model.

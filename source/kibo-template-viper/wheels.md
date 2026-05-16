@@ -27,7 +27,7 @@ build-backend = "setuptools.build_meta"
 name = "model"
 version = "1.0.0"
 description = "Typed proxies for model (over dsviper)"
-requires-python = ">=3.14"
+requires-python = ">=3.10"
 dependencies = ["dsviper>=1.2.0"]
 
 [tool.setuptools.packages.find]

@@ -4,7 +4,7 @@ This chapter covers installing and verifying the dsviper Python module.
 
 ## Prerequisites
 
-- Python 3.14+
+- Python 3.10+ (cp310 / cp311 / cp312 / cp313 / cp314 wheels published)
 - pip package manager
 
 ## Installing from PyPI

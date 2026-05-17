@@ -1,11 +1,11 @@
-Commit Engine
-=============
+Commit Database
+===============
 
-The Commit Engine provides transactional persistence with history tracking.
+The Commit Database provides transactional persistence with history tracking.
 
 **When to use**: Use ``CommitDatabase`` for versioned persistence with history,
-divergence, and sync. Every change creates a commit, enabling undo/redo
-and concurrent editing.
+divergence, and sync. A ``CommitStore`` wraps an open database to expose
+undo/redo and the dispatch surface for concurrent editing.
 
 Quick Start
 -----------

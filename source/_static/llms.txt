@@ -48,7 +48,7 @@ DevKit is the **distribution** that bundles **DSM** (the modeling language), **K
 - [DSM from Python](https://docs.digitalsubstrate.io/dsviper/dsm.html): Loading DSM definitions dynamically.
 - [Errors](https://docs.digitalsubstrate.io/dsviper/errors.html): Error model and exceptions.
 
-## Commit Engine
+## Commit Database
 
 - [Commit](https://docs.digitalsubstrate.io/commit/commit.html): The commit DAG over your data — modes of use, dual-layer contract.
 - [Commit contract](https://docs.digitalsubstrate.io/commit/commit_contract.html): Mutation rules and invariants.

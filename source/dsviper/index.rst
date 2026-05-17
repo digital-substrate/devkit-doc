@@ -77,8 +77,8 @@ A complete wrapper
 ------------------
 
 ``dsviper`` is a complete wrapper over Viper C++ — the full C++ surface
-(types, values, runtime, database tier, commit engine, serialization, RPC)
-is reachable from Python. The Commit Engine in particular is documented in
+(types, values, runtime, database tier, Commit Database, serialization, RPC)
+is reachable from Python. The Commit Database in particular is documented in
 the peer :doc:`Commit <../commit/index>` section.
 
 

@@ -55,7 +55,7 @@ Working examples
 To see this API in action, the two GUI editors shipped with
 ``dsviper-tools`` exercise complementary parts of the surface:
 
-- ``cdbe.py`` (Commit Database Editor) — covers the **Commit Engine**
+- ``cdbe.py`` (Commit Database Editor) — covers the **Commit Database**
   side: ``CommitDatabase``, ``CommitMutableState``, ``CommitStore``,
   ``CommitSynchronizer``, undo/redo, and live sync.
 - ``dbe.py`` (Database Editor, plain CRUD) — covers the non-versioned

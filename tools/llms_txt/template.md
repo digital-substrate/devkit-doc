@@ -24,7 +24,7 @@ DevKit is the **distribution** that bundles **DSM** (the modeling language), **K
 
 {{auto:source/dsviper/*.md}}
 
-## Commit Engine
+## Commit Database
 
 {{auto:source/commit/*.md}}
 

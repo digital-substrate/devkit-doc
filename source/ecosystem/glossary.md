@@ -138,7 +138,7 @@ Dual Reality
 
 ```
 
-## Commit Engine vocabulary
+## Commit Database vocabulary
 
 ```{glossary}
 

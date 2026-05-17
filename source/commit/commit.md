@@ -1,9 +1,10 @@
-# Commit Engine
+# Commit Database
 
-The Commit Engine provides transactional persistence with history tracking.
+The Commit Database provides transactional persistence with history tracking.
 
 **When to use**: Use `CommitDatabase` for versioned persistence with history, concurrent
-streams, and sync. Every change creates a commit, enabling undo/redo and concurrent editing.
+streams, and sync. A `CommitStore` wraps an open database to expose undo/redo and
+the dispatch surface for concurrent editing.
 
 ---
 
@@ -43,14 +44,14 @@ problem. This is where the
 [Dual-Layer Contract](commit_contract.md) becomes load-bearing.
 
 ```{note}
-**Three regimes of multi-author work** — only one is what the engine
-provides:
+**Three regimes of multi-author work** — only one is what the Commit
+Database provides:
 
 - **Collaboration** — humans reconcile intentions: conflicts are
   identified, surfaced, resolved (the git-merge / review model).
 - **Cooperation** — disjoint contributions assemble without conflict
   by construction.
-- **Mechanical convergence** — the engine linearises streams
+- **Mechanical convergence** — the Commit Database linearises streams
   deterministically with no notion of "conflict": clashing intentions
   are silently reconciled by structural rules. Structurally sound,
   semantically untrusted.

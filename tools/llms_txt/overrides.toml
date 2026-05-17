@@ -156,7 +156,7 @@ title = "Errors"
 description = "Error model and exceptions."
 sort = 110
 
-# ---- Commit Engine ---------------------------------------------------
+# ---- Commit Database -------------------------------------------------
 
 [overrides."https://docs.digitalsubstrate.io/commit/commit.html"]
 title = "Commit"

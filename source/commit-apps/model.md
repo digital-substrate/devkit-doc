@@ -1,8 +1,9 @@
 # Commit Application Model
 
-The **Commit Application Model** is the architectural pattern shared
-by every application built on the Commit Engine. It defines how an
-application composes a `CommitStore` (provided by the Viper C++ runtime)
+The **Commit Application Model** is the architectural pattern for
+applications that hold versioned, observable state. It defines how an
+application composes a `CommitStore` (the in-memory wrapper over a
+[Commit Database](../commit/index.rst), provided by the Viper C++ runtime)
 with its own domain state, dispatch surface, and platform
 notifications, so that all state changes flow through the
 [commit DAG](../commit/commit.md) with built-in undo/redo, multi-author
@@ -306,11 +307,11 @@ The Application Context never imports a UI framework — it speaks
 
 ## The dual-layer contract
 
-The Commit Engine guarantees **structural integrity** — typed
-mutations land cleanly in the DAG, the commit graph stays
-consistent, undo/redo behaves deterministically. It does **not**
-guarantee **semantic integrity** — that the application's domain
-invariants are upheld.
+The Commit Database guarantees **structural integrity** — typed
+mutations land cleanly in the DAG, the commit graph stays consistent,
+and the `CommitStore` navigation (undo/redo) behaves deterministically.
+It does **not** guarantee **semantic integrity** — that the
+application's domain invariants are upheld.
 
 That responsibility belongs to the Application Context. The pattern
 asks the application to validate its own domain rules **at
@@ -351,7 +352,7 @@ established application patterns:
 | **CQRS** (CQS-leaning) | Read interface and mutation interface separated |
 | **Observer (Adapter)** | Notifier bridge to the platform UI              |
 
-What's specific is the integration with the Commit Engine: persistence,
+What's specific is the integration with the Commit Database: persistence,
 history, branching, and multi-author convergence are intrinsic rather than
 bolted on.
 

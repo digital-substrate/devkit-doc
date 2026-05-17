@@ -8,7 +8,7 @@ Raptor Editor
 Overview
 --------
 
-Raptor Editor is a **stress test application** for Commit Engine performance and blob management.
+Raptor Editor is a **stress test application** for Commit Database performance and blob management.
 This DSM defines the complete data model for:
 
 - **Scene composition**: Models, Surfaces, Geometry Layers, Position Layers

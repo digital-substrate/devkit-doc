@@ -2,12 +2,12 @@ Commit Applications
 ===================
 
 The :doc:`Commit Application Model <model>` is the architectural
-pattern shared by every application built on the
-:doc:`Commit Engine <../commit/index>`. It defines how an application
-composes a ``CommitStore``, its domain state, dispatch surface, and
-platform notifications. Two language profiles exist — a six-layer
-C++ profile that uses generated function pools, and a five-layer
-Python profile that does not need them.
+pattern for applications that hold versioned, observable state. It
+defines how an application composes a ``CommitStore`` (the in-memory
+wrapper over a :doc:`Commit Database <../commit/index>`), its domain
+state, dispatch surface, and platform notifications. Two language
+profiles exist — a six-layer C++ profile that uses generated function
+pools, and a five-layer Python profile that does not need them.
 
 The walkthroughs below are concrete **instances** of that single
 Model, on different presentation tiers. They are not products in

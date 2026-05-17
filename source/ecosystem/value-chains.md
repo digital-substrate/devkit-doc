@@ -50,9 +50,10 @@ Consumed by applications. Comes in two parallel tracks: `dsviper-components`
 (Qt Widgets) and `dsviper-components-qml` (Qt Quick / QML). Most of the
 runtime stack mirrors this split.
 
-**Commit Application Model** — the application pattern on top of the
-Commit Engine. An Application Context composing a `CommitStore`, the
-domain state, the dispatch surface, and a platform-agnostic notifier. See
+**Commit Application Model** — the application pattern on top of a
+`CommitStore` (over a Commit Database). An Application Context composing
+the `CommitStore`, the domain state, the dispatch surface, and a
+platform-agnostic notifier. See
 [Commit Application Model](../commit-apps/model.md) for the pattern
 itself; the walkthroughs that exercise the *whole* ecosystem
 end-to-end (dsm, kibo, template, dsviper-components, runtime) are:

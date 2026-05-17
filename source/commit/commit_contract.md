@@ -1,17 +1,17 @@
 # The Dual-Layer Contract
 
-This page documents the contract between the Commit Engine (exposed in Python
+This page documents the contract between the Commit Database (exposed in Python
 through `dsviper`) and your application code **in the regime where merges
 happen automatically, without human arbitration** — typically multiple authors
 writing concurrently into a shared database. In single-user use (desktop
-editors, scripting, read-only history), the engine still behaves the way this
-contract describes, but the failure modes below do not bite: there is no
-unsupervised convergence to worry about. See
+editors, scripting, read-only history), the Commit Database still behaves the
+way this contract describes, but the failure modes below do not bite: there is
+no unsupervised convergence to worry about. See
 [Modes of Use](commit.md#modes-of-use) to locate your scenario.
 
 When the contract does apply, read it before relying on commit behavior to
-validate your data: the engine produces **structurally sound but untrusted
-output**, and your application is what turns it into trusted state.
+validate your data: the Commit Database produces **structurally sound but
+untrusted output**, and your application is what turns it into trusted state.
 
 ## The Contract
 
@@ -25,7 +25,7 @@ algorithm:
 
 - Mutations targeting non-existent documents or unresolved paths are **silently
   ignored**.
-- Business rule violations are **not** detected by the engine.
+- Business rule violations are **not** detected by the Commit Database.
 - LWW arbitration may keep a value that no single submitted intent would have
   produced.
 
@@ -63,7 +63,7 @@ distinct places, not one:
 | Family                           | Origin                                              | Detected by                         |
 |----------------------------------|-----------------------------------------------------|-------------------------------------|
 | **Untrusted (external)**         | I/O, deserialization, type mismatch, malformed path | Engine, fail-fast → `dsviper.Error` |
-| **Untrusted (post-convergence)** | State returned by the engine after convergence      | Application, at read time           |
+| **Untrusted (post-convergence)** | State returned by the Commit Database after convergence      | Application, at read time           |
 | **Invalid (semantic)**           | Business-rule violation on otherwise sound data     | Application, at read time           |
 
 The first family is what `dsviper.Error` covers. The other two are entirely
@@ -109,7 +109,7 @@ The contract shapes how you should write code on top of `dsviper.Commit*`:
   will land. After concurrent streams converge, some operations may have been
   silently dropped because their targets disappeared.
 - **Validate at the application boundary,** which means
-  the engine output. If your domain has invariants (uniqueness,
+  the Commit Database output. If your domain has invariants (uniqueness,
   referential integrity, cross-field consistency), enforce them when consuming
   the state.
 

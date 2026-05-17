@@ -6,6 +6,14 @@ The Commit Database provides transactional persistence with history tracking.
 streams, and sync. A `CommitStore` wraps an open database to expose undo/redo and
 the dispatch surface for concurrent editing.
 
+```{seealso}
+This page documents the persistence layer in isolation — opening a
+database, capturing commit ids, walking history by id. For the
+runtime surface most applications actually use — current state,
+dispatch, undo / redo, notifications — see
+[CommitStore](commit_store.md).
+```
+
 ---
 
 ## Modes of Use

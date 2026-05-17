@@ -2,17 +2,19 @@
 
 The **Commit Application Model** is the architectural pattern for
 applications that hold versioned, observable state. It defines how an
-application composes a `CommitStore` (the in-memory wrapper over a
-[Commit Database](../commit/index.rst), provided by the Viper C++ runtime)
-with its own domain state, dispatch surface, and platform
-notifications, so that all state changes flow through the
-[commit DAG](../commit/commit.md) with built-in undo/redo, multi-author
+application composes a [`CommitStore`](commit_store.md) — the in-memory
+wrapper over a [Commit Database](commit_database.md), provided by the
+Viper C++ runtime — with its own domain state, dispatch surface, and
+platform notifications, so that all state changes flow through the
+[commit DAG](commit_database.md) with built-in undo/redo, multi-author
 convergence, and audit trail.
 
-The walkthroughs that follow this page — `cdbe.py`, [ge-py](ge-py.md),
-[ge-qml](ge-qml.md), [web-cdbe](web-cdbe.md) — are concrete
-**instances** of this single Model, in different languages and on
-different presentation tiers. The Model is what they have in common.
+Concrete walkthroughs in different languages and on different
+presentation tiers — `cdbe.py`, [ge-py](../commit-apps/ge-py.md),
+[ge-qml](../commit-apps/ge-qml.md),
+[web-cdbe](../commit-apps/web-cdbe.md) — live under
+[Commit Applications](../commit-apps/index.rst). They are instances of
+this single Model; the Model is what they have in common.
 
 > `dbe.py` is **not** an instance of this model. It is a plain CRUD
 > inspector for the non-versioned `Database` backend — it does not use
@@ -238,12 +240,12 @@ from the dispatch lambda.
 This profile applies to all four Commit Applications shipped or
 walked through in the DevKit:
 
-| Application             | Domain              | UI tier                  |
-|-------------------------|---------------------|--------------------------|
-| `cdbe.py`               | Generic (no domain) | Qt Widgets (PySide6)     |
-| [ge-py](ge-py.md)       | Graph               | Qt Widgets (PySide6)     |
-| [ge-qml](ge-qml.md)     | Graph               | Qt Quick / QML (PySide6) |
-| [web-cdbe](web-cdbe.md) | Generic (no domain) | Server-rendered HTML/CSS |
+| Application                              | Domain              | UI tier                  |
+|------------------------------------------|---------------------|--------------------------|
+| `cdbe.py`                                | Generic (no domain) | Qt Widgets (PySide6)     |
+| [ge-py](../commit-apps/ge-py.md)         | Graph               | Qt Widgets (PySide6)     |
+| [ge-qml](../commit-apps/ge-qml.md)       | Graph               | Qt Quick / QML (PySide6) |
+| [web-cdbe](../commit-apps/web-cdbe.md)   | Generic (no domain) | Server-rendered HTML/CSS |
 
 `cdbe.py` and `web-cdbe` are **generic** — they have no DSM model
 of their own and no Kibo-generated infrastructure. They open any
@@ -319,8 +321,8 @@ consumption time**, not at write time, because a commit may have been
 authored elsewhere (different version, different author) and only
 discovered locally on sync.
 
-See [The Dual-Layer Contract](../commit/commit_contract.md) for the
-full rationale and the where-to-validate decision tree.
+See [The Dual-Layer Contract](commit_contract.md) for the full
+rationale and the where-to-validate decision tree.
 
 ## Generic versus domain-specific instances
 

@@ -7,7 +7,7 @@ writing concurrently into a shared database. In single-user use (desktop
 editors, scripting, read-only history), the Commit Database still behaves the
 way this contract describes, but the failure modes below do not bite: there is
 no unsupervised convergence to worry about. See
-[Modes of Use](commit.md#modes-of-use) to locate your scenario.
+[Modes of Use](commit_database.md#modes-of-use) to locate your scenario.
 
 When the contract does apply, read it before relying on commit behavior to
 validate your data: the Commit Database produces **structurally sound but
@@ -123,5 +123,5 @@ The contract shapes how you should write code on top of `dsviper.Commit*`:
 
 ## See Also
 
-- [Commit](commit.md) — using the commit API from Python
+- [Commit Database](commit_database.md) — using the commit API from Python
 - [Errors](../dsviper/errors.md) — `dsviper.Error` and exception handling

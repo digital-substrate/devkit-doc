@@ -54,7 +54,7 @@ runtime stack mirrors this split.
 `CommitStore` (over a Commit Database). An Application Context composing
 the `CommitStore`, the domain state, the dispatch surface, and a
 platform-agnostic notifier. See
-[Commit Application Model](../commit-apps/model.md) for the pattern
+[Commit Application Model](../commit/commit_application_model.md) for the pattern
 itself; the walkthroughs that exercise the *whole* ecosystem
 end-to-end (dsm, kibo, template, dsviper-components, runtime) are:
 

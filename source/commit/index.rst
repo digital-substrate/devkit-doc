@@ -1,23 +1,38 @@
-Commit Database
-===============
+Commit
+======
 
-The **Commit Database** is Viper's versioned persistence layer — an
-immutable, content-addressed DAG of commits derived from a
-:doc:`DSM <../dsm/index>` model, with deterministic mechanical convergence
-between concurrent streams.
+**Commit** is Viper's versioned-state technology — an immutable,
+content-addressed DAG of commits derived from a
+:doc:`DSM <../dsm/index>` model, with deterministic mechanical
+convergence between concurrent streams, plus the runtime wrapper and
+the architectural pattern that turn it into the substrate of an
+interactive application.
 
-A ``CommitStore`` wraps an open Commit Database in memory and exposes the
-navigation operations on top — time travel, undo/redo, multi-head
-exploration — plus a dispatch surface for typed mutations and a notifier
-for observers.
+It is structured as three layers, from the disk upward:
+
+* :doc:`Commit Database <commit_database>` — the persistence layer
+  itself. An immutable DAG of commits, opened by path, mutated through
+  explicit commit ids. No current state, no undo, no notifications.
+* :doc:`CommitStore <commit_store>` — the in-memory wrapper. Holds the
+  current state, dispatches typed mutations as commits, maintains
+  undo / redo, notifies observers through a framework-agnostic
+  protocol. The runtime surface an application actually uses.
+* :doc:`Commit Application Model <commit_application_model>` — the
+  architectural pattern. An Application Context owns the
+  ``CommitStore``, exposes domain state, dispatches user actions, and
+  routes notifications to the UI.
+
+A fourth page, :doc:`The Dual-Layer Contract <commit_contract>`,
+formalises what the three layers guarantee structurally and what
+remains the application's semantic responsibility.
 
 It is a Viper C++ subsystem first and a Python API second. The Python
 exposure lives in :doc:`dsviper <../dsviper/index>` (``CommitDatabase``,
-``CommitMutableState``, ``commit_mutations``); Qt-side tools live in
+``CommitStore``, ``CommitMutableState``); Qt-side tools live in
 :doc:`dsviper-tools <../dsviper-tools/index>` and
-:doc:`dsviper-components <../dsviper-components/index>`. The pages below
-document the subsystem itself — its guarantees, its modes of use, and the
-contract it asks of the application that consumes its output.
+:doc:`dsviper-components <../dsviper-components/index>`. Concrete
+walk-throughs of the Model are gathered under
+:doc:`Commit Applications <../commit-apps/index>`.
 
 
 Place in the ecosystem
@@ -36,9 +51,10 @@ Where it sits in the value chain
 Without the Commit Database, ``dsviper`` reads and writes against the plain
 ``Database`` backend — flat key-value, no history. The Commit Database adds
 versioning over the same backend: an immutable DAG of commits with
-deterministic convergence between concurrent streams. A ``CommitStore``
-adds the navigation on top — undo/redo, multi-head exploration. See
-:doc:`../ecosystem/value-chains` for the broader picture.
+deterministic convergence between concurrent streams. A
+:doc:`CommitStore <commit_store>` adds the navigation, dispatch, and
+notifications on top. See :doc:`../ecosystem/value-chains` for the broader
+picture.
 
 
 Tools that ship with the DevKit
@@ -68,7 +84,9 @@ Topics
 .. toctree::
    :maxdepth: 2
 
-   commit
+   commit_database
+   commit_store
+   commit_application_model
    commit_contract
 
 

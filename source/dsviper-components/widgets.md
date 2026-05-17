@@ -2,8 +2,8 @@
 
 A catalogue of the components exposed by `dsviper-components`, grouped
 by functional area. Every widget assumes the host application has
-constructed a `CommitStore` and a `DSCommitStoreNotifier` as described
-in [Architecture](architecture.md).
+constructed a [CommitStore](../commit/commit_store.md) and a
+`DSCommitStoreNotifier` as described in [Architecture](architecture.md).
 
 ```{note}
 **Convention** — most widgets take the running `CommitStore` as their

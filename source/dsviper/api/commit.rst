@@ -32,7 +32,7 @@ Quick Start
 .. seealso::
 
    For detailed examples and the Dual-Layer Contract, see
-   :doc:`/commit/commit` and :doc:`/commit/commit_contract`.
+   :doc:`/commit/commit_database` and :doc:`/commit/commit_contract`.
 
 Path-Based Mutations
 --------------------

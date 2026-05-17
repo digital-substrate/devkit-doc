@@ -21,8 +21,8 @@ cdbe is the **degenerate case** of the Commit Application Model:
 the same pattern as ge-py / ge-qml, but with the domain-specific
 layers collapsed because there is no domain. It is what remains
 when you take the
-[Commit Application Model](model.md) and remove every domain-specific
-piece.
+[Commit Application Model](../commit/commit_application_model.md) and
+remove every domain-specific piece.
 
 | Layer of the Python profile      | Where in cdbe.py                                                                                 |
 |----------------------------------|--------------------------------------------------------------------------------------------------|
@@ -331,7 +331,7 @@ others are what gets added back when the domain is known.
 
 ## Reference
 
-* [Commit Application Model](model.md) — the pattern cdbe instantiates.
+* [Commit Application Model](../commit/commit_application_model.md) — the pattern cdbe instantiates.
 * [dsviper](../dsviper/index.rst) — the runtime exercised through the
   singleton `CommitStore`.
 * [dsviper-components](../dsviper-components/index.rst) — the shared

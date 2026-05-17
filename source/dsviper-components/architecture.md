@@ -7,15 +7,16 @@ updates** (the Notifier Bridge) and **constructor-based store injection**
 ## The Notifier Bridge
 
 ```{seealso}
-This page describes the **Python / Qt implementation**. For the
-language-agnostic statement of the same pattern, see
-[Commit Application Model — The notification contract](../commit-apps/model.md#the-notification-contract).
+The framework-agnostic `CommitStoreNotifying` protocol — what
+notifications exist, when each fires — is documented on
+[CommitStore — The notification protocol](../commit/commit_store.md#4-the-notification-protocol).
+This section covers the **Python / Qt adapter** that translates those
+notifications into Qt Signals.
 ```
 
-The dsviper runtime exposes change notifications through the
-`CommitStoreNotifying` protocol — a plain Python interface with methods
-like `notify_state_did_change()` and `notify_database_did_open()`.
-For Qt to consume these notifications, they must become Qt **Signals**.
+The dsviper runtime emits change notifications through the
+`CommitStoreNotifying` protocol. For Qt to consume them, they must
+become Qt **Signals**.
 
 `DSCommitStoreNotifier` is the **adapter** that bridges the two worlds.
 It is a `QObject` whose signals mirror the protocol's notification
@@ -88,7 +89,7 @@ injects an explicit notifier into every component.
 ## Integration recipe
 
 A minimal Commit-based application built on `dsviper-components` does
-five things, in this order:
+four things, in this order:
 
 ```python
 from dsviper import CommitStore, CommitDatabase
@@ -97,31 +98,28 @@ from dsviper_components.ds_commits_dialog       import DSCommitsDialog
 from dsviper_components.ds_commit_undo_dialog   import DSCommitUndoDialog
 # … any other dialog the application wants
 
-# 1. Build the store (one or many).
+# 1. Build the store (one or many) and attach a database.
 store = CommitStore()
+store.use(CommitDatabase.open("model.cdb"))
 
 # 2. Wire the notifier so the runtime can emit Qt Signals.
 notifier = DSCommitStoreNotifier()
 store.set_notifier(notifier)        # CommitStore consumes CommitStoreNotifying
-
-# 3. Open or create the database, then attach it to the store.
-database = CommitDatabase.open("model.cdb")
-store.set_database(database)
 store.notify_database_did_open()
 
-# 4. Instantiate the dialogs the application wants. Each receives the
+# 3. Instantiate the dialogs the application wants. Each receives the
 #    same store. They subscribe to the notifier on their own and react
 #    to state_did_change, database_did_open, etc.
 commits_dialog = DSCommitsDialog(store)
 undo_dialog    = DSCommitUndoDialog(store)
 
-# 5. Wire the application's own UI to the same notifier, so the domain
+# 4. Wire the application's own UI to the same notifier, so the domain
 #    panels redraw in lock-step with the shared dialogs.
 notifier.state_did_change.connect(self._refresh_my_panel)
 ```
 
-Steps 1–3 are the runtime side. Step 4 is what `dsviper-components`
-adds: every shared widget instantiated with the running store. Step 5
+Steps 1–2 are the runtime side. Step 3 is what `dsviper-components`
+adds: every shared widget instantiated with the running store. Step 4
 is the only application-specific wiring left.
 
 ```{note}

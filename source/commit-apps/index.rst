@@ -1,33 +1,21 @@
 Commit Applications
 ===================
 
-The :doc:`Commit Application Model <model>` is the architectural
-pattern for applications that hold versioned, observable state. It
-defines how an application composes a ``CommitStore`` (the in-memory
-wrapper over a :doc:`Commit Database <../commit/index>`), its domain
-state, dispatch surface, and platform notifications. Two language
-profiles exist — a six-layer C++ profile that uses generated function
-pools, and a five-layer Python profile that does not need them.
+Concrete walk-throughs of the
+:doc:`Commit Application Model <../commit/commit_application_model>`,
+in different languages and on different presentation tiers. The Model
+itself — Application Context, dispatch surface, notification contract,
+language profiles — is documented in the :doc:`Commit <../commit/index>`
+chapter; this chapter is **instances**.
 
-The walkthroughs below are concrete **instances** of that single
-Model, on different presentation tiers. They are not products in
-their own right — read them as worked examples.
+The pattern stripped of its domain first (``cdbe``), then with a domain
+on top (``ge-py``, ``ge-qml``), then re-stripped on a different tier
+(``web-cdbe``). They are not products in their own right — read them as
+worked examples.
 
-
-The Model
----------
-
-:doc:`Commit Application Model <model>`
-    The pattern itself. Application Context, four pillars, dispatch,
-    notification contract, dual-layer contract, generic-versus-domain
-    instances, lineage. Start here before reading the walkthroughs.
-
-
-Walkthroughs
-------------
 
 cdbe
-~~~~
+----
 
 The minimal, generic incarnation of the pattern — a PySide6 desktop
 application that opens **any** commit database with no domain, no
@@ -43,7 +31,7 @@ Context.
 * **Walk-through** — :doc:`cdbe`.
 
 ge-py
-~~~~~
+-----
 
 Graph Editor — PySide6 desktop application demonstrating dsviper
 end-to-end with a graph database visualization. Built on the Qt
@@ -57,7 +45,7 @@ class that owns the domain state.
 * **Walk-through** — :doc:`ge-py`.
 
 ge-qml
-~~~~~~
+------
 
 Graph Editor — QML port of ge-py, built on the Qt Quick
 infrastructure (``dsviper-components-qml``). Same value chain, same
@@ -69,7 +57,7 @@ Python ``QObject`` models registered as QML context properties.
 * **Walk-through** — :doc:`ge-qml`.
 
 web-cdbe
-~~~~~~~~
+--------
 
 Flask web application — a generic Commit Database Editor. Pure
 HTML5, no JavaScript. Same model-agnostic posture as cdbe, ported to
@@ -81,19 +69,19 @@ a server-rendered HTML/CSS surface.
 
 
 C++ realizations
-~~~~~~~~~~~~~~~~
+----------------
 
 Concrete C++ realizations of the same pattern exist in parallel — a Qt
 profile and an AppKit (macOS) profile, with a generic Commit Database
 Editor and a Graph Editor mirroring ``cdbe`` and ``ge-py``. They follow
-the six-layer C++ profile described in :doc:`model` and ship alongside
+the six-layer C++ profile described in
+:doc:`../commit/commit_application_model` and ship alongside
 :term:`Viper C++`. :doc:`Contact us <../ecosystem/naming>` for access.
 
 
 .. toctree::
    :hidden:
 
-   model
    cdbe
    ge-py
    ge-qml

@@ -48,18 +48,19 @@ DevKit is the **distribution** that bundles **DSM** (the modeling language), **K
 - [DSM from Python](https://docs.digitalsubstrate.io/dsviper/dsm.html): Loading DSM definitions dynamically.
 - [Errors](https://docs.digitalsubstrate.io/dsviper/errors.html): Error model and exceptions.
 
-## Commit Database
+## Commit
 
-- [Commit](https://docs.digitalsubstrate.io/commit/commit.html): The commit DAG over your data — modes of use, dual-layer contract.
-- [Commit contract](https://docs.digitalsubstrate.io/commit/commit_contract.html): Mutation rules and invariants.
+- [Commit Database](https://docs.digitalsubstrate.io/commit/commit_database.html): The persistence layer — immutable DAG of commits, modes of use, mutation API.
+- [CommitStore](https://docs.digitalsubstrate.io/commit/commit_store.html): In-memory wrapper over a CommitDatabase — current state, dispatch, undo/redo, notifications.
+- [Commit Application Model](https://docs.digitalsubstrate.io/commit/commit_application_model.html): Architectural pattern — Application Context, dispatch surface, notifier, two language profiles.
+- [Dual-layer contract](https://docs.digitalsubstrate.io/commit/commit_contract.html): Structural guarantees of the commit DAG and the semantic checks that remain the application's.
 
 ## Services
 
 - [Services](https://docs.digitalsubstrate.io/services/services.html): Typed business logic across the wire — function pools, Remote-Local protocol, Dual Reality client paths.
 
-## Commit Application Model
+## Commit Applications
 
-- [Model](https://docs.digitalsubstrate.io/commit-apps/model.html): The architectural pattern — Application Context, dispatch surface, notifier, two language profiles.
 - [cdbe](https://docs.digitalsubstrate.io/commit-apps/cdbe.html): Commit Database Editor — generic Commit Application reference.
 - [ge-py](https://docs.digitalsubstrate.io/commit-apps/ge-py.html): Pure-Python reference application (Graph Editor).
 - [ge-qml](https://docs.digitalsubstrate.io/commit-apps/ge-qml.html): Qt Quick / QML reference application (Graph Editor).

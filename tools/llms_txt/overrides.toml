@@ -156,17 +156,27 @@ title = "Errors"
 description = "Error model and exceptions."
 sort = 110
 
-# ---- Commit Database -------------------------------------------------
+# ---- Commit ---------------------------------------------------------
 
-[overrides."https://docs.digitalsubstrate.io/commit/commit.html"]
-title = "Commit"
-description = "The commit DAG over your data — modes of use, dual-layer contract."
+[overrides."https://docs.digitalsubstrate.io/commit/commit_database.html"]
+title = "Commit Database"
+description = "The persistence layer — immutable DAG of commits, modes of use, mutation API."
 sort = 10
 
-[overrides."https://docs.digitalsubstrate.io/commit/commit_contract.html"]
-title = "Commit contract"
-description = "Mutation rules and invariants."
+[overrides."https://docs.digitalsubstrate.io/commit/commit_store.html"]
+title = "CommitStore"
+description = "In-memory wrapper over a CommitDatabase — current state, dispatch, undo/redo, notifications."
 sort = 20
+
+[overrides."https://docs.digitalsubstrate.io/commit/commit_application_model.html"]
+title = "Commit Application Model"
+description = "Architectural pattern — Application Context, dispatch surface, notifier, two language profiles."
+sort = 30
+
+[overrides."https://docs.digitalsubstrate.io/commit/commit_contract.html"]
+title = "Dual-layer contract"
+description = "Structural guarantees of the commit DAG and the semantic checks that remain the application's."
+sort = 40
 
 # ---- Services --------------------------------------------------------
 
@@ -174,32 +184,27 @@ sort = 20
 title = "Services"
 description = "Typed business logic across the wire — function pools, Remote-Local protocol, Dual Reality client paths."
 
-# ---- Commit Application Model ----------------------------------------
-
-[overrides."https://docs.digitalsubstrate.io/commit-apps/model.html"]
-title = "Model"
-description = "The architectural pattern — Application Context, dispatch surface, notifier, two language profiles."
-sort = 10
+# ---- Commit Applications ---------------------------------------------
 
 [overrides."https://docs.digitalsubstrate.io/commit-apps/cdbe.html"]
 title = "cdbe"
 description = "Commit Database Editor — generic Commit Application reference."
-sort = 20
+sort = 10
 
 [overrides."https://docs.digitalsubstrate.io/commit-apps/ge-py.html"]
 title = "ge-py"
 description = "Pure-Python reference application (Graph Editor)."
-sort = 30
+sort = 20
 
 [overrides."https://docs.digitalsubstrate.io/commit-apps/ge-qml.html"]
 title = "ge-qml"
 description = "Qt Quick / QML reference application (Graph Editor)."
-sort = 40
+sort = 30
 
 [overrides."https://docs.digitalsubstrate.io/commit-apps/web-cdbe.html"]
 title = "web-cdbe"
 description = "Web-based commit-database editor."
-sort = 50
+sort = 40
 
 # ---- Tools and components --------------------------------------------
 

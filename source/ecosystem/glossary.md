@@ -134,11 +134,11 @@ Dual Reality
    IDEs. Both describe the same objects; switching is a change of view,
    not of data. In the dsviper/Viper C++ ecosystem the static surface is generated
    by `kibo-template-viper` as an adapter over the dynamic runtime.
-   Visible in {doc}`../services/services` and {doc}`../commit-apps/model`.
+   Visible in {doc}`../services/services` and {doc}`../commit/commit_application_model`.
 
 ```
 
-## Commit Database vocabulary
+## Commit vocabulary
 
 ```{glossary}
 
@@ -156,11 +156,18 @@ mutation
    An opcode-level change applied to a value (`set`, `update`, `insert`,
    `remove`, …). Mutations are grouped atomically into a {term}`commit`.
 
+CommitStore
+   The in-memory wrapper over a `CommitDatabase` that holds the current
+   state, dispatches typed mutations as commits, maintains an undo /
+   redo stack, and notifies observers through the `CommitStoreNotifying`
+   protocol. The runtime surface a {term}`Commit Application` actually
+   uses. See {doc}`../commit/commit_store`.
+
 Commit Application
    An application built on the
-   {doc}`Commit Application Model <../commit-apps/model>` —
-   Application Context composing the `CommitStore`, the domain state,
-   the dispatch surface, and a platform-agnostic notifier.
+   {doc}`Commit Application Model <../commit/commit_application_model>` —
+   Application Context composing the {term}`CommitStore`, the domain
+   state, the dispatch surface, and a platform-agnostic notifier.
    See {doc}`commit-apps/index <../commit-apps/index>` for instances.
 
 ```

@@ -10,11 +10,11 @@ dives — is conveyed even when a tool ingests them out of order:
     10-devkit-dsm        The modeling language (chain entry point)
     20-devkit-kibo       Code generation (DSM → C++ / Python)
     30-devkit-dsviper    Python runtime: API and concepts
-    35-devkit-commit     The Commit Engine: versioned persistence,
-                         modes of use, dual-layer contract
-    36-devkit-commit-apps  The Commit Application Model: pattern, two
-                         language profiles, instances (cdbe, ge-py,
-                         ge-qml, web-cdbe)
+    35-devkit-commit     The Commit subsystem: three layers
+                         (CommitDatabase, CommitStore, Commit
+                         Application Model) plus the dual-layer contract
+    36-devkit-commit-instances  Walkthroughs of the Commit Application
+                         Model: cdbe (shipped), ge-py, ge-qml, web-cdbe
     37-devkit-services   The Service mechanism: function pools across
                          the wire, Remote-Local protocol, safety
     40-devkit-tools      Tools and UI components consuming dsviper
@@ -84,12 +84,12 @@ BUNDLES: tuple[Bundle, ...] = (
     ),
     Bundle(
         "35-devkit-commit",
-        "The Commit Engine — versioned persistence: DAG, modes of use, dual-layer contract.",
+        "The Commit subsystem — three layers (CommitDatabase: versioned persistence DAG; CommitStore: in-memory wrapper with dispatch, undo/redo, notifications; Commit Application Model: pattern with two language profiles) plus the dual-layer contract.",
         ("commit",),
     ),
     Bundle(
-        "36-devkit-commit-apps",
-        "The Commit Application Model — pattern (Application Context, two language profiles, dispatch, notification, dual-layer contract) and walkthroughs (cdbe, ge-py, ge-qml, web-cdbe).",
+        "36-devkit-commit-instances",
+        "Walkthroughs of the Commit Application Model — cdbe.py (shipped, generic), ge-py, ge-qml, web-cdbe.",
         ("commit-apps",),
     ),
     Bundle(

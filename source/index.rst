@@ -63,11 +63,11 @@ Documentation
    kibo-template-viper/index
    dsviper/index
    commit/index
+   commit-apps/index
    services/index
-   dsviper/api/index
    dsviper-tools/index
    dsviper-components/index
-   commit-apps/index
+   dsviper/api/index
    legal/index
 
 

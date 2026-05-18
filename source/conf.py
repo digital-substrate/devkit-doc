@@ -117,3 +117,32 @@ latex_engine = 'xelatex'
 # `xindy` is not shipped with BasicTeX on macOS — fall back to the
 # bundled `makeindex` instead.
 latex_use_xindy = False
+
+
+# -- Build hooks -------------------------------------------------------------
+
+def setup(app):
+    """Emit build/html/llms-full.txt at the end of every successful html build.
+
+    Keeping the emission inside the Sphinx pipeline means anyone running
+    plain `make html` (or the CI that publishes docs.digitalsubstrate.io)
+    gets the llms-full.txt companion automatically — no extra Makefile
+    target to forget.
+    """
+    _tools_dir = os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                              os.pardir, "tools"))
+    if _tools_dir not in sys.path:
+        sys.path.insert(0, _tools_dir)
+    import build_llms_full
+
+    def _emit_llms_full(app, exception):
+        if exception is not None:
+            return
+        if app.builder.name != "html":
+            return
+        from pathlib import Path
+        out_path = Path(app.outdir) / "llms-full.txt"
+        size = build_llms_full.write(out_path)
+        print(f"wrote {out_path} ({size} bytes)")
+
+    app.connect("build-finished", _emit_llms_full)

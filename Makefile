@@ -12,7 +12,7 @@ BUILDDIR      = build
 help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-.PHONY: help Makefile notebooklm notebooklmzip distzip pdf check llmstxt llmstxt-check
+.PHONY: help Makefile notebooklm notebooklmzip distzip pdf check llmstxt llmstxt-check llmsfulltxt
 
 # Documentation version (from conf.py `release` — keep in sync).
 DOC_VERSION ?= 1.2
@@ -35,6 +35,13 @@ llmstxt:
 # or first paragraph) without re-running `make llmstxt`.
 llmstxt-check:
 	@python tools/build_llms_txt.py --check
+
+# Standalone target to regenerate build/html/llms-full.txt without
+# rerunning sphinx-build. `make html` already produces it via the
+# build-finished hook in source/conf.py — this target is for fast
+# iteration on tools/build_llms_full.py or template.md.
+llmsfulltxt:
+	@python tools/build_llms_full.py --out "$(BUILDDIR)/html/llms-full.txt"
 
 # Build markdown bundles for NotebookLM and autonomous LLM agents.
 # Produces one .md per maillon of the value chain in build/notebooklm/.

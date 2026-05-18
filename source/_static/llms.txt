@@ -76,7 +76,8 @@ DevKit is the **distribution** that bundles **DSM** (the modeling language), **K
 
 ## For LLM agents and RAG pipelines
 
-A concatenated Markdown corpus of the full documentation, organised as bundles tuned for LLM ingestion (NotebookLM, agents, RAG), is published with each DevKit release as `devkit-X.Y-notebooklm.zip`. Available at https://devkit.digitalsubstrate.io/downloads/.
+- [Full documentation in one file](https://docs.digitalsubstrate.io/llms-full.txt): All pages above concatenated with `<!-- FILE: ... -->` source markers — the llms-full.txt companion to this file (see https://llmstxt.org/). Fetch this when you need to answer a question from ground truth in a single request.
+- [NotebookLM-ready Markdown bundles](https://devkit.digitalsubstrate.io/downloads/): `devkit-X.Y-notebooklm.zip` — the same corpus split by subsystem for tools that ingest per-source (NotebookLM, RAG pipelines).
 
 ## Optional
 

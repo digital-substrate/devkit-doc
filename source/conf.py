@@ -29,6 +29,7 @@ extensions = [
 	'myst_parser',
 	'sphinx_copybutton',
 	'sphinx_sitemap',
+	'sphinxext.opengraph',
 	'dsm_lexer',
 	'pyi_signatures',
 ]
@@ -107,6 +108,14 @@ html_extra_path = ['_static/CNAME', '_static/llms.txt', '_static/robots.txt']
 # Single-locale doc — disable the per-locale subtree to keep URLs flat.
 sitemap_locales = [None]
 sitemap_url_scheme = "{link}"
+
+# sphinxext-opengraph: emit <meta name="description"> + Open Graph tags
+# from the first paragraph after each page's H1. Same heuristic as
+# tools/build_llms_txt.py — pages are already shaped for this.
+ogp_site_url = html_baseurl
+ogp_site_name = "DevKit Documentation"
+ogp_description_length = 200
+ogp_type = "website"
 
 # Furo theme options
 html_theme_options = {

@@ -94,7 +94,7 @@ function pool
 ```{glossary}
 
 definitions
-   The runtime model — the metadata that mirrors a DSM file at runtime. What
+   The runtime model — the metadata that mirrors a DSM definitions at runtime. What
    dsviper exposes through introspection (`Definitions`,
    `DefinitionsInspector`, …) and what every typed operation consults.
 

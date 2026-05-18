@@ -188,6 +188,7 @@ Remote-Local protocol
    **client's local** {term}`AttachmentMutating` via RPC callbacks — the
    roles invert during execution. Safe by isolation: nothing reaches a
    persistent store unless the client explicitly persists.
+   See {doc}`../services/remote_local`.
 
 AttachmentMutating
    The Viper C++ interface through which stateful operations read and mutate

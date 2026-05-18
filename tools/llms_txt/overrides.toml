@@ -182,7 +182,13 @@ sort = 40
 
 [overrides."https://docs.digitalsubstrate.io/services/services.html"]
 title = "Services"
-description = "Typed business logic across the wire — function pools, Remote-Local protocol, Dual Reality client paths."
+description = "Typed business logic across the wire — function pools, server composition, Dual Reality client paths."
+sort = 10
+
+[overrides."https://docs.digitalsubstrate.io/services/remote_local.html"]
+title = "Remote-Local Protocol"
+description = "How stateful pool calls stay safe over RPC — business logic runs on the server, mutations land in the client's AttachmentMutating; isolation table."
+sort = 20
 
 # ---- Commit Applications ---------------------------------------------
 

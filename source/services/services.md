@@ -1,4 +1,4 @@
-# The Service Mechanism
+# Anatomy of a Service
 
 A `Viper::Service` aggregates DSM definitions and function pools into
 an immutable container that can be exposed over a network socket. The
@@ -20,9 +20,9 @@ storage or mutable state.
 ```dsm
 """This pool provides utility functions."""
 function_pool Tools {7aa5aea2-c9de-4f91-8371-7995aca8c947} {
-    int64   add(int64 a, int64 b);
-    Vector3 addVector(Vector3 a, Vector3 b);
-    string  randomString(uint32 size);
+int64   add(int64 a, int64 b);
+Vector3 addVector(Vector3 a, Vector3 b);
+string  randomString(uint32 size);
 };
 ```
 
@@ -39,9 +39,11 @@ to an `AttachmentMutating` for reads and mutations.
 
 ```dsm
 """This pool provides Player utility functions."""
-attachment_function_pool PlayerModel {d75a8a57-...} {
-    mutable key<Player> create(string nickname, Level level);
-    optional<key<Player>> has_player(string nickname);
+attachment_function_pool PlayerModel {
+d75a8a57-...
+} {
+mutable key<Player> create(string nickname, Level level);
+optional<key<Player>> has_player(string nickname);
 };
 ```
 
@@ -52,7 +54,6 @@ attachment_function_pool PlayerModel {d75a8a57-...} {
   service has no opinion on what backs the interface — the client
   picks the implementation that fits its scenario, and the service
   reads from / writes to it through the interface alone.
-
 
 ## Server side — assembling and serving
 
@@ -99,7 +100,6 @@ Three things to note:
   publish those pools through different surfaces (in-process API on
   one side, RPC on the other).
 
-
 ## Client side — Dual Reality, two languages
 
 The Python and C++ clients consume the same Viper RPC protocol
@@ -131,7 +131,7 @@ from dsviper import Definitions, ServiceRemote
 defs = Definitions()
 s = ServiceRemote.connect("localhost", "54328", defs)
 
-result = s.function_pool_funcs("Tools")["add"](32, 10)   # returns 42
+result = s.function_pool_funcs("Tools")["add"](32, 10)  # returns 42
 ```
 
 The minimal connection scaffold ships with `dsviper-tools` as
@@ -151,18 +151,18 @@ Sketch, derived from `devkit-codegen-test/service/python/service_client.py`:
 ```python
 from dsviper import Definitions, ServiceRemote
 from service.data import *
-import service.function_pool_remotes            as fpr
+import service.function_pool_remotes as fpr
 import service.attachment_function_pool_remotes as afpr
 
-defs           = Definitions()
+defs = Definitions()
 service_remote = ServiceRemote.connect("localhost", "54328", defs)
 
 # Stateless — typed Python proxy from generated function_pool_remotes.
 TOOLS = fpr.Tools(service_remote)
 if TOOLS.is_available():
-    r  = TOOLS.add(32, 10)                                     # 42
-    vr = TOOLS.add_vector(Demo_Vector3({"x":1, "y":2, "z":3}),
-                          Demo_Vector3({"x":10,"y":20,"z":30}))
+    r = TOOLS.add(32, 10)  # 42
+    vr = TOOLS.add_vector(Demo_Vector3({"x": 1, "y": 2, "z": 3}),
+                          Demo_Vector3({"x": 10, "y": 20, "z": 30}))
 
 # Stateful — typed Python proxy from
 # attachment_function_pool_remotes. The client passes whatever
@@ -170,7 +170,7 @@ if TOOLS.is_available():
 # (built from any backend — the service does not know which).
 PM = afpr.PlayerModel(service_remote)
 if PM.is_available():
-    mutating = ...   # any AttachmentMutating implementation
+    mutating = ...  # any AttachmentMutating implementation
     # Execution runs on the SERVER — mutations land in the
     # CLIENT-LOCAL `mutating` via the Remote-Local protocol below.
     key = PM.create(mutating, "the shadow man", Demo_Level.BEGINNER)
@@ -221,113 +221,14 @@ The Kibo-generated parts are the per-pool proxy classes (`Tools`,
 method. Both languages get them from the **same DSM**, so the same
 pool name has the same method signatures on both sides.
 
+## Stateful calls execute remotely, mutate locally
 
-## The Remote-Local protocol — how stateful pools stay safe over RPC
-
-For `AttachmentFunctionPool` calls, the protocol implements a pattern
-that is unusual but central to the design: **business logic executes
-on the server, but state mutations happen on the client**. The roles
-*invert* during execution.
-
-When a stateful pool method runs server-side and needs to read or
-mutate the client's `AttachmentMutating`, the server sends a callback
-RPC back to the client. The client reads (or mutates) its
-**client-local** `AttachmentMutating`, responds, and the server
-continues.
-
-```text
-CLIENT                                         SERVER
-   │                                              │
-   │──► RPCPacketCallAttachmentFunction ─────────►│
-   │    (pool: PlayerModel, func: create)         │
-   │                                              │
-   │                                        ┌─────┴─────┐
-   │                                        │  Execute  │
-   │                                        │  business │
-   │                                        │   logic   │
-   │                                        └─────┬─────┘
-   │                                              │
-   │◄── RPCPacketCallAttachmentGettingGet ◄───────│  ← ROLE INVERSION
-   │    (server asks client to read)              │    Server CALLS
-   │                                              │
-   │    [Read from LOCAL AttachmentMutating]      │
-   │──► RPCPacketReturnValue ────────────────────►│  ← Client RESPONDS
-   │                                              │
-   │◄── RPCPacketCallAttachmentMutatingUpdate ◄───│  ← ROLE INVERSION
-   │    (server asks client to mutate)            │
-   │                                              │
-   │    [Mutate CLIENT-LOCAL AttachmentMutating]  │
-   │──► RPCPacketReturnVoid ─────────────────────►│
-   │                                              │
-   │                                        [Function complete]
-   │                                              │
-   │◄── RPCPacketReturnValue (final result) ◄─────│
-   │                                              │
-```
-
-On the server, the `mutating` parameter passed to the pool function
-is an `AttachmentMutatingRemote` — a proxy that forwards every
-operation to the client. The bridge code that implements the pool
-method does not know it is talking to a remote state:
-
-```cpp
-// Server-side bridge — the same code runs locally and remotely.
-// When called via RPC, `mutating` is AttachmentMutatingRemote,
-// which proxies every Set/Get/Update back to the client.
-PlayerKey create(std::shared_ptr<Viper::AttachmentMutating> const & mutating,
-                 std::string const & nickname, Demo::Level level) {
-    auto const key      = PlayerKey::create();
-    auto const property = PlayerProperty{nickname, level};
-    Attachments::Player_Property::set(mutating, key, property);  // proxied!
-    return key;
-}
-```
-
-The Viper RPC layer defines fifteen callback packet types covering
-every read and mutation operation an `AttachmentMutating` can
-perform — three reads (`Keys`, `Has`, `Get`) and twelve mutations
-(`Set`, `Diff`, `Update` on documents; `UnionInSet`, `SubtractInSet`
-on sets; map and ordered-array mutations).
-
-
-## Safety by isolation
-
-The Remote-Local pattern looks dangerous at first read — the server
-sends commands that mutate client state. The design is **inherently
-safe** because mutations land in the client's `AttachmentMutating`,
-and **persistence (if any) is triggered by the client**, never by
-the server.
-
-```text
-CLIENT                                         SERVER
-   │                                              │
-   │  ┌─────────────────────────┐                 │
-   │  │  AttachmentMutating     │                 │
-   │  │  (CLIENT-LOCAL)         │                 │
-   │  │                         │                 │
-   │  │  All mutations land     │◄────────────────│  Server sends mutations
-   │  │  here, locally          │                 │
-   │  └───────────┬─────────────┘                 │
-   │              │                               │
-   │              │ Persistence (if any) is       │
-   │              │ TRIGGERED BY THE CLIENT       │
-   │              │ — never by the server.        │
-   │              ▼                               │
-   │  ┌─────────────────────────┐                 │
-   │  │  Backing store          │                 │
-   │  │  (whatever the client   │                 │
-   │  │   chose to bind to its  │                 │
-   │  │   AttachmentMutating)   │                 │
-   │  └─────────────────────────┘                 │
-```
-
-| Failure mode                  | Result                                 | Data corruption |
-|-------------------------------|----------------------------------------|-----------------|
-| Network timeout               | Client-local state abandoned           | Impossible      |
-| Server exception              | Client-local state abandoned           | Impossible      |
-| Client crash before persist   | Client-local state lost                | Impossible      |
-| Server sends invalid data     | Client validates before persisting     | Impossible      |
-| Partial mutations             | Never reach the backing store          | Impossible      |
+Stateful pool calls (`AttachmentFunctionPool`) use the
+{doc}`remote_local` — the business logic runs on the server, but every
+read and mutation lands in the **client's local** `AttachmentMutating`
+via RPC callbacks. The roles invert during execution, and persistence
+is triggered by the client alone, never by the server. That isolation
+is what makes the design safe.
 
 ## When to use a service
 
@@ -351,18 +252,17 @@ A service is *not* useful when:
   {doc}`commit_database_server <../dsviper-tools/server>` for
   versioned databases) are simpler.
 
-
 ## References
 
 ### Source code
 
-| Location                                                   | What                                      |
-|------------------------------------------------------------|-------------------------------------------|
-| `devkit-codegen-test/service/`                             | Canonical worked example — DSM, generate.py, server, two clients, bridges |
-| `devkit-codegen-test/service/ServiceServer.cpp`            | Server binary                             |
-| `devkit-codegen-test/service/ServiceClient.cpp`            | C++ client using generated typed proxies  |
-| `devkit-codegen-test/service/python/service_client.py`     | Python client using generated typed proxies |
-| `dsviper-tools/service_client.py`                          | Five-line connection scaffold for the universal dynamic client |
+| Location                                               | What                                                                      |
+|--------------------------------------------------------|---------------------------------------------------------------------------|
+| `devkit-codegen-test/service/`                         | Canonical worked example — DSM, generate.py, server, two clients, bridges |
+| `devkit-codegen-test/service/ServiceServer.cpp`        | Server binary                                                             |
+| `devkit-codegen-test/service/ServiceClient.cpp`        | C++ client using generated typed proxies                                  |
+| `devkit-codegen-test/service/python/service_client.py` | Python client using generated typed proxies                               |
+| `dsviper-tools/service_client.py`                      | Five-line connection scaffold for the universal dynamic client            |
 
 ### dsviper API
 

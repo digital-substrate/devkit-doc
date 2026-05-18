@@ -57,7 +57,8 @@ DevKit is the **distribution** that bundles **DSM** (the modeling language), **K
 
 ## Services
 
-- [Services](https://docs.digitalsubstrate.io/services/services.html): Typed business logic across the wire — function pools, Remote-Local protocol, Dual Reality client paths.
+- [Services](https://docs.digitalsubstrate.io/services/services.html): Typed business logic across the wire — function pools, server composition, Dual Reality client paths.
+- [Remote-Local Protocol](https://docs.digitalsubstrate.io/services/remote_local.html): How stateful pool calls stay safe over RPC — business logic runs on the server, mutations land in the client's AttachmentMutating; isolation table.
 
 ## Commit Applications
 

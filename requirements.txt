@@ -17,5 +17,8 @@ sphinx-copybutton
 # Markdown builder (used by `make notebooklm`)
 sphinx-markdown-builder
 
+# Sitemap generator — emits build/html/sitemap.xml for crawlers
+sphinx-sitemap
+
 # dsviper runtime (required by pyi_signatures extension to extract API type hints)
 dsviper

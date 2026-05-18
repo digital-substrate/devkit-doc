@@ -28,6 +28,7 @@ extensions = [
 	'sphinx.ext.coverage',
 	'myst_parser',
 	'sphinx_copybutton',
+	'sphinx_sitemap',
 	'dsm_lexer',
 	'pyi_signatures',
 ]
@@ -98,7 +99,14 @@ html_baseurl = 'https://docs.digitalsubstrate.io/'
 # - CNAME tells GitHub Pages which custom domain to serve.
 # - llms.txt follows the emerging convention (https://llmstxt.org) so LLM
 #   agents crawling docs.digitalsubstrate.io discover the corpus structure.
-html_extra_path = ['_static/CNAME', '_static/llms.txt']
+# - robots.txt advertises the sitemap and the agent-readable surface
+#   (llms.txt / llms-full.txt / version.json on the sister site).
+html_extra_path = ['_static/CNAME', '_static/llms.txt', '_static/robots.txt']
+
+# sphinx-sitemap: generate build/html/sitemap.xml from html_baseurl.
+# Single-locale doc — disable the per-locale subtree to keep URLs flat.
+sitemap_locales = [None]
+sitemap_url_scheme = "{link}"
 
 # Furo theme options
 html_theme_options = {

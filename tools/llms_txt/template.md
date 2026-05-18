@@ -44,6 +44,7 @@ DevKit is the **distribution** that bundles **DSM** (the modeling language), **K
 
 - [Full documentation in one file](https://docs.digitalsubstrate.io/llms-full.txt): All pages above concatenated with `<!-- FILE: ... -->` source markers — the llms-full.txt companion to this file (see https://llmstxt.org/). Fetch this when you need to answer a question from ground truth in a single request.
 - [NotebookLM-ready Markdown bundles](https://devkit.digitalsubstrate.io/downloads/): `devkit-X.Y-notebooklm.zip` — the same corpus split by subsystem for tools that ingest per-source (NotebookLM, RAG pipelines).
+- [Bundle coordinates and download URLs](https://devkit.digitalsubstrate.io/version.json): Machine-readable JSON on the sister site — current LTS, build number, dsviper PyPI floor, and direct download URLs for the DevKit zip / doc archive / PDF / NotebookLM zip.
 
 ## Optional
 

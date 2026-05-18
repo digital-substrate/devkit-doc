@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://docs.digitalsubstrate.io/sitemap.xml
+
+# Agent-readable surface
+# llms.txt:        https://docs.digitalsubstrate.io/llms.txt
+# llms-full.txt:   https://docs.digitalsubstrate.io/llms-full.txt
+# Bundle version:  https://devkit.digitalsubstrate.io/version.json

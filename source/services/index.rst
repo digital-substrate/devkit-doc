@@ -1,5 +1,5 @@
-Services
-========
+Service
+=======
 
 A **Service** is a container that exposes typed business logic across
 the network. It composes DSM definitions and one or more

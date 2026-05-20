@@ -46,6 +46,5 @@ the C++ runtime.
 
 **Documentation scope.** This site describes the architecture and uses
 C++ snippets to illustrate the engine layer where relevant. A complete
-C++ API reference — headers, generated bindings, integration
-patterns — is delivered alongside the runtime under commercial
-license, not mirrored here.
+C++ API reference — headers, integration patterns — is delivered alongside 
+the runtime under commercial license, not mirrored here.

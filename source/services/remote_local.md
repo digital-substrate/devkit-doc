@@ -102,12 +102,12 @@ CLIENT                                                  SERVER
    │  └───────────────────────────────────┘                │
 ```
 
-| Failure mode              | Effect on the client's authoritative state |
-|---------------------------|--------------------------------------------|
-| Network timeout           | Mutation context abandoned, never integrated |
-| Server exception          | Mutation context abandoned, never integrated |
+| Failure mode              | Effect on the client's authoritative state        |
+|---------------------------|---------------------------------------------------|
+| Network timeout           | Mutation context abandoned, never integrated      |
+| Server exception          | Mutation context abandoned, never integrated      |
 | Server sends invalid data | Client may discard the context before integration |
-| Partial mutations         | Context never integrated as a whole       |
+| Partial mutations         | Context never integrated as a whole               |
 
 The structural integrity of the client's authoritative state is
 guaranteed at the protocol level. **Semantic integrity** under

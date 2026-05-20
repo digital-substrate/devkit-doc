@@ -39,9 +39,7 @@ to an `AttachmentMutating` for reads and mutations.
 
 ```dsm
 """This pool provides Player utility functions."""
-attachment_function_pool PlayerModel {
-d75a8a57-...
-} {
+attachment_function_pool PlayerModel { d75a8a57-... } {
 mutable key<Player> create(string nickname, Level level);
 optional<key<Player>> has_player(string nickname);
 };

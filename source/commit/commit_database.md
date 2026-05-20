@@ -298,16 +298,26 @@ Behaviour beyond those envelopes is not characterised.
 
 ## Storage growth
 
-The commit DAG is **append-only** — every mutation lands as a new
-commit linked to its parent. The database grows monotonically; the
-runtime carries no incremental garbage collection, no partial purge,
-no archival mechanism that trims old commits while keeping recent
-history.
+The commit DAG is **append-only** — once written, every commit is
+immutable. The database grows monotonically; the runtime carries no
+incremental garbage collection, no partial purge that trims old
+commits while keeping recent history, and no archival mechanism.
 
-If long-running databases need to be kept small, the practical
-pattern is periodic full flatten into a fresh database, not in-place
-pruning. Sustained-growth scenarios are not addressed by the current
-runtime.
+Two reductions are possible, both all-or-nothing on history:
+
+- **Reset** (built-in) — `commit_admin reset` deletes every commit
+  except the initial one (see
+  {doc}`commit_admin <../dsviper-tools/server>`). The current state is
+  not preserved; the database returns to its empty initial commit.
+  Useful as a session reset between demos or admin operations — not a
+  substitute for garbage collection.
+- **Flatten** (user-space pattern) — read the current head state from
+  the source database, write it as the initial commit of a fresh
+  target database, then switch readers and writers to the new
+  database. Current state is preserved; all history is dropped.
+
+Sustained-growth scenarios that need to keep recent history while
+trimming older commits are not addressed by the current runtime.
 
 ---
 

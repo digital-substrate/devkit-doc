@@ -37,17 +37,20 @@ The Dual Reality
 ----------------
 
 The code produced by kibo-template-viper is not a runtime in its own
-right — it is a typed **adapter layer** over Viper's dynamic API. The
-runtime is metadata-driven and dynamic ; the generated code gives
-developers and IDEs a static, idiomatic surface (typed classes, STL in
-C++, type hints in Python) that delegates to the dynamic runtime
-transparently.
+right — it is a static **adapter layer** over Viper's dynamic API.
+Both APIs are strongly typed ; the type catalog, built from DSM at
+runtime, is the single source of truth. The generated adapter gives
+developers and IDEs a static, idiomatic surface (typed classes, STL
+in C++, type hints in Python) that delegates to the dynamic runtime
+transparently. The static surface does not add type safety — it adds
+editor ergonomics on top of safety that already lives in the runtime.
 
 This split is the :term:`Dual Reality` pattern :
 
-* **Developer Reality** — static, typed, what the IDE sees.
-* **Runtime Reality** — dynamic, metadata-driven, what the engine
-  actually manipulates.
+* **Developer Reality** — statically typed at edit/compile time, what
+  the IDE sees.
+* **Runtime Reality** — dynamically typed via the metadata catalog,
+  what the engine actually manipulates.
 
 Both realities coexist for the same data; the generated adapters translate
 between them, sharing one engine — no parallel implementation, no C++/Python

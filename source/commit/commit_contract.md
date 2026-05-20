@@ -80,13 +80,13 @@ read the state, not when you build the mutations**.
 | **Content-Addressable**       | `CommitId = SHA-1(content)`, tamper-evident |
 
 ```{note}
-**Why *convergence*, not *merge*** — what git calls a *merge* is a
-reconciliation step that may surface conflicts and ask a human to
-arbitrate. The engine does no such thing: when concurrent streams meet,
-it linearises them by deterministic structural rules, never refuses,
-and never reports a conflict. We call this *convergence* to keep the
-two operations distinct: reproducible, but no semantic arbitration has
-happened.
+**Why *convergence*, not *merge*** — a *merge* in version-control
+tools is a reconciliation step that may surface conflicts and ask a
+human to arbitrate. The engine does no such thing: when concurrent
+streams meet, it linearises them by deterministic structural rules,
+never refuses, and never reports a conflict. We call this
+*convergence* to keep the two operations distinct: reproducible, but
+no semantic arbitration has happened.
 ```
 
 ## What Commit Does NOT Provide

@@ -306,7 +306,8 @@ struct MaterialMultilayer {
 ### XArray
 
 The `xarray<T>` type is like a vector but preserves element order during
-concurrent mutations. Designed for multiplayer editing scenarios.
+concurrent mutations. UUID-keyed positions keep insertions and removals
+from colliding when applied in parallel.
 
 ```dsm
 struct Document {

@@ -13,7 +13,7 @@ Graph.dsm
 **Domain:** Graph, Vertex, Edge
 
 This file defines the core data model for a graph editor application. It demonstrates the
-**recommended Viper C++ pattern** with multiple attachments per concept, separating concerns
+**recommended DSM pattern** with multiple attachments per concept, separating concerns
 cleanly.
 
 Data Model Design
@@ -149,7 +149,7 @@ Pool_ModelGraph.dsm
 
 **Domain:** Pool: ModelGraph
 
-This is an **attachment_function_pool** - functions that modify the AttachmentMutableState.
+This is an **attachment_function_pool** - functions that declare an intent to mutate state.
 
 Function Categories
 ^^^^^^^^^^^^^^^^^^^
@@ -176,8 +176,8 @@ These functions are intentionally broken for demonstrations:
 
 .. note::
 
-   All ``mutable`` functions operate within a mutation context (AttachmentMutating).
-   Non-mutable functions (queries) only need a reading context (AttachmentGetting).
+   All ``mutable`` functions declare an intent to modify state.
+   Non-mutable functions (queries) declare read-only access.
 
 .. code-block:: dsm
 
@@ -285,12 +285,17 @@ Three Repair Strategies
 Why This Matters
 ^^^^^^^^^^^^^^^^
 
-In Viper C++, concepts (Vertex, Edge) are identified by keys. If you
-delete a Vertex without updating Edge references, edges become "orphaned". This pool shows
-how to detect and repair such inconsistencies.
+DSM concepts are identified by keys. If a ``delete`` function neglects
+to update references that point to a deleted entity, those references
+become "orphaned" — a defect of that specific function, not a property
+of the engine. This pool demonstrates how a sample application detects
+and repairs such inconsistencies when one of its own functions is
+deliberately incomplete.
 
-**Use case**: After running ``deleteSelectionBugged`` from ModelGraph pool (which
-intentionally creates orphans), use these functions to restore graph integrity.
+**Use case**: ``deleteSelectionBugged`` in ModelGraph is a deliberately
+incomplete delete kept in the sample for teaching purposes — it leaves
+orphans. The ModelIntegrity pool shows three repair strategies for that
+specific situation.
 
 .. code-block:: dsm
 
@@ -412,7 +417,7 @@ Difference from attachment_function_pool
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - ``function_pool``: Pure functions
-- ``attachment_function_pool``: Functions that modify the AttachmentMutableState
+- ``attachment_function_pool``: Functions that declare an intent to mutate state
 
 Utility Functions
 ^^^^^^^^^^^^^^^^^
@@ -421,7 +426,7 @@ Utility Functions
 - ``randomWord`` - generate random strings for testing
 
 **Use case**: These functions are stateless and available in RPC context for client-side
-computations or test data generation (no AttachmentMutating context required).
+computations or test data generation (no mutation context required).
 
 .. code-block:: dsm
 

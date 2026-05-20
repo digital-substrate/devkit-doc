@@ -44,8 +44,7 @@ Use cases:
 
 ## Attachment Function Pool
 
-An `attachment_function_pool` contains functions that operate via the AttachmentMutating
-interface
+An `attachment_function_pool` contains functions that mutate attachment state.
 
 ```dsm
 // From Graph Editor: Graph editing operations
@@ -74,10 +73,10 @@ mutable void clearGraph(key<Graph> graphKey);
 Functions that modify the state are marked `mutable`:
 
 ```dsm
-// Mutable: modifies state via AttachmentMutating
+// Mutable: declares an intent to modify state
 mutable key<Vertex> newVertex(key<Graph> graphKey, int64 value, Position position);
 
-// Non-mutable: read-only via AttachmentGetting
+// Non-mutable: declares read-only access
 set<key<Vertex>> selectedVertices(key<Graph> graphKey);
 ```
 
@@ -185,7 +184,7 @@ optional<key<Vertex>> findByName(key<Graph> graph, string name);
 
 ## XArray Operations
 
-XArray uses UUID positions instead of indices for multiplayer editing:
+XArray uses UUID positions instead of indices, so concurrent insertions and removals never collide:
 
 ```dsm
 // From Graph Editor: XArray comment operations
@@ -242,13 +241,13 @@ optional<Position> position, optional<int64> value);
 
 ### Use Queries for Read-Only Operations
 
-Non-mutable functions can be called without a commit context:
+Non-mutable functions are plain queries against current state:
 
 ```dsm
-// Query: doesn't need commit context
+// Query: returns a snapshot, no state change
 set<key<Vertex>> selectedVertices(key<Graph> graphKey);
 
-// Mutation: requires commit context
+// Mutation: declares an intent to modify state
 mutable void selectAll(key<Graph> graphKey);
 ```
 

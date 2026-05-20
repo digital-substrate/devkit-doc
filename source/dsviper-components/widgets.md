@@ -74,7 +74,7 @@ applications that want to expose a generic document tree on their own.
 | `DSBlobsDialog`          | `()`          | Standalone blob browser (independent of commit history). |
 | `DSBlobsTreeViewItem`    | embedded      | Tree-view item helper used by the blob dialogs.          |
 
-## Collaboration / sync
+## Sync
 
 | Class                              | Constructor   | Purpose                                                |
 |------------------------------------|---------------|--------------------------------------------------------|

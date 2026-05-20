@@ -320,7 +320,7 @@ QML world. Below it, everything is identical to ge-py.
 ## What dsviper-components-qml ships with the application
 
 As in ge-py, the application **inherits a complete suite of
-administration, collaboration and scripting features by importing from
+administration, sync, and scripting features by importing from
 `dsviper-components-qml`**. None of this code lives in ge-qml — `main.py`
 instantiates the model classes and exposes them to QML; the QML side
 does no Python-specific wiring.

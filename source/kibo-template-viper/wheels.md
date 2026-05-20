@@ -67,7 +67,7 @@ After generation, your package looks like:
 model/
 ├── __init__.py                          # Re-exports data
 ├── data.py                              # Concept, struct, enum, key classes
-├── attachments.py                       # Attachment getters/setters (incl. collaborative variants)
+├── attachments.py                       # Attachment getters/setters (incl. concurrent variants)
 ├── database_attachments.py              # Database-side attachment getters/setters
 ├── function_pools.py                    # Function pool API
 ├── attachment_function_pools.py         # Function pools tied to attachments

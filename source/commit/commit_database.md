@@ -56,7 +56,7 @@ problem. This is where the
 Database provides:
 
 - **Collaboration** — humans reconcile intentions: conflicts are
-  identified, surfaced, resolved (the git-merge / review model).
+  identified, surfaced, resolved (the manual-merge / review model).
 - **Cooperation** — disjoint contributions assemble without conflict
   by construction.
 - **Mechanical convergence** — the Commit Database linearises streams

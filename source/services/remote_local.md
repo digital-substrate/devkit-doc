@@ -69,37 +69,47 @@ on sets; map and ordered-array mutations).
 
 The Remote-Local pattern looks dangerous at first read — the server
 sends commands that mutate client state. The design is **inherently
-safe** because mutations land in the client's `AttachmentMutating`,
-and **persistence (if any) is triggered by the client**, never by
-the server.
+safe** because the server has no handle on the client's authoritative
+state. Mutations land in an `AttachmentMutating` *context* owned by
+the client, isolated from the model the client treats as ground
+truth. The client alone decides whether — and when — to integrate
+that context back into its authoritative state.
+
+The protocol's safety property is at the **state-ownership** level :
+the server cannot reach into the client's model. What happens
+downstream of the context (held in memory, integrated into the
+authoritative state, eventually persisted, discarded) is the
+client's prerogative and is orthogonal to the protocol.
 
 ```text
-CLIENT                                         SERVER
-   │                                              │
-   │  ┌─────────────────────────┐                 │
-   │  │  AttachmentMutating     │                 │
-   │  │  (CLIENT-LOCAL)         │                 │
-   │  │                         │                 │
-   │  │  All mutations land     │◄────────────────│  Server sends mutations
-   │  │  here, locally          │                 │
-   │  └───────────┬─────────────┘                 │
-   │              │                               │
-   │              │ Persistence (if any) is       │
-   │              │ TRIGGERED BY THE CLIENT       │
-   │              │ — never by the server.        │
-   │              ▼                               │
-   │  ┌─────────────────────────┐                 │
-   │  │  Backing store          │                 │
-   │  │  (whatever the client   │                 │
-   │  │   chose to bind to its  │                 │
-   │  │   AttachmentMutating)   │                 │
-   │  └─────────────────────────┘                 │
+CLIENT                                                  SERVER
+   │                                                       │
+   │  ┌───────────────────────────────────┐                │
+   │  │  AttachmentMutating (context)     │                │
+   │  │  CLIENT-LOCAL, server-isolated    │                │
+   │  │                                   │                │
+   │  │  All mutations land here          │◄───────────────│  Server sends mutations
+   │  └───────────────┬───────────────────┘                │
+   │                  │                                    │
+   │                  │ Integration into authoritative     │
+   │                  │ state is the CLIENT's decision.    │
+   │                  │ Persistence, if any, is downstream │
+   │                  │ of integration — never driven      │
+   │                  │ by the server.                     │
+   │                  ▼                                    │
+   │  ┌───────────────────────────────────┐                │
+   │  │  Client-authoritative state       │                │
+   │  └───────────────────────────────────┘                │
 ```
 
-| Failure mode                | Result                             | Data corruption |
-|-----------------------------|------------------------------------|-----------------|
-| Network timeout             | Client-local state abandoned       | Impossible      |
-| Server exception            | Client-local state abandoned       | Impossible      |
-| Client crash before persist | Client-local state lost            | Impossible      |
-| Server sends invalid data   | Client validates before persisting | Impossible      |
-| Partial mutations           | Never reach the backing store      | Impossible      |
+| Failure mode              | Effect on the client's authoritative state |
+|---------------------------|--------------------------------------------|
+| Network timeout           | Mutation context abandoned, never integrated |
+| Server exception          | Mutation context abandoned, never integrated |
+| Server sends invalid data | Client may discard the context before integration |
+| Partial mutations         | Context never integrated as a whole       |
+
+The structural integrity of the client's authoritative state is
+guaranteed at the protocol level. **Semantic integrity** under
+multi-author convergence is a separate concern of the commit layer —
+see [Dual-Layer Contract](../commit/commit_contract.md).

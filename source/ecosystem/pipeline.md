@@ -52,8 +52,8 @@ Two paths, one model:
 Both paths share the same metadata that drove generation, so type checking,
 serialization, persistence, the commit DAG, and remote synchronization
 behave identically across surfaces. Your data is strongly typed end-to-end;
-type mismatches raise exceptions immediately rather than silently corrupting
-state.
+type mismatches raise exceptions immediately rather than silently coercing
+values.
 
 → Reference: {doc}`../dsviper/index` (Python).
 

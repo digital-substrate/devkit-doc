@@ -228,7 +228,7 @@ UI action  ──►  store.dispatch(label, λ)
 ## What dsviper-components ships with the application
 
 Beyond the panels ge-py builds for its own domain (`components/`), the
-application **inherits a complete suite of administration, collaboration
+application **inherits a complete suite of administration, sync,
 and scripting features by importing from `dsviper-components`**. None of
 this code lives in ge-py — the application only instantiates the widgets
 and wires them into its menus.
@@ -275,7 +275,7 @@ Adopting these dialogs is what turns a domain editor into a
 fully-introspectable Commit application. The same set is consumed by
 every Commit-based editor in the ecosystem.
 
-### Collaboration — fetch / push / sync over a commit server
+### Sync — fetch / push over a commit server
 
 ge-py's File menu and toolbar expose three actions — **Fetch**, **Push**,
 **Sync** — that operate on a remote commit server. The wiring is again

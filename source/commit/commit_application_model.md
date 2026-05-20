@@ -42,9 +42,13 @@ The Context is responsible for four things:
    same Context can drive Qt Widgets, QML, AppKit, or a web view
    without changing the core code.
 
-In C++, the Context additionally holds the generated **function
-pools** (see below). In Python, function pools are unnecessary and
-the Context holds direct references to the business-logic modules.
+In C++, the Context additionally holds the generated **local
+function-pool wrapper classes** (see below). In Python these wrapper
+classes are unnecessary — a Python module already serves the same
+role, so the Context holds direct references to the business-logic
+modules. (Distinct from `function_pool_remotes`, the RPC proxy
+classes generated in both languages — see
+{doc}`../services/services`.)
 
 ## Two language profiles
 
@@ -355,7 +359,7 @@ established application patterns:
 | **Observer (Adapter)** | Notifier bridge to the platform UI              |
 
 What's specific is the integration with the Commit Database: persistence,
-history, branching, and multi-author convergence are intrinsic rather than
+history, divergence, and multi-author convergence are intrinsic rather than
 bolted on.
 
 ## Implementing your own

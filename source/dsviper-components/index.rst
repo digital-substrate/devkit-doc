@@ -2,7 +2,7 @@ dsviper-components
 ==================
 
 Shared component library on top of :term:`dsviper` — the **standard
-administrative, collaborative and scripting surface** of any Commit
+administrative, sync, and scripting surface** of any Commit
 application, ready to compose into a domain-specific UI. Available as
 two parallel variants:
 
@@ -23,7 +23,7 @@ needing:
 * **Administration / introspection** — commit-DAG browser, undo-stack
   navigator, attachment inspector, blob browser, per-commit document
   and settings dialogs.
-* **Collaboration** — connect-to-server dialog, threaded synchroniser,
+* **Sync** — connect-to-server dialog, threaded synchroniser,
   fetch / push / sync log.
 * **Embedded scripting** — Python script editor with a runtime model
   that exposes the live application context to user scripts.

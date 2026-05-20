@@ -8,8 +8,9 @@ Raptor Editor
 Overview
 --------
 
-Raptor Editor is a **stress test application** for Commit Database performance and blob management.
-This DSM defines the complete data model for:
+Raptor Editor is a **comprehensive 3D visualization data model**, demonstrating modeling at
+realistic scale — many concepts, deep type structures, monolithic attachments. This DSM
+defines the complete data model for:
 
 - **Scene composition**: Models, Surfaces, Geometry Layers, Position Layers
 - **Materials**: Multi-layer shading (diffuse, specular, illumination), PBR materials, car

@@ -1,6 +1,6 @@
 # DevKit Documentation
 
-> Digital Substrate's Python toolkit for metadata-driven data modeling. Define data structures in DSM (a purpose-built DSL), and the dsviper runtime gives you strong typing, a versioned commit DAG over your data, and seamless Python integration.
+> Digital Substrate's Python toolkit for metadata-driven data modeling. Define data structures in DSM (a purpose-built DSL), and the dsviper runtime gives you strong typing, a versioned mutation graph over your data, and seamless Python integration.
 
 DevKit is the **distribution** that bundles **DSM** (the modeling language), **Kibo** (the code generator), **dsviper** (the Python runtime, published on PyPI), and a set of editors, components and reference apps. The names **DevKit / dsviper / Viper** are not interchangeable — see the naming page for the canonical disambiguation. This documentation is the canonical source, published at https://docs.digitalsubstrate.io/.
 

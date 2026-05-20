@@ -7,8 +7,8 @@ DevKit is the Digital Substrate Python toolkit for metadata-driven data
 modeling. Define your data structures in DSM (a purpose-built DSL), and the
 dsviper runtime gives you:
 
-- **Strong typing** - Type mismatches raise exceptions immediately, not silently corrupt data
-- **Version control for data** - Every mutation is tracked in a commit DAG (like git for your data)
+- **Strong typing** - Type mismatches raise exceptions immediately, not silently coerce values
+- **Version control for data** - Every mutation is tracked in a mutation graph
 - **Seamless Python integration** - Work with native Python types, dsviper handles conversions
 
 .. code-block:: python

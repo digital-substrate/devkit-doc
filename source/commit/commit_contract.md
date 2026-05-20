@@ -13,6 +13,26 @@ When the contract does apply, read it before relying on commit behavior to
 validate your data: the Commit Database produces **structurally sound but
 untrusted output**, and your application is what turns it into trusted state.
 
+## A change of discipline
+
+The contract exists because two layers, governed by opposite
+disciplines, meet at the convergence boundary.
+
+- **dsviper / Viper C++** applies **fail-fast** at the type and
+  structural level: malformed values, undefined paths against a known
+  schema, references to absent attachments all raise exceptions
+  immediately. Nothing is silently coerced.
+- The **Commit Engine**, layered on top, applies **best-effort** at
+  the convergence level: when concurrent streams meet, mutations
+  whose targets have disappeared in another branch are silently
+  dropped to keep the DAG converging without human arbitration.
+
+The two are not contradictory — they govern different operations at
+different moments. But the discipline changes across the boundary,
+and that change is precisely what this contract formalises: the
+application takes back, at read time, the strictness the engine
+relaxes at convergence time.
+
 ## The Contract
 
 | Layer           | Guarantees                                               |

@@ -92,21 +92,30 @@ no semantic arbitration has happened.
 ## How Convergence Picks a Winner
 
 When concurrent streams converge, the engine has to choose a single
-outcome for every overlapping path. The choice is deterministic — same
-inputs, same result on every client — but its mechanics are
-*structural*, not author- or time-meaningful:
+outcome for every overlapping path. The choice is deterministic given
+a fixed merge sequence — same inputs, same merges, same result on
+every client — but its mechanics are *structural*, not author- or
+time-meaningful.
 
-- On a linear chain, the later commit (by the wall-clock timestamp
-  recorded at creation) overrides the earlier one.
-- Across multiple heads being reduced, heads are merged in iteration
-  order of their `CommitId`s — i.e. lexicographic order of the
-  content hash. The last head merged wins subsequent LWW conflicts on
-  overlapping paths.
+**The merge primitive.** `commitMerge(parent, target)` creates a
+merge commit. When the resulting state is reconstructed, `target`'s
+mutations are applied *after* `parent`'s — so the target branch
+wins all LWW conflicts on overlapping paths. This is the only
+arbitration rule the engine itself fixes.
 
-The winner of an LWW conflict is therefore a function of hash
-ordering and wall-clock readings — not of authorship, recency,
-intent, or semantic priority. Two authors editing the same field have
-no way to predict which value will survive convergence.
+**Reducing multiple heads is a strategy, not a guarantee.** The
+built-in `reduceHeads` iterates heads in lexicographic `CommitId`
+order and calls `commitMerge` once per pair, with the running result
+as parent and the next head as target. Applications are free to use a
+different order — or to skip `reduceHeads` entirely and issue their
+own `commitMerge` sequence. The final state depends on *who calls
+commitMerge in what order*, not on a property of the engine.
+
+**None of this preserves intent.** Whichever strategy is used, the
+winner of an LWW conflict is a function of how merges were
+sequenced — not of authorship, recency, or semantic priority. Two
+authors editing the same field have no way to predict which value
+will survive convergence, even within a fixed strategy.
 
 This is what the contract is telling you: do not rely on a specific
 arbitration outcome. Re-validate at read time.

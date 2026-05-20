@@ -307,10 +307,11 @@ Two reductions are possible, both all-or-nothing on history:
 
 - **Reset** (built-in) — `commit_admin reset` deletes every commit
   except the initial one (see
-  {doc}`commit_admin <../dsviper-tools/server>`). The current state is
-  not preserved; the database returns to its empty initial commit.
-  Useful as a session reset between demos or admin operations — not a
-  substitute for garbage collection.
+  {doc}`commit_admin <../dsviper-tools/server>`). The database
+  returns to its initial commit — whatever state was set up at
+  creation (embedded definitions, seed data, etc.). Useful to replay
+  a scenario from a known-good baseline; not a substitute for
+  garbage collection.
 - **Flatten** (user-space pattern) — read the current head state from
   the source database, write it as the initial commit of a fresh
   target database, then switch readers and writers to the new

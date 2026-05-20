@@ -101,7 +101,8 @@ time-meaningful.
 merge commit. When the resulting state is reconstructed, `target`'s
 mutations are applied *after* `parent`'s — so the target branch
 wins all LWW conflicts on overlapping paths. This is the only
-arbitration rule the engine itself fixes.
+arbitration rule the engine itself fixes — and it makes the operation
+non-commutative: `commitMerge(A, B) ≠ commitMerge(B, A)`.
 
 **Reducing multiple heads is a strategy, not a guarantee.** The
 built-in `reduceHeads` iterates heads in lexicographic `CommitId`

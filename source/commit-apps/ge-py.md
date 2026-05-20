@@ -269,7 +269,7 @@ to do beyond toggling visibility.
 | `DSCommitSettingsDialog`  | Per-commit settings                                    |
 | `DSCommitUndoDialog`      | The undo stack as a navigable list                     |
 | `DSCommitBlobsDialog`     | Every blob referenced across commits                   |
-| `DSCommitActionsDialog`   | Enable / disable / reset commits in batch              |
+| `DSCommitActionsDialog`   | Toggle commit visibility in batch (each toggle appends an Enable / Disable commit) |
 
 Adopting these dialogs is what turns a domain editor into a
 fully-introspectable Commit application. The same set is consumed by

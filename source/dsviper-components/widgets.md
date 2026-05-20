@@ -38,7 +38,7 @@ Signals.
 |---------------------------|-------------------------|---------------------------------------------------------|
 | `DSCommitsDialog`         | `(store: CommitStore)`  | Full DAG browser — navigate commits, jump to head, compare. |
 | `DSCommitsView`           | embedded                | Embeddable view used by `DSCommitsDialog`.              |
-| `DSCommitActionsDialog`   | `(store: CommitStore)`  | Enable / disable / reset commits in batch.              |
+| `DSCommitActionsDialog`   | `(store: CommitStore)`  | Toggle commit visibility in batch (each toggle appends an Enable / Disable commit). |
 | `DSCommitUndoDialog`      | `(store: CommitStore)`  | Undo stack as a navigable list (replay any past state). |
 
 ## Per-commit content

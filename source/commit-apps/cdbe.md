@@ -225,7 +225,7 @@ self._code_editor_dialog = DSCodeEditorDialog(self._python_editor_model)
 | `DSCommitSettingsDialog` | Per-commit settings                               |
 | `DSCommitUndoDialog`     | The undo stack as a navigable list                |
 | `DSCommitBlobsDialog`    | Every blob referenced across commits              |
-| `DSCommitActionsDialog`  | Enable / disable / reset commits in batch         |
+| `DSCommitActionsDialog`  | Toggle commit visibility in batch (each toggle appends an Enable / Disable commit) |
 | `DSCommitSyncLogDialog`  | Live log of synchronizer activity                 |
 | `DSCodeEditorDialog`     | Embedded Python editor wired to store + documents |
 

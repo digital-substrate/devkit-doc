@@ -63,7 +63,7 @@ Convenience wrappers for the most common shapes:
 | `dispatch_set`             | A single `set(attachment, key, value)`.         |
 | `dispatch_update`          | A path-based `update(...)`.                     |
 | `dispatch_diff`            | The diff of an updated document vs current.    |
-| `dispatch_enable_commit`   | Enable / disable a commit in the DAG.           |
+| `dispatch_enable_commit`   | Append an Enable / Disable commit that masks a target. |
 
 The single dispatch surface is what gives the
 [Commit Application Model](commit_application_model.md#the-dispatch-pattern)

@@ -285,12 +285,13 @@ Three Repair Strategies
 Why This Matters
 ^^^^^^^^^^^^^^^^
 
-DSM concepts are identified by keys. If a ``delete`` function neglects
-to update references that point to a deleted entity, those references
-become "orphaned" — a defect of that specific function, not a property
-of the engine. This pool demonstrates how a sample application detects
-and repairs such inconsistencies when one of its own functions is
-deliberately incomplete.
+DSM concepts are identified by keys, but referential integrity
+between keys is not enforced by the engine — it falls on the
+application. If a ``delete`` function neglects to update references
+that point to a deleted entity, those references become "orphaned",
+as a defect of that specific function. This pool demonstrates how a
+sample application detects and repairs such inconsistencies when one
+of its own functions is deliberately incomplete.
 
 **Use case**: ``deleteSelectionBugged`` in ModelGraph is a deliberately
 incomplete delete kept in the sample for teaching purposes — it leaves

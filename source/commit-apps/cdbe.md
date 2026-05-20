@@ -246,8 +246,8 @@ self._sync_logger = DSLogger(Logging.LEVEL_ALL)
 self._sync_logging = Logging.create(self._sync_logger)
 ```
 
-`DSConnectToServerDialog` collects credentials and writes them to
-settings; `_synchronize(mode)` calls
+`DSConnectToServerDialog` collects the server connection details
+(host, port, socket path) and writes them to settings; `_synchronize(mode)` calls
 `DSSettings().create_synchronizer(mode, path)` to drive the
 runtime-level `CommitSynchronizer` directly from the toolbar
 (Fetch / Push / Sync). Every sync round-trip can update embedded

@@ -78,7 +78,7 @@ applications that want to expose a generic document tree on their own.
 
 | Class                              | Constructor   | Purpose                                                |
 |------------------------------------|---------------|--------------------------------------------------------|
-| `DSConnectToServerDialog`          | `()`          | Collect remote-server credentials.                     |
+| `DSConnectToServerDialog`          | `()`          | Collect remote-server connection details (host, port, socket path). |
 | `DSCommitSynchronizerThread`       | runtime       | Threaded worker driving fetch / push / sync off the UI thread. |
 | `DSCommitSynchronizationSource`    | runtime       | Descriptor for a synchronisation source.               |
 | `DSCommitSyncLogDialog`            | `()`          | Real-time sync log display.                            |

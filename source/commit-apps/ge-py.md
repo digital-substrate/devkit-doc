@@ -291,7 +291,8 @@ self._sync_logger = DSLogger(Logging.LEVEL_ALL)
 self._sync_logging = Logging.create(self._sync_logger)
 ```
 
-`DSConnectToServerDialog` collects the server address and credentials.
+`DSConnectToServerDialog` collects the server connection details
+(host, port, socket path).
 `DSCommitSynchronizerThread` runs the sync I/O off the UI thread and emits
 progress signals consumed by `DSCommitSyncLogDialog` (the sync log
 visible from the Admin menu). Three menu actions drive the workflow:

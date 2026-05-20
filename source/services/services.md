@@ -252,6 +252,12 @@ A service is *not* useful when:
   {doc}`commit_database_server <../dsviper-tools/server>` for
   versioned databases) are simpler.
 
+## Security
+
+Viper services share the network surface and security posture of all
+Viper RPC endpoints — trusted-network assumption, no built-in auth or
+transport encryption. See {doc}`../ecosystem/security`.
+
 ## References
 
 ### Source code

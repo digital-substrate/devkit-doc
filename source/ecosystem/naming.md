@@ -43,3 +43,9 @@ is a separate ``pip`` step.
 Distributed under commercial license.
 [Contact us](https://devkit.digitalsubstrate.io/contact/) for access to
 the C++ runtime.
+
+**Documentation scope.** This site describes the architecture and uses
+C++ snippets to illustrate the engine layer where relevant. A complete
+C++ API reference — headers, generated bindings, integration
+patterns — is delivered alongside the runtime under commercial
+license, not mirrored here.

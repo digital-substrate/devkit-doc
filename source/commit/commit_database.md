@@ -249,6 +249,68 @@ available as constants in the calling namespace.
 
 ---
 
+## Performance characteristics
+
+Reconstructing a document's state from its commit history is
+**per-document**, not per-database. Cost depends on the opcodes that
+touched it and on **Ops** — the number of path-targeted operations
+on this document since its last `set`.
+
+| Opcode             | Reconstruction  | Notes                              |
+|--------------------|-----------------|------------------------------------|
+| `set`              | O(1)            | replaces the whole document        |
+| `update`           | O(Ops)          | replays field-level updates        |
+| `update_in_map`    | O(Ops)          |                                    |
+| `update_in_xarray` | O(Ops)          |                                    |
+| `remove_in_xarray` | O(Ops)          |                                    |
+| `union_in_map`     | O(Ops · log M)  | M = map size                       |
+| `subtract_in_map`  | O(Ops · log M)  |                                    |
+| `union_in_set`     | O(Ops · S)      | S = set size                       |
+| `subtract_in_set`  | O(Ops · S)      |                                    |
+| `insert_in_xarray` | O(Ops²)         | UUID positioning, quadratic worst  |
+
+### Design pitfall: O(N²) on accumulated Sets
+
+A document whose state grows by repeated `union_in_set` across many
+commits incurs O(Ops²) reconstruction — every read replays every
+prior union. For long-running topologies that grow by accumulation,
+prefer either a tree structure with `set()` replacing the children
+list each commit, or a periodic flatten (see
+[Storage growth](#storage-growth)).
+
+### Validated scale
+
+Commit has been benchmarked at:
+
+- ~6 600 documents per database — about 3 MB of structural data,
+  alongside ~3 GB of associated blobs on CAD workloads (structure is
+  typically < 0.15 % of total disk footprint);
+- up to 8 concurrent processes sharing a single SQLite database with
+  applicative jitter between commits.
+
+State reconstruction is linear in document count: a full warm-up via
+`CommitState.cache_preload()` runs at ~1.5–2 µs per document across
+this range — 0.4 ms at 230 documents, 14 ms at 6 600.
+
+Behaviour beyond those envelopes is not characterised.
+
+---
+
+## Storage growth
+
+The commit DAG is **append-only** — every mutation lands as a new
+commit linked to its parent. The database grows monotonically; the
+runtime carries no incremental garbage collection, no partial purge,
+no archival mechanism that trims old commits while keeping recent
+history.
+
+If long-running databases need to be kept small, the practical
+pattern is periodic full flatten into a fresh database, not in-place
+pruning. Sustained-growth scenarios are not addressed by the current
+runtime.
+
+---
+
 ## Safe Usage
 
 A checklist for the operational gotchas. None of this is enforced by the

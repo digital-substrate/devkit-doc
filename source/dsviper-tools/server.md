@@ -45,6 +45,13 @@ python3 tools/commit_database_server.py -vvv project.cdb
 Press `Ctrl+C` to stop the server gracefully. Active connections will be closed
 and the database will be properly finalized.
 
+### Security
+
+`commit_database_server` shares the network surface and security
+posture of all Viper RPC endpoints — trusted-network assumption, no
+built-in auth or transport encryption. See
+{doc}`../ecosystem/security`.
+
 ### Client Connection
 
 Clients connect using `CommitDatabase.connect()` or `CommitDatabase.connect_local()`:

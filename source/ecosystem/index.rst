@@ -16,3 +16,4 @@ new, start with :doc:`value-chains` — it is the map.
    pipeline
    naming
    glossary
+   security

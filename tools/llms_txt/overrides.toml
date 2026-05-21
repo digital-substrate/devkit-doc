@@ -179,7 +179,7 @@ description = "Structural guarantees of the commit DAG and the semantic checks t
 sort = 40
 
 [overrides."https://docs.digitalsubstrate.io/commit/commit_cooperation.html"]
-title = "Cooperative Editing Patterns"
+title = "Cooperative Discipline"
 description = "Scope decomposition methodology — avoid conflicts by construction rather than reconcile them on read."
 sort = 50
 

@@ -55,7 +55,7 @@ DevKit is the **distribution** that bundles **DSM** (the modeling language), **K
 - [CommitStore](https://docs.digitalsubstrate.io/commit/commit_store.html): In-memory wrapper over a CommitDatabase — current state, dispatch, undo/redo, notifications.
 - [Commit Application Model](https://docs.digitalsubstrate.io/commit/commit_application_model.html): Architectural pattern — Application Context, dispatch surface, notifier, two language profiles.
 - [Dual-layer contract](https://docs.digitalsubstrate.io/commit/commit_contract.html): Structural guarantees of the commit DAG and the semantic checks that remain the application's.
-- [Cooperative Editing Patterns](https://docs.digitalsubstrate.io/commit/commit_cooperation.html): Scope decomposition methodology — avoid conflicts by construction rather than reconcile them on read.
+- [Cooperative Discipline](https://docs.digitalsubstrate.io/commit/commit_cooperation.html): Scope decomposition methodology — avoid conflicts by construction rather than reconcile them on read.
 
 ## Services
 

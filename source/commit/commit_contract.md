@@ -231,7 +231,7 @@ merge — and that depends on semantic invariants — must explicitly own one
 of these strategies, and document that the application-visible state lives
 one step removed from the commit history.
 
-See [Cooperative Editing Patterns](commit_cooperation.md) for how to
+See [Cooperative Discipline](commit_cooperation.md) for how to
 design work so these strategies remain a defensive fallback rather than
 the daily mode.
 

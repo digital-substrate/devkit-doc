@@ -1,4 +1,4 @@
-# Cooperative Editing Patterns
+# Cooperative Discipline
 
 The [Dual-Layer Contract](commit_contract.md) explains why the engine
 cannot deliver semantic validity on its own: under unsupervised
@@ -7,7 +7,7 @@ import strategies (ignore, subset, correct, reject) all live outside
 the DAG. That is the reactive, post-hoc answer.
 
 This page is the preventive answer. **Organise the work so that
-semantic conflicts do not arise** — and the import strategies stay a
+writes do not overlap** — and the import strategies stay a
 defensive fallback rather than the daily mode.
 
 Commit gives you the *mechanical convergence* primitive. To get
@@ -34,9 +34,9 @@ contract.
   merge, broken build" pattern.
 
 Mechanical convergence is the strongest guarantee any unsupervised
-system can deliver. Richer guarantees require a supervisor. The patterns below let you stay
-unsupervised by ensuring the engine never has anything semantically
-meaningful to arbitrate.
+system can deliver. Richer guarantees require a supervisor. The
+discipline below lets you stay unsupervised by ensuring the engine
+never has anything semantically meaningful to arbitrate.
 
 ## Principle: scope ownership
 
@@ -88,11 +88,11 @@ back-stop at read time, beneath whatever discipline you choose.
 
 ## Summary
 
-| Regime                     | Conflict handling                       | Where it lives                                      |
-|----------------------------|-----------------------------------------|-----------------------------------------------------|
+| Regime                     | Conflict handling                       | Where it lives                                           |
+|----------------------------|-----------------------------------------|----------------------------------------------------------|
 | **Mechanical convergence** | Silent best-effort, no notion           | The engine — the strongest guarantee without supervision |
-| **Cooperation**            | Avoided by scope, by construction       | This page — application discipline                  |
-| **Collaboration**          | Resolved by a supervisor (human / rule) | An application layer you build on top               |
+| **Cooperation**            | Avoided by scope, by construction       | This page — application discipline                       |
+| **Collaboration**          | Resolved by a supervisor (human / rule) | An application layer you build on top                    |
 
 The dual-layer contract holds in all three regimes; the discipline you
 adopt determines how much of it you have to consume at read time.

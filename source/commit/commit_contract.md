@@ -205,12 +205,12 @@ When the state is an import, the application has to pick a strategy for
 parts that violate its semantic invariants. Four strategies are
 available; none of them re-enters the DAG.
 
-| Strategy             | What the application does   | Consequence                                                                            |
-|----------------------|-----------------------------|----------------------------------------------------------------------------------------|
-| **Ignore**           | Consume the state as-is     | Explodes later, deep inside algorithms that assumed the invariants held                |
-| **Extract a subset** | Validate, drop what fails   | Surfaces a *partial* state — **disconnected from the DAG**                             |
-| **Correct**          | Validate, repair what fails | Surfaces a *phantom* state that no commit ever encoded — **disconnected from the DAG** |
-| **Reject**           | Refuse the state            | Not acceptable                                                                         |
+| Strategy             | What the application does   | Consequence                                                                       |
+|----------------------|-----------------------------|-----------------------------------------------------------------------------------|
+| **Ignore**           | Consume the state as-is     | A *latent* state — violations deferred to code that assumed the invariants held   |
+| **Extract a subset** | Validate, drop what fails   | A *partial* state — **disconnected from the DAG**                                 |
+| **Correct**          | Validate, repair what fails | A *phantom* state — **disconnected from the DAG**                                 |
+| **Reject**           | Refuse the state            | No state — resolution moves outside the import                                    |
 
 Reject is the appropriate choice when the first three would be
 inadequate for the application's domain. Safety-critical or strongly

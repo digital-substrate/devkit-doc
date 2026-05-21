@@ -1,14 +1,14 @@
 DevKit Documentation
 ====================
 
-**Define your data model. Get type safety, versioning, and Python access for free.**
+**Define your data model. Get type safety, mutation DAG, and Python access for free.**
 
 DevKit is the Digital Substrate Python toolkit for metadata-driven data
 modeling. Define your data structures in DSM (a purpose-built DSL), and the
 dsviper runtime gives you:
 
 - **Strong typing** - Type mismatches raise exceptions immediately, not silently coerce values
-- **Version control for data** - Every mutation is tracked in a mutation DAG
+- **Mutation DAG** - Every mutation lands as a typed commit in a content-addressed graph
 - **Seamless Python integration** - Work with native Python types, dsviper handles conversions
 
 .. code-block:: python
@@ -16,7 +16,7 @@ dsviper runtime gives you:
    from dsviper import CommitDatabase, CommitMutableState
    import model.attachments as ma
 
-   # Open a versioned database
+   # Open a commit database
    db = CommitDatabase.open("model.cdb")
 
    # Create and modify typed data
@@ -24,7 +24,7 @@ dsviper runtime gives you:
    login = ma.Tuto_Login()
    login.nickname = "alice"
 
-   # Commit with full history
+   # Commit the mutation
    state = CommitMutableState(db.initial_state())
    ma.tuto_user_login_set(state.attachment_mutating(), key, login)
    db.commit_mutations("Add user", state)

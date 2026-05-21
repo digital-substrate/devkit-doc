@@ -36,7 +36,7 @@ Install:
 
    pip install dsviper
 
-Open a versioned database, write a typed value, commit:
+Open a commit database, write a typed value, commit:
 
 .. code-block:: python
 

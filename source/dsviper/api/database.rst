@@ -5,7 +5,7 @@ Database classes provide persistence for Viper C++ documents using SQLite or rem
 connections.
 
 **When to use**: Use ``Database`` for simple key-value persistence without
-history tracking. For versioned data, see :doc:`commit`.
+history tracking. For the mutation DAG, see :doc:`commit`.
 
 Quick Start
 -----------

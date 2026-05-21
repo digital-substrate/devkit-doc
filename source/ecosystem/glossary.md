@@ -147,17 +147,17 @@ Dual Reality
 ```{glossary}
 
 commit
-   A node in the versioned-data DAG. Captures a set of {term}`mutations
+   A node in the {term}`mutation DAG`. Captures a set of {term}`mutations
    <mutation>` against a parent commit. See {doc}`../commit/index`.
 
 mutation DAG
    The directed acyclic graph formed by commits and their parent links.
-   Storage and history of versioned data; supports divergence, merging
-   of heads, and synchronization across clients. Older docs and
-   informal usage call this the *commit DAG*; the *mutation DAG*
-   label is preferred because a Viper commit is a patch in opcodes,
-   not a Git-style snapshot — the analogy that the older term invites
-   does not hold.
+   Storage and history of typed commits; supports divergence, merging
+   of heads, and synchronization across clients. The label *mutation*
+   rather than *commit* is deliberate: a Viper commit captures the
+   typed mutations applied since its parent, not a Git-style snapshot
+   of the resulting state — so the Git analogy a reader is likely to
+   reach for breaks down on the actual mechanics.
 
 mutation
    An opcode-level change applied to a value (`set`, `update`, `insert`,

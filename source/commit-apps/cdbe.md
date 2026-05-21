@@ -69,7 +69,7 @@ The UI is itself dominated by shared components: cdbe's
 ```text
 dsviper-tools/
 ├── cdbe.py                  # Application entry point (QApplication, MainWindow)
-├── dbe.py                   # Sibling — same shape, non-versioned Database backend
+├── dbe.py                   # Sibling — same shape, single-state Database backend
 ├── dsviper_components/      # Vendored copy of the shared dsviper-components library
 ├── scripts/                 # User scripts (run by the embedded Python editor)
 └── resources_rc.py          # Compiled Qt resources (icons)

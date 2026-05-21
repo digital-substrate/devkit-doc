@@ -14,7 +14,7 @@ Quick Start
 
    from dsviper import CommitDatabase, CommitMutableState
 
-   # Open versioned database (created with dsm_util.py)
+   # Open commit database (created with dsm_util.py)
    db = CommitDatabase.open("model.cdb")
    db.definitions().inject()
 
@@ -75,7 +75,7 @@ Choosing the Right Class
    * - Use Case
      - Class
      - Example
-   * - Open versioned database
+   * - Open commit database
      - :class:`CommitDatabase`
      - ``db = CommitDatabase.open(path)``
    * - Read state at specific commit

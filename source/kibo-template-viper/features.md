@@ -87,7 +87,7 @@ You don't need every feature. Common selections by use case:
 # Minimal — types only
 templates = ['Data']
 
-# Persistence (versioned data on disk)
+# Persistence (typed data on disk)
 templates = ['Model', 'Data', 'Attachments', 'Database']
 
 # Full stack — types + persistence + serialization + RPC

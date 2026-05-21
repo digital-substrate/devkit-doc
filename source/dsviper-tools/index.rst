@@ -41,7 +41,7 @@ Validate a DSM model:
 
    python3 tools/dsm_util.py check model.dsm
 
-Create a versioned database from a DSM model:
+Create a commit database from a DSM model:
 
 .. code-block:: bash
 

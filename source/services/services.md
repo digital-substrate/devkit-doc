@@ -248,7 +248,7 @@ A service is *not* useful when:
   artefact across clients with no domain-specific operations to
   expose. For that, dedicated database-transport tools (e.g. the
   {doc}`commit_database_server <../dsviper-tools/server>` for
-  versioned databases) are simpler.
+  commit databases) are simpler.
 
 ## Security
 

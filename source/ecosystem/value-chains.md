@@ -106,7 +106,7 @@ You do not have to adopt the whole stack. Common partial uses:
   contract. No kibo, no viper involved.
 - **Generated code for a non-viper runtime.** Use `kibo` with a different
   template; viper and dsviper are out of the picture.
-- **Versioned data without code generation.** Use `dsviper`'s dynamic API
+- **Commit subsystem without code generation.** Use `dsviper`'s dynamic API
   directly, loading dsm definitions at runtime — no static package needed.
 - **Inspect a database.** `dsviper-tools` (`cdbe`, `dbe`) 
   work standalone against any compatible database, regardless of

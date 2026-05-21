@@ -5,9 +5,9 @@ Viper C++ provides two database types for persistence:
 | Type             | Use Case                 | History   |
 |------------------|--------------------------|-----------|
 | `Database`       | Simple key-value storage | No        |
-| `CommitDatabase` | Versioned data           | Yes (DAG) |
+| `CommitDatabase` | Commit-based storage     | Yes (DAG) |
 
-This page covers the simple `Database`. For versioned storage,
+This page covers the simple `Database`. For commit-based storage,
 see [CommitDatabase](../commit/commit_database.md).
 
 ---

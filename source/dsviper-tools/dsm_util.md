@@ -8,7 +8,7 @@ models, creates databases, and generates Python packages.
 | Command                  | Description                  |
 |--------------------------|------------------------------|
 | `check`                  | Validate DSM syntax          |
-| `create_commit_database` | Create a versioned database  |
+| `create_commit_database` | Create a commit database     |
 | `create_database`        | Create a simple database     |
 | `create_python_package`  | Generate Python package      |
 | `encode`                 | Convert DSM to binary format |
@@ -39,7 +39,7 @@ This format integrates with most IDEs for click-to-navigate.
 
 ## Create Commit Database
 
-Create an empty versioned database with embedded definitions:
+Create an empty commit database with embedded definitions:
 
 ```bash
 python3 tools/dsm_util.py create_commit_database model.dsm model.cdb

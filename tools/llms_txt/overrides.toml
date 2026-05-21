@@ -175,7 +175,7 @@ sort = 30
 
 [overrides."https://docs.digitalsubstrate.io/commit/commit_contract.html"]
 title = "Dual-layer contract"
-description = "Structural guarantees of the commit DAG and the semantic checks that remain the application's."
+description = "Structural guarantees of the mutation DAG and the semantic checks that remain the application's."
 sort = 40
 
 [overrides."https://docs.digitalsubstrate.io/commit/commit_cooperation.html"]

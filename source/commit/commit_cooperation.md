@@ -40,10 +40,11 @@ never has anything semantically meaningful to arbitrate.
 
 ## Principle: scope ownership
 
-If two writers never touch the same path, convergence has nothing to
-arbitrate — the result is the union of disjoint mutations, and every
-submitted intent survives intact. Semantic validity becomes a
-consequence of structural disjointness.
+If two writers operate on disjoint attachments — or on disjoint paths
+within a shared attachment — convergence has nothing to arbitrate.
+The result is the union of disjoint mutations, and every submitted
+intent survives intact. Semantic validity becomes a consequence of
+structural disjointness.
 
 The shape of that disjointness is application-specific. This page does
 not prescribe a recipe — what works in one domain may not transfer to

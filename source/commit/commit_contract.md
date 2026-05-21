@@ -1,12 +1,14 @@
 # The Dual-Layer Contract
 
 This page documents the contract between the Commit Database (exposed in Python
-through `dsviper`) and your application code **in the regime where merges
-happen automatically, without human arbitration** — typically multiple authors
-writing concurrently into a shared database. In single-user use (desktop
-editors, scripting, read-only history), the Commit Database still behaves the
-way this contract describes, but the failure modes below do not bite: there is
-no unsupervised convergence to worry about. See
+through `dsviper`) and your application code **whenever the state being read
+was reconstructed from a history that contains at least one `commitMerge`**.
+The trigger is the merge itself, not concurrency or automation: a single
+author manually merging two of their own branches in a desktop editor faces
+the same best-effort drops as an unsupervised reducer collapsing multi-author
+heads. The contract does not bite only when the history is strictly linear —
+pure single-user editing on one head, scripting against your own untouched
+history, browsing a never-merged DAG. See
 [Modes of Use](commit_database.md#modes-of-use) to locate your scenario.
 
 When the contract does apply, read it before relying on commit behavior to
@@ -33,6 +35,32 @@ and that change is precisely what this contract formalises: the
 application takes back, at read time, the strictness the engine
 relaxes at convergence time.
 
+### Why the divide exists: complicated vs complex
+
+The boundary is not arbitrary. The engine and the application solve
+two qualitatively different problems:
+
+- **Convergence is *complicated*.** Many moving parts — LWW
+  arbitration, merge ordering, structural drop rules — but the
+  problem is tractable and mechanical: given the same inputs and the
+  same merge sequence, the engine always picks the same outcome. It
+  is fully solvable in code, once and for all, with no knowledge of
+  your domain.
+- **Semantic validation is *complex*.** It is not a more elaborate
+  flavour of convergence. It is emergent, application-specific, and
+  has no closed-form solution: uniqueness, referential integrity,
+  cross-field invariants, domain rules all depend on what your data
+  *means*. No engine can solve it generically without becoming your
+  application.
+
+The engine stops at convergence not because semantic validation is
+hard, but because it is *not the engine's problem to solve*. Pushing
+it inside would either require the engine to refuse states (breaking
+unsupervised convergence) or to encode every application's rules
+(breaking generality). The contract keeps the complicated part
+mechanical and the complex part where it belongs: at the application
+boundary.
+
 ## The Contract
 
 | Layer           | Guarantees                                               |
@@ -52,13 +80,15 @@ algorithm:
 This is by design. The engine is intentionally agnostic to your domain rules
 and never refuses to converge — it picks a deterministic outcome and moves on.
 
-## Why the Engine's Output Is Untrusted Data
+## Reading the State Is an Import, Not a Load
 
 This is the load-bearing point of the contract.
 
 "Untrusted" usually means *data that crossed a boundary you don't control* —
 network input, a deserialized file, an external API. The natural reflex is to
-validate at that boundary and then trust the data internally.
+validate at that boundary and then trust the data internally. We call that a
+**load**: a one-shot transfer of confidence from an external source into a
+trusted in-memory representation.
 
 Best-effort convergence breaks that reflex. **The state returned by
 `state(commitId)` is itself a boundary**, even though the data never left the
@@ -72,19 +102,24 @@ process:
 
 Structurally the data is sound — types check, paths resolve, the DAG is
 consistent. **Semantically, you have no guarantee** that the result reflects
-any single coherent intent. That makes engine output equivalent to untrusted
-data from the application's perspective.
+any single coherent intent.
+
+Treat reading `state(commitId)` as an **import**, not a load. An import
+acknowledges that the source is structurally well-formed but semantically
+foreign: a strategy must be picked for what to do with parts that violate
+your domain rules. A load offers no such choice — it assumes the data is
+already yours. After best-effort convergence, it is not.
 
 ## Three Error Families
 
 Because of this, validation in a `dsviper`-based system happens at three
 distinct places, not one:
 
-| Family                           | Origin                                              | Detected by                         |
-|----------------------------------|-----------------------------------------------------|-------------------------------------|
-| **Untrusted (external)**         | I/O, deserialization, type mismatch, malformed path | Engine, fail-fast → `dsviper.Error` |
-| **Untrusted (post-convergence)** | State returned by the Commit Database after convergence      | Application, at read time           |
-| **Invalid (semantic)**           | Business-rule violation on otherwise sound data     | Application, at read time           |
+| Family                           | Origin                                                  | Detected by                         |
+|----------------------------------|---------------------------------------------------------|-------------------------------------|
+| **Untrusted (external)**         | I/O, deserialization, type mismatch, malformed path     | Engine, fail-fast → `dsviper.Error` |
+| **Untrusted (post-convergence)** | State returned by the Commit Database after convergence | Application, at read time           |
+| **Invalid (semantic)**           | Business-rule violation on otherwise sound data         | Application, at read time           |
 
 The first family is what `dsviper.Error` covers. The other two are entirely
 your responsibility — and they share a remediation: **re-validate when you
@@ -150,16 +185,59 @@ arbitration outcome. Re-validate at read time.
 | **Mutation Notification** | No alert when mutations are silently ignored           |
 | **Conflict Detection**    | No notion of conflict — just deterministic convergence |
 
+## Import Strategies
+
+The strategies below are the choices available to an application reading a
+converged state. None is universally right; documenting them is what makes
+informed use possible.
+
+The trigger for import is **the merge**, not concurrency or automation. As
+long as a state is reconstructed from a strictly linear history, reading is
+a *load*: every mutation you submitted is exactly the mutation that
+contributed to the state, and there is nothing untrusted to import. The
+moment the history contains a `commitMerge` — whether triggered by an
+unsupervised reducer or by a human in a desktop editor — best-effort drops
+have already been applied silently, and reading that state becomes an
+*import*.
+
+When the state is an import, the application has to pick a strategy for
+parts that violate its semantic invariants. Three strategies are
+available; none of them re-enters the DAG.
+
+| Strategy             | What the application does   | Consequence                                                                            |
+|----------------------|-----------------------------|----------------------------------------------------------------------------------------|
+| **Ignore**           | Consume the state as-is     | Explodes later, deep inside algorithms that assumed the invariants held                |
+| **Extract a subset** | Validate, drop what fails   | Surfaces a *partial* state — **disconnected from the DAG**                             |
+| **Correct**          | Validate, repair what fails | Surfaces a *phantom* state that no commit ever encoded — **disconnected from the DAG** |
+
+None of these strategies pushes the validated state back into the DAG as
+the "real" state. **Commit has no notion of conflict** — there is nothing
+for the application to push back into. The engine has already converged;
+the application's repair or pruning is private to the read and lives
+outside the DAG.
+
+This is why any application that reads a state whose history contains a
+merge — and that depends on semantic invariants — must explicitly own one
+of these strategies, and document that the application-visible state lives
+one step removed from the commit history.
+
+See [Cooperative Editing Patterns](commit_cooperation.md) for how to
+design work so these strategies remain a defensive fallback rather than
+the daily mode.
+
 ## Implications for `dsviper` Code
 
 The contract shapes how you should write code on top of `dsviper.Commit*`:
 
-- **Treat the post-convergence state as a boundary.** It is the symmetric
-  equivalent of deserialized network input: structurally sound, semantically
-  unverified.
+- **Treat the post-convergence state as an import boundary.** It is the
+  symmetric equivalent of deserialized network input: structurally sound,
+  semantically unverified.
 - **Do not assume** that every operation you build into a `CommitMutableState`
   will land. After concurrent streams converge, some operations may have been
   silently dropped because their targets disappeared.
+- **Pick an import strategy explicitly.** Do not let it emerge from where you
+  happen to validate. Make the choice visible in the code that consumes the
+  state.
 - **Validate at the application boundary,** which means
   the Commit Database output. If your domain has invariants (uniqueness,
   referential integrity, cross-field consistency), enforce them when consuming

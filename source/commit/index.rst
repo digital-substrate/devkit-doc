@@ -24,7 +24,11 @@ It is structured as three layers, from the disk upward:
 
 A fourth page, :doc:`The Dual-Layer Contract <commit_contract>`,
 formalises what the three layers guarantee structurally and what
-remains the application's semantic responsibility.
+remains the application's semantic responsibility. A fifth page,
+:doc:`Cooperative Editing Patterns <commit_cooperation>`, gives the
+operational discipline — scope decomposition — that lets you stay
+inside the engine's structural guarantees without having to consume
+the contract at read time.
 
 It is a Viper C++ subsystem first and a Python API second. The Python
 exposure lives in :doc:`dsviper <../dsviper/index>` (``CommitDatabase``,
@@ -88,6 +92,7 @@ Topics
    commit_store
    commit_application_model
    commit_contract
+   commit_cooperation
 
 
 Status

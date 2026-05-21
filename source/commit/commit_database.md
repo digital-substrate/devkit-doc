@@ -19,9 +19,10 @@ dispatch, undo / redo, notifications — see
 ## Modes of Use
 
 How you exercise the commit DAG determines which guarantees you can rely on
-and where validation belongs. Four user-facing modes — the first three are
-single-author, so the application arbitrates every change or head merge and
-the dual-layer contract is not load-bearing. The fourth is where the contract
+and where validation belongs. Four user-facing modes — the first three
+either never invoke `commitMerge` or invoke it under direct human review of
+the resulting state, so the dual-layer contract is not load-bearing. The
+fourth automates merges away from any supervisor, and is where the contract
 on the next page becomes the centre of gravity.
 
 ### Time travel (read-only)
@@ -65,9 +66,11 @@ Database provides:
   semantically untrusted.
 
 dsviper offers mechanical convergence. Cooperation is achievable by
-structuring work along disjoint paths
-([Why Paths Matter](#why-paths-matter)). Collaboration requires an
-explicit application layer on top — that is what the
+structuring work along disjoint paths — see
+[Cooperative Editing Patterns](commit_cooperation.md) for the full
+methodology, or [Why Paths Matter](#why-paths-matter) below for a
+minimal concrete example. Collaboration requires an explicit
+application layer on top — that is what the
 [Dual-Layer Contract](commit_contract.md) formalises.
 ```
 
@@ -209,6 +212,9 @@ After convergence: Both updates apply (disjoint paths)
 
 With `set()`, one user's changes would overwrite the other's.
 
+See [Cooperative Editing Patterns](commit_cooperation.md) for the full
+methodology this example illustrates.
+
 ---
 
 ## Commit History
@@ -343,7 +349,7 @@ engine — it's on the application.
   dropped. If the outcome matters, read the state back and check.
 - **Validate on read, not on write,** when the contract applies. Engine
   output is structurally sound but semantically untrusted
-  ([why](commit_contract.md#why-the-engines-output-is-untrusted-data)) —
+  ([why](commit_contract.md#reading-the-state-is-an-import-not-a-load)) —
   enforce uniqueness, referential integrity, and cross-field invariants
   when you consume the state, not when you build the mutations.
 

@@ -2,7 +2,7 @@ Commit
 ======
 
 **Commit** is Viper's versioned-state technology — an immutable,
-content-addressed DAG of commits derived from a
+content-addressed mutation DAG derived from a
 :doc:`DSM <../dsm/index>` model, with deterministic mechanical
 convergence between concurrent streams, plus the runtime wrapper and
 the architectural pattern that turn it into the substrate of an
@@ -11,7 +11,7 @@ interactive application.
 It is structured as three layers, from the disk upward:
 
 * :doc:`Commit Database <commit_database>` — the persistence layer
-  itself. An immutable DAG of commits, opened by path, mutated through
+  itself. An immutable mutation DAG, opened by path, mutated through
   explicit commit ids. No current state, no undo, no notifications.
 * :doc:`CommitStore <commit_store>` — the in-memory wrapper. Holds the
   current state, dispatches typed mutations as commits, maintains
@@ -54,7 +54,7 @@ Where it sits in the value chain
 
 Without the Commit Database, ``dsviper`` reads and writes against the plain
 ``Database`` backend — flat key-value, no history. The Commit Database adds
-versioning over the same backend: an immutable DAG of commits with
+versioning over the same backend: an immutable mutation DAG with
 deterministic convergence between concurrent streams. A
 :doc:`CommitStore <commit_store>` adds the navigation, dispatch, and
 notifications on top. See :doc:`../ecosystem/value-chains` for the broader

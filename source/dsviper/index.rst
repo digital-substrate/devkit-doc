@@ -2,7 +2,7 @@ dsviper
 =======
 
 The **dsviper** Python runtime is the strongly typed Python API over the
-Viper C++ engine. It carries the type system, value system, commit DAG,
+Viper C++ engine. It carries the type system, value system, mutation DAG,
 database tier, serialization, and RPC, and exposes them as Python classes
 and functions. Most user code in the ecosystem imports ``dsviper`` and is
 built on top of it.

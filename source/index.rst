@@ -8,7 +8,7 @@ modeling. Define your data structures in DSM (a purpose-built DSL), and the
 dsviper runtime gives you:
 
 - **Strong typing** - Type mismatches raise exceptions immediately, not silently coerce values
-- **Version control for data** - Every mutation is tracked in a mutation graph
+- **Version control for data** - Every mutation is tracked in a mutation DAG
 - **Seamless Python integration** - Work with native Python types, dsviper handles conversions
 
 .. code-block:: python

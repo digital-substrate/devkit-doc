@@ -260,7 +260,7 @@ context:
 * No client-side framework, no build step, no transpiler — only Python,
   Flask, Jinja, and the browser's native form handling.
 * Every state transition is a normal HTTP request, so the server is the
-  single source of truth and the commit DAG is the only state machine.
+  single source of truth and the mutation DAG is the only state machine.
 * Anyone with a copy of dsviper can run the demo against their own
   database and immediately see what's stored, what's editable, and what
   changing it looks like in commit history.

@@ -18,7 +18,7 @@ dispatch, undo / redo, notifications — see
 
 ## Modes of Use
 
-How you exercise the commit DAG determines which guarantees you can rely on
+How you exercise the mutation DAG determines which guarantees you can rely on
 and where validation belongs. Four user-facing modes — the first three
 either never invoke `commitMerge` or invoke it under direct human review of
 the resulting state, so the dual-layer contract is not load-bearing. The
@@ -304,7 +304,7 @@ Behaviour beyond those envelopes is not characterised.
 
 ## Storage growth
 
-The commit DAG is **append-only** — once written, every commit is
+The mutation DAG is **append-only** — once written, every commit is
 immutable. The database grows monotonically; the runtime carries no
 incremental garbage collection, no partial purge that trims old
 commits while keeping recent history, and no archival mechanism.

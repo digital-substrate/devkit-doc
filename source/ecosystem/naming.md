@@ -27,7 +27,7 @@ download from the website (digitalsubstrate.io).
 *What runs in your Python apps.*
 
 The Python runtime — a strongly typed Python API over the Viper C++ engine. It
-carries the type system, value system, commit DAG, database tier,
+carries the type system, value system, mutation DAG, database tier,
 serialization, and RPC, and exposes them as Python classes and functions.
 
 **Distribution.** dsviper is published exclusively on

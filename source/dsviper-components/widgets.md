@@ -32,7 +32,7 @@ Signals.
 |-------------------|-------------|----------------------------------------------------------------------------------------------|
 | `DSInspectDialog` | `()`        | Tree of every attachment / structure in the running state — refreshes on `state_did_change`. |
 
-## The commit DAG
+## The mutation DAG
 
 | Class                   | Constructor            | Purpose                                                                             |
 |-------------------------|------------------------|-------------------------------------------------------------------------------------|

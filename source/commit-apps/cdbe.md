@@ -220,7 +220,7 @@ self._code_editor_dialog = DSCodeEditorDialog(self._python_editor_model)
 | Dialog                   | What it shows                                     |
 |--------------------------|---------------------------------------------------|
 | `DSInspectDialog`        | Database metadata: path, UUID, codec, definitions |
-| `DSCommitsDialog`        | The full commit DAG (browse, jump to, compare)    |
+| `DSCommitsDialog`        | The full mutation DAG (browse, jump to, compare)    |
 | `DSCommitProgramDialog`  | Python program embedded in a commit (replayable)  |
 | `DSCommitSettingsDialog` | Per-commit settings                               |
 | `DSCommitUndoDialog`     | The undo stack as a navigable list                |

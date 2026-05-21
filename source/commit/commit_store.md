@@ -73,7 +73,7 @@ action against the store, never a sideways write to the database.
 ### 3. Undo / redo and DAG navigation
 
 The store maintains an in-memory undo stack on top of the underlying
-commit DAG. Calls do not rewrite history — they move the current
+mutation DAG. Calls do not rewrite history — they move the current
 state along existing commits, diverging when necessary.
 
 ```pycon

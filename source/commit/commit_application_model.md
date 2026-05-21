@@ -6,7 +6,7 @@ application composes a [`CommitStore`](commit_store.md) — the in-memory
 wrapper over a [Commit Database](commit_database.md), provided by the
 Viper C++ runtime — with its own domain state, dispatch surface, and
 platform notifications, so that all state changes flow through the
-[commit DAG](commit_database.md) with built-in undo/redo, multi-author
+[mutation DAG](commit_database.md) with built-in undo/redo, multi-author
 convergence, and audit trail.
 
 Concrete walkthroughs in different languages and on different
@@ -18,7 +18,7 @@ this single Model; the Model is what they have in common.
 
 > `dbe.py` is **not** an instance of this model. It is a plain CRUD
 > inspector for the non-versioned `Database` backend — it does not use
-> a `CommitStore` and does not flow through a commit DAG. Outside the
+> a `CommitStore` and does not flow through a mutation DAG. Outside the
 > pattern.
 
 ## The Application Context
@@ -316,7 +316,7 @@ The Application Context never imports a UI framework — it speaks
 ## The dual-layer contract
 
 The Commit Database guarantees **structural integrity** — typed
-mutations land cleanly in the DAG, the commit graph stays consistent,
+mutations land cleanly in the mutation DAG, and the structure stays consistent,
 and the `CommitStore` navigation (undo/redo) behaves deterministically.
 It does **not** guarantee **semantic integrity** — that the
 application's domain invariants are upheld.
@@ -336,7 +336,7 @@ The same Model produces two distinct kinds of application:
 
 * **Generic instances** — `cdbe.py` and `web-cdbe`. No DSM model, no
   Kibo output, no business logic. They open any `CommitDatabase` and
-  drive its commit DAG through the dynamic introspection API of the
+  drive its mutation DAG through the dynamic introspection API of the
   runtime. Their value is universality.
 
 * **Domain-specific instances** — `ge-py`, `ge-qml`, and any

@@ -50,7 +50,7 @@ Two paths, one model:
   **Viper C++** runtime (commercial).
 
 Both paths share the same metadata that drove generation, so type checking,
-serialization, persistence, the commit DAG, and remote synchronization
+serialization, persistence, the mutation DAG, and remote synchronization
 behave identically across surfaces. Your data is strongly typed end-to-end;
 type mismatches raise exceptions immediately rather than silently coercing
 values.

@@ -263,7 +263,7 @@ to do beyond toggling visibility.
 | Dialog                    | What it shows                                          |
 |---------------------------|--------------------------------------------------------|
 | `DSInspectDialog`         | Live tree of every attachment / structure in the state |
-| `DSCommitsDialog`         | The full commit DAG (browse, jump to, compare commits) |
+| `DSCommitsDialog`         | The full mutation DAG (browse, jump to, compare commits) |
 | `DSCommitDocumentsDialog` | Documents + attachments grouped by commit              |
 | `DSCommitProgramDialog`   | Python program embedded in a commit (replayable)       |
 | `DSCommitSettingsDialog`  | Per-commit settings                                    |

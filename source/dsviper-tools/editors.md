@@ -19,7 +19,7 @@ same generic-editor idea — minimum-surface example, not a substitute for
 ## cdbe.py - Commit Database Editor
 
 A generic Qt Widgets GUI that opens any `CommitDatabase` and exposes its
-full commit DAG: history, document browsing, mutations, undo/redo,
+full mutation DAG: history, document browsing, mutations, undo/redo,
 synchronisation with a remote commit server, embedded Python scripting.
 
 ```{figure} /_static/images/tools/cdbe.png

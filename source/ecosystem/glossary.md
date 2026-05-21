@@ -150,10 +150,14 @@ commit
    A node in the versioned-data DAG. Captures a set of {term}`mutations
    <mutation>` against a parent commit. See {doc}`../commit/index`.
 
-commit DAG
+mutation DAG
    The directed acyclic graph formed by commits and their parent links.
    Storage and history of versioned data; supports divergence, merging
-   of heads, and synchronization across clients.
+   of heads, and synchronization across clients. Older docs and
+   informal usage call this the *commit DAG*; the *mutation DAG*
+   label is preferred because a Viper commit is a patch in opcodes,
+   not a Git-style snapshot — the analogy that the older term invites
+   does not hold.
 
 mutation
    An opcode-level change applied to a value (`set`, `update`, `insert`,

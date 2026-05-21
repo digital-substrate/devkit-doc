@@ -35,5 +35,5 @@ code you obtain the same handles either by importing the
 [Kibo-generated package](../kibo/index.rst) (the static API) or by
 [loading the DSM model at runtime](dsm.md) (the dynamic API).
 
-For the full lifecycle — a `.cdb` on disk, browsing the commit DAG,
+For the full lifecycle — a `.cdb` on disk, browsing the mutation DAG,
 querying via attachments — continue with the [Tutorial](tutorial.md).

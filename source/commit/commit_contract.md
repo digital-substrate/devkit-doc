@@ -202,7 +202,7 @@ have already been applied silently, and reading that state becomes an
 *import*.
 
 When the state is an import, the application has to pick a strategy for
-parts that violate its semantic invariants. Three strategies are
+parts that violate its semantic invariants. Four strategies are
 available; none of them re-enters the DAG.
 
 | Strategy             | What the application does   | Consequence                                                                            |
@@ -210,6 +210,15 @@ available; none of them re-enters the DAG.
 | **Ignore**           | Consume the state as-is     | Explodes later, deep inside algorithms that assumed the invariants held                |
 | **Extract a subset** | Validate, drop what fails   | Surfaces a *partial* state — **disconnected from the DAG**                             |
 | **Correct**          | Validate, repair what fails | Surfaces a *phantom* state that no commit ever encoded — **disconnected from the DAG** |
+| **Reject**           | Refuse the state            | Not acceptable                                                                         |
+
+Reject is the appropriate choice when the first three would be
+inadequate for the application's domain. Safety-critical or strongly
+invariant-bound workflows often cannot tolerate partial views, invented
+values, or hidden invariant violations — for them, refusing the state
+is safer than producing one. Resolution moves outside the import :
+human intervention, rollback to a previous head, or a coordination
+protocol.
 
 None of these strategies pushes the validated state back into the DAG as
 the "real" state. **Commit has no notion of conflict** — there is nothing

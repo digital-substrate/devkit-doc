@@ -2,8 +2,8 @@
 
 The [Dual-Layer Contract](commit_contract.md) explains why the engine
 cannot deliver semantic validity on its own: under unsupervised
-convergence, reading a merged state is an *import*, and the three
-import strategies (ignore, subset, correct) all live outside
+convergence, reading a merged state is an *import*, and the four
+import strategies (ignore, subset, correct, reject) all live outside
 the DAG. That is the reactive, post-hoc answer.
 
 This page is the preventive answer. **Organise the work so that
@@ -100,7 +100,7 @@ adopt determines how much of it you have to consume at read time.
 ## See Also
 
 - [The Dual-Layer Contract](commit_contract.md) — why the engine
-  cannot deliver semantic validity on its own, and the three import
+  cannot deliver semantic validity on its own, and the four import
   strategies that back-stop any cooperation discipline.
 - [Commit Database — Modes of Use](commit_database.md#modes-of-use) —
   the three-regime note that names collaboration, cooperation, and

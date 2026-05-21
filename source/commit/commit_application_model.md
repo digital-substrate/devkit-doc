@@ -105,13 +105,15 @@ Function pools (and their bridges) exist for **two reasons**:
 
 Once a pool is registered with Viper C++, **its Python availability is
 free**. Viper's "Metadata Everywhere" principle means every value
-and every function carries its type metadata at runtime; `dsviper`
-(the hand-maintained Python wrapper of Viper C++, shipped as a wheel on
-PyPI) introspects registered pools and calls them with automatic
-marshalling between Python values and Viper C++ values. No per-pool
-Python binding is generated, none is written by hand — the same
-mechanism that lets `dsviper` expose any Viper C++ type to Python
-exposes the pools too.
+and every function carries its type metadata at runtime; `dsviper` —
+the hand-maintained C-extension that bridges Python to Viper C++,
+shipped as a wheel on PyPI — introspects registered pools and calls
+them with automatic marshalling between Python values and Viper C++
+values. The Python ↔ Viper C++ binding is `dsviper` itself, single-
+sourced and pool-agnostic; no per-pool extension code is written or
+generated. Kibo can optionally emit pure-Python typed proxy classes
+on top for IDE ergonomics, but those delegate every call back to
+`dsviper`'s dynamic dispatch — they are not bindings.
 
 #### How pools reach Python — Context injection + Viper introspection
 
@@ -122,7 +124,7 @@ there, every pool held by the Context is callable directly:
 `ctx.modelGraph.new_vertex(...)` reaches the hand-written C++
 implementation through the generated pool bridge, with Python ↔ Viper C++
 marshalling handled automatically by `dsviper` from the runtime metadata.
-No per-pool binding code is written or generated.
+No per-pool C-extension code is written or generated.
 
 This mirrors what `PythonEditorModel(..., namespace_vars={...})` does for
 the Python profile. The two profiles converge on the same scripting

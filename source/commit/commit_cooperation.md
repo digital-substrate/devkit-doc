@@ -29,12 +29,12 @@ contract.
 - Operational Transformation (Google-Docs-style) needs a central
   server that arbitrates operation order. Remove the server and OT
   collapses back to mechanical convergence.
-- Git's auto-merge succeeds silently on textually disjoint edits even
-  when they are semantically incompatible — the "successful merge,
-  broken build" pattern.
+- Line-based text auto-merge succeeds silently on textually disjoint
+  edits even when they are semantically incompatible — the "successful
+  merge, broken build" pattern.
 
-Mechanical convergence is the honest unsupervised primitive. Richer
-guarantees require a supervisor. The patterns below let you stay
+Mechanical convergence is the strongest guarantee any unsupervised
+system can deliver. Richer guarantees require a supervisor. The patterns below let you stay
 unsupervised by ensuring the engine never has anything semantically
 meaningful to arbitrate.
 
@@ -70,28 +70,27 @@ Be honest about the limits of the discipline:
   apply to the *derived* state, even if every contributor's
   individual write was clean.
 
-## When to escalate to collaboration
+## When a supervisor is required
 
 When the scope cannot be cleanly decomposed — when authors genuinely
 need to co-edit the same field, or when global invariants matter —
 the right answer is not a better convergence algorithm. It is an
 application-level supervisor: a review UI that surfaces clashes for
 human arbitration, a semantic gate that refuses commits, a merge UX
-that asks an operator to pick. That is the *collaboration* regime
-named in the three-regime note in
+that asks an operator to pick. That is the supervised regime named in
+the three-regime note in
 [Commit Database — Modes of Use](commit_database.md#modes-of-use).
 
 The supervisor is yours to build. The Commit Database does not
 provide it; what it provides — the
 [import strategies](commit_contract.md#import-strategies) — is the
-back-stop at read time, beneath whatever cooperation or collaboration
-discipline you choose.
+back-stop at read time, beneath whatever discipline you choose.
 
 ## Summary
 
 | Regime                     | Conflict handling                       | Where it lives                                      |
 |----------------------------|-----------------------------------------|-----------------------------------------------------|
-| **Mechanical convergence** | Silent best-effort, no notion           | The engine — the only honest unsupervised primitive |
+| **Mechanical convergence** | Silent best-effort, no notion           | The engine — the strongest guarantee without supervision |
 | **Cooperation**            | Avoided by scope, by construction       | This page — application discipline                  |
 | **Collaboration**          | Resolved by a supervisor (human / rule) | An application layer you build on top               |
 

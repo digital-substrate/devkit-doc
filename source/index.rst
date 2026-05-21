@@ -1,7 +1,7 @@
 DevKit Documentation
 ====================
 
-**Define your data model. Get type safety, versioning, and Python bindings for free.**
+**Define your data model. Get type safety, versioning, and Python access for free.**
 
 DevKit is the Digital Substrate Python toolkit for metadata-driven data
 modeling. Define your data structures in DSM (a purpose-built DSL), and the

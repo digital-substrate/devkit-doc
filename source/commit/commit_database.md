@@ -67,9 +67,9 @@ Database provides:
 
 dsviper offers mechanical convergence. Cooperation is achievable by
 structuring work along disjoint paths — see
-[Cooperative Editing Patterns](commit_cooperation.md) for the full
-methodology, or [Why Paths Matter](#why-paths-matter) below for a
-minimal concrete example. Collaboration requires an explicit
+[Cooperative Editing Patterns](commit_cooperation.md) for the
+principle and its limits, or [Why Paths Matter](#why-paths-matter)
+below for a minimal concrete example. Collaboration requires an explicit
 application layer on top — that is what the
 [Dual-Layer Contract](commit_contract.md) formalises.
 ```
@@ -212,8 +212,8 @@ After convergence: Both updates apply (disjoint paths)
 
 With `set()`, one user's changes would overwrite the other's.
 
-See [Cooperative Editing Patterns](commit_cooperation.md) for the full
-methodology this example illustrates.
+See [Cooperative Editing Patterns](commit_cooperation.md) for the
+principle and its limits.
 
 ---
 

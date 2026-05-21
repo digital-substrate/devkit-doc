@@ -4,7 +4,7 @@ This page documents the contract between the Commit Database (exposed in Python
 through `dsviper`) and your application code **whenever the state being read
 was reconstructed from a history that contains at least one `commitMerge`**.
 The trigger is the merge itself, not concurrency or automation: a single
-author manually merging two of their own branches in a desktop editor faces
+author manually merging two of their own heads in a desktop editor faces
 the same best-effort drops as an unsupervised reducer collapsing multi-author
 heads. The contract does not bite only when the history is strictly linear —
 pure single-user editing on one head, scripting against your own untouched
@@ -26,7 +26,7 @@ disciplines, meet at the convergence boundary.
   immediately. Nothing is silently coerced.
 - The **Commit Engine**, layered on top, applies **best-effort** at
   the convergence level: when concurrent streams meet, mutations
-  whose targets have disappeared in another branch are silently
+  whose targets have disappeared after divergence are silently
   dropped to keep the DAG converging without human arbitration.
 
 The two are not contradictory — they govern different operations at
@@ -154,10 +154,10 @@ time-meaningful.
 
 **The merge primitive.** `commitMerge(parent, target)` creates a
 merge commit. When the resulting state is reconstructed, `target`'s
-mutations are applied *after* `parent`'s — so the target branch
-wins all LWW conflicts on overlapping paths. This is the only
-arbitration rule the engine itself fixes — and it makes the operation
-non-commutative: `commitMerge(A, B) ≠ commitMerge(B, A)`.
+mutations are applied *after* `parent`'s — so on every overlapping
+path, the value from `target` survives. This is the only such rule
+the engine itself fixes, and it makes the operation non-commutative:
+`commitMerge(A, B) ≠ commitMerge(B, A)`.
 
 **Reducing multiple heads is a strategy, not a guarantee.** The
 built-in `reduceHeads` iterates heads in lexicographic `CommitId`
@@ -168,8 +168,9 @@ own `commitMerge` sequence. The final state depends on *who calls
 commitMerge in what order*, not on a property of the engine.
 
 **None of this preserves intent.** Whichever strategy is used, the
-winner of an LWW conflict is a function of how merges were
-sequenced — not of authorship, recency, or semantic priority. Two
+value that survives on an overlapping path is a function of how
+merges were sequenced — not of authorship, recency, or semantic
+priority. Two
 authors editing the same field have no way to predict which value
 will survive convergence, even within a fixed strategy.
 

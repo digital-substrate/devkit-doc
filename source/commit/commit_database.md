@@ -16,6 +16,31 @@ dispatch, undo / redo, notifications — see
 
 ---
 
+## Two kinds of version DAG
+
+Two distinct families of versioning systems share vocabulary
+(commit, merge, head, branch, parent) and topology (a DAG of
+nodes with one or more parents), but differ on **what a node
+contains**.
+
+Some systems (git, hg, fossil) are **snapshot DAGs**: each node
+contains a full state of the tree. Their `merge` reconciles
+states; when states disagree, the algorithm cannot pick and
+surfaces a conflict for human arbitration.
+
+Commit is a **mutation DAG**: each node contains a sequence of
+path-based mutations. Its `commitMerge` composes
+mutation sequences; when mutations target the same path,
+deterministic composition rules apply (last-writer-wins by
+fusion order). No conflict is ever surfaced.
+This is what makes mechanical convergence possible — and what makes the
+[Dual-Layer Contract](commit_contract.md) necessary.
+
+Habits built in snapshot DAGs do not transfer cleanly. Read
+on with this distinction in mind.
+
+---
+
 ## Modes of Use
 
 How you exercise the mutation DAG determines which guarantees you can rely on
@@ -262,18 +287,18 @@ Reconstructing a document's state from its commit history is
 touched it and on **Ops** — the number of path-targeted operations
 on this document since its last `set`.
 
-| Opcode             | Reconstruction  | Notes                              |
-|--------------------|-----------------|------------------------------------|
-| `set`              | O(1)            | replaces the whole document        |
-| `update`           | O(Ops)          | replays field-level updates        |
-| `update_in_map`    | O(Ops)          |                                    |
-| `update_in_xarray` | O(Ops)          |                                    |
-| `remove_in_xarray` | O(Ops)          |                                    |
-| `union_in_map`     | O(Ops · log M)  | M = map size                       |
-| `subtract_in_map`  | O(Ops · log M)  |                                    |
-| `union_in_set`     | O(Ops · S)      | S = set size                       |
-| `subtract_in_set`  | O(Ops · S)      |                                    |
-| `insert_in_xarray` | O(Ops²)         | UUID positioning, quadratic worst  |
+| Opcode             | Reconstruction | Notes                             |
+|--------------------|----------------|-----------------------------------|
+| `set`              | O(1)           | replaces the whole document       |
+| `update`           | O(Ops)         | replays field-level updates       |
+| `update_in_map`    | O(Ops)         |                                   |
+| `update_in_xarray` | O(Ops)         |                                   |
+| `remove_in_xarray` | O(Ops)         |                                   |
+| `union_in_map`     | O(Ops · log M) | M = map size                      |
+| `subtract_in_map`  | O(Ops · log M) |                                   |
+| `union_in_set`     | O(Ops · S)     | S = set size                      |
+| `subtract_in_set`  | O(Ops · S)     |                                   |
+| `insert_in_xarray` | O(Ops²)        | UUID positioning, quadratic worst |
 
 ### Design pitfall: O(N²) on accumulated Sets
 

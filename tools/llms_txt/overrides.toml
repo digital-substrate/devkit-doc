@@ -160,7 +160,7 @@ sort = 110
 
 [overrides."https://docs.digitalsubstrate.io/commit/commit_database.html"]
 title = "Commit Database"
-description = "The persistence layer — immutable DAG of commits, modes of use, mutation API."
+description = "The persistence layer — mutation DAG, modes of use, path-based mutation API."
 sort = 10
 
 [overrides."https://docs.digitalsubstrate.io/commit/commit_store.html"]

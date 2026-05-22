@@ -51,7 +51,7 @@ DevKit is the **distribution** that bundles **DSM** (the modeling language), **K
 
 ## Commit
 
-- [Commit Database](https://docs.digitalsubstrate.io/commit/commit_database.html): The persistence layer — immutable DAG of commits, modes of use, mutation API.
+- [Commit Database](https://docs.digitalsubstrate.io/commit/commit_database.html): The persistence layer — mutation DAG, modes of use, path-based mutation API.
 - [CommitStore](https://docs.digitalsubstrate.io/commit/commit_store.html): In-memory wrapper over a CommitDatabase — current state, dispatch, undo/redo, notifications.
 - [Commit Application Model](https://docs.digitalsubstrate.io/commit/commit_application_model.html): Architectural pattern — Application Context, dispatch surface, notifier, two language profiles.
 - [Dual-layer contract](https://docs.digitalsubstrate.io/commit/commit_contract.html): Structural guarantees of the mutation DAG and the semantic checks that remain the application's.

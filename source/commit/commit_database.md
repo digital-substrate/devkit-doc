@@ -28,8 +28,8 @@ contains a full state of the tree. Their `merge` reconciles
 states; when states disagree, the algorithm cannot pick and
 surfaces a conflict for human arbitration.
 
-Commit is a **mutation DAG**: each node contains a sequence of
-path-based mutations. Its `commitMerge` composes
+The Commit Database is a **mutation DAG**: each node contains a
+sequence of path-based mutations. Its `commitMerge` composes
 mutation sequences; when mutations target the same path,
 deterministic composition rules apply (last-writer-wins by
 fusion order). No conflict is ever surfaced.

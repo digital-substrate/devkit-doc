@@ -1,16 +1,11 @@
 # Commit Database
 
-The Commit Database provides transactional persistence with history tracking.
-
-**When to use**: Use `CommitDatabase` for versioned persistence with history, concurrent
-streams, and sync. A `CommitStore` wraps an open database to expose undo/redo and
-the dispatch surface for concurrent editing.
+The Commit Database is the persistence layer: an immutable mutation
+DAG, transactional, with history and synchronisation across streams.
 
 ```{seealso}
-This page documents the persistence layer in isolation — opening a
-database, capturing commit ids, walking history by id. For the
-runtime surface most applications actually use — current state,
-dispatch, undo / redo, notifications — see
+For the runtime surface most applications actually use — current
+state, dispatch, undo / redo, notifications — see
 [CommitStore](commit_store.md).
 ```
 
@@ -43,12 +38,31 @@ on with this distinction in mind.
 
 ## Modes of Use
 
-How you exercise the mutation DAG determines which guarantees you can rely on
-and where validation belongs. Four user-facing modes — the first three
-either never invoke `commitMerge` or invoke it under direct human review of
-the resulting state, so the dual-layer contract is not load-bearing. The
-fourth automates merges away from any supervisor, and is where the contract
-on the next page becomes the centre of gravity.
+How you exercise the mutation DAG determines whether the
+[Dual-Layer Contract](commit_contract.md) applies to you at all.
+Read this section as a diagnostic, not a catalogue.
+
+Five user-facing modes. The first three are **single-stream** — no
+`commitMerge` is reconstructed at read time, so the contract is not
+load-bearing. The last two are **multi-stream** under mechanical
+convergence, split by **what your invariants look like**.
+
+```{note}
+**Three regimes of multi-author work** — only one is what the Commit
+Database provides:
+
+- **Collaboration** — humans arbitrate overlapping intentions
+  *before* convergence (manual-merge / review).
+- **Cooperation** — disjoint contributions assemble without conflict
+  by construction.
+- **Mechanical convergence** — the Commit Database linearises streams
+  deterministically with no notion of "conflict": clashing intentions
+  are silently reconciled by structural rules. Structurally sound,
+  semantically untrusted.
+
+dsviper offers mechanical convergence. The two multi-stream modes
+below are flavours of it.
+```
 
 ### Time travel (read-only)
 
@@ -58,46 +72,58 @@ content-addressing.
 
 ### Single-user undo / redo
 
-Step back along the chain, diverge, redo. *Intent: revise history* —
-correct or replay past decisions on a single author's line. All structural
-guarantees apply, plus tombstone semantics.
+Step back along the chain, diverge, redo. *Intent: revise history*
+on a single author's line. All structural guarantees apply, plus
+tombstone semantics.
 
 ### Single-user exploration
 
-Diverge the DAG and keep parallel heads alive, merging heads on your own
-schedule. *Intent: explore alternatives in parallel* — same machinery as
-undo/redo, but you maintain multiple heads concurrently instead of
-replaying one. All structural guarantees apply, plus multi-head machinery.
+Diverge the DAG and keep parallel heads alive, merging them on your
+own schedule. Same machinery as undo/redo with multiple heads. Merges
+happen, but a single author reviews the resulting state — still
+single-stream.
 
-### Automated multi-user
+### Multi-stream with local invariants
 
-Concurrent commits from multiple authors converge without human review.
-The engine guarantees structural soundness only; semantic integrity
-(uniqueness, referential integrity, cross-field invariants) is your
-problem. This is where the
-[Dual-Layer Contract](commit_contract.md) becomes load-bearing.
+Multiple authors converge automatically, but the structural drops
+cost the application nothing in practice. Two routes lead here:
 
-```{note}
-**Three regimes of multi-author work** — only one is what the Commit
-Database provides:
+- **Naturally local invariants** — the entire mutable state lives
+  in containers whose convergence is commutative by construction
+  (`set`, `map`, `xarray` with union / subtract / UUID positions).
+  There is nothing for the engine to silently break.
+- **Defensive-by-design** — cross-attachment references exist and
+  may break under convergence, but the application is built from
+  day one to tolerate the break: load robustly, surface the
+  integrity issue, expose corrective actions to the user. This is
+  an uncommon architectural choice — most applications are not
+  built this way.
 
-- **Collaboration** — humans reconcile intentions: conflicts are
-  identified, surfaced, resolved (the manual-merge / review model).
-- **Cooperation** — disjoint contributions assemble without conflict
-  by construction.
-- **Mechanical convergence** — the Commit Database linearises streams
-  deterministically with no notion of "conflict": clashing intentions
-  are silently reconciled by structural rules. Structurally sound,
-  semantically untrusted.
+The Graph Editor sample exemplifies the second route: `EdgeTopology`
+references vertices, and the model ships `ModelIntegrity` as a
+user-facing repair pool (recreate, delete, or respawn missing
+elements), on top of an application that loads graphs with broken
+integrity without crashing.
 
-dsviper offers mechanical convergence. Cooperation is achievable by
-structuring work along disjoint paths — see
-[Cooperative Discipline](commit_cooperation.md) for the
-principle and its limits, or [Why Paths Matter](#why-paths-matter)
-below for a minimal concrete example. Collaboration requires an explicit
-application layer on top — that is what the
-[Dual-Layer Contract](commit_contract.md) formalises.
-```
+For this mode the [Dual-Layer Contract](commit_contract.md) is
+reference material, not load-bearing.
+
+### Multi-stream with strong invariants
+
+Multiple authors converge automatically; your invariants are global
+(uniqueness, referential integrity the engine must uphold), or your
+domain does not tolerate silent loss (financial, safety, regulatory).
+This is where the [Dual-Layer Contract](commit_contract.md) becomes
+load-bearing — and where reading it is a diagnostic, not a cookbook:
+the four post-convergence outcomes collapse to *refuse the state*,
+which is equivalent to saying mechanical convergence was the wrong
+primitive.
+
+The exit is not better post-convergence handling. It is
+re-architecting toward **multi-stream with local invariants** via
+scope decomposition (see
+[Cooperative Discipline](commit_cooperation.md)), or building an
+application-level supervisor on top of Commit.
 
 ---
 
@@ -358,10 +384,10 @@ trimming older commits are not addressed by the current runtime.
 A checklist for the operational gotchas. None of this is enforced by the
 engine — it's on the application.
 
-- **Identify your mode first.** The four [Modes of Use](#modes-of-use) carry
-  different burdens. Only automated multi-user makes the
-  [Dual-Layer Contract](commit_contract.md) load-bearing; the other three
-  are safe to use without it.
+- **Identify your mode first.** The [Modes of Use](#modes-of-use) carry
+  different burdens. Only *multi-stream with strong invariants* makes
+  the [Dual-Layer Contract](commit_contract.md) load-bearing; the
+  other modes are safe to use without it.
 - **Capture `commit_id` explicitly.** `commit_mutations()` returns the new
   id; there is no implicit current commit to auto-advance. Chain further
   mutations and reads from the captured value.

@@ -8,6 +8,30 @@ convergence between concurrent streams, plus the runtime wrapper and
 the architectural pattern that turn it into the substrate of an
 interactive application.
 
+.. important::
+
+   **The first architectural choice when adopting Commit is
+   single-stream vs multi-stream usage** — and it is effectively
+   irreversible.
+
+   - **Single-stream** (time travel, undo / redo, exploration) — one
+     author at a time. The
+     :doc:`Dual-Layer Contract <commit_contract>` does not apply;
+     any DSM model works.
+   - **Multi-stream** — multiple authors converge automatically. The
+     contract becomes load-bearing, and the DSM model itself must be
+     designed for convergence (see
+     :doc:`Cooperative Discipline <commit_cooperation>`).
+
+   DSM definitions are sealed by their definition, so switching
+   regimes after the fact is a schema rewrite that invalidates
+   existing data — dsviper carries no migration tooling. The
+   asymmetry runs one way: a multi-stream-friendly model is harmless
+   in single-stream usage; a single-stream model has no safe path to
+   multi-stream. **In doubt, model for multi-stream.**
+
+   See :doc:`Modes of Use <commit_database>` for the diagnostic.
+
 It is structured as three layers, from the disk upward:
 
 * :doc:`Commit Database <commit_database>` — the persistence layer

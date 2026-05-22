@@ -1,18 +1,25 @@
 # Cooperative Discipline
 
-The [Dual-Layer Contract](commit_contract.md) explains why the engine
-cannot deliver semantic validity on its own: under unsupervised
-convergence, reading a merged state is an *import*, and the four
-import strategies (ignore, subset, correct, reject) all live outside
-the DAG. That is the reactive, post-hoc answer.
+If you have chosen
+[multi-stream usage](commit_database.md#modes-of-use), this page is
+the modelling discipline that keeps you on the safe side of the
+diagnostic — in
+[Multi-stream with local invariants](commit_database.md#multi-stream-with-local-invariants),
+where the [Dual-Layer Contract](commit_contract.md) stays reference
+material.
 
-This page is the preventive answer. **Organise the work so that
-writes do not overlap** — and the import strategies stay a
-defensive fallback rather than the daily mode.
+Commit gives you mechanical convergence as a primitive. To get
+*cooperation* — the regime where disjoint writes converge without
+arbitration, every submitted intent surviving — shape the DSM model
+so the engine never has anything semantically meaningful to
+arbitrate. That shaping is **scope decomposition**: model the data
+such that concurrent writers operate on structurally disjoint
+targets.
 
-Commit gives you the *mechanical convergence* primitive. To get
-[cooperation](commit_database.md#modes-of-use) out of it, you have to
-add a discipline. That discipline is scope decomposition.
+This is the recommended path for multi-stream usage, not the
+back-stop when the contract bites. The
+[import outcomes](commit_contract.md#import-outcomes) are what
+remains *if* the discipline fails on a specific path.
 
 ## Not a Commit quirk
 
@@ -46,10 +53,34 @@ The result is the union of disjoint mutations, and every submitted
 intent survives intact. Semantic validity becomes a consequence of
 structural disjointness.
 
-The shape of that disjointness is application-specific. This page does
-not prescribe a recipe — what works in one domain may not transfer to
-another, and no pattern has been validated at scale as a general
-solution.
+The shape of that disjointness is application-specific. This page
+does not prescribe a recipe — what works in one domain may not
+transfer to another, and no pattern has been validated at scale as
+a general solution.
+
+### Modelling levers
+
+Disjointness is engineered in the `.dsm`, not at runtime. The DSM
+language provides the levers — none of them new:
+
+- **Multiple attachments per concept** rather than one monolithic
+  struct. Concurrent writers touching different attachments do not
+  collide. See
+  [Attachments](../dsm/attachments.md#recommended-pattern-multiple-attachments).
+- **`set` / `map` / `xarray` containers** for concurrently-edited
+  collections — convergence is commutative by construction. Prefer
+  `xarray` over `vector` when positions must survive merges; see
+  [Vector vs XArray](../dsviper/collections.md#vector-vs-xarray-when-to-use-each).
+- **References that tolerate breakage** — accept that a `key<X>`
+  may outlive its target. This is a *whole-application commitment*,
+  not just a DSM choice: the app must load robustly, surface the
+  integrity issue, and expose corrective actions to the user. See
+  the {ref}`ModelIntegrity <pool-modelintegrity-dsm>` pattern as an
+  uncommon worked example.
+
+These choices are made in the `.dsm` before any code is written —
+which is why the single-stream / multi-stream decision is
+architectural, not runtime.
 
 ## What scope decomposition does not solve
 
@@ -67,9 +98,9 @@ Be honest about the limits of the discipline:
 - **Aggregations and analytics.** Sums, joins, derived views over
   multiple authors' contributions still face the contract at read
   time. The
-  [import strategies](commit_contract.md#import-strategies) still
-  apply to the *derived* state, even if every contributor's
-  individual write was clean.
+  [import outcomes](commit_contract.md#import-outcomes) still apply
+  to the *derived* state, even if every contributor's individual
+  write was clean.
 
 ## When a supervisor is required
 
@@ -84,7 +115,7 @@ the three-regime note in
 
 The supervisor is yours to build. The Commit Database does not
 provide it; what it provides — the
-[import strategies](commit_contract.md#import-strategies) — is the
+[import outcomes](commit_contract.md#import-outcomes) — is the
 back-stop at read time, beneath whatever discipline you choose.
 
 ## Summary
@@ -95,14 +126,16 @@ back-stop at read time, beneath whatever discipline you choose.
 | **Cooperation**            | Avoided by scope, by construction       | This page — application discipline                       |
 | **Collaboration**          | Resolved by a supervisor (human / rule) | An application layer you build on top                    |
 
-The dual-layer contract holds in all three regimes; the discipline you
-adopt determines how much of it you have to consume at read time.
+The dual-layer contract is described in all three regimes; the
+discipline you adopt determines whether it stays reference material
+or becomes load-bearing. Cooperation keeps it on the shelf.
 
 ## See Also
 
-- [The Dual-Layer Contract](commit_contract.md) — why the engine
-  cannot deliver semantic validity on its own, and the four import
-  strategies that back-stop any cooperation discipline.
 - [Commit Database — Modes of Use](commit_database.md#modes-of-use) —
-  the three-regime note that names collaboration, cooperation, and
-  mechanical convergence.
+  the diagnostic that determines which regime your application is in.
+- [The Dual-Layer Contract](commit_contract.md) — what the engine
+  does and does not guarantee under convergence, and the four import
+  outcomes that back-stop the discipline.
+- [Attachments — Recommended Pattern](../dsm/attachments.md#recommended-pattern-multiple-attachments) —
+  the DSM modelling guidance that operationalises scope decomposition.

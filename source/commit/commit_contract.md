@@ -1,19 +1,19 @@
 # The Dual-Layer Contract
 
-This page documents the contract between the Commit Database (exposed in Python
-through `dsviper`) and your application code **whenever the state being read
-was reconstructed from a history that contains at least one `commitMerge`**.
-The trigger is the merge itself, not concurrency or automation: a single
-author manually merging two of their own heads in a desktop editor faces
-the same best-effort drops as an unsupervised reducer collapsing multi-author
-heads. The contract does not bite only when the history is strictly linear —
-pure single-user editing on one head, scripting against your own untouched
-history, browsing a never-merged DAG. See
-[Modes of Use](commit_database.md#modes-of-use) to locate your scenario.
+This page is load-bearing only for
+**[Multi-stream with strong invariants](commit_database.md#multi-stream-with-strong-invariants)**.
+In every other mode listed in
+[Modes of Use](commit_database.md#modes-of-use), what follows is
+reference material. Reach this page from the diagnostic, not before.
 
-When the contract does apply, read it before relying on commit behavior to
-validate your data: the Commit Database produces **structurally sound but
-untrusted output**, and your application is what turns it into trusted state.
+The Commit Database produces **structurally sound but semantically
+untrusted output** under convergence. When your invariants are
+local, application-side re-validation closes the gap. When they are
+strong, re-validation cannot rebuild the intent the convergence
+dropped — the contract then describes a gap that must be closed
+*upstream*, by re-architecting toward local invariants (see
+[Cooperative Discipline](commit_cooperation.md)) or by supervising
+convergence with an application layer.
 
 ## A change of discipline
 
@@ -186,54 +186,56 @@ arbitration outcome. Re-validate at read time.
 | **Mutation Notification** | No alert when mutations are silently ignored           |
 | **Conflict Detection**    | No notion of conflict — just deterministic convergence |
 
-## Import Strategies
+## Import Outcomes
 
-The strategies below are the choices available to an application reading a
-converged state. None is universally right; documenting them is what makes
-informed use possible.
+The four entries below apply to **standard applications meeting
+untrusted state** — applications that did not commit to the
+defensive-by-design route from day one. They are commonly framed
+as "strategies"; under strong invariants they are better described
+as **modes of loss**: none re-enters the DAG, none recovers intent.
 
-The trigger for import is **the merge**, not concurrency or automation. As
-long as a state is reconstructed from a strictly linear history, reading is
-a *load*: every mutation you submitted is exactly the mutation that
-contributed to the state, and there is nothing untrusted to import. The
-moment the history contains a `commitMerge` — whether triggered by an
-unsupervised reducer or by a human in a desktop editor — best-effort drops
-have already been applied silently, and reading that state becomes an
-*import*.
+The trigger for import is the merge itself, not concurrency or
+automation. A strictly linear history is a *load*: every mutation
+you submitted is exactly the one that contributed to the state. The
+moment the history contains a `commitMerge` — unsupervised reducer
+or human desktop merge — best-effort drops have been applied
+silently, and reading becomes an *import*.
 
-When the state is an import, the application has to pick a strategy for
-parts that violate its semantic invariants. Four strategies are
-available; none of them re-enters the DAG.
-
-| Strategy             | What the application does   | Consequence                                                                       |
+| Outcome              | What the application does   | Consequence                                                                       |
 |----------------------|-----------------------------|-----------------------------------------------------------------------------------|
 | **Ignore**           | Consume the state as-is     | A *latent* state — violations deferred to code that assumed the invariants held   |
 | **Extract a subset** | Validate, drop what fails   | A *partial* state — **disconnected from the DAG**                                 |
 | **Correct**          | Validate, repair what fails | A *phantom* state — **disconnected from the DAG**                                 |
 | **Reject**           | Refuse the state            | No state — resolution moves outside the import                                    |
 
-Reject is the appropriate choice when the first three would be
-inadequate for the application's domain. Safety-critical or strongly
-invariant-bound workflows often cannot tolerate partial views, invented
-values, or hidden invariant violations — for them, refusing the state
-is safer than producing one. Resolution moves outside the import :
-human intervention, rollback to a previous head, or a coordination
-protocol.
+Read this as a hierarchy of failure modes, not a menu. Under strong
+invariants:
 
-None of these strategies pushes the validated state back into the DAG as
-the "real" state. **Commit has no notion of conflict** — there is nothing
-for the application to push back into. The engine has already converged;
-the application's repair or pruning is private to the read and lives
-outside the DAG.
+- **Ignore** — deferral, not a strategy. The violation propagates
+  into downstream code written assuming invariants held.
+- **Extract a subset** — shows a state that is *not* the DAG state.
+  Tolerable for read-only audit; once edits resume from it, new
+  commits reference a fiction.
+- **Correct** — invention dressed as recovery. The application makes
+  up a value nobody committed; if a subsequent write builds on it,
+  the fiction enters the DAG as if authored.
+- **Reject** — the only honest answer when invariants are strong,
+  and equivalent to saying mechanical convergence was the wrong
+  primitive. Resolution moves outside the import: human intervention,
+  rollback, or a coordination protocol.
 
-This is why any application that reads a state whose history contains a
-merge — and that depends on semantic invariants — must explicitly own one
-of these strategies, and document that the application-visible state lives
-one step removed from the commit history.
+**Commit has no notion of conflict** — there is nothing for the
+application to push back into. The engine has already converged;
+whatever the application does with the result lives outside the DAG.
 
-See [Cooperative Discipline](commit_cooperation.md) for how to
-design work so these strategies remain a defensive fallback rather than
-the daily mode.
+If you reach for one of these outcomes regularly in code that guards
+strong invariants, that is the diagnostic, not the solution. The
+next move is upstream: re-design toward
+[Multi-stream with local invariants](commit_database.md#multi-stream-with-local-invariants)
+via scope decomposition (see
+[Cooperative Discipline](commit_cooperation.md)), or build an
+application-level supervisor. Under local invariants these outcomes
+remain available as defensive fallbacks — no longer load-bearing.
 
 ## Implications for `dsviper` Code
 
@@ -245,9 +247,11 @@ The contract shapes how you should write code on top of `dsviper.Commit*`:
 - **Do not assume** that every operation you build into a `CommitMutableState`
   will land. After concurrent streams converge, some operations may have been
   silently dropped because their targets disappeared.
-- **Pick an import strategy explicitly.** Do not let it emerge from where you
-  happen to validate. Make the choice visible in the code that consumes the
-  state.
+- **Pick an import outcome explicitly, and name it as such.** Do not
+  let it emerge from where you happen to validate. If you find
+  yourself reaching for *Correct* or *Ignore* in code that handles
+  strong invariants, that is the signal to move the conversation
+  upstream — see [Cooperative Discipline](commit_cooperation.md).
 - **Validate at the application boundary,** which means
   the Commit Database output. If your domain has invariants (uniqueness,
   referential integrity, cross-field consistency), enforce them when consuming
@@ -256,12 +260,31 @@ The contract shapes how you should write code on top of `dsviper.Commit*`:
 ## Summary
 
 > **"I guarantee structural integrity. I hand you back data that is
-> structurally sound but semantically untrusted. You re-validate it on read.
-> Together, we guarantee data integrity. Separately, neither of us can."**
+> structurally sound but semantically untrusted. You re-validate it
+> on read."**
 >
 > — The Dual-Layer Contract
 
+Whether re-validation closes the loop depends on the architecture
+upstream of this page:
+
+- **Naturally local invariants** — nothing for the engine to
+  silently break. Re-validation is unnecessary; the contract is
+  reference material.
+- **Defensive-by-design** — the application is built to tolerate
+  broken integrity (load robustly, surface, expose correction).
+  Re-validation is part of the design. The Graph Editor's
+  `ModelIntegrity` pool exemplifies this — an uncommon
+  architectural choice.
+- **Standard application with strong invariants** — re-validation
+  cannot close the loop. The intent dropped at convergence is not
+  recoverable, and the application was not built to tolerate the
+  drop. The contract describes a gap; closing it requires
+  re-architecting upstream, not a better outcome downstream.
+
 ## See Also
 
+- [Modes of Use](commit_database.md#modes-of-use) — the diagnostic that determines whether this page applies to you
+- [Cooperative Discipline](commit_cooperation.md) — the modelling exit for applications whose invariants are too strong for mechanical convergence
 - [Commit Database](commit_database.md) — using the commit API from Python
 - [Errors](../dsviper/errors.md) — `dsviper.Error` and exception handling

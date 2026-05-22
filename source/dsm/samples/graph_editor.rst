@@ -266,6 +266,8 @@ These functions are intentionally broken for demonstrations:
 
 ----
 
+.. _pool-modelintegrity-dsm:
+
 Pool_ModelIntegrity.dsm
 -----------------------
 

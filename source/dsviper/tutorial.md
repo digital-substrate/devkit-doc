@@ -110,8 +110,8 @@ behavior described in [The Dual-Layer Contract](../commit/commit_contract.md):
 with one author committing in sequence, mutations are never silently dropped
 and no LWW arbitration takes place. The contract becomes load-bearing once
 **multiple authors converge automatically** — see
-[Modes of Use](../commit/commit_database.md#modes-of-use) for the four regimes and
-which one applies to your application.
+[Modes of Use](../commit/commit_database.md#modes-of-use) for the
+diagnostic and which mode applies to your application.
 ```
 
 ### Step 8: Read from Database

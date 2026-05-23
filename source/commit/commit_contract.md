@@ -1,9 +1,9 @@
 # The Dual-Layer Contract
 
 This page is load-bearing only for
-**[Multi-stream with strong invariants](commit_database.md#multi-stream-with-strong-invariants)**.
+**[Multi-stream with strong invariants](commit_modes.md#multi-stream-with-strong-invariants)**.
 In every other mode listed in
-[Modes of Use](commit_database.md#modes-of-use), what follows is
+[Modes of Use](commit_modes.md), what follows is
 reference material. Reach this page from the diagnostic, not before.
 
 The Commit Database produces **structurally sound but semantically
@@ -14,6 +14,29 @@ dropped — the contract then describes a gap that must be closed
 *upstream*, by re-architecting toward local invariants (see
 [Cooperative Discipline](commit_cooperation.md)) or by supervising
 convergence with an application layer.
+
+```{note}
+**Local vs strong invariants** — the opposition that decides whether
+this contract is reference material or load-bearing.
+
+- **Local invariant** — its truth depends only on a structurally
+  disjoint subset of the data (one attachment, one path, one
+  document, or a commutative container by construction). Two authors
+  writing on disjoint paths cannot break it: the disjointness
+  shields the invariant from convergence.
+- **Strong invariant** (also called *global*) — its truth couples
+  data that multiple authors can write in parallel: uniqueness
+  across the whole model (no two assets share an SKU), referential
+  integrity between attachments (an edge must point to an existing
+  vertex), cross-document consistency, or any domain that does not
+  tolerate silent loss (financial, safety, regulatory).
+
+Re-validating at read time closes the gap for local invariants —
+there was nothing for convergence to break. It does **not** close
+the gap for strong invariants: read-side validation can *detect* a
+violation, but cannot *reconstruct* the intent that convergence
+dropped. The lost information is not recoverable downstream.
+```
 
 ## A change of discipline
 
@@ -146,33 +169,13 @@ no semantic arbitration has happened.
 
 ## How Convergence Picks a Winner
 
-When concurrent streams converge, the engine has to choose a single
-outcome for every overlapping path. The choice is deterministic given
-a fixed merge sequence — same inputs, same merges, same result on
-every client — but its mechanics are *structural*, not author- or
-time-meaningful.
-
-**The merge primitive.** `commitMerge(parent, target)` creates a
-merge commit. When the resulting state is reconstructed, `target`'s
-mutations are applied *after* `parent`'s — so on every overlapping
-path, the value from `target` survives. This is the only such rule
-the engine itself fixes, and it makes the operation non-commutative:
-`commitMerge(A, B) ≠ commitMerge(B, A)`.
-
-**Reducing multiple heads is a strategy, not a guarantee.** The
-built-in `reduceHeads` iterates heads in lexicographic `CommitId`
-order and calls `commitMerge` once per pair, with the running result
-as parent and the next head as target. Applications are free to use a
-different order — or to skip `reduceHeads` entirely and issue their
-own `commitMerge` sequence. The final state depends on *who calls
-commitMerge in what order*, not on a property of the engine.
-
-**None of this preserves intent.** Whichever strategy is used, the
-value that survives on an overlapping path is a function of how
-merges were sequenced — not of authorship, recency, or semantic
-priority. Two
-authors editing the same field have no way to predict which value
-will survive convergence, even within a fixed strategy.
+The mechanics — `commitMerge`, `reduceHeads`, the structural rules
+that pick a value on each overlapping path — are described in
+[Commit Database — How Convergence Picks a Winner](commit_database.md#how-convergence-picks-a-winner).
+The summary the contract leans on: the outcome is **deterministic
+given a fixed merge sequence**, but its mechanics are *structural*,
+not author- or time-meaningful. Two authors editing the same field
+have no way to predict which value will survive convergence.
 
 This is what the contract is telling you: do not rely on a specific
 arbitration outcome. Re-validate at read time.
@@ -188,8 +191,8 @@ arbitration outcome. Re-validate at read time.
 
 ## Import Outcomes
 
-The four entries below apply to **standard applications meeting
-untrusted state** — applications that did not commit to the
+The four entries below apply to **standard consumers meeting
+untrusted state** — code that did not commit to the
 defensive-by-design route from day one. They are commonly framed
 as "strategies"; under strong invariants they are better described
 as **modes of loss**: none re-enters the DAG, none recovers intent.
@@ -211,8 +214,10 @@ silently, and reading becomes an *import*.
 Read this as a hierarchy of failure modes, not a menu. Under strong
 invariants:
 
-- **Ignore** — deferral, not a strategy. The violation propagates
-  into downstream code written assuming invariants held.
+- **Ignore** — deferral, not a strategy. It treats the read as a
+  load, bypassing the import boundary the contract describes. The
+  violation propagates into downstream code written assuming
+  invariants held.
 - **Extract a subset** — shows a state that is *not* the DAG state.
   Tolerable for read-only audit; once edits resume from it, new
   commits reference a fiction.
@@ -231,7 +236,7 @@ whatever the application does with the result lives outside the DAG.
 If you reach for one of these outcomes regularly in code that guards
 strong invariants, that is the diagnostic, not the solution. The
 next move is upstream: re-design toward
-[Multi-stream with local invariants](commit_database.md#multi-stream-with-local-invariants)
+[Multi-stream with local invariants](commit_modes.md#multi-stream-with-local-invariants)
 via scope decomposition (see
 [Cooperative Discipline](commit_cooperation.md)), or build an
 application-level supervisor. Under local invariants these outcomes
@@ -284,7 +289,7 @@ upstream of this page:
 
 ## See Also
 
-- [Modes of Use](commit_database.md#modes-of-use) — the diagnostic that determines whether this page applies to you
+- [Modes of Use](commit_modes.md) — the diagnostic that determines whether this page applies to you
 - [Cooperative Discipline](commit_cooperation.md) — the modelling exit for applications whose invariants are too strong for mechanical convergence
 - [Commit Database](commit_database.md) — using the commit API from Python
 - [Errors](../dsviper/errors.md) — `dsviper.Error` and exception handling

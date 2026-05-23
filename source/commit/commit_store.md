@@ -58,12 +58,12 @@ the head, and notifies observers — atomically:
 
 Convenience wrappers for the most common shapes:
 
-| Method                     | What it dispatches                              |
-|----------------------------|-------------------------------------------------|
-| `dispatch_set`             | A single `set(attachment, key, value)`.         |
-| `dispatch_update`          | A path-based `update(...)`.                     |
-| `dispatch_diff`            | The diff of an updated document vs current.    |
-| `dispatch_enable_commit`   | Append an Enable / Disable commit that masks a target. |
+| Method                   | What it dispatches                                     |
+|--------------------------|--------------------------------------------------------|
+| `dispatch_set`           | A single `set(attachment, key, value)`.                |
+| `dispatch_update`        | A path-based `update(...)`.                            |
+| `dispatch_diff`          | The diff of an updated document vs current.            |
+| `dispatch_enable_commit` | Append an Enable / Disable commit that masks a target. |
 
 The single dispatch surface is what gives the
 [Commit Application Model](commit_application_model.md#the-dispatch-pattern)
@@ -74,7 +74,7 @@ action against the store, never a sideways write to the database.
 
 The store maintains an in-memory undo stack on top of the underlying
 mutation DAG. Calls do not rewrite history — they move the current
-state along existing commits, diverging when necessary.
+state along existing commits.
 
 ```pycon
 >>> store.can_undo()
@@ -82,12 +82,12 @@ True
 >>> store.undo()
 >>> store.redo()
 >>> store.use_commit(some_commit_id)        # jump anywhere
->>> store.forward()                          # follow to the most plausible head
->>> store.reduce_heads()                     # collapse multi-head to one
+>>> store.forward()                         # follow to the most plausible head
+>>> store.reduce_heads()                    # collapse multi-head to one
 ```
 
 For the conceptual model of divergence and multi-head exploration,
-see [Modes of Use](commit_database.md#modes-of-use). For the underlying
+see [Modes of Use](commit_modes.md). For the underlying
 DAG guarantees the store leans on, see
 [the Dual-Layer Contract](commit_contract.md).
 
@@ -98,15 +98,15 @@ a small, framework-agnostic Python protocol. Each platform adapts
 it to its own notification mechanism (Qt Signals,
 `NSNotificationCenter`, …). The store never imports a UI framework.
 
-| Notification                    | When                                                |
-|---------------------------------|-----------------------------------------------------|
-| `notify_database_did_open`      | A database has been attached.                       |
-| `notify_database_did_close`     | The store has been closed.                          |
-| `notify_state_did_change`       | The current state moved (commit, undo, navigation). |
-| `notify_definitions_did_change` | Definitions extended at runtime.                    |
-| `notify_dispatch_error`         | A dispatched callable raised.                       |
-| `notify_database_will_reset` / `notify_database_did_reset` | Reset bracket.           |
-| `notify_stop_live`              | Live mode requested to stop.                        |
+| Notification                                               | When                                                |
+|------------------------------------------------------------|-----------------------------------------------------|
+| `notify_database_did_open`                                 | A database has been attached.                       |
+| `notify_database_did_close`                                | The store has been closed.                          |
+| `notify_state_did_change`                                  | The current state moved (commit, undo, navigation). |
+| `notify_definitions_did_change`                            | Definitions extended at runtime.                    |
+| `notify_dispatch_error`                                    | A dispatched callable raised.                       |
+| `notify_database_will_reset` / `notify_database_did_reset` | Reset bracket.                                      |
+| `notify_stop_live`                                         | Live mode requested to stop.                        |
 
 A notifier is installed once:
 
@@ -128,7 +128,7 @@ from dsviper import CommitStore, CommitDatabase
 
 store = CommitStore()
 store.use(CommitDatabase.open("model.cdb"))
-store.set_notifier(my_notifier)            # observable
+store.set_notifier(my_notifier)  # observable
 
 store.dispatch("Add Alice",
                lambda m: m.set(TUTO_A_USER_LOGIN, key, login))

@@ -1,10 +1,10 @@
 # Cooperative Discipline
 
 If you have chosen
-[multi-stream usage](commit_database.md#modes-of-use), this page is
+[multi-stream usage](commit_modes.md), this page is
 the modelling discipline that keeps you on the safe side of the
 diagnostic — in
-[Multi-stream with local invariants](commit_database.md#multi-stream-with-local-invariants),
+[Multi-stream with local invariants](commit_modes.md#multi-stream-with-local-invariants),
 where the [Dual-Layer Contract](commit_contract.md) stays reference
 material.
 
@@ -111,7 +111,7 @@ application-level supervisor: a review UI that surfaces clashes for
 human arbitration, a semantic gate that refuses commits, a merge UX
 that asks an operator to pick. That is the supervised regime named in
 the three-regime note in
-[Commit Database — Modes of Use](commit_database.md#modes-of-use).
+[Commit Database — Modes of Use](commit_modes.md).
 
 The supervisor is yours to build. The Commit Database does not
 provide it; what it provides — the
@@ -132,7 +132,7 @@ or becomes load-bearing. Cooperation keeps it on the shelf.
 
 ## See Also
 
-- [Commit Database — Modes of Use](commit_database.md#modes-of-use) —
+- [Commit Database — Modes of Use](commit_modes.md) —
   the diagnostic that determines which regime your application is in.
 - [The Dual-Layer Contract](commit_contract.md) — what the engine
   does and does not guarantee under convergence, and the four import

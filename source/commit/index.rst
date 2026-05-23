@@ -2,37 +2,34 @@ Commit
 ======
 
 **Commit** is Viper's versioned-state technology — an immutable,
-content-addressed mutation DAG derived from a
+content-addressed mutation DAG over a
 :doc:`DSM <../dsm/index>` model, with deterministic mechanical
 convergence between concurrent streams, plus the runtime wrapper and
 the architectural pattern that turn it into the substrate of an
 interactive application.
 
+Three regimes of multi-author work
+----------------------------------
+
+Only one is what Commit provides:
+
+- **Collaboration** — humans arbitrate overlapping intentions
+  *before* convergence (manual-merge / review).
+- **Cooperation** — disjoint contributions assemble without conflict
+  by construction.
+- **Mechanical convergence** — Commit linearises streams
+  deterministically with no notion of "conflict": clashing intentions
+  are silently reconciled by structural rules. Structurally sound,
+  semantically untrusted.
+
 .. important::
 
-   **The first architectural choice when adopting Commit is
-   single-stream vs multi-stream usage** — and it is effectively
-   irreversible.
+   Before reading the API, identify your **mode of use** — the
+   single-stream / multi-stream decision is effectively irreversible
+   once a DSM model is sealed. See
+   :doc:`Modes of Use <commit_modes>` for the diagnostic.
 
-   - **Single-stream** (time travel, undo / redo, exploration) — one
-     author at a time. The
-     :doc:`Dual-Layer Contract <commit_contract>` does not apply;
-     any DSM model works.
-   - **Multi-stream** — multiple authors converge automatically. The
-     contract becomes load-bearing, and the DSM model itself must be
-     designed for convergence (see
-     :doc:`Cooperative Discipline <commit_cooperation>`).
-
-   DSM definitions are sealed by their definition, so switching
-   regimes after the fact is a schema rewrite that invalidates
-   existing data — dsviper carries no migration tooling. The
-   asymmetry runs one way: a multi-stream-friendly model is harmless
-   in single-stream usage; a single-stream model has no safe path to
-   multi-stream. **In doubt, model for multi-stream.**
-
-   See :doc:`Modes of Use <commit_database>` for the diagnostic.
-
-It is structured as three layers, from the disk upward:
+Commit is structured as three layers, from the disk upward:
 
 * :doc:`Commit Database <commit_database>` — the persistence layer
   itself. An immutable mutation DAG, opened by path, mutated through
@@ -46,22 +43,19 @@ It is structured as three layers, from the disk upward:
   ``CommitStore``, exposes domain state, dispatches user actions, and
   routes notifications to the UI.
 
-A fourth page, :doc:`The Dual-Layer Contract <commit_contract>`,
-formalises what the three layers guarantee structurally and what
-remains the application's semantic responsibility. A fifth page,
-:doc:`Cooperative Discipline <commit_cooperation>`, gives the
-operational discipline — scope decomposition — that lets you stay
-inside the engine's structural guarantees without having to consume
-the contract at read time.
+Three transverse pages complete the chapter:
 
-It is a Viper C++ subsystem first and a Python API second. The Python
-exposure lives in :doc:`dsviper <../dsviper/index>` (``CommitDatabase``,
-``CommitStore``, ``CommitMutableState``); Qt-side tools live in
-:doc:`dsviper-tools <../dsviper-tools/index>` and
-:doc:`dsviper-components <../dsviper-components/index>`. Concrete
-walk-throughs of the Model are gathered under
-:doc:`Commit Applications <../commit-apps/index>`.
-
+* :doc:`The Dual-Layer Contract <commit_contract>` — formalises what
+  the three layers guarantee structurally and what remains the
+  application's semantic responsibility.
+* :doc:`Cooperative Discipline <commit_cooperation>` — gives the
+  operational discipline (scope decomposition) that lets you stay
+  inside the engine's structural guarantees without having to consume
+  the contract at read time.
+* :doc:`Database synchronisation <commit_synchronization>` —
+  how ``CommitSynchronizer`` replicates the mutation DAG between
+  separate ``CommitDatabase`` instances, and what it implies for the
+  diagnostic and the contract.
 
 Place in the ecosystem
 ----------------------
@@ -112,11 +106,13 @@ Topics
 .. toctree::
    :maxdepth: 2
 
+   commit_modes
    commit_database
    commit_store
    commit_application_model
    commit_contract
    commit_cooperation
+   commit_synchronization
 
 
 Status

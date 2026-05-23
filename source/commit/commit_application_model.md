@@ -16,11 +16,6 @@ presentation tiers — `cdbe.py`, [ge-py](../commit-apps/ge-py.md),
 [Commit Applications](../commit-apps/index.rst). They are instances of
 this single Model; the Model is what they have in common.
 
-> `dbe.py` is **not** an instance of this model. It is a plain CRUD
-> inspector for the non-versioned `Database` backend — it does not use
-> a `CommitStore` and does not flow through a mutation DAG. Outside the
-> pattern.
-
 ## The Application Context
 
 The pattern is centred on an **Application Context** — a
@@ -107,30 +102,27 @@ Once a pool is registered with Viper C++, **its Python availability is
 free**. Viper's "Metadata Everywhere" principle means every value
 and every function carries its type metadata at runtime; `dsviper` —
 the hand-maintained C-extension that bridges Python to Viper C++,
-shipped as a wheel on PyPI — introspects registered pools and calls
-them with automatic marshalling between Python values and Viper C++
-values. The Python ↔ Viper C++ binding is `dsviper` itself, single-
-sourced and pool-agnostic; no per-pool extension code is written or
-generated. Kibo can optionally emit pure-Python typed proxy classes
-on top for IDE ergonomics, but those delegate every call back to
-`dsviper`'s dynamic dispatch — they are not bindings.
+shipped as a wheel on PyPI — introspects registered pools and marshals
+values across the boundary automatically. The binding is `dsviper`
+itself, single-sourced and pool-agnostic; no per-pool extension code
+is written or generated. Kibo can optionally emit pure-Python typed
+proxy classes on top for IDE ergonomics, but those delegate every call
+back to `dsviper`'s dynamic dispatch — they are not bindings.
 
-#### How pools reach Python — Context injection + Viper introspection
+#### How pools reach Python — Context injection
 
 The application embeds CPython, imports `dsviper` and a thin `app`
-extension module that publishes the Python wrapper of the Context, and
-injects the Context singleton as a Python global (typically `ctx`). From
-there, every pool held by the Context is callable directly:
-`ctx.modelGraph.new_vertex(...)` reaches the hand-written C++
-implementation through the generated pool bridge, with Python ↔ Viper C++
-marshalling handled automatically by `dsviper` from the runtime metadata.
-No per-pool C-extension code is written or generated.
+extension module that publishes the Python wrapper of the Context,
+and injects the Context singleton as a Python global (typically
+`ctx`). From there, every pool held by the Context is callable
+directly: `ctx.modelGraph.new_vertex(...)` reaches the hand-written
+C++ implementation through the generated pool bridge.
 
-This mirrors what `PythonEditorModel(..., namespace_vars={...})` does for
-the Python profile. The two profiles converge on the same scripting
-surface — `ctx.dispatch("label", ...)` against the store — and differ only
-in whether the business functions are Python (Python profile) or C++
-fronted by typed pools (C++ profile).
+This mirrors what `PythonEditorModel(..., namespace_vars={...})` does
+for the Python profile. The two profiles converge on the same
+scripting surface — `ctx.dispatch("label", ...)` against the store —
+and differ only in whether the business functions are Python (Python
+profile) or C++ fronted by typed pools (C++ profile).
 
 A real Application Context, abridged from the Graph Editor C++
 reference (`GE::Context`):
@@ -297,38 +289,20 @@ After the lambda returns, the store has:
 ## The notification contract
 
 The store communicates with the UI through a small, framework-agnostic
-interface (`CommitStoreNotifying`). Each platform adapts it to the
-local notification mechanism (Adapter pattern):
-
-| Signal                    | Purpose                             |
-|---------------------------|-------------------------------------|
-| `notifyDatabaseDidOpen`   | Database opened successfully        |
-| `notifyDatabaseDidClose`  | Database closed                     |
-| `notifyDatabaseWillReset` | Reset is about to occur             |
-| `notifyStateDidChange`    | State changed (undo/redo available) |
-| `notifyDispatchError`     | Error occurred during dispatch      |
-
-The bridges are platform-specific: `NSNotificationCenter` (AppKit),
-Qt signals (Qt C++ and PySide), or any other observer mechanism.
-The Application Context never imports a UI framework — it speaks
-`CommitStoreNotifying` and lets a per-platform adapter publish.
+interface (`CommitStoreNotifying`). The Application Context never
+imports a UI framework — it speaks `CommitStoreNotifying` and lets a
+per-platform adapter publish (Qt signals, `NSNotificationCenter`, or
+any other observer mechanism). See
+[CommitStore — the notification protocol](commit_store.md#4-the-notification-protocol)
+for the full notification list.
 
 ## The dual-layer contract
 
-The Commit Database guarantees **structural integrity** — typed
-mutations land cleanly in the mutation DAG, and the structure stays consistent,
-and the `CommitStore` navigation (undo/redo) behaves deterministically.
-It does **not** guarantee **semantic integrity** — that the
-application's domain invariants are upheld.
-
-That responsibility belongs to the Application Context. The pattern
-asks the application to validate its own domain rules **at
-consumption time**, not at write time, because a commit may have been
-authored elsewhere (different version, different author) and only
-discovered locally on sync.
-
-See [The Dual-Layer Contract](commit_contract.md) for the full
-rationale and the where-to-validate decision tree.
+The Commit Database guarantees **structural integrity**, not
+**semantic integrity** — that responsibility belongs to the
+Application Context, which re-validates engine output at consumption
+time. See [The Dual-Layer Contract](commit_contract.md) for the full
+rationale and when it becomes load-bearing.
 
 ## Generic versus domain-specific instances
 

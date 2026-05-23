@@ -39,6 +39,11 @@ APIs and renders editable forms based on the embedded DSM definitions
 of whatever database has been opened. There is no compile-time
 knowledge of the schema.
 
+```{note}
+**cdbe is just a raw reader/writer.** No business logic, no
+re-validation — what it shows is what the database contains.
+```
+
 ## Architecture
 
 cdbe collapses the five-layer Python profile to **three effective

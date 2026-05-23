@@ -301,19 +301,28 @@ immutable. The database grows monotonically; the runtime carries no
 incremental garbage collection, no partial purge that trims old
 commits while keeping recent history, and no archival mechanism.
 
-Two reductions are possible, both all-or-nothing on history:
+The only sanctioned way to shrink a database is **Flatten** — a
+user-space pattern, not a runtime operation: read the current head
+state from the source database, write it as the initial commit of a
+fresh target database, then switch readers and writers to the new
+database. The source database is untouched; the target is a new
+append-only history that happens to start where the old one ended.
 
-- **Reset** (built-in) — `commit_admin reset` deletes every commit
-  except the initial one (see
-  {doc}`commit_admin <../dsviper-tools/server>`). The database
-  returns to its initial commit — whatever state was set up at
-  creation (embedded definitions, seed data, etc.). Useful to replay
-  a scenario from a known-good baseline; not a substitute for
-  garbage collection.
-- **Flatten** (user-space pattern) — read the current head state from
-  the source database, write it as the initial commit of a fresh
-  target database, then switch readers and writers to the new
-  database. Current state is preserved; all history is dropped.
+```{warning}
+`CommitDatabase.delete_commit()` and `CommitDatabase.reset_commits()`
+(plus the CLI wrapper `commit_admin reset`) are **not features** —
+they are tricks for live-demo scenarios.
+
+- `delete_commit(commit_id)` only makes sense on a head — deleting
+  any other commit would orphan its descendants. Live-demo use:
+  rewinding the DAG by one step.
+- `reset_commits()` / `commit_admin reset` removes every commit
+  except the initial one. Live-demo use: replaying a scenario from
+  a known baseline between runs.
+
+Both operations break the append-only invariant that every other
+reader relies on. Never use them as storage-management tools.
+```
 
 Sustained-growth scenarios that need to keep recent history while
 trimming older commits are not addressed by the current runtime.

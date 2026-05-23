@@ -135,12 +135,12 @@ read the state, not when you build the mutations**.
 
 ## What Commit Provides
 
-| Guarantee                     | Description                                 |
-|-------------------------------|---------------------------------------------|
-| **DAG Consistency**           | Commits form a valid directed acyclic graph |
-| **Immutability**              | Once committed, data cannot be modified     |
-| **Deterministic Convergence** | Same inputs always produce the same output  |
-| **Content-Addressable**       | `CommitId = SHA-1(content)`, tamper-evident |
+| Guarantee                     | Description                                                                                |
+|-------------------------------|--------------------------------------------------------------------------------------------|
+| **DAG Consistency**           | Commits form a valid directed acyclic graph                                                |
+| **Immutability**              | Once committed, data cannot be modified                                                    |
+| **Deterministic Convergence** | `commitMerge` is a pure function of its ordered inputs — same `(parent, target)` produces the same commit. *Which* order ends up applied across multi-head topologies is an application choice, not an engine property. |
+| **Content-Addressable**       | `CommitId = SHA-1(content)`, tamper-evident                                                |
 
 ```{note}
 **Why *convergence*, not *merge*** — a *merge* in version-control

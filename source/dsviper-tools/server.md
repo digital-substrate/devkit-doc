@@ -95,19 +95,25 @@ db = CommitDatabase.connect_local("/tmp/project.sock")
 
 ## commit_admin.py
 
-Administration tool for CommitDatabase operations: reset, sync, and converge heads.
+Administration tool for CommitDatabase operations: sync, converge heads,
+and a demo-only `reset` trick (see warning below).
 
-### Reset Database
+### Reset Database (demo-only trick)
 
-Reset a database to its initial commit, deleting all history:
+Remove every commit except the initial one:
 
 ```bash
 python3 tools/commit_admin.py --database project.cdb reset
 ```
 
 ```{warning}
-This operation is destructive and cannot be undone. All commits except the
-initial commit will be deleted.
+`reset` is **not a feature** — it is a trick for live-demo scenarios
+that need to replay from a known baseline between runs. It breaks the
+append-only invariant every other reader relies on; never use it as a
+storage-management tool. See
+[Storage growth](../commit/commit_database.md#storage-growth) in the
+Commit Database chapter for the only sanctioned way to shrink a
+database (Flatten).
 ```
 
 ### Reduce Heads
@@ -154,9 +160,9 @@ python3 tools/commit_admin.py --socket-path /tmp/project.sock sync local.cdb
 
 ### Sub-commands
 
-| Command        | Description                                 |
-|----------------|---------------------------------------------|
-| `reset`        | Reset to first commit (deletes all history) |
-| `reduce_heads` | Merge multiple heads into one               |
-| `sync`         | Synchronize local database with source      |
+| Command        | Description                                                  |
+|----------------|--------------------------------------------------------------|
+| `sync`         | Synchronize local database with source                       |
+| `reduce_heads` | Merge multiple heads into one                                |
+| `reset`        | **Demo-only trick** — remove all commits except the initial; see warning above |
 

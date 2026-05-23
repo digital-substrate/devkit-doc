@@ -150,17 +150,3 @@ scope decomposition (see
 **application-level supervisor** on top of Commit — a review UI, a
 semantic gate, or a coordination protocol that arbitrates *before*
 the engine converges.
-
----
-
-## Where to go next
-
-* Single-stream modes — read [Commit Database](commit_database.md)
-  and [CommitStore](commit_store.md); skip Contract and Cooperation.
-* Multi-stream with local invariants — same, plus
-  [Cooperative Discipline](commit_cooperation.md) as the modelling
-  guide.
-* Multi-stream with strong invariants — start with
-  [Cooperative Discipline](commit_cooperation.md) (scope
-  decomposition exit) and [The Dual-Layer Contract](commit_contract.md)
-  (load-bearing in this mode); only then enter the API pages.

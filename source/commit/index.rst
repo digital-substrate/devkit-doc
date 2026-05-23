@@ -8,6 +8,8 @@ convergence between concurrent streams, plus the runtime wrapper and
 the architectural pattern that turn it into the substrate of an
 interactive application.
 
+.. _three-regimes:
+
 Three regimes of multi-author work
 ----------------------------------
 

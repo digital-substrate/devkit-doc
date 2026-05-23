@@ -86,11 +86,13 @@ architectural, not runtime.
 
 Be honest about the limits of the discipline:
 
-- **Global invariants.** Uniqueness across the whole model (no two
+- **Strong invariants.** Uniqueness across the whole model (no two
   assets share an SKU, no two users share an email) cannot be enforced
   by partitioning. Two authors writing into disjoint documents can
   still both claim the same global identifier. This requires a
-  supervisor — typically a service that mediates allocation.
+  supervisor — typically a service that mediates allocation. See
+  {ref}`local vs strong invariants <local-vs-strong-invariants>` for
+  the canonical definition.
 - **Cross-author semantic dependencies.** If author B's work depends
   on the *meaning* of what author A produced (and not just its
   presence), they are not really cooperating on disjoint scope; they
@@ -105,13 +107,12 @@ Be honest about the limits of the discipline:
 ## When a supervisor is required
 
 When the scope cannot be cleanly decomposed — when authors genuinely
-need to co-edit the same field, or when global invariants matter —
+need to co-edit the same field, or when strong invariants matter —
 the right answer is not a better convergence algorithm. It is an
 application-level supervisor: a review UI that surfaces clashes for
 human arbitration, a semantic gate that refuses commits, a merge UX
-that asks an operator to pick. That is the supervised regime named in
-the three-regime note in
-[Commit Database — Modes of Use](commit_modes.md).
+that asks an operator to pick. That is the supervised regime — the
+*Collaboration* row in the chapter's {ref}`three-regimes` table.
 
 The supervisor is yours to build. The Commit Database does not
 provide it; what it provides — the
@@ -132,7 +133,7 @@ or becomes load-bearing. Cooperation keeps it on the shelf.
 
 ## See Also
 
-- [Commit Database — Modes of Use](commit_modes.md) —
+- [Modes of Use](commit_modes.md) —
   the diagnostic that determines which regime your application is in.
 - [The Dual-Layer Contract](commit_contract.md) — what the engine
   does and does not guarantee under convergence, and the four import

@@ -59,6 +59,8 @@ model. For the dynamic API (no code generation, definitions loaded at
 runtime), see :doc:`dsm`.
 
 
+.. _metadata-everywhere-principle:
+
 The Metadata Everywhere Principle
 ---------------------------------
 

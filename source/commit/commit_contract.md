@@ -15,28 +15,13 @@ dropped — the contract then describes a gap that must be closed
 [Cooperative Discipline](commit_cooperation.md)) or by supervising
 convergence with an application layer.
 
-```{note}
-**Local vs strong invariants** — the opposition that decides whether
-this contract is reference material or load-bearing.
-
-- **Local invariant** — its truth depends only on a structurally
-  disjoint subset of the data (one attachment, one path, one
-  document, or a commutative container by construction). Two authors
-  writing on disjoint paths cannot break it: the disjointness
-  shields the invariant from convergence.
-- **Strong invariant** (also called *global*) — its truth couples
-  data that multiple authors can write in parallel: uniqueness
-  across the whole model (no two assets share an SKU), referential
-  integrity between attachments (an edge must point to an existing
-  vertex), cross-document consistency, or any domain that does not
-  tolerate silent loss (financial, safety, regulatory).
-
-Re-validating at read time closes the gap for local invariants —
-there was nothing for convergence to break. It does **not** close
-the gap for strong invariants: read-side validation can *detect* a
-violation, but cannot *reconstruct* the intent that convergence
-dropped. The lost information is not recoverable downstream.
-```
+The opposition that decides whether this contract is reference
+material or load-bearing — **local vs strong invariants** — is
+defined and elaborated in
+{ref}`Modes of Use <local-vs-strong-invariants>`.
+Re-validating at read time closes the gap for local invariants;
+it does **not** close it for strong invariants, where the intent
+dropped at convergence is not recoverable downstream.
 
 ## A change of discipline
 

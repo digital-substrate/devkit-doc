@@ -4,6 +4,14 @@ The Commit Database is the persistence layer: an immutable mutation
 DAG, transactional, with history and deterministic convergence across
 concurrent streams.
 
+```{important}
+Before reading the API, identify your **mode of use**. The
+[Modes of Use](commit_modes.md) diagnostic decides whether the
+sections below are reference material or load-bearing for you —
+single-stream readers can ignore convergence-related sections
+entirely.
+```
+
 ## Structure
 
 A `CommitDatabase` holds **two content-addressed spaces**:
@@ -48,7 +56,12 @@ True
 set()
 ```
 
-The `initial_state()` method always works and returns the empty state:
+The `initial_state()` method always works and returns the empty
+state. The example uses constants like `TUTO_A_USER_LOGIN` exposed
+by the database's embedded definitions — see
+[Embedded Definitions](#embedded-definitions) below; a one-line
+`db.definitions().inject()` makes them available in the calling
+namespace.
 
 ```{doctest}
 >>> initial = db.initial_state()

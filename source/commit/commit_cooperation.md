@@ -120,11 +120,11 @@ back-stop at read time, beneath whatever discipline you choose.
 
 ## Summary
 
-| Regime                     | Conflict handling                       | Where it lives                                           |
-|----------------------------|-----------------------------------------|----------------------------------------------------------|
-| **Mechanical convergence** | Silent best-effort, no notion           | The engine — the strongest guarantee without supervision |
-| **Cooperation**            | Avoided by scope, by construction       | This page — application discipline                       |
-| **Collaboration**          | Resolved by a supervisor (human / rule) | An application layer you build on top                    |
+| Regime                     | How divergence resolves                             | Where it lives                                           |
+|----------------------------|-----------------------------------------------------|----------------------------------------------------------|
+| **Mechanical convergence** | Structural linearisation — no notion of conflict    | The engine — the strongest guarantee without supervision |
+| **Cooperation**            | Disjointness by construction — nothing to arbitrate | This page — application discipline                       |
+| **Collaboration**          | Supervisor arbitrates (human / rule)                | An application layer you build on top                    |
 
 The dual-layer contract is described in all three regimes; the
 discipline you adopt determines whether it stays reference material

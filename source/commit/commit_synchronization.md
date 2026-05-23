@@ -88,6 +88,9 @@ What sync **does not** do:
 
 ## Three modes
 
+The two roles are symmetric by construction; a **mode** picks one of
+the two possible directions across that pair (or both, for `Sync`).
+
 | Mode    | Direction              | Use case                                         |
 |---------|------------------------|--------------------------------------------------|
 | `Fetch` | source → target        | Pull updates from a server into a local replica. |

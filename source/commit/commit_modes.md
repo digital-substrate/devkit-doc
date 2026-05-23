@@ -18,9 +18,8 @@ multi-stream. **In doubt, model for multi-stream.**
 ## Two kinds of version DAG
 
 Two distinct families of versioning systems share vocabulary
-(commit, merge, head, branch, parent) and topology (a DAG of
-nodes with one or more parents), but differ on **what a node
-contains**.
+(commit, merge, head, parent) and topology (a DAG of nodes with
+one or more parents), but differ on **what a node contains**.
 
 Some systems (git, hg, fossil) are **snapshot DAGs**: each node
 contains a full state of the tree. Their `merge` reconciles
@@ -61,8 +60,9 @@ content-addressing.
 ### Undo / redo
 
 Step back along the chain, diverge, redo. *Intent: revise history*
-on a single author's line. All structural guarantees apply, plus
-tombstone semantics.
+on a single author's line. All structural guarantees apply; undo is
+append-only — masking a target with an Enable/Disable commit, not
+rewriting it.
 
 ### Multi-head exploration
 
@@ -76,14 +76,35 @@ single-stream.
 Multiple authors converge automatically under mechanical convergence.
 Two flavours, split by what your invariants look like.
 
+(local-vs-strong-invariants)=
+
+- **Local invariant** — its truth depends only on a structurally
+  disjoint subset of the data (one attachment, one path, one
+  document, or a commutative container by construction). Two authors
+  writing on disjoint paths cannot break it: the disjointness
+  shields the invariant from convergence.
+- **Strong invariant** (also called *global*) — its truth couples
+  data that multiple authors can write in parallel: uniqueness
+  across the whole model (no two assets share an SKU), referential
+  integrity between attachments (an edge must point to an existing
+  vertex), cross-document consistency, or any domain that does not
+  tolerate silent loss (financial, safety, regulatory).
+
+Re-validating at read time closes the gap for local invariants —
+there was nothing for convergence to break. It does **not** close
+the gap for strong invariants: read-side validation can *detect* a
+violation, but cannot *reconstruct* the intent that convergence
+dropped. The lost information is not recoverable downstream.
+
 ```{important}
 Time travel, undo / redo and multi-head exploration **remain
 available** in this context — but they are no longer trivial. Every
 read here is an
-[import](commit_contract.md#reading-the-state-is-an-import-not-a-load),
-including reads of past states, because that state was itself
-produced by `commitMerge`. The Dual-Layer Contract applies along the
-context axis, not the operation axis.
+[import](commit_contract.md#reading-the-state-is-an-import-not-a-load)
+— a state structurally sound but semantically untrusted, to be
+re-validated at read time — including reads of past states, because
+that state was itself produced by `commitMerge`. The Dual-Layer
+Contract applies along the context axis, not the operation axis.
 ```
 
 ### Multi-stream with local invariants
@@ -118,15 +139,17 @@ Multiple authors converge automatically; your invariants are global
 domain does not tolerate silent loss (financial, safety, regulatory).
 This is where the [Dual-Layer Contract](commit_contract.md) becomes
 load-bearing — and where reading it is a diagnostic, not a cookbook:
-the four post-convergence outcomes collapse to *refuse the state*,
-which is equivalent to saying mechanical convergence was the wrong
-primitive.
+the four post-convergence outcomes (*Ignore / Extract a subset /
+Correct / Reject*) collapse to *Reject*, which is equivalent to
+saying mechanical convergence was the wrong primitive.
 
 The exit is not better post-convergence handling. It is
 re-architecting toward **multi-stream with local invariants** via
 scope decomposition (see
 [Cooperative Discipline](commit_cooperation.md)), or building an
-application-level supervisor on top of Commit.
+**application-level supervisor** on top of Commit — a review UI, a
+semantic gate, or a coordination protocol that arbitrates *before*
+the engine converges.
 
 ---
 

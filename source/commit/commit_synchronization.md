@@ -154,8 +154,8 @@ python3 tools/commit_admin.py --host server.local sync local.cdb
 python3 tools/commit_admin.py --host server.local sync local.cdb --loop --update-interval 2
 ```
 
-See [`commit_admin.py`](../dsviper-tools/server.md#commit-admin-py)
-for all options, including continuous mode.
+See {ref}`commit_admin.py <commit-admin-py>` for all options,
+including continuous mode.
 
 ---
 

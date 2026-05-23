@@ -91,6 +91,8 @@ db = CommitDatabase.connect_local("/tmp/project.sock")
 
 ---
 
+(commit-admin-py)=
+
 ## commit_admin.py
 
 Administration tool for CommitDatabase operations: reset, sync, and converge heads.

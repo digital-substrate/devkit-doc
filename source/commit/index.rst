@@ -1,12 +1,36 @@
 Commit
 ======
 
-**Commit** is Viper's versioned-state technology — an immutable,
-content-addressed mutation DAG over a
+**Commit** is Viper's versioned-state technology — it turns your
+application's state into an *undoable history*: every change is an
+immutable commit you can read back at any past point, undo, or
+reconcile with other authors.
+
+Technically: an immutable, content-addressed **mutation DAG** over a
 :doc:`DSM <../dsm/index>` model, with deterministic mechanical
-convergence between concurrent streams, plus the runtime wrapper and
-the architectural pattern that turn it into the substrate of an
-interactive application.
+convergence between concurrent streams, and the architectural pattern
+that turns it into the substrate of an interactive application.
+
+Start here
+----------
+
+Most of this chapter is reference material you can skip. The pages you
+need turn on **one question**: can more than one author write to the
+database?
+
+- **No — a single author (the common case).** Read
+  :doc:`Commit Database <commit_database>`,
+  :doc:`CommitStore <commit_store>` and
+  :doc:`Commit Application Model <commit_application_model>`. Skip the
+  rest: with a linear history, every read returns exactly what you
+  wrote.
+- **Yes — several authors writing concurrently.** Start with the
+  :doc:`Modes of Use <commit_modes>` diagnostic; it tells you which of
+  the remaining pages apply, and how much.
+
+Unsure — or might a second author appear later? The choice is hard to
+reverse once a model is sealed, so read
+:doc:`Modes of Use <commit_modes>` before you settle on single-stream.
 
 .. _three-regimes:
 
@@ -23,13 +47,6 @@ Only one is what Commit provides:
   deterministically with no notion of "conflict": clashing intentions
   are silently reconciled by structural rules. Structurally sound,
   semantically untrusted.
-
-.. important::
-
-   Before reading the API, identify your **mode of use** — the
-   single-stream / multi-stream decision is effectively irreversible
-   once a DSM model is sealed. See
-   :doc:`Modes of Use <commit_modes>` for the diagnostic.
 
 Commit is structured as three layers, from the disk upward:
 

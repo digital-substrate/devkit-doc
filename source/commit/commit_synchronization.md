@@ -38,9 +38,10 @@ with another site — typically a central server, but the engine
 makes no such assumption.
 
 This pattern enables offline work, local-first reads, and bandwidth
-amortisation. It is also the pattern that turns the application
-into a **multi-stream** consumer of the engine, even if a single
-human user is at each site — see [Implications](#implications).
+amortisation. It also gives each site its **own write head**, which
+can make the application a **multi-stream** consumer of the engine —
+depending on how the diverging heads are reconciled; see
+[Implications](#implications).
 
 ---
 
@@ -163,13 +164,18 @@ including continuous mode.
 
 ### On Modes of Use
 
-A replicated topology is **multi-stream by construction**: each
-site has its own write head, and concurrent commits from
-different sites are reconciled at sync time, not at write time.
-A single-stream model — one that assumes a single author with a
-linear history — has no safe path here.
+A replicated topology is **multi-head by construction**: each site
+has its own write head, and divergent heads are reconciled at sync
+time, not at write time. Whether that makes you *multi-stream* is a
+question of reconciliation, not topology — the same line
+[Modes of Use](commit_modes.md#multi-head-exploration) draws for
+multi-head exploration. A single author who reviews each
+reconciliation stays single-stream; a **second author committing in
+parallel**, or head reduction left unreviewed, does not.
 
-If your application is replicated, you are at least in
+Once you are past that line, a single-stream model — one that assumes
+a single author with a linear history — has no safe path here. You are
+then at least in
 [Multi-stream with local invariants](commit_modes.md#multi-stream-with-local-invariants),
 and possibly in
 [Multi-stream with strong invariants](commit_modes.md#multi-stream-with-strong-invariants)

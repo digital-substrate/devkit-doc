@@ -235,11 +235,12 @@ different order — or to skip `reduceHeads` entirely and issue their
 own `commitMerge` sequence. The final state depends on *who calls
 commitMerge in what order*, not on a property of the engine.
 
-**None of this preserves intent.** Whichever strategy is used, the
-value that survives on an overlapping path is a function of how
-merges were sequenced — not of authorship, recency, or semantic
-priority. Two authors editing the same field have no way to predict
-which value will survive convergence, even within a fixed strategy.
+**On an overlapping path, the surviving value is structural, not
+intentional.** Whichever strategy is used, the value that survives is
+a function of how merges were sequenced — not of authorship, recency,
+or semantic priority. Two authors editing the same field have no way
+to predict which value will survive convergence, even within a fixed
+strategy.
 
 The implication for the application is treated in the
 [Dual-Layer Contract](commit_contract.md#reading-the-state-is-an-import-not-a-load):

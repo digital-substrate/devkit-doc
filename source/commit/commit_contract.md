@@ -135,12 +135,12 @@ read the state, not when you build the mutations**.
 
 ## What Commit Provides
 
-| Guarantee                     | Description                                                                                |
-|-------------------------------|--------------------------------------------------------------------------------------------|
-| **DAG Consistency**           | Commits form a valid directed acyclic graph                                                |
-| **Immutability**              | Once committed, data cannot be modified                                                    |
+| Guarantee                     | Description                                                                                                                                                                                                             |
+|-------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **DAG Consistency**           | Commits form a valid directed acyclic graph                                                                                                                                                                             |
+| **Immutability**              | Once committed, data cannot be modified                                                                                                                                                                                 |
 | **Deterministic Convergence** | `commitMerge` is a pure function of its ordered inputs — same `(parent, target)` produces the same commit. *Which* order ends up applied across multi-head topologies is an application choice, not an engine property. |
-| **Content-Addressable**       | `CommitId = SHA-1(content)`, tamper-evident                                                |
+| **Content-Addressable**       | `CommitId = SHA-1(content)`, tamper-evident                                                                                                                                                                             |
 
 ```{note}
 **Why *convergence*, not *merge*** — a *merge* in version-control
@@ -189,30 +189,39 @@ moment the history contains a `commitMerge` — unsupervised reducer
 or human desktop merge — best-effort drops have been applied
 silently, and reading becomes an *import*.
 
-| Outcome              | What the application does   | Consequence                                                                       |
-|----------------------|-----------------------------|-----------------------------------------------------------------------------------|
-| **Ignore**           | Consume the state as-is     | A *latent* state — violations deferred to code that assumed the invariants held   |
-| **Extract a subset** | Validate, drop what fails   | A *partial* state — **disconnected from the DAG**                                 |
-| **Correct**          | Validate, repair what fails | A *phantom* state — **disconnected from the DAG**                                 |
-| **Reject**           | Refuse the state            | No state — resolution moves outside the import                                    |
+That state answers to no single human intent. Where streams overlap,
+convergence picks by structural rule and can preserve a combination no
+contributor would have written — **its author is the mechanism, not a
+person.** So none of the outcomes below *recovers* a true state; there
+is none to recover. Read them as structural consequences, not degrees
+of developer fault — the failure is mechanical convergence applied
+where intent had to survive, not the code left coping with the result.
+
+| Outcome              | What the application does   | Resulting state                             |
+|----------------------|-----------------------------|---------------------------------------------|
+| **Ignore**           | Consume the state as-is     | *untrusted* — stays in the DAG, unvalidated |
+| **Extract a subset** | Validate, drop what fails   | *partial* — disconnected from the DAG       |
+| **Correct**          | Validate, repair what fails | *phantom* — disconnected from the DAG       |
+| **Reject**           | Refuse the state            | *none* — nothing produced                   |
 
 Read this as a hierarchy of failure modes, not a menu. Under strong
 invariants:
 
-- **Ignore** — deferral, not a strategy. It treats the read as a
-  load, bypassing the import boundary the contract describes. The
-  violation propagates into downstream code written assuming
-  invariants held.
-- **Extract a subset** — shows a state that is *not* the DAG state.
-  Tolerable for read-only audit; once edits resume from it, new
-  commits reference a fiction.
-- **Correct** — invention dressed as recovery. The application makes
-  up a value nobody committed; if a subsequent write builds on it,
-  the fiction enters the DAG as if authored.
-- **Reject** — the only honest answer when invariants are strong,
-  and equivalent to saying mechanical convergence was the wrong
-  primitive. Resolution moves outside the import: human intervention,
-  rollback, or a coordination protocol.
+- **Ignore** — deferral, not a strategy: it treats the import as a
+  load. The unvalidated violation surfaces later, in code that assumed
+  the invariants held.
+- **Extract a subset** — invention by subtraction: to make the
+  fragment validate, it deletes the records that carry the violation,
+  manufacturing consistency by erasing the evidence of its own
+  inconsistency. It carries *less* than the converged state, not more.
+- **Correct** — invention by addition, the mirror of Extract: instead
+  of deleting the violating record it overwrites it with a fabricated
+  value that has no `CommitId`. Once a write builds on it, the
+  fabrication enters the DAG as if authored.
+- **Reject** — the only honest answer under strong invariants: it
+  concedes mechanical convergence was the wrong primitive, and pushes
+  resolution outside the import — human intervention, rollback, or a
+  coordination protocol.
 
 **Commit has no notion of conflict** — there is nothing for the
 application to push back into. The engine has already converged;
@@ -275,6 +284,7 @@ upstream of this page:
 ## See Also
 
 - [Modes of Use](commit_modes.md) — the diagnostic that determines whether this page applies to you
-- [Cooperative Discipline](commit_cooperation.md) — the modelling exit for applications whose invariants are too strong for mechanical convergence
+- [Cooperative Discipline](commit_cooperation.md) — the modelling exit for applications whose invariants are too strong
+  for mechanical convergence
 - [Commit Database](commit_database.md) — using the commit API from Python
 - [Errors](../dsviper/errors.md) — `dsviper.Error` and exception handling

@@ -261,7 +261,7 @@ instances of the Model.
 ## The dispatch pattern
 
 All state mutations go through `dispatch`. The store creates a
-mutable snapshot, runs the function, persists the resulting commit,
+mutable state, runs the function, persists the resulting commit,
 and notifies observers — atomically.
 
 In C++, dispatch takes a pool function:
@@ -283,7 +283,7 @@ store.dispatch("Create Vertex",
 
 After the lambda returns, the store has:
 
-* Created an immutable `CommitState` snapshot from the mutations.
+* Created an immutable `CommitState` from the mutations.
 * Persisted the commit into the DAG.
 * Notified observers via the notification contract (below).
 

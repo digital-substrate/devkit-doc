@@ -1,15 +1,11 @@
 Commit
 ======
 
-**Commit** is Viper's versioned-state technology — it turns your
-application's state into an *undoable history*: every change is an
-immutable commit you can read back at any past point, undo, or
-reconcile with other authors.
-
-Technically: an immutable, content-addressed **mutation DAG** over a
+**Commit** is Viper's versioned-state technology — an immutable,
+content-addressed mutation DAG over a
 :doc:`DSM <../dsm/index>` model, with deterministic mechanical
-convergence between concurrent streams, and the architectural pattern
-that turns it into the substrate of an interactive application.
+convergence between concurrent streams: the substrate of an
+interactive application.
 
 Start here
 ----------
@@ -45,7 +41,7 @@ Only one is what Commit provides:
   by construction.
 - **Mechanical convergence** — Commit linearises streams
   deterministically with no notion of "conflict": clashing intentions
-  are silently reconciled by structural rules. Structurally sound,
+  are silently collapsed by structural rules. Structurally sound,
   semantically untrusted.
 
 Commit is structured as three layers, from the disk upward:

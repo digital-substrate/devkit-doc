@@ -40,7 +40,7 @@ makes no such assumption.
 This pattern enables offline work, local-first reads, and bandwidth
 amortisation. It also gives each site its **own write head**, which
 can make the application a **multi-stream** consumer of the engine —
-depending on how the diverging heads are reconciled; see
+depending on how the diverging heads are reduced; see
 [Implications](#implications).
 
 ---
@@ -165,12 +165,12 @@ including continuous mode.
 ### On Modes of Use
 
 A replicated topology is **multi-head by construction**: each site
-has its own write head, and divergent heads are reconciled at sync
-time, not at write time. Whether that makes you *multi-stream* is a
-question of reconciliation, not topology — the same line
+has its own write head, and divergent heads meet at sync time, not at
+write time. Whether that makes you *multi-stream* is a question of how
+those heads are reduced, not of topology — the same line
 [Modes of Use](commit_modes.md#multi-head-exploration) draws for
-multi-head exploration. A single author who reviews each
-reconciliation stays single-stream; a **second author committing in
+multi-head exploration. A single author who reviews each head
+reduction stays single-stream; a **second author committing in
 parallel**, or head reduction left unreviewed, does not.
 
 Once you are past that line, a single-stream model — one that assumes

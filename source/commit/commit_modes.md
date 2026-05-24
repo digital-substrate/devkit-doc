@@ -39,39 +39,78 @@ on with this distinction in mind.
 
 ---
 
-How you exercise the mutation DAG determines whether the
-[Dual-Layer Contract](commit_contract.md) applies to you at all.
-Read this section as a diagnostic, not a catalogue.
+## Two orthogonal axes
 
-The first divide is **single-stream vs multi-stream**.
+How you exercise the mutation DAG splits along **two independent
+axes**, and conflating them is the most common source of confusion.
 
-## Single-stream
+- **What you can do** — the *operation* axis. Time travel, undo / redo
+  and multi-head exploration are **always available**, in every
+  context.
+- **Where you do it** — the *context* axis. Single-stream, multi-stream
+  with local invariants, or multi-stream with strong invariants. The
+  context alone decides whether the engine ever has to arbitrate, and
+  therefore whether the [Dual-Layer Contract](commit_contract.md)
+  applies to you.
 
-One author writing at a time. No `commitMerge` is reconstructed at
-read time, so the [Dual-Layer Contract](commit_contract.md) is
-reference material, not load-bearing.
+**The Dual-Layer Contract applies along the context axis, not the
+operation axis.** An undo is trivial in single-stream; the *same* undo
+in multi-stream reads through a state an earlier `commitMerge`
+produced. The operation did not change — the context did.
+
+Read both sections as a diagnostic, not a catalogue.
+
+---
+
+## What you can do — the operation axis
+
+These three operations are available regardless of context. What
+changes with context is not whether you can perform them, but whether
+the state they read has already passed through `commitMerge`.
 
 ### Time travel
 
-Reconstruct any past state from a `commitId`. No writes, so only the
-read-side structural guarantees apply: determinism, immutability,
-content-addressing.
+*Read-only.* Reconstruct any past state from a `commitId`. No writes,
+so only the read-side structural guarantees apply: determinism,
+immutability, content-addressing.
 
 ### Undo / redo
 
-Step back along the chain, diverge, redo. *Intent: revise history*
-on a single author's line. All structural guarantees apply; undo is
-append-only — masking a target with an Enable/Disable commit, not
-rewriting it.
+*Append-only.* Step back along the chain, diverge, redo. Undo never
+rewrites history — it masks its target with an Enable/Disable commit.
+All structural guarantees apply.
 
 ### Multi-head exploration
 
-Diverge the DAG and keep parallel heads alive, merging them on your
-own schedule. Same machinery as undo/redo with multiple heads. Merges
-happen, but a single author reviews the resulting state — still
-single-stream.
+*Parallel heads.* Diverge the DAG and keep parallel heads alive,
+merging them back on your own schedule. Multi-head exploration where a
+single author reviews each merged result stays **single-stream** — the
+merge happens, but one person owns the resulting state.
 
-## Multi-stream
+```{important}
+In single-stream every read returns exactly what you wrote. In
+multi-stream every read is an
+[import](commit_contract.md#reading-the-state-is-an-import-not-a-load)
+— a state structurally sound but semantically untrusted, to be
+re-validated at read time. This includes reads of *past* states,
+because that state was itself produced by `commitMerge`. The three
+operations above do not change between the two contexts; what changes
+is the contract around the state they read.
+```
+
+---
+
+## Where you do it — the context axis
+
+### Single-stream
+
+One author writing at a time. No `commitMerge` is reconstructed at
+read time, so the [Dual-Layer Contract](commit_contract.md) is
+reference material, not load-bearing. Time travel, undo / redo and
+multi-head exploration all apply with only the read-side structural
+guarantees — there is nothing for the engine to arbitrate.
+
+### Multi-stream
 
 Multiple authors converge automatically under mechanical convergence.
 Two flavours, split by what your invariants look like.
@@ -95,17 +134,6 @@ there was nothing for convergence to break. It does **not** close
 the gap for strong invariants: read-side validation can *detect* a
 violation, but cannot *reconstruct* the intent that convergence
 dropped. The lost information is not recoverable downstream.
-
-```{important}
-Time travel, undo / redo and multi-head exploration **remain
-available** in this context — but they are no longer trivial. Every
-read here is an
-[import](commit_contract.md#reading-the-state-is-an-import-not-a-load)
-— a state structurally sound but semantically untrusted, to be
-re-validated at read time — including reads of past states, because
-that state was itself produced by `commitMerge`. The Dual-Layer
-Contract applies along the context axis, not the operation axis.
-```
 
 ### Multi-stream with local invariants
 

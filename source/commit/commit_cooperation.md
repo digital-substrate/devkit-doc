@@ -12,7 +12,7 @@ Commit gives you mechanical convergence as a primitive. To get
 *cooperation* — the regime where disjoint writes converge without
 arbitration, every submitted intent surviving — shape the DSM model
 so the engine never has anything semantically meaningful to
-arbitrate. That shaping is **scope decomposition**: model the data
+pick between. That shaping is **scope decomposition**: model the data
 such that concurrent writers operate on structurally disjoint
 targets.
 
@@ -43,12 +43,12 @@ contract.
 Mechanical convergence is the strongest guarantee any unsupervised
 system can deliver. Richer guarantees require a supervisor. The
 discipline below lets you stay unsupervised by ensuring the engine
-never has anything semantically meaningful to arbitrate.
+never has anything semantically meaningful to pick between.
 
 ## Principle: scope ownership
 
 If two writers operate on disjoint attachments — or on disjoint paths
-within a shared attachment — convergence has nothing to arbitrate.
+within a shared attachment — convergence has nothing to pick between.
 The result is the union of disjoint mutations, and every submitted
 intent survives intact. Semantic validity becomes a consequence of
 structural disjointness.
@@ -121,11 +121,11 @@ back-stop at read time, beneath whatever discipline you choose.
 
 ## Summary
 
-| Regime                     | How divergence resolves                             | Where it lives                                           |
-|----------------------------|-----------------------------------------------------|----------------------------------------------------------|
-| **Mechanical convergence** | Structural linearisation — no notion of conflict    | The engine — the strongest guarantee without supervision |
-| **Cooperation**            | Disjointness by construction — nothing to arbitrate | This page — application discipline                       |
-| **Collaboration**          | Supervisor arbitrates (human / rule)                | An application layer you build on top                    |
+| Regime                     | How divergence resolves                                | Where it lives                                           |
+|----------------------------|--------------------------------------------------------|----------------------------------------------------------|
+| **Mechanical convergence** | Structural linearisation — no notion of conflict       | The engine — the strongest guarantee without supervision |
+| **Cooperation**            | Disjointness by construction — nothing to pick between | This page — application discipline                       |
+| **Collaboration**          | Supervisor arbitrates (human / rule)                   | An application layer you build on top                    |
 
 The dual-layer contract is described in all three regimes; the
 discipline you adopt determines whether it stays reference material

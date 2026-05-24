@@ -38,8 +38,8 @@ Path-Based Mutations
 --------------------
 
 Use ``Path`` with ``update()`` to modify specific fields without replacing
-the entire document. This enables multiplayer editing where concurrent
-changes to different fields converge automatically.
+the entire document. This enables concurrent editing — changes to
+different fields converge automatically.
 
 .. code-block:: python
 
@@ -63,7 +63,7 @@ changes to different fields converge automatically.
    db.commit_mutations("Update city", mutable)
 
 With ``set()``, concurrent edits to the same document cause one to be overwritten. With ``update()``,
-edits to different fields converge automatically—essential for multiplayer editing.
+edits to different fields converge automatically—essential for concurrent editing.
 
 Choosing the Right Class
 ------------------------

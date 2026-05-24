@@ -79,7 +79,7 @@ Between them they cover the table below:
    * - **Mutation Context**
      - ``CommitMutableState``, ``AttachmentMutating`` for isolated evaluation
    * - **Path-Based Mutations**
-     - ``Path``, ``AttachmentMutating.update()`` for multiplayer editing
+     - ``Path``, ``AttachmentMutating.update()`` for concurrent editing
    * - **Undo/Redo**
      - ``CommitStore`` for application-level undo with full state restoration
    * - **Synchronization**

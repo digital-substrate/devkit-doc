@@ -261,17 +261,17 @@ dsviper.ViperError: ...expected type 'string|int64', got 'float'...
 
 ### Vector vs XArray: When to Use Each
 
-| Feature                 | Vector                         | XArray                |
-|-------------------------|--------------------------------|-----------------------|
-| **Indexing**            | Integer indices (0, 1, 2...)   | UUID positions        |
-| **Insert/Remove**       | Indices shift                  | Positions stable      |
-| **Multiplayer editing** | Last-write-wins                | Merge-friendly        |
-| **Performance**         | Faster for local use           | Slight overhead       |
-| **Use case**            | Local arrays, batch processing | Shared editable lists |
+| Feature                | Vector                         | XArray                    |
+|------------------------|--------------------------------|---------------------------|
+| **Indexing**           | Integer indices (0, 1, 2...)   | UUID positions            |
+| **Insert/Remove**      | Indices shift                  | Positions stable          |
+| **Concurrent editing** | Last-write-wins                | Converges without loss    |
+| **Performance**        | Faster for local use           | Slight overhead           |
+| **Use case**           | Local arrays, batch processing | Concurrently edited lists |
 
-**Why XArray?** In multiplayer scenarios, two users might insert at "index 3"
+**Why XArray?** Under concurrent editing, two authors might insert at "index 3"
 simultaneously. With Vector, one insert wins and the other is lost or corrupted. With
-XArray, each element has a UUID position that remains stable across merges.
+XArray, each element has a UUID position that remains stable across convergence.
 
 **Example**: A shared todo list where multiple users add/remove items should use XArray. A
 local computation buffer should use Vector.

@@ -49,7 +49,7 @@ axes**, and conflating them is the most common source of confusion.
   context.
 - **Where you do it** — the *context* axis. Single-stream, multi-stream
   with local invariants, or multi-stream with strong invariants. The
-  context alone decides whether the engine ever has to arbitrate, and
+  context alone decides whether the engine ever has to pick a winner, and
   therefore whether the [Dual-Layer Contract](commit_contract.md)
   applies to you.
 
@@ -108,7 +108,7 @@ One author writing at a time. No `commitMerge` is reconstructed at
 read time, so the [Dual-Layer Contract](commit_contract.md) is
 reference material, not load-bearing. Time travel, undo / redo and
 multi-head exploration all apply with only the read-side structural
-guarantees — there is nothing for the engine to arbitrate.
+guarantees — there is nothing for the engine to pick between.
 
 ### Multi-stream
 

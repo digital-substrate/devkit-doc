@@ -163,6 +163,6 @@ python3 tools/commit_admin.py --socket-path /tmp/project.sock sync local.cdb
 | Command        | Description                                                  |
 |----------------|--------------------------------------------------------------|
 | `sync`         | Synchronize local database with source                       |
-| `reduce_heads` | Merge multiple heads into one                                |
+| `reduce_heads` | Reduce multiple heads into one                               |
 | `reset`        | **Demo-only trick** — remove all commits except the initial; see warning above |
 

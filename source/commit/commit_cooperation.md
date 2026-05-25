@@ -8,18 +8,23 @@ diagnostic — in
 where the [Dual-Layer Contract](commit_contract.md) stays reference
 material.
 
-Commit gives you mechanical convergence as a primitive. To get
-*cooperation* — the regime where disjoint writes converge without
-arbitration, every submitted intent surviving — shape the DSM model
-so the engine never has anything semantically meaningful to
-pick between. That shaping is **scope decomposition**: model the data
-such that concurrent writers operate on structurally disjoint
-targets.
+Outside a narrow envelope, concurrent writes lose data **silently**.
+The engine has no notion of conflict: when two streams touch the same
+granule it collapses them by structural rule (last-writer-wins) and
+signals nothing — the dropped write is gone, with no error and no
+notification.
 
-This is the recommended path for multi-stream usage, not the
-back-stop when the contract bites. The
-[import outcomes](commit_contract.md#import-outcomes) are what
-remains *if* the discipline fails on a specific path.
+That envelope is **disjoint writes**: concurrent authors operating on
+structurally disjoint targets, where convergence has nothing to pick
+between and every submitted intent survives. Reaching it is a modelling
+task, not a runtime one — shape the DSM model so the engine never has
+anything semantically meaningful to choose. That shaping is **scope
+decomposition**.
+
+This is the path for multi-stream usage, not a back-stop when the
+[Dual-Layer Contract](commit_contract.md) bites. The
+[import outcomes](commit_contract.md#import-outcomes) are what remains
+*if* the discipline fails on a specific path.
 
 ## Not a Commit quirk
 

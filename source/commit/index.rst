@@ -1,11 +1,13 @@
 Commit
 ======
 
-**Commit** is Viper's versioned-state technology — an immutable,
-content-addressed mutation DAG over a
-:doc:`DSM <../dsm/index>` model, with deterministic mechanical
-convergence between concurrent streams: the substrate of an
-interactive application.
+**Commit** is a deterministic, best-effort convergence engine over an
+immutable, content-addressed mutation DAG on a
+:doc:`DSM <../dsm/index>` model. For a **single author it is
+lossless** — every read returns exactly what you wrote. For
+**concurrent authors it has no notion of conflict**: overlapping intent
+is silently collapsed by structural rules — structurally sound,
+semantically untrusted. It is **not** a collaboration substrate.
 
 Start here
 ----------
@@ -20,9 +22,11 @@ database?
   :doc:`Commit Application Model <commit_application_model>`. Skip the
   rest: with a linear history, every read returns exactly what you
   wrote.
-- **Yes — several authors writing concurrently.** Start with the
-  :doc:`Modes of Use <commit_modes>` diagnostic; it tells you which of
-  the remaining pages apply, and how much.
+- **Yes — several authors writing concurrently.** The engine will
+  silently collapse overlapping intent; your task is to keep writes
+  inside the envelope where that cannot happen, or coordinate above it.
+  Start with the :doc:`Modes of Use <commit_modes>` diagnostic; it tells
+  you which of the remaining pages apply, and how much.
 
 Unsure — or might a second author appear later? The choice is hard to
 reverse once a model is sealed, so read
@@ -33,16 +37,21 @@ reverse once a model is sealed, so read
 Three regimes of multi-author work
 ----------------------------------
 
-Only one is what Commit provides:
+Commit provides exactly one of them:
 
-- **Collaboration** — humans arbitrate overlapping intentions
-  *before* convergence (manual-merge / review).
-- **Cooperation** — disjoint contributions assemble without conflict
-  by construction.
-- **Mechanical convergence** — Commit linearises streams
-  deterministically with no notion of "conflict": clashing intentions
-  are silently collapsed by structural rules. Structurally sound,
-  semantically untrusted.
+- **Mechanical convergence — what Commit is.** Streams are linearised
+  deterministically, with no notion of "conflict": overlapping intent is
+  silently collapsed by structural rules (last-writer-wins by
+  linearisation order). Nothing is detected, signalled, or reconciled —
+  structurally sound, semantically untrusted.
+- **Cooperation — the safe envelope you engineer.** Disjoint or
+  accretive contributions converge with every intent surviving. This is
+  the *only* concurrent writing the engine folds without loss, and
+  reaching it is a modelling task
+  (:doc:`Cooperative Discipline <commit_cooperation>`).
+- **Collaboration — what Commit is not.** Arbitrating overlapping
+  intentions *before* convergence (manual-merge / review) needs a
+  supervisor *above* the engine; Commit provides none.
 
 Commit is structured as three layers, from the disk upward:
 
@@ -63,10 +72,9 @@ Three transverse pages complete the chapter:
 * :doc:`The Dual-Layer Contract <commit_contract>` — formalises what
   the three layers guarantee structurally and what remains the
   application's semantic responsibility.
-* :doc:`Cooperative Discipline <commit_cooperation>` — gives the
-  operational discipline (scope decomposition) that lets you stay
-  inside the engine's structural guarantees without having to consume
-  the contract at read time.
+* :doc:`Cooperative Discipline <commit_cooperation>` — scope
+  decomposition: how to keep concurrent writes inside the disjoint
+  envelope, the only region where no intent is silently lost.
 * :doc:`Database synchronisation <commit_synchronization>` —
   how ``CommitSynchronizer`` replicates the mutation DAG between
   separate ``CommitDatabase`` instances, and what it implies for the

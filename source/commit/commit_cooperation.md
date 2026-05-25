@@ -68,8 +68,12 @@ language provides the levers — none of them new:
   collide. See
   [Attachments](../dsm/attachments.md#recommended-pattern-multiple-attachments).
 - **`set` / `map` / `xarray` containers** for concurrently-edited
-  collections — convergence is commutative by construction. Prefer
-  `xarray` over `vector` when positions must survive merges; see
+  collections — commutative where used **accretively or on disjoint
+  granules**: grow-only `set` union, `xarray` insert (no insert is
+  lost), and writes to non-overlapping keys / paths / positions.
+  Concurrent writes to the *same* element collapse to last-writer-wins,
+  silently dropping one value. Prefer `xarray` over `vector` when
+  positions must survive convergence; see
   [Vector vs XArray](../dsviper/collections.md#vector-vs-xarray-when-to-use-each).
 - **References that tolerate breakage** — accept that a `key<X>`
   may outlive its target. This is a *whole-application commitment*,

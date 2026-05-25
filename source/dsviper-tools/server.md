@@ -12,8 +12,9 @@ operations.
 
 ## commit_database_server.py
 
-RPC server that exposes a CommitDatabase over the network, allowing multiple clients
-to synchronize with a central database.
+RPC server that exposes a CommitDatabase over the network. Multiple clients can
+work against it directly (transparent proxy) or synchronise a local replica with
+it (CommitSynchronizer).
 
 ### Basic Usage
 

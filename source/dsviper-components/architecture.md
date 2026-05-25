@@ -72,18 +72,18 @@ class DSCommitsDialog(QDialog):
 
 The widget does not subclass anything domain-specific; it does not reach
 out to a global. The application owns the store and **injects** it into
-each component. This makes the library equally usable in:
+each component, so it imposes no single topology. Both ge-py and ge-qml run one
+`CommitStore` behind a `Context` singleton; what differs is how each supplies
+the notifier:
 
-- a single-store application (one `CommitStore.instance()`, used by ge-py),
-- a multi-store application (one `CommitStore` per document, used by
-  ge-qml),
-- and headless tools that build a `CommitStore` for a one-off task.
+- **ge-py** has each component reach the `DSCommitStoreNotifier.instance()`
+  convenience singleton;
+- **ge-qml** injects an explicit notifier into every component instead;
+- **headless tools** build a `CommitStore` for a one-off task.
 
 ```{tip}
-The `instance()` classmethods present on some components
-(`DSCommitStoreNotifier.instance()`) are a convenience for single-store
-applications, **not** a requirement. ge-qml deliberately avoids them and
-injects an explicit notifier into every component.
+The `instance()` classmethods on some components
+(`DSCommitStoreNotifier.instance()`) are a convenience, **not** a requirement.
 ```
 
 ## Integration recipe

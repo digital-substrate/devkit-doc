@@ -277,7 +277,7 @@ def _live_timer_timeout(self):
 ```
 
 This is the simplest demonstration in the DevKit of **continuous
-multi-author convergence**: cdbe will keep pulling and pushing in the
+background sync**: cdbe will keep pulling and pushing in the
 background, optionally reducing heads whenever a divergence appears.
 
 ### Embedded Python — DSCodeEditorDialog
@@ -330,7 +330,7 @@ others are what gets added back when the domain is known.
 2. `cdbe.py` — `main()` and `_setup_connections` — singletons + notifier wiring.
 3. `cdbe.py` — `_setup_dialog` — the eight shared admin dialogs.
 4. `cdbe.py` — `_live_timer_timeout` and surrounding live-mode code —
-   continuous multi-author sync in its simplest form.
+   continuous background sync in its simplest form.
 5. `cdbe.py` — `_synchronize` and the connect-to-server dialog — manual
    sync workflow.
 

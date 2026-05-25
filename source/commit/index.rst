@@ -7,7 +7,7 @@ immutable, content-addressed mutation DAG on a
 lossless** — every read returns exactly what you wrote. For
 **concurrent authors it has no notion of conflict**: overlapping intent
 is silently collapsed by structural rules — structurally sound,
-semantically untrusted. It is **not** a collaboration substrate.
+semantically untrusted.
 
 Start here
 ----------

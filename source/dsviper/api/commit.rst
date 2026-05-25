@@ -5,7 +5,7 @@ The Commit Database provides transactional persistence with history tracking.
 
 **When to use**: Use ``CommitDatabase`` for versioned persistence with history,
 divergence, and sync. A ``CommitStore`` wraps an open database to expose
-undo/redo and the dispatch surface for concurrent editing.
+undo/redo and the dispatch surface for mutations.
 
 Quick Start
 -----------
@@ -38,7 +38,7 @@ Path-Based Mutations
 --------------------
 
 Use ``Path`` with ``update()`` to modify specific fields without replacing
-the entire document. This enables concurrent editing — changes to
+the entire document. This enables disjoint concurrent writes — changes to
 different fields converge automatically.
 
 .. code-block:: python
@@ -62,8 +62,8 @@ different fields converge automatically.
    # Commit
    db.commit_mutations("Update city", mutable)
 
-With ``set()``, concurrent edits to the same document cause one to be overwritten. With ``update()``,
-edits to different fields converge automatically—essential for concurrent editing.
+With ``set()``, concurrent edits to the same document silently lose one (last-writer-wins). With ``update()``,
+edits to **different** fields converge without loss.
 
 Choosing the Right Class
 ------------------------

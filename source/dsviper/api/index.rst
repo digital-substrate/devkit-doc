@@ -57,7 +57,7 @@ To see this API in action, the two GUI editors shipped with
 
 - ``cdbe.py`` (Commit Database Editor) — covers the **Commit Database**
   side: ``CommitDatabase``, ``CommitMutableState``, ``CommitStore``,
-  ``CommitSynchronizer``, undo/redo, and live sync.
+  ``CommitSynchronizer``, undo/redo, and sync.
 - ``dbe.py`` (Database Editor, plain CRUD) — covers the non-versioned
   ``Database`` side and the read/inspection surface (definitions,
   blobs, HTML rendering).
@@ -79,13 +79,13 @@ Between them they cover the table below:
    * - **Mutation Context**
      - ``CommitMutableState``, ``AttachmentMutating`` for isolated evaluation
    * - **Path-Based Mutations**
-     - ``Path``, ``AttachmentMutating.update()`` for concurrent editing
+     - ``Path``, ``AttachmentMutating.update()`` for field-level writes that converge when disjoint
    * - **Undo/Redo**
      - ``CommitStore`` for application-level undo with full state restoration
    * - **Synchronization**
      - ``CommitSynchronizer`` for fetch/push/sync with remote servers
-   * - **Live Sync**
-     - ``CommitStoreNotifying`` for real-time multi-user updates
+   * - **Change Notification**
+     - ``CommitStoreNotifying`` to observe state changes (including after sync)
    * - **Binary Assets**
      - ``BlobGetting``, ``ValueBlobId`` for large binary data management
    * - **Schema Introspection**

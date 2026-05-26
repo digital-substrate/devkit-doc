@@ -154,7 +154,7 @@ no semantic arbitration has happened.
 
 ## How Convergence Picks a Winner
 
-The mechanics — `commitMerge`, `reduceHeads`, the structural rules
+The mechanics — `commitMerge` and the structural rules
 that pick a value on each overlapping path — are described in
 [Commit Database — How Convergence Picks a Winner](commit_database.md#how-convergence-picks-a-winner).
 The summary the contract leans on: the outcome is **deterministic

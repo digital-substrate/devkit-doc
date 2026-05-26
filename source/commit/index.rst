@@ -43,7 +43,10 @@ Commit provides exactly one of them:
   deterministically, with no notion of "conflict": overlapping intent is
   silently collapsed by structural rules (last-writer-wins by
   linearisation order). Nothing is detected, signalled, or reconciled —
-  structurally sound, semantically untrusted.
+  structurally sound, semantically untrusted. The linearisation is
+  reproducible only within a fixed merge sequence; which sequence is
+  applied when several heads meet is an application strategy, not an
+  engine guarantee.
 - **Cooperation — the safe envelope you engineer.** Disjoint or
   accretive contributions converge with every intent surviving. This is
   the *only* concurrent writing the engine folds without loss, and

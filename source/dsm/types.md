@@ -305,13 +305,13 @@ struct MaterialMultilayer {
 
 ### XArray
 
-The `xarray<T>` type is like a vector but preserves element order during
-concurrent mutations. UUID-keyed positions keep insertions and removals
-from colliding when applied in parallel.
+The `xarray<T>` type is like a vector but uses UUID-keyed positions, so
+concurrent insertions and removals don't collide. Concurrent edits to the
+*same* element still collapse to last-writer-wins.
 
 ```dsm
 struct Document {
-    xarray<string> comments;  // Order preserved across concurrent edits
+    xarray<string> comments;  // UUID positions; concurrent inserts don't collide
 };
 ```
 

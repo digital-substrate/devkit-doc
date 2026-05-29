@@ -70,7 +70,7 @@ Commit is structured as three layers, from the disk upward:
   ``CommitStore``, exposes domain state, dispatches user actions, and
   routes notifications to the UI.
 
-Three transverse pages complete the chapter:
+Four transverse pages complete the chapter:
 
 * :doc:`The Dual-Layer Contract <commit_contract>` — formalises what
   the three layers guarantee structurally and what remains the
@@ -78,6 +78,10 @@ Three transverse pages complete the chapter:
 * :doc:`Cooperative Discipline <commit_cooperation>` — scope
   decomposition: how to keep concurrent writes inside the disjoint
   envelope, the only region where no intent is silently lost.
+* :doc:`Supervised Reconciliation <commit_collaboration>` — a reference
+  implementation of the collaboration supervisor: identify, surface and
+  reconcile a reconstructed conflict over a merge, additive over the
+  public API.
 * :doc:`Database synchronisation <commit_synchronization>` —
   how ``CommitSynchronizer`` replicates the mutation DAG between
   separate ``CommitDatabase`` instances, and what it implies for the
@@ -138,6 +142,7 @@ Topics
    commit_application_model
    commit_contract
    commit_cooperation
+   commit_collaboration
    commit_synchronization
 
 

@@ -127,6 +127,9 @@ The supervisor is yours to build. The Commit Database does not
 provide it; what it provides — the
 [import outcomes](commit_contract.md#import-outcomes) — is the
 back-stop at read time, beneath whatever discipline you choose.
+[Supervised Reconciliation](commit_collaboration.md) documents one such
+supervisor — post-merge, headless, additive over the public API — as a
+reference implementation.
 
 ## Summary
 

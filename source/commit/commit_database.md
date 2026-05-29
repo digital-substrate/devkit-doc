@@ -98,8 +98,6 @@ Create a mutable state and apply changes:
 >>> mutating.update(attachment, key, path, new_value)
 ```
 
-> **Note**: CommitDatabase tracks history via mutations from CommitMutableState.
-
 ### Committing
 
 `commit_mutations()` returns the new commit id — capture it explicitly to

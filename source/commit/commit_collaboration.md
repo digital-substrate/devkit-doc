@@ -4,7 +4,7 @@ The {ref}`three regimes <three-regimes>` place *collaboration* — arbitrating
 overlapping intentions, the manual-merge / review model — *above* the engine:
 "Commit provides none". [Cooperative Discipline](commit_cooperation.md#when-a-supervisor-is-required)
 says the same from the other side: when scope cannot be decomposed, "the
-supervisor is yours to build". This page documents a reference implementation
+supervisor is yours to build". This page documents one implementation
 of that supervisor: an API that **identifies, surfaces, and reconciles a
 reconstructed conflict** over a merge the engine has already performed.
 
@@ -26,8 +26,8 @@ arbitrary. This is the index's own caveat: "which sequence is applied when
 several heads meet is an application strategy, not an engine guarantee".
 
 This layer does not change that. It **reconstructs** a notion of conflict as
-an analysis overlay: after a merge, it recomputes each branch's typed delta
-and reports the loci where one branch's intent did not survive. The conflict
+an analysis overlay: after a merge, it recomputes each stream's typed delta
+and reports the loci where one stream's intent did not survive. The conflict
 is manufactured on replay; it is not something the engine stores or knows.
 
 ## The headless triad
@@ -53,7 +53,7 @@ them.
 
 ## Why the anchor is post-merge
 
-Arbitration cannot happen *before* the merge. The merge result depends on the
+The choice cannot be made *before* the merge. The merge result depends on the
 **opcode shape** — an absolute `set` re-baselines the document and is then
 overwritten target-wins, while incremental path-based operations combine
 without loss — and a value-level three-way comparison cannot predict which
@@ -61,7 +61,7 @@ case applies. The only authority is `state(merge)`, the result the engine
 actually produced.
 
 So the layer endures the merge, reads `merge_state = db.state(merge)`, and
-defines lost intent against it: a branch's intent is lost at an opcode's locus
+defines lost intent against it: a stream's intent is lost at an opcode's locus
 **iff that opcode's effect is not already present** in `merge_state`. The
 check is per opcode type — a `Set_Union` survived iff its elements are present,
 a `Document_Update(path, value)` iff `path` resolves to `value`, and so on. A
@@ -105,10 +105,10 @@ value shape. Sequence reordering and element-level XArray merge are out of scope
 
 ## When there is no base
 
-When the two branches share no unambiguous common ancestor — a criss-cross
+When the two streams share no unambiguous common ancestor — a criss-cross
 history, or two independent roots — there is no base to anchor detection
 against. The layer degrades to a 2-way scan (candidates are every key where
-the branches differ) rather than failing; `CommitMergeAnalysis.two_way()`
+the streams differ) rather than failing; `CommitMergeAnalysis.two_way()`
 reports this mode. Survival is base-free either way, so reconciliation is
 identical.
 

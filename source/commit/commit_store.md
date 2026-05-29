@@ -15,7 +15,7 @@ into the runtime surface a Commit Application actually uses. It:
 * notifies observers when any of the above changes,
 * exposes DAG navigation (multi-head, merge, forward).
 
-This page introduces the four surfaces and points at the canonical
+This page introduces the four surfaces and points at the
 references for each. For full method signatures, see the
 [CommitStore API reference](../dsviper/api/commit.rst).
 
@@ -114,7 +114,7 @@ A notifier is installed once:
 >>> store.set_notifier(my_notifier)   # any CommitStoreNotifying impl
 ```
 
-The canonical Qt adapter — `DSCommitStoreNotifier`, which turns each
+The Qt adapter — `DSCommitStoreNotifier`, which turns each
 notification into a Qt Signal — lives in `dsviper-components`. See
 [The Notifier Bridge](../dsviper-components/architecture.md#the-notifier-bridge)
 for the bridge code and the Qt integration recipe.

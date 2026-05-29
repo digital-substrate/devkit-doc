@@ -69,8 +69,8 @@ on sets; map and ordered-array mutations).
 
 The Remote-Local pattern looks dangerous at first read — the server
 sends commands that mutate client state. The design is **inherently
-safe** because the server has no handle on the client's authoritative
-state. Mutations land in an `AttachmentMutating` *context* owned by
+safe at the state-ownership level** because the server has no handle on
+the client's authoritative state. Mutations land in an `AttachmentMutating` *context* owned by
 the client, isolated from the model the client treats as ground
 truth. The client alone decides whether — and when — to integrate
 that context back into its authoritative state.
@@ -113,3 +113,10 @@ The structural integrity of the client's authoritative state is
 guaranteed at the protocol level. **Semantic integrity** under
 multi-author convergence is a separate concern of the commit layer —
 see [Dual-Layer Contract](../commit/commit_contract.md).
+
+**Transport security** — authentication and encryption against a
+spoofed or eavesdropping server — is a separate concern again: Viper
+assumes a trusted network and delegates it to deployment (see
+[Security posture](../ecosystem/security.md)). State isolation bounds
+what a *connected* server can do; it is not a substitute for securing
+the connection.

@@ -64,8 +64,9 @@ The operation in one pass:
 3. **Copy missing commits and the blobs they reference.** Walk the
    missing commits — `source.commitIds() \ target.commitIds()` for
    Fetch, `target.commitIds() \ source.commitIds()` for Push — in
-   topological order. For each commit, first copy the blobs it
-   references that the target lacks (set difference on blob hashes),
+   topological order. For each Mutations commit, decode its opcodes
+   (against the synced definitions) to collect any blob references they
+   carry, copy those the target lacks (set difference on blob hashes),
    then create the commit itself. This guarantees the invariant that
    **a commit on the target never references a blob the target does
    not have** — the
@@ -82,8 +83,9 @@ What sync **does not** do:
 - It never picks a winner between divergent heads. Multiple heads
   resulting from independent writes survive the sync intact, on
   both sides.
-- It never inspects commit content. Sync compares commit ids only;
-  mutations are copied as opaque payload.
+- It never converges or transforms a commit's mutations — the opcode
+  payload is stored verbatim. It decodes a Mutations commit's opcodes
+  only to collect the blob references it must copy first (step 3).
 
 ---
 

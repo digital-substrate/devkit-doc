@@ -226,7 +226,7 @@ Stateful pool calls (`AttachmentFunctionPool`) use the
 read and mutation lands in the **client's local** `AttachmentMutating`
 via RPC callbacks. The roles invert during execution, and persistence
 is triggered by the client alone, never by the server. That isolation
-is what makes the design safe.
+is what makes the design safe at the state-ownership level.
 
 ## When to use a service
 

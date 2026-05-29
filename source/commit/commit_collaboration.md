@@ -17,9 +17,10 @@ ships inside Viper and reaches Python through `dsviper`.
 The engine has no notion of conflict. Mechanical convergence linearises
 streams and collapses overlapping intent by structural rule, signalling
 nothing. A pairwise merge is target-wins and non-commutative; when several
-heads meet, `reduce_heads()` folds them in the lexicographic order of their
-content hashes (the SHA-1 `CommitId`s). The resolved state is therefore
-deterministic, but the determinant is the opcode shape and the hash ordering,
+heads meet, `reduce_heads()` seeds the fold with the most recent head and
+folds the rest into it in ascending `CommitId` order (their SHA-1 content
+hashes). The resolved state is therefore deterministic, but the determinant is
+the opcode shape, which head is most recent, and the hash ordering of the rest,
 not the authors' intent — so to an observer, *which* intent the merge keeps is
 arbitrary. This is the index's own caveat: "which sequence is applied when
 several heads meet is an application strategy, not an engine guarantee".
@@ -33,7 +34,7 @@ is manufactured on replay; it is not something the engine stores or knows.
 
 No user interface is part of this layer. Both seams are plain data, so the
 presentation tier is the consumer's choice — QML tooling, a CLI, a web review,
-or an automated arbiter.
+or an automated policy.
 
 | Step          | API                                                      | Produces                                               |
 |---------------|----------------------------------------------------------|--------------------------------------------------------|
@@ -44,6 +45,11 @@ or an automated arbiter.
 The supervisor reads the conflicts, decides per conflict, and expresses each
 decision as a `CommitMergeResolution`. Accepting the merge requires no
 resolution.
+
+Conflicts arrive grouped per document — `CommitMergeAnalysis.documents()`
+returns one `CommitMergeDocument` per `(attachment, key)`, the unit
+`reconcile` operates on; `conflicts()` is the flattened view across all of
+them.
 
 ## Why the anchor is post-merge
 
@@ -89,12 +95,13 @@ The decree's reach mirrors the merge's own nature, container by container:
 | Structure       | per field (`Document_Update`, sibling fields preserved) |
 | XArray / Vector | field-scoped `Document_Update` (decretal, whole field)  |
 
-A conflict's `path` is the finest decree point; a supervisor may climb its
-ancestors for a coarser, more dictatorial decree, up to a whole-document
-`Document_Set`. Deeper paths bound the blast radius to a smaller locus. The
-universal fallback — `Document_Update(path = field, value = chosen)` — is
-always expressible and round-trips trivially. Sequence reordering and
-element-level XArray merge are out of scope.
+A decree is anchored on the conflict's own `path` — the finest locus the merge
+localised the lost intent to — and the supervisor dictates only the *value*
+that should survive there (`CommitMergeResolution(conflict, chosen)`). `reconcile`
+applies a recursive deep `Document_Update` at that path, so the merge's sibling
+fields and leaves are preserved untouched; the blast radius is bounded to the
+locus, not the whole document. The construction round-trips trivially for every
+value shape. Sequence reordering and element-level XArray merge are out of scope.
 
 ## When there is no base
 
@@ -117,42 +124,8 @@ identical.
 - **Intent beyond commit headers is not recoverable.** The layer surfaces
   *that* values collided and *what* each was, never *why* an author wanted it.
 
-## API surface
-
-| Type / function                     | Role                                                                                             |
-|--------------------------------------|--------------------------------------------------------------------------------------------------|
-| `CommitMergeAnalyzer.merge_base`     | Structural common ancestor (DAG only); `None` on criss-cross.                                    |
-| `CommitMergeAnalyzer.analyze_merge`  | Post-merge analysis; returns a `CommitMergeAnalysis`.                                             |
-| `CommitMergeAnalyzer.reconcile`      | Authors the survival commit from a list of resolutions.                                          |
-| `CommitMergeAnalysis`                | `conflicts()`, `has_conflicts()`, `base()`, `two_way()`, `ours()`, `theirs()`, `merge_commit()`. |
-| `CommitMergeConflict`                | `attachment()`, `key()`, `path()`, `base_value()`, `ours_value()`, `theirs_value()`, `merged_value()`. |
-| `CommitMergeResolution`              | A decree `(attachment, key, path, chosen)` built by the supervisor.                              |
-
-## Example
-
-```pycon
->>> # Endure the merge the engine produces (Data).
->>> merge = db.merge_commit("merge ours into theirs", ours, theirs)
-
->>> # Identify the reconstructed conflicts (Logic).
->>> analysis = CommitMergeAnalyzer.analyze_merge(db, merge)
->>> analysis.has_conflicts()
-True
-
->>> # Surface each conflict to the supervisor (Presentation, tier-agnostic).
->>> resolutions = []
->>> for conflict in analysis.conflicts():
-...     # The supervisor decides; here, keep ours at the conflicting path.
-...     resolutions.append(CommitMergeResolution(
-...         conflict.attachment(), conflict.key(),
-...         conflict.path(), conflict.ours_value().unwrap()))
-
->>> # Reconcile: a survival commit, child of the merge (Data).
->>> survivor = CommitMergeAnalyzer.reconcile(db, merge, resolutions, "reconcile")
-```
-
-When a supervisor accepts the merge for every conflict, `reconcile` returns
-the merge commit unchanged.
+The full class surface — signatures, accessors, and a runnable example —
+is the API reference: {doc}`Merge Reconciliation </dsviper/api/reconciliation>`.
 
 ## See Also
 

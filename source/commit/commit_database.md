@@ -228,9 +228,10 @@ the engine itself fixes, and it makes the operation non-commutative:
 `commitMerge(A, B) ≠ commitMerge(B, A)`.
 
 **Reducing multiple heads is a strategy, not a guarantee.** The
-built-in `reduceHeads` iterates heads in lexicographic `CommitId`
-order and calls `commitMerge` once per pair, with the running result
-as parent and the next head as target. Applications are free to use a
+built-in `reduceHeads` seeds the running result with the most recent
+head (`lastCommitId()`, by authoring timestamp) and folds the remaining
+heads into it in ascending `CommitId` order, calling `commitMerge` once
+per head with the running result as parent and the head as target. Applications are free to use a
 different order — or to skip `reduceHeads` entirely and issue their
 own `commitMerge` sequence. The final state depends on *who calls
 commitMerge in what order*, not on a property of the engine.

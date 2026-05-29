@@ -13,6 +13,7 @@ by functional domain.
    attachments
    database
    commit
+   reconciliation
    blobs
    serialization
    dsm
@@ -38,6 +39,8 @@ Overview
      - Persistence (``Database``, ``DatabaseSQLite``, etc.)
    * - :doc:`commit`
      - Versioned persistence (``CommitDatabase``, ``CommitState``, ``AttachmentMutating``, etc.)
+   * - :doc:`reconciliation`
+     - Merge reconciliation (``CommitMergeAnalyzer``, ``CommitMergeConflict``, etc.)
    * - :doc:`blobs`
      - Binary data (``BlobArray``, ``BlobPack``, ``BlobLayout``, etc.)
    * - :doc:`serialization`

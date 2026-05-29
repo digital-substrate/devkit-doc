@@ -68,24 +68,9 @@ edits to **different** fields converge without loss.
 Supervised Reconciliation
 -------------------------
 
-The engine converges concurrent streams mechanically and signals no conflict.
-``CommitMergeAnalyzer`` is an additive, application-level supervisor over the
-public API: it reconstructs a notion of conflict *after* a merge and lets a
-caller make a chosen value survive. See :doc:`/commit/commit_collaboration`
-for the model and its bounds.
-
-.. code-block:: python
-
-   from dsviper import CommitMergeAnalyzer, CommitMergeResolution
-
-   merge = db.merge_commit("merge", ours, theirs)
-   analysis = CommitMergeAnalyzer.analyze_merge(db, merge)
-
-   resolutions = [
-       CommitMergeResolution(c.attachment(), c.key(), c.path(), c.ours_value().unwrap())
-       for c in analysis.conflicts()
-   ]
-   survivor = CommitMergeAnalyzer.reconcile(db, merge, resolutions, "reconcile")
+Reconciling a merge — ``CommitMergeAnalyzer`` and friends — is an additive
+supervisor over this API, documented on its own page:
+:doc:`reconciliation`.
 
 Choosing the Right Class
 ------------------------
@@ -115,9 +100,6 @@ Choosing the Right Class
    * - Inspect commit metadata
      - :class:`CommitHeader`
      - ``header = db.commit_header(id)``
-   * - Reconcile a merge
-     - :class:`CommitMergeAnalyzer`
-     - ``CommitMergeAnalyzer.analyze_merge(db, merge)``
 
 Core Classes
 ------------
@@ -156,18 +138,6 @@ History & DAG
    dsviper.CommitHeader
    dsviper.CommitData
    dsviper.CommitEvalAction
-
-Reconciliation
---------------
-
-.. autosummary::
-   :toctree: generated/
-   :nosignatures:
-
-   dsviper.CommitMergeAnalyzer
-   dsviper.CommitMergeAnalysis
-   dsviper.CommitMergeConflict
-   dsviper.CommitMergeResolution
 
 Synchronization
 ---------------

@@ -183,6 +183,11 @@ title = "Cooperative Discipline"
 description = "Scope decomposition methodology — avoid conflicts by construction rather than reconcile them on read."
 sort = 50
 
+[overrides."https://docs.digitalsubstrate.io/commit/commit_collaboration.html"]
+title = "Supervised Reconciliation"
+description = "Reference supervisor — reconstruct, surface and reconcile a conflict after a merge; additive over the public API."
+sort = 60
+
 # ---- Services --------------------------------------------------------
 
 [overrides."https://docs.digitalsubstrate.io/services/services.html"]

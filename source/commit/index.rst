@@ -78,10 +78,10 @@ Four transverse pages complete the chapter:
 * :doc:`Cooperative Discipline <commit_cooperation>` — scope
   decomposition: how to keep concurrent writes inside the disjoint
   envelope, the only region where no intent is silently lost.
-* :doc:`Supervised Reconciliation <commit_collaboration>` — a reference
-  implementation of the collaboration supervisor: identify, surface and
-  reconcile a reconstructed conflict over a merge, additive over the
-  public API.
+* :doc:`Supervised Reconciliation <commit_collaboration>` — the
+  curative counterpart, for when writes could not be kept disjoint: it
+  surfaces post-merge the intent the engine dropped and lets you correct
+  it. It works around that convergence; it does not repair it.
 * :doc:`Database synchronisation <commit_synchronization>` —
   how ``CommitSynchronizer`` replicates the mutation DAG between
   separate ``CommitDatabase`` instances, and what it implies for the

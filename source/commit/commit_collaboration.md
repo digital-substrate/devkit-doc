@@ -68,22 +68,27 @@ a `Document_Update(path, value)` iff `path` resolves to `value`, and so on. A
 conflict is therefore anchored on a **path** (the opcode locus), not on a whole
 document.
 
-## Reconciliation is a survival patch
+## Reconciliation is a survival commit
 
 To make a chosen value survive, the layer authors a follow-up `Mutations`
 commit, child of the merge: it copies `merge_state`, places each decree at its
 path, and diffs the result against `merge_state`. "Accept the merge" yields an
 empty diff, so the merge simply stands and no commit is created.
 
-The construction satisfies a round-trip invariant for every value shape:
+No patch algebra is invented: the layer builds the survival commit with the
+engine's own `diff`, applied by the same deterministic evaluator. The
+round-trip
 
 ```
 apply(merge_state, diff(merge_state, chosen)) == chosen
 ```
 
-It holds by construction, because `diff` is the engine's own authoring
-function replayed by the same evaluator. No patch algebra is invented; the
-layer constructs a patch the deterministic evaluator applies exactly.
+is therefore the diff/apply law itself, not a property the layer proves. What
+the layer *does* guarantee is that this holds for **every** value shape — and
+that guarantee is the coarsening, not the equation: the decree stays
+fine-grained where the container round-trips element by element, and falls
+back to a whole-field `Document_Update` where it would not (see
+[Granularity](#granularity-and-its-ceiling)).
 
 ## Granularity and its ceiling
 
@@ -93,15 +98,15 @@ The decree's reach mirrors the merge's own nature, container by container:
 |-----------------|---------------------------------------------------------|
 | Set / Map       | fine, per element / entry (union, subtract, update)     |
 | Structure       | per field (`Document_Update`, sibling fields preserved) |
-| XArray / Vector | field-scoped `Document_Update` (decretal, whole field)  |
+| XArray / Vector | field-scoped `Document_Update` (whole field)            |
 
 A decree is anchored on the conflict's own `path` — the finest locus the merge
 localised the lost intent to — and the supervisor dictates only the *value*
 that should survive there (`CommitMergeResolution(conflict, chosen)`). `reconcile`
 applies a recursive deep `Document_Update` at that path, so the merge's sibling
 fields and leaves are preserved untouched; the blast radius is bounded to the
-locus, not the whole document. The construction round-trips trivially for every
-value shape. Sequence reordering and element-level XArray merge are out of scope.
+locus, not the whole document. Sequence reordering and element-level XArray
+merge are out of scope.
 
 ## When there is no base
 

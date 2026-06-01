@@ -14,6 +14,7 @@ by functional domain.
    database
    commit
    reconciliation
+   transfer
    blobs
    serialization
    dsm
@@ -41,6 +42,8 @@ Overview
      - Versioned persistence (``CommitDatabase``, ``CommitState``, ``AttachmentMutating``, etc.)
    * - :doc:`reconciliation`
      - Merge reconciliation (``CommitMergeAnalyzer``, ``CommitMergeConflict``, etc.)
+   * - :doc:`transfer`
+     - Database ↔ CommitDatabase transfer (``DatabaseCopier``, ``CommitDatabaseFlattener``, etc.)
    * - :doc:`blobs`
      - Binary data (``BlobArray``, ``BlobPack``, ``BlobLayout``, etc.)
    * - :doc:`serialization`

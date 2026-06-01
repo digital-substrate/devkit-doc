@@ -61,6 +61,11 @@ Choosing the Right Class
      - :class:`DatabaseRemote`
      - Client-server mode
 
+.. seealso::
+
+   To copy a ``Database``, or move content to and from a ``CommitDatabase``,
+   see :doc:`transfer`.
+
 Core Classes
 ------------
 

@@ -308,6 +308,14 @@ fresh target database, then switch readers and writers to the new
 database. The source database is untouched; the target is a new
 append-only history that happens to start where the old one ended.
 
+The `dsviper` binding ships this pattern as a ready-made converter,
+`CommitDatabaseFlattener`: it flattens a chosen commit into a fresh
+single-commit target, keeping only the blobs that commit still references
+and dropping superseded history blobs. The source is left untouched — the
+converter automates the pattern, it does not trim history in place. See
+{doc}`Database Transfer <../dsviper/api/transfer>` for the full transfer
+toolkit.
+
 ```{warning}
 `CommitDatabase.delete_commit()` and `CommitDatabase.reset_commits()`
 (plus the CLI wrapper `commit_admin reset`) are **not features** —

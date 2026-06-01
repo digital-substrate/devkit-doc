@@ -72,6 +72,13 @@ Reconciling a merge — ``CommitMergeAnalyzer`` and friends — is an additive
 supervisor over this API, documented on its own page:
 :doc:`reconciliation`.
 
+Database ↔ CommitDatabase Transfer
+----------------------------------
+
+Moving content between the flat ``Database`` and the versioned
+``CommitDatabase`` — convert, materialize, faithful copy, and flatten — is a
+set of converters documented on its own page: :doc:`transfer`.
+
 Choosing the Right Class
 ------------------------
 

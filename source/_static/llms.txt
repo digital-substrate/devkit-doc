@@ -13,6 +13,7 @@ DevKit is the **distribution** that bundles **DSM** (the modeling language), **K
 - [Value chains](https://docs.digitalsubstrate.io/ecosystem/value-chains.html): How DSM, Kibo, dsviper, components and tools fit together end-to-end.
 - [Pipeline](https://docs.digitalsubstrate.io/ecosystem/pipeline.html): Day-to-day modeling-to-app workflow.
 - [Glossary](https://docs.digitalsubstrate.io/ecosystem/glossary.html): Terms used across the documentation.
+- [Concurrency posture](https://docs.digitalsubstrate.io/ecosystem/concurrency.html): Viper assumes the caller owns synchronization. The core runtime carries no internal locking — concurrency control is provided around it (at the server layer, and for Python at the GIL), never inside it. Same delegation stance as the security posture, on memory rather than the network.
 - [Security posture](https://docs.digitalsubstrate.io/ecosystem/security.html): Viper assumes a trusted network. The runtime carries no authentication, no authorization, and no transport encryption — these are delegated to deployment infrastructure (TLS proxy, firewall, Unix socket permissions).
 
 ## DSM — the modeling language

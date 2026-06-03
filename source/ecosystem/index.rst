@@ -17,3 +17,4 @@ new, start with :doc:`value-chains` — it is the map.
    naming
    glossary
    security
+   concurrency

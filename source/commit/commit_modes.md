@@ -119,8 +119,9 @@ Two flavours, split by what your invariants look like.
 
 - **Local invariant** — its truth depends only on a structurally
   disjoint subset of the data (one attachment, one path, one
-  document, or a commutative container by construction). Two authors
-  writing on disjoint paths cannot break it: the disjointness
+  document, or a container used only where it is commutative — a
+  `set` / `map`, or an `xarray` read as a *set* of elements). Two
+  authors writing on disjoint paths cannot break it: the disjointness
   shields the invariant from convergence.
 - **Strong invariant** (also called *global*) — its truth couples
   data that multiple authors can write in parallel: uniqueness
@@ -142,8 +143,12 @@ cost you nothing in practice. Two routes lead here:
 
 - **Naturally local invariants** — the entire mutable state lives
   in containers whose convergence is commutative by construction
-  (`set`, `map`, `xarray` with union / subtract / UUID positions).
-  There is nothing for the engine to silently break.
+  (`set` / `map` union / subtract), or in an `xarray` read only as a
+  *set* of elements. An `xarray` converges on membership — no insert
+  is lost — but the relative order of concurrently-inserted elements
+  is not commutative, so an order-dependent invariant is *not*
+  naturally local. Where the invariant is membership-only, there is
+  nothing for the engine to silently break.
 - **Defensive-by-design** — cross-attachment references exist and
   may break under convergence, but the application is built from
   day one to tolerate the break: load robustly, surface the

@@ -74,11 +74,15 @@ language provides the levers — none of them new:
   [Attachments](../dsm/attachments.md#recommended-pattern-multiple-attachments).
 - **`set` / `map` / `xarray` containers** for concurrently-edited
   collections — commutative where used **accretively or on disjoint
-  granules**: grow-only `set` union, `xarray` insert (no insert is
-  lost), and writes to non-overlapping keys / paths / positions.
+  granules**: grow-only `set` union and writes to non-overlapping
+  keys / paths / positions. `xarray` insert is **accretive but not
+  commutative**: no concurrent insert is lost, yet the relative order
+  of inserts from different streams is fixed by fusion order, not by
+  their positions — rely on the element set, not on its order.
   Concurrent writes to the *same* element collapse to last-writer-wins,
   silently dropping one value. Prefer `xarray` over `vector` when
-  positions must survive convergence; see
+  concurrent inserts must not be lost — `vector`'s integer indices
+  collide under concurrency; see
   [Vector vs XArray](../dsviper/collections.md#vector-vs-xarray-when-to-use-each).
 - **References that tolerate breakage** — accept that a `key<X>`
   may outlive its target. This is a *whole-application commitment*,

@@ -279,8 +279,11 @@ local computation buffer should use Vector.
 
 ### XArray Basics
 
-`ValueXArray` preserves order during concurrent mutations using UUID positions instead of
-integer indices.
+`ValueXArray` addresses elements by stable UUID positions instead of integer
+indices, so concurrent inserts and removes neither collide nor shift one
+another — no edit is lost. It does **not** make the *order* of concurrently
+inserted elements deterministic: where two streams insert independently, their
+relative order is settled by convergence (fusion order), not preserved.
 
 Create and append. Note that `append()` returns `x.END` — the zero-UUID
 sentinel that means "the end of the array" — not the position of the

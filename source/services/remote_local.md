@@ -111,7 +111,7 @@ CLIENT                                                  SERVER
 
 The structural integrity of the client's authoritative state is
 guaranteed at the protocol level. **Semantic integrity** under
-multi-author convergence is a separate concern of the commit layer —
+multi-author reduction is a separate concern of the commit layer —
 see [Dual-Layer Contract](../commit/commit_contract.md).
 
 **Transport security** — authentication and encryption against a

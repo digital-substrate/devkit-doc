@@ -2,7 +2,7 @@ Merge Reconciliation
 ====================
 
 ``CommitMergeAnalyzer`` is an additive, application-level supervisor over the
-public ``CommitDatabase`` API. The engine converges concurrent streams
+public ``CommitDatabase`` API. The engine reduces concurrent streams
 mechanically and signals no conflict; this layer **reconstructs** a notion of
 conflict *after* a merge and lets a caller make a chosen value survive. It adds
 no engine, storage-format, or runtime change.

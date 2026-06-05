@@ -302,8 +302,8 @@ visible from the Admin menu). Three menu actions drive the workflow:
 - **Sync** — fetch + push in one step.
 
 The shared DAG itself is a property of the `CommitDatabase` — there is no
-separate "merge" step in the application. Convergence is what the commit
-DAG is for.
+separate "merge" step in the application. Deterministic reduction is what
+the commit DAG is for.
 
 ### Embedded Python scripting — DSCodeEditorDialog
 

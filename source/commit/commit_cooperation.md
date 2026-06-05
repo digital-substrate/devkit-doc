@@ -29,7 +29,7 @@ This is the path for multi-stream usage, not a back-stop when the
 ## Not a Commit quirk
 
 The limit is structural, not a peculiarity of this engine. Any system
-that converges automatically without supervision — no human at the
+that merges automatically without supervision — no human at the
 merge, no semantic rule allowed to refuse — faces the same dual-layer
 contract.
 
@@ -40,12 +40,12 @@ contract.
   document means what either author intended.
 - Operational Transformation (Google-Docs-style) needs a central
   server that arbitrates operation order. Remove the server and OT
-  collapses back to mechanical convergence.
+  collapses back to mechanical reduction.
 - Line-based text auto-merge succeeds silently on textually disjoint
   edits even when they are semantically incompatible — the "successful
   merge, broken build" pattern.
 
-Mechanical convergence is the strongest guarantee any unsupervised
+Mechanical reduction is the strongest guarantee any unsupervised
 system can deliver. Richer guarantees require a supervisor. The
 discipline below lets you stay unsupervised by ensuring the engine
 never has anything semantically meaningful to pick between.
@@ -121,7 +121,7 @@ Be honest about the limits of the discipline:
 
 When the scope cannot be cleanly decomposed — when authors genuinely
 need to co-edit the same field, or when strong invariants matter —
-the right answer is not a better convergence algorithm. It is an
+the right answer is not a better reduction algorithm. It is an
 application-level supervisor: a review UI that surfaces clashes for
 human arbitration, a semantic gate that refuses commits, a merge UX
 that asks an operator to pick. That is the supervised regime — the
@@ -139,7 +139,7 @@ reference implementation.
 
 | Regime                     | How divergence resolves                                | Where it lives                                           |
 |----------------------------|--------------------------------------------------------|----------------------------------------------------------|
-| **Mechanical convergence** | Structural linearisation — no notion of conflict       | The engine — the strongest guarantee without supervision |
+| **Deterministic reduction**| Structural linearisation — no notion of conflict       | The engine — the strongest guarantee without supervision |
 | **Cooperation**            | Disjointness by construction — nothing to pick between | This page — application discipline                       |
 | **Collaboration**          | Supervisor arbitrates (human / rule)                   | An application layer you build on top                    |
 
@@ -152,7 +152,7 @@ or becomes load-bearing. Cooperation keeps it on the shelf.
 - [Modes of Use](commit_modes.md) —
   the diagnostic that determines which regime your application is in.
 - [The Dual-Layer Contract](commit_contract.md) — what the engine
-  does and does not guarantee under convergence, and the four import
+  does and does not guarantee under reduction, and the four import
   outcomes that back-stop the discipline.
 - [Attachments — Recommended Pattern](../dsm/attachments.md#recommended-pattern-multiple-attachments) —
   the DSM modelling guidance that operationalises scope decomposition.

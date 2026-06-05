@@ -7,13 +7,13 @@ In every other mode listed in
 reference material. Reach this page from the diagnostic, not before.
 
 The Commit Database produces **structurally sound but semantically
-untrusted output** under convergence. When your invariants are
+untrusted output** under reduction. When your invariants are
 local, application-side re-validation closes the gap. When they are
-strong, re-validation cannot rebuild the intent the convergence
+strong, re-validation cannot rebuild the intent the reduction
 dropped — the contract then describes a gap that must be closed
 *upstream*, by re-architecting toward local invariants (see
 [Cooperative Discipline](commit_cooperation.md)) or by supervising
-convergence with an application layer.
+reduction with an application layer.
 
 The opposition that decides whether this contract is reference
 material or load-bearing — **local vs strong invariants** — is
@@ -21,50 +21,50 @@ defined and elaborated in
 {ref}`Modes of Use <local-vs-strong-invariants>`.
 Re-validating at read time closes the gap for local invariants;
 it does **not** close it for strong invariants, where the intent
-dropped at convergence is not recoverable downstream.
+dropped at reduction is not recoverable downstream.
 
 ## A change of discipline
 
 The contract exists because two layers, governed by opposite
-disciplines, meet at the convergence boundary.
+disciplines, meet at the reduction boundary.
 
 - **dsviper / Viper C++** applies **fail-fast** at the type and
   structural level: malformed values, undefined paths against a known
   schema, references to absent attachments all raise exceptions
   immediately. Nothing is silently coerced.
 - The **Commit Engine**, layered on top, applies **best-effort** at
-  the convergence level: when concurrent streams meet, mutations
+  the reduction level: when concurrent streams meet, mutations
   whose targets have disappeared after divergence are silently
-  dropped to keep the DAG converging without human arbitration.
+  dropped so reduction proceeds without human arbitration.
 
 The two are not contradictory — they govern different operations at
 different moments. But the discipline changes across the boundary,
 and that change is precisely what this contract formalises: the
 application takes back, at read time, the strictness the engine
-relaxes at convergence time.
+relaxes at reduction time.
 
 ### Why the divide exists: complicated vs complex
 
 The boundary is not arbitrary. The engine and the application solve
 two qualitatively different problems:
 
-- **Convergence is *complicated*.** Many moving parts — LWW
+- **Reduction is *complicated*.** Many moving parts — LWW
   arbitration, merge ordering, structural drop rules — but the
   problem is tractable and mechanical: given the same inputs and the
   same merge sequence, the engine always picks the same outcome. It
   is fully solvable in code, once and for all, with no knowledge of
   your domain.
 - **Semantic validation is *complex*.** It is not a more elaborate
-  flavour of convergence. It is emergent, application-specific, and
+  flavour of reduction. It is emergent, application-specific, and
   has no closed-form solution: uniqueness, referential integrity,
   cross-field invariants, domain rules all depend on what your data
   *means*. No engine can solve it generically without becoming your
   application.
 
-The engine stops at convergence not because semantic validation is
+The engine stops at reduction not because semantic validation is
 hard, but because it is *not the engine's problem to solve*. Pushing
 it inside would either require the engine to refuse states (breaking
-unsupervised convergence) or to encode every application's rules
+unsupervised reduction) or to encode every application's rules
 (breaking generality). The contract keeps the complicated part
 mechanical and the complex part where it belongs: at the application
 boundary.
@@ -73,10 +73,10 @@ boundary.
 
 | Layer           | Guarantees                                               |
 |-----------------|----------------------------------------------------------|
-| **Commit**      | Deterministic convergence, DAG consistency, immutability |
+| **Commit**      | Deterministic reduction, DAG consistency, immutability   |
 | **Application** | Re-validates engine output before acting on it           |
 
-When concurrent streams converge, mutations are applied using a **best-effort**
+When concurrent streams are reduced, mutations are applied using a **best-effort**
 algorithm:
 
 - Mutations targeting non-existent documents or unresolved paths are **silently
@@ -86,7 +86,7 @@ algorithm:
   produced.
 
 This is by design. The engine is intentionally agnostic to your domain rules
-and never refuses to converge — it picks a deterministic outcome and moves on.
+and never refuses to reduce — it picks a deterministic outcome and moves on.
 
 ## Reading the State Is an Import, Not a Load
 
@@ -98,7 +98,7 @@ validate at that boundary and then trust the data internally. We call that a
 **load**: a one-shot transfer of confidence from an external source into a
 trusted in-memory representation.
 
-Best-effort convergence breaks that reflex. **The state returned by
+Best-effort reduction breaks that reflex. **The state returned by
 `state(commitId)` is itself a boundary**, even though the data never left the
 process:
 
@@ -116,7 +116,7 @@ Treat reading `state(commitId)` as an **import**, not a load. An import
 acknowledges that the source is structurally well-formed but semantically
 foreign: a strategy must be picked for what to do with parts that violate
 your domain rules. A load offers no such choice — it assumes the data is
-already yours. After best-effort convergence, it is not.
+already yours. After best-effort reduction, it is not.
 
 ## Three Error Families
 
@@ -126,7 +126,7 @@ distinct places, not one:
 | Family                           | Origin                                                  | Detected by                         |
 |----------------------------------|---------------------------------------------------------|-------------------------------------|
 | **Untrusted (external)**         | I/O, deserialization, type mismatch, malformed path     | Engine, fail-fast → `dsviper.Error` |
-| **Untrusted (post-convergence)** | State returned by the Commit Database after convergence | Application, at read time           |
+| **Untrusted (post-reduction)**   | State returned by the Commit Database after reduction   | Application, at read time           |
 | **Invalid (semantic)**           | Business-rule violation on otherwise sound data         | Application, at read time           |
 
 The first family is what `dsviper.Error` covers. The other two are entirely
@@ -139,28 +139,35 @@ read the state, not when you build the mutations**.
 |-------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **DAG Consistency**           | Commits form a valid directed acyclic graph                                                                                                                                                                             |
 | **Immutability**              | Once committed, data cannot be modified                                                                                                                                                                                 |
-| **Deterministic Convergence** | `commitMerge` is a pure function of its ordered inputs — same `(parent, target)` produces the same commit. *Which* order ends up applied across multi-head topologies is an application choice, not an engine property. |
+| **Deterministic Reduction**   | `commitMerge` is a pure function of its ordered inputs — same `(parent, target)` produces the same commit. *Which* order ends up applied across multi-head topologies is an application choice, not an engine property. |
 | **Content-Addressable**       | `CommitId = SHA-1(content)`, tamper-evident                                                                                                                                                                             |
 
 ```{note}
-**Why *convergence*, not *merge*** — a *merge* in version-control
-tools is a reconciliation step that may surface conflicts and ask a
-human to arbitrate. The engine does no such thing: when concurrent
-streams meet, it linearises them by deterministic structural rules,
-never refuses, and never reports a conflict. We call this
-*convergence* to keep the two operations distinct: reproducible, but
-no semantic arbitration has happened.
+**Why *reduction* — not *merge*, not *convergence*.** A *merge* in
+version-control tools is a reconciliation step that may surface
+conflicts and ask a human to arbitrate; the engine does no such thing.
+*Convergence*, in the CRDT sense, names an *order-independent* outcome —
+the same set of updates yields the same state regardless of the order
+they are applied; the engine does not provide that either, because
+`commitMerge` is **non-commutative** (`commitMerge(A, B) ≠
+commitMerge(B, A)`). What the engine actually does is **reduce**
+divergent heads to one by deterministic structural rules: reproducible
+given a fixed order, order-dependent, with no semantic arbitration. We
+reserve *convergence* for the commutative subset — disjoint paths,
+accretive containers (see
+[Cooperative Discipline](commit_cooperation.md)) — where reduction
+genuinely is order-independent. Everywhere else, it is *reduction*.
 ```
 
-## How Convergence Picks a Winner
+## How Reduction Picks a Winner
 
 The mechanics — `commitMerge` and the structural rules
 that pick a value on each overlapping path — are described in
-[Commit Database — How Convergence Picks a Winner](commit_database.md#how-convergence-picks-a-winner).
+[Commit Database — How Reduction Picks a Winner](commit_database.md#how-reduction-picks-a-winner).
 The summary the contract leans on: the outcome is **deterministic
 given a fixed merge sequence**, but its mechanics are *structural*,
 not author- or time-meaningful. Two authors editing the same field
-have no way to predict which value will survive convergence.
+have no way to predict which value will survive reduction.
 
 This is what the contract is telling you: do not rely on a specific
 arbitration outcome. Re-validate at read time.
@@ -172,7 +179,7 @@ arbitration outcome. Re-validate at read time.
 | **Intent Preservation**   | Deterministic arbitration (LWW), not your intent       |
 | **Semantic Validation**   | No business rule checking                              |
 | **Mutation Notification** | No alert when mutations are silently ignored           |
-| **Conflict Detection**    | No notion of conflict — just deterministic convergence |
+| **Conflict Detection**    | No notion of conflict — just deterministic reduction   |
 
 ## Import Outcomes
 
@@ -190,11 +197,11 @@ or human desktop merge — best-effort drops have been applied
 silently, and reading becomes an *import*.
 
 That state answers to no single human intent. Where streams overlap,
-convergence picks by structural rule and can preserve a combination no
+reduction picks by structural rule and can preserve a combination no
 contributor would have written — **its author is the mechanism, not a
 person.** So none of the outcomes below *recovers* a true state; there
 is none to recover. Read them as structural consequences, not degrees
-of developer fault — the failure is mechanical convergence applied
+of developer fault — the failure is a mechanical reduction applied
 where intent had to survive, not the code left coping with the result.
 
 | Outcome              | What the application does   | Resulting state                             |
@@ -213,19 +220,20 @@ invariants:
 - **Extract a subset** — invention by subtraction: to make the
   fragment validate, it deletes the records that carry the violation,
   manufacturing consistency by erasing the evidence of its own
-  inconsistency. It carries *less* than the converged state, not more.
+  inconsistency. It carries *less* than the reduced state, not more.
 - **Correct** — invention by addition, the mirror of Extract: instead
   of deleting the violating record it overwrites it with a fabricated
   value that has no `CommitId`. Once a write builds on it, the
   fabrication enters the DAG as if authored.
 - **Reject** — the only honest answer under strong invariants: it
-  concedes mechanical convergence was the wrong primitive, and pushes
+  concedes mechanical reduction was the wrong primitive, and pushes
   resolution outside the import — human intervention, rollback, or a
   coordination protocol.
 
 **Commit has no notion of conflict** — there is nothing for the
-application to push back into. The engine has already converged;
-whatever the application does with the result lives outside the DAG.
+application to push back into. The engine has already produced the
+reduced state; whatever the application does with the result lives
+outside the DAG.
 
 If you reach for one of these outcomes regularly in code that guards
 strong invariants, that is the diagnostic, not the solution. The
@@ -240,11 +248,11 @@ remain available as defensive fallbacks — no longer load-bearing.
 
 The contract shapes how you should write code on top of `dsviper.Commit*`:
 
-- **Treat the post-convergence state as an import boundary.** It is the
+- **Treat the post-reduction state as an import boundary.** It is the
   symmetric equivalent of deserialized network input: structurally sound,
   semantically unverified.
 - **Do not assume** that every operation you build into a `CommitMutableState`
-  will land. After concurrent streams converge, some operations may have been
+  will land. After concurrent streams are reduced, some operations may have been
   silently dropped because their targets disappeared.
 - **Pick an import outcome explicitly, and name it as such.** Do not
   let it emerge from where you happen to validate. If you find
@@ -276,7 +284,7 @@ upstream of this page:
   `ModelIntegrity` pool exemplifies this — an uncommon
   architectural choice.
 - **Standard application with strong invariants** — re-validation
-  cannot close the loop. The intent dropped at convergence is not
+  cannot close the loop. The intent dropped at reduction is not
   recoverable, and the application was not built to tolerate the
   drop. The contract describes a gap; closing it requires
   re-architecting upstream, not a better outcome downstream.
@@ -285,6 +293,6 @@ upstream of this page:
 
 - [Modes of Use](commit_modes.md) — the diagnostic that determines whether this page applies to you
 - [Cooperative Discipline](commit_cooperation.md) — the modelling exit for applications whose invariants are too strong
-  for mechanical convergence
+  for mechanical reduction
 - [Commit Database](commit_database.md) — using the commit API from Python
 - [Errors](../dsviper/errors.md) — `dsviper.Error` and exception handling

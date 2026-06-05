@@ -12,8 +12,8 @@ one on commit ids, one on blob hashes. Each side copies what the
 other has and it lacks. The resulting DAG and blob pool on each
 side are the union of both — divergent heads included, unchanged.
 
-Sync **does not converge** the resulting heads. That is a separate
-operation (see [Sync vs converge](#sync-vs-converge) below).
+Sync **does not reduce** the resulting heads. That is a separate
+operation (see [Sync vs reduce](#sync-vs-reduce) below).
 
 ---
 
@@ -83,7 +83,7 @@ What sync **does not** do:
 - It never picks a winner between divergent heads. Multiple heads
   resulting from independent writes survive the sync intact, on
   both sides.
-- It never converges or transforms a commit's mutations — the opcode
+- It never reduces or transforms a commit's mutations — the opcode
   payload is stored verbatim. It decodes a Mutations commit's opcodes
   only to collect the blob references it must copy first (step 3).
 
@@ -105,7 +105,7 @@ as the class constants `MODE_FETCH`, `MODE_PUSH`, `MODE_SYNC`.
 
 ---
 
-## Sync vs converge
+## Sync vs reduce
 
 These are **two distinct operations**. Confusing them is the most
 common source of surprise.
@@ -113,7 +113,7 @@ common source of surprise.
 | Operation    | What it does                                                                                                                 | Result                                                                                |
 |--------------|------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|
 | **Sync**     | Copies missing commits across sites. Append-only.                                                                            | Both sides see the union of commits. **Multiple heads may now coexist on each side.** |
-| **Converge** | Calls `commitMerge` on multiple heads to produce a merge commit. Append-only too — the merge is a new commit, not a rewrite. | One head (or fewer than before).                                                      |
+| **Reduce**   | Calls `commitMerge` on multiple heads to produce a merge commit. Append-only too — the merge is a new commit, not a rewrite. | One head (or fewer than before).                                                      |
 
 `CommitSynchronizer::sync()` performs only the first. The second is
 either:
@@ -124,8 +124,8 @@ either:
 - bespoke, via direct `commitMerge` calls in application code.
 
 The split is intentional: a replicated topology may want to
-preserve multiple heads for inspection before converging, or apply
-a domain-specific reduction order. Forcing convergence inside sync
+preserve multiple heads for inspection before reducing, or apply
+a domain-specific reduction order. Forcing reduction inside sync
 would foreclose that choice.
 
 ---
@@ -191,7 +191,7 @@ Once the local state is reconstructed from a head that descends
 from a `commitMerge`, **reading that state is an
 [import](commit_contract.md#reading-the-state-is-an-import-not-a-load)**
 — the same import boundary the contract describes for intra-base
-mechanical convergence. Synchronisation does not weaken the
+mechanical reduction. Synchronisation does not weaken the
 contract; it expands the surface where the contract applies.
 
 ### On Cooperative Discipline
@@ -212,7 +212,7 @@ it pays off.
 |--------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------|
 | [`dsviper.CommitSynchronizer`](../dsviper/api/commit.rst)                | The runtime class. Python API.                                                                  |
 | [`commit_admin sync`](../dsviper-tools/server.md#sync-local-with-remote) | CLI wrapper for one-shot or continuous sync against a remote server.                            |
-| [`commit_admin reduce_heads`](../dsviper-tools/server.md#reduce-heads)   | Converge multiple heads after sync. Separate operation.                                         |
+| [`commit_admin reduce_heads`](../dsviper-tools/server.md#reduce-heads)   | Reduce multiple heads after sync. Separate operation.                                           |
 | [`commit_database_server.py`](../dsviper-tools/server.md)                | Network-exposed CommitDatabase. The remote endpoint of replicated sync.                         |
 | [`cdbe.py`](../commit-apps/cdbe.md)                                      | Example application wiring sync into a Qt UI (connect dialog, threaded synchroniser, live log). |
 

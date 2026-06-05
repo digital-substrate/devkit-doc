@@ -14,7 +14,7 @@ ships inside Viper and reaches Python through `dsviper`.
 
 ## A conflict is reconstructed, not reported
 
-The engine has no notion of conflict. Mechanical convergence linearises
+The engine has no notion of conflict. Mechanical reduction linearises
 streams and collapses overlapping intent by structural rule, signalling
 nothing. A pairwise merge is target-wins and non-commutative; when several
 heads meet, `reduce_heads()` seeds the fold with the most recent head and
@@ -119,7 +119,7 @@ identical.
 
 ## Honest bounds
 
-- **It inherits the engine's convergence; it does not repair it.** The merge
+- **It inherits the engine's reduction; it does not repair it.** The merge
   it reconciles is still hash-ordered and target-wins. This layer makes the
   lost intent observable and correctable — nothing more.
 - **It is *a* supervisor, not *the* supervisor.** Other supervised regimes —

@@ -7,7 +7,7 @@ wrapper over a [Commit Database](commit_database.md), provided by the
 Viper C++ runtime — with its own domain state, dispatch surface, and
 platform notifications, so that all state changes flow through the
 [mutation DAG](commit_database.md) with built-in undo/redo, multi-author
-convergence, and audit trail.
+reduction, and audit trail.
 
 Concrete walkthroughs in different languages and on different
 presentation tiers — `cdbe.py`, [ge-py](../commit-apps/ge-py.md),
@@ -336,7 +336,7 @@ established application patterns:
 | **Observer (Adapter)** | Notifier bridge to the platform UI              |
 
 What's specific is the integration with the Commit Database: persistence,
-history, divergence, and multi-author convergence are intrinsic rather than
+history, divergence, and multi-author reduction are intrinsic rather than
 bolted on.
 
 ## Implementing your own

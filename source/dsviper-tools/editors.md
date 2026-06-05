@@ -73,7 +73,7 @@ cdbe.py supports synchronizing with a remote CommitDatabase server.
 Enable automatic synchronization at configurable intervals:
 
 - **Live Mode**: Auto-sync on timer
-- **Manager Mode**: Auto-converge heads during live sync
+- **Manager Mode**: Auto-reduce heads during live sync
 
 ### Inspecting Commits
 

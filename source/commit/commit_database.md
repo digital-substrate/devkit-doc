@@ -1,14 +1,14 @@
 # Commit Database
 
 The Commit Database is the persistence layer: an immutable mutation
-DAG, transactional, with history and deterministic convergence across
+DAG, transactional, with history and deterministic reduction across
 concurrent streams.
 
 ```{important}
 Before reading the API, identify your **mode of use**. The
 [Modes of Use](commit_modes.md) diagnostic decides whether the
 sections below are reference material or load-bearing for you —
-single-stream readers can ignore convergence-related sections
+single-stream readers can ignore reduction-related sections
 entirely.
 ```
 
@@ -210,9 +210,9 @@ available as constants in the calling namespace.
 
 ---
 
-## How Convergence Picks a Winner
+## How Reduction Picks a Winner
 
-When concurrent streams converge, the engine has to choose a single
+When concurrent streams are reduced, the engine has to choose a single
 outcome for every overlapping path. The choice is deterministic given
 a fixed merge sequence — same inputs, same merges, same result on
 every client — but its mechanics are *structural*, not author- or
@@ -238,7 +238,7 @@ commitMerge in what order*, not on a property of the engine.
 intentional.** Whichever strategy is used, the value that survives is
 a function of how merges were sequenced — not of authorship, recency,
 or semantic priority. Two authors editing the same field have no way
-to predict which value will survive convergence, even within a fixed
+to predict which value will survive reduction, even within a fixed
 strategy.
 
 The implication for the application is treated in the
@@ -354,7 +354,7 @@ engine — it's on the application.
   collide. `update`, `union_in_set`, `update_in_map`, etc. converge
   cleanly on disjoint paths — see [Why Paths Matter](#why-paths-matter).
 - **Re-validate the state when you read it back, not when you build the
-  mutations.** Under best-effort convergence, mutations may have been
+  mutations.** Under best-effort reduction, mutations may have been
   silently dropped and combined states may violate cross-field
   invariants. See
   [The Dual-Layer Contract](commit_contract.md#reading-the-state-is-an-import-not-a-load)

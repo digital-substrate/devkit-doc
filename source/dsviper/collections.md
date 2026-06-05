@@ -271,7 +271,7 @@ dsviper.ViperError: ...expected type 'string|int64', got 'float'...
 
 **Why XArray?** Under concurrent editing, two authors might insert at "index 3"
 simultaneously. With Vector, one insert wins and the other is lost or corrupted. With
-XArray, each element has a UUID position that remains stable across convergence —
+XArray, each element has a UUID position that remains stable across reduction —
 concurrent edits to the *same* element still collapse to last-write-wins.
 
 **Example**: A shared todo list where multiple users add/remove items should use XArray. A
@@ -283,7 +283,7 @@ local computation buffer should use Vector.
 indices, so concurrent inserts and removes neither collide nor shift one
 another — no edit is lost. It does **not** make the *order* of concurrently
 inserted elements deterministic: where two streams insert independently, their
-relative order is settled by convergence (fusion order), not preserved.
+relative order is settled by reduction (fusion order), not preserved.
 
 Create and append. Note that `append()` returns `x.END` — the zero-UUID
 sentinel that means "the end of the array" — not the position of the

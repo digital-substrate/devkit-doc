@@ -105,11 +105,11 @@ True
 ```{note}
 **Scope of this tutorial**
 
-The single-author flow shown here does not exercise the convergence
+The single-author flow shown here does not exercise the reduction
 behavior described in [The Dual-Layer Contract](../commit/commit_contract.md):
 with one author committing in sequence, mutations are never silently dropped
 and no LWW arbitration takes place. The contract becomes load-bearing once
-**multiple authors converge automatically** — see
+**several authors' writes are reduced automatically** — see
 [Modes of Use](../commit/commit_modes.md) for the
 diagnostic and which mode applies to your application.
 ```

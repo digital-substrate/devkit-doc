@@ -31,7 +31,7 @@ sequence of path-based mutations. Its `commitMerge` composes
 mutation sequences; when mutations target the same path,
 deterministic composition rules apply (last-writer-wins by
 fusion order). No conflict is ever surfaced.
-This is what makes mechanical convergence possible — and what makes the
+This is what makes mechanical reduction possible — and what makes the
 [Dual-Layer Contract](commit_contract.md) necessary.
 
 Habits built in snapshot DAGs do not transfer cleanly. Read
@@ -112,7 +112,7 @@ guarantees — there is nothing for the engine to pick between.
 
 ### Multi-stream
 
-Multiple authors converge automatically under mechanical convergence.
+Multiple authors' writes are reduced automatically by mechanical reduction.
 Two flavours, split by what your invariants look like.
 
 (local-vs-strong-invariants)=
@@ -122,7 +122,7 @@ Two flavours, split by what your invariants look like.
   document, or a container used only where it is commutative — a
   `set` / `map`, or an `xarray` read as a *set* of elements). Two
   authors writing on disjoint paths cannot break it: the disjointness
-  shields the invariant from convergence.
+  shields the invariant from reduction.
 - **Strong invariant** (also called *global*) — its truth couples
   data that multiple authors can write in parallel: uniqueness
   across the whole model (no two assets share an SKU), referential
@@ -131,14 +131,14 @@ Two flavours, split by what your invariants look like.
   tolerate silent loss (financial, safety, regulatory).
 
 Re-validating at read time closes the gap for local invariants —
-there was nothing for convergence to break. It does **not** close
+there was nothing for reduction to break. It does **not** close
 the gap for strong invariants: read-side validation can *detect* a
-violation, but cannot *reconstruct* the intent that convergence
+violation, but cannot *reconstruct* the intent that reduction
 dropped. The lost information is not recoverable downstream.
 
 ### Multi-stream with local invariants
 
-Multiple authors converge automatically, but the structural drops
+Multiple authors' writes are reduced automatically, but the structural drops
 cost you nothing in practice. Two routes lead here:
 
 - **Naturally local invariants** — the entire mutable state lives
@@ -150,7 +150,7 @@ cost you nothing in practice. Two routes lead here:
   naturally local. Where the invariant is membership-only, there is
   nothing for the engine to silently break.
 - **Defensive-by-design** — cross-attachment references exist and
-  may break under convergence, but the application is built from
+  may break under reduction, but the application is built from
   day one to tolerate the break: load robustly, surface the
   integrity issue, expose corrective actions to the user. This is
   an uncommon architectural choice — most applications are not
@@ -167,19 +167,19 @@ reference material, not load-bearing.
 
 ### Multi-stream with strong invariants
 
-Multiple authors converge automatically; your invariants are global
+Multiple authors' writes are reduced automatically; your invariants are global
 (uniqueness, referential integrity the engine must uphold), or your
 domain does not tolerate silent loss (financial, safety, regulatory).
 This is where the [Dual-Layer Contract](commit_contract.md) becomes
 load-bearing — and where reading it is a diagnostic, not a cookbook:
-the four post-convergence outcomes (*Ignore / Extract a subset /
+the four post-reduction outcomes (*Ignore / Extract a subset /
 Correct / Reject*) collapse to *Reject*, which is equivalent to
-saying mechanical convergence was the wrong primitive.
+saying mechanical reduction was the wrong primitive.
 
-The exit is not better post-convergence handling. It is
+The exit is not better post-reduction handling. It is
 re-architecting toward **multi-stream with local invariants** via
 scope decomposition (see
 [Cooperative Discipline](commit_cooperation.md)), or building an
 **application-level supervisor** on top of Commit — a review UI, a
 semantic gate, or a coordination protocol that arbitrates *before*
-the engine converges.
+the engine reduces.

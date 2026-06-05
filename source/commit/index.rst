@@ -1,7 +1,7 @@
 Commit
 ======
 
-**Commit** is a deterministic, best-effort convergence engine over an
+**Commit** is a deterministic, best-effort reduction engine over an
 immutable, content-addressed mutation DAG on a
 :doc:`DSM <../dsm/index>` model. For a **single author it is
 lossless** — every read returns exactly what you wrote. For
@@ -39,21 +39,23 @@ Three regimes of multi-author work
 
 Commit provides exactly one of them:
 
-- **Mechanical convergence — what Commit is.** Streams are linearised
+- **Deterministic reduction — what Commit is.** Streams are linearised
   deterministically, with no notion of "conflict": overlapping intent is
   silently collapsed by structural rules (last-writer-wins by
   linearisation order). Nothing is detected, signalled, or reconciled —
   structurally sound, semantically untrusted. The linearisation is
   reproducible only within a fixed merge sequence; which sequence is
   applied when several heads meet is an application strategy, not an
-  engine guarantee.
+  engine guarantee. It is not *convergence* in the CRDT sense: the
+  reduction is non-commutative, so the same heads in a different order
+  can yield a different state.
 - **Cooperation — the safe envelope you engineer.** Disjoint or
   accretive contributions converge with every intent surviving. This is
   the *only* concurrent writing the engine folds without loss, and
   reaching it is a modelling task
   (:doc:`Cooperative Discipline <commit_cooperation>`).
 - **Collaboration — what Commit is not.** Arbitrating overlapping
-  intentions *before* convergence (manual-merge / review) needs a
+  intentions *before* reduction (manual-merge / review) needs a
   supervisor *above* the engine; Commit provides none.
 
 Commit is structured as three layers, from the disk upward:
@@ -81,7 +83,7 @@ Four transverse pages complete the chapter:
 * :doc:`Supervised Reconciliation <commit_collaboration>` — the
   curative counterpart, for when writes could not be kept disjoint: it
   surfaces post-merge the intent the engine dropped and lets you correct
-  it. It works around that convergence; it does not repair it.
+  it. It works around that reduction; it does not repair it.
 * :doc:`Database synchronisation <commit_synchronization>` —
   how ``CommitSynchronizer`` replicates the mutation DAG between
   separate ``CommitDatabase`` instances, and what it implies for the
@@ -103,7 +105,7 @@ Where it sits in the value chain
 Without the Commit Database, ``dsviper`` reads and writes against the plain
 ``Database`` backend — flat key-value, no history. The Commit Database adds
 versioning over the same backend: an immutable mutation DAG with
-deterministic convergence between concurrent streams. A
+deterministic reduction between concurrent streams. A
 :doc:`CommitStore <commit_store>` adds the navigation, dispatch, and
 notifications on top. See :doc:`../ecosystem/value-chains` for the broader
 picture.

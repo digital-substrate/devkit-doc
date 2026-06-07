@@ -100,17 +100,50 @@ trusted in-memory representation.
 
 Best-effort reduction breaks that reflex. **The state returned by
 `state(commitId)` is itself a boundary**, even though the data never left the
-process:
+process. The state is *reconstructed* by replaying the mutations each author
+committed, in linearisation order — and a mutation's grain is the verb that
+produced it, not the whole value the author had in mind. A `set()` replaces the
+**whole document** and supersedes every mutation before it; the
+[path-based mutators](commit_database.md#path-based-mutators) (`update` and the
+container operations) instead accrete, each on its own path. **The result is
+assembled from these mutations, not from the intents behind them.**
 
-- Mutations you submitted may have been silently dropped.
-- Two disjoint updates, each individually consistent, may have produced a
-  combined state that violates a cross-field invariant.
-- LWW may have preserved a value that no submitted commit would have written
-  on its own.
+For the path-based mutators that carry most concurrent work, that assembly
+resolves each shared structure in one of two regimes:
+
+- **Shared path — resolution with loss.** When two heads write the *same*
+  path, the last in linearisation order wins and the rest are discarded. No
+  value is invented: a value you really submitted wins, verbatim; the others
+  are gone, and nothing signals it.
+- **Disjoint paths — recombination without loss.** When two heads write
+  *different* paths of the same structure, both survive: no field value is
+  dropped, and none is fabricated. The recombined structure has no single
+  author — with several writers it cannot — but whether that is *owned* or
+  *invented* depends on what the paths meant.
+
+That distinction is the whole of it. If each writer **owned** the path they
+touched — meant exactly that scope and no more — the union is the collective's
+intent, owned end to end: trustworthy, though no one person wrote the whole. If
+instead `diff` split one author's whole-value intent across those paths, the
+union recombines *fragments* no one meant to stand alone — a structure that
+answers to no author. The two are indistinguishable field by field: with
+nothing lost, every field verbatim, and no invariant broken, per-field
+re-validation cannot tell the owned union from the invented one, because each
+field, alone, is valid. What ownership certifies is not the fields but the
+*combination*.
+
+So name the escalation. *Valid or invalid* is the wrong first question: it
+presumes a true state to measure against. *Untrusted* is the working frame —
+re-validate on read. And where the paths were fragments, the state is
+*invented*: no prior true state exists to recover. Three depths of one gap,
+not synonyms.
 
 Structurally the data is sound — types check, paths resolve, the DAG is
-consistent. **Semantically, you have no guarantee** that the result reflects
-any single coherent intent.
+consistent. **Semantically, the right question is ownership, not unicity**:
+with several writers the state never reflects a *single* intent, so demanding
+that is the wrong bar. The state is trustworthy when every surviving value is
+one author's whole intent over a scope they alone wrote — and an invention when
+any surviving value is a fragment that recombination left standing on its own.
 
 Treat reading `state(commitId)` as an **import**, not a load. An import
 acknowledges that the source is structurally well-formed but semantically

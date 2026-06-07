@@ -234,6 +234,14 @@ different order — or to skip `reduceHeads` entirely and issue their
 own `commitMerge` sequence. The final state depends on *who calls
 commitMerge in what order*, not on a property of the engine.
 
+Within this default, the outcome on an overlapping path is still fully
+determined — a function of the `CommitId` hashes, reproducible on every
+client — but it is not predictable without computing them. One
+consequence is easy to miss: because the seed is folded in first and
+each later `commitMerge` lets `target` overwrite it, the *most recent*
+head is not the one preserved on an overlapping path; the
+highest-`CommitId` head, applied last, is.
+
 **On an overlapping path, the surviving value is structural, not
 intentional.** Whichever strategy is used, the value that survives is
 a function of how merges were sequenced — not of authorship, recency,

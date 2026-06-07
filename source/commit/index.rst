@@ -40,9 +40,12 @@ Three regimes of multi-author work
 Commit provides exactly one of them:
 
 - **Deterministic reduction — what Commit is.** Streams are linearised
-  deterministically, with no notion of "conflict": overlapping intent is
-  silently collapsed by structural rules (last-writer-wins by
-  linearisation order). Nothing is detected, signalled, or reconciled —
+  deterministically, with no notion of "conflict": overlapping intent on a
+  shared path is silently collapsed by structural rules (last-writer-wins by
+  linearisation order), while writes to disjoint paths are recombined. The
+  result is assembled from the mutations submitted, not from whole-value
+  intents, so it may match no whole value any author wrote. Nothing is
+  detected, signalled, or reconciled —
   structurally sound, semantically untrusted. The linearisation is
   reproducible only within a fixed merge sequence; which sequence is
   applied when several heads meet is an application strategy, not an

@@ -55,8 +55,12 @@ never has anything semantically meaningful to pick between.
 If two writers operate on disjoint attachments — or on disjoint paths
 within a shared attachment — convergence has nothing to pick between.
 The result is the union of disjoint mutations, and every submitted
-intent survives intact. Semantic validity becomes a consequence of
-structural disjointness.
+intent survives intact. But survival is not yet trust: disjointness earns it
+only when it **matches ownership** — when each writer's whole intent *is* the
+scope they touch. Then the union is every author's owned intent and nothing is
+invented. Let a scope be a *fragment* of a larger intent and disjointness still
+holds, yet the union answers to no one (see
+[Re-entering the graph](commit_contract.md#re-entering-the-graph)).
 
 The shape of that disjointness is application-specific. This page
 does not prescribe a recipe — what works in one domain may not

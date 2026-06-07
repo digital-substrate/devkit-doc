@@ -277,6 +277,54 @@ via scope decomposition (see
 application-level supervisor. Under local invariants these outcomes
 remain available as defensive fallbacks — no longer load-bearing.
 
+## Re-entering the graph
+
+Reading a state is half the cycle; writing it back is the other half, and
+the verb you write it back with decides what the Commit Database *is* under
+concurrency.
+
+**Writing back with `update` / `diff`.** Path-based write-back keeps the
+per-path behaviour: concurrent authors who touch different paths have their
+edits recombined rather than overwritten. Whether that recombination is a cure
+or an invention turns on **ownership** — does each writer own the scope they
+touch? When the path *is* the unit of intent, every contribution is a whole
+owned intent and the union is trustworthy (the cooperative case). When `diff`
+splits one author's whole-value intent into sub-scopes instead, those fragments
+recombine into a value no one owns alone — and the same minimality carries it
+across the cycle: at input it records a path-scoped operation from a
+whole-value edit, attributing a scope the author need not have meant; at
+reduction it lets the fragments recombine into a structure no author wrote; and
+when a corrected read is written back, it diffs against that reconstructed
+state, so a value derived from it enters the DAG as authored. Path-based
+write-back is the cure under ownership and the cost without it.
+
+**Writing back with `set`.** A whole-document write replaces the document and
+does not recombine. Concurrent writers to the same document are not folded
+together — one whole document survives and the others are dropped. The
+recombination is gone, and with it the appearance that several authors
+collaborated: the Commit Database is then a key-value store with history.
+
+Neither verb is collaboration. `set` gives an honest versioned store where a
+contested document keeps one whole version — which one is a
+[head-reduction strategy](commit_database.md#how-reduction-picks-a-winner)
+choice, not an intent; `update` / `diff` gives recombination — trustworthy when
+each scope is owned, an invention when it is a fragment. The architecture
+decision is which of the two you mean to build — and to make it on purpose, not
+by reaching for whichever verb is nearest.
+
+**Choosing the grain.** Owning a scope is something you *do*, and the lever is
+write granularity. `diff` delegates that to structural difference — it splits
+wherever values differ, recursively down to the leaf — so it can fragment
+fields that form one semantic unit. Only you know which fields are bound: a
+translation vector, a `(min, max)` pair, the components of a quaternion. Write
+each such unit as a single `update` on the unit's path rather than letting
+`diff` pick the grain. The cost is deliberate: two concurrent edits inside one
+unit then collide on a shared path — one whole edit lost — instead of
+recombining into a value neither author wrote. For bound fields that is the
+trade you want: an overt, detectable loss beats a silent invention. `diff` is
+safe only where the leaves already are the atoms; otherwise prefer several
+targeted `update`s — that is how a path becomes a scope someone owns.
+
 ## Implications for `dsviper` Code
 
 The contract shapes how you should write code on top of `dsviper.Commit*`:

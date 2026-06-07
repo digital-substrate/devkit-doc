@@ -167,8 +167,15 @@ After convergence: Both updates apply (disjoint paths)
 
 With `set()`, one user's changes would overwrite the other's.
 
-See [Cooperative Discipline](commit_cooperation.md) for the
-principle and its limits.
+Paths matter here because *name* and *email* are **owned by distinct writers**:
+each means exactly the field they touch, so the union — Alice's name beside
+Bob's email — is the collective intent, owned end to end. The same verbs
+*invent* instead when a path is a **fragment** of a whole-value intent that
+`diff` happened to split — see
+[Re-entering the graph](commit_contract.md#re-entering-the-graph).
+
+See [Cooperative Discipline](commit_cooperation.md) for the principle (scope
+ownership) and its limits.
 
 ---
 

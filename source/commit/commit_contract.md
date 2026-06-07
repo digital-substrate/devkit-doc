@@ -299,6 +299,17 @@ when a corrected read is written back, it diffs against that reconstructed
 state, so a value derived from it enters the DAG as authored. Path-based
 write-back is the cure under ownership and the cost without it.
 
+**The loop compounds.** A read-modify-write application closes the loop: it
+loads a state, edits it, and writes the edit back as the next commit — whose
+state the next load reconstructs. When the load is lossy and the write-back
+diffs against it, each cycle's output is the next cycle's input. Whatever does
+not round-trip is then not lost once but eroded a little more every cycle — a
+drift that is silent (no error), signed (a real authored commit), and cumulative
+on the append-only history, and that no per-cycle check catches because each
+cycle looks locally consistent. A loop you never close — a read, or a one-way
+projection — cannot drift; a loop you do close inherits the round-trip fidelity
+of its weakest stage.
+
 **Writing back with `set`.** A whole-document write replaces the document and
 does not recombine. Concurrent writers to the same document are not folded
 together — one whole document survives and the others are dropped. The

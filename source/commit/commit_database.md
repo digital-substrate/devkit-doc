@@ -249,6 +249,15 @@ each later `commitMerge` lets `target` overwrite it, the *most recent*
 head is not the one preserved on an overlapping path; the
 highest-`CommitId` head, applied last, is.
 
+Because the outcome is set by the merge sequence and not by the engine, **every
+client that reduces heads on a shared database must use the same strategy.** Two
+processes folding the same heads in different orders — one in ascending
+`CommitId`, another in, say, hash-table iteration order — produce different
+states on contested paths, and the shared history stops converging. Fix one
+reduction order for all writers of a shared store; the built-in `reduceHeads()`
+is the obvious choice, and it is transactional, where a hand-rolled fold can
+leave a half-merged DAG if it is interrupted mid-merge.
+
 **On an overlapping path, the surviving value is structural, not
 intentional.** Whichever strategy is used, the value that survives is
 a function of how merges were sequenced — not of authorship, recency,
@@ -363,7 +372,13 @@ engine — it's on the application.
   other modes are safe to use without it.
 - **Capture `commit_id` explicitly.** `commit_mutations()` returns the new
   id; there is no implicit current commit to auto-advance. Chain further
-  mutations and reads from the captured value.
+  mutations and reads from the captured value. **That id is itself state**: if
+  you keep it outside the database — in a scene file, a config, any side-channel
+  the store never sees — it can drift out of sync (one is copied, restored, or
+  reopened without the other). A stale or absent baseline makes the next read
+  either raise or, worse, diff against the wrong commit and emit authored
+  mutations no one made. Store the cursor so it cannot outlive or desync from
+  the database it points into.
 - **Prefer path-based mutators over `set()`** for fields edited
   concurrently. `set()` replaces the whole document, so disjoint edits
   collide. `update`, `union_in_set`, `update_in_map`, etc. converge

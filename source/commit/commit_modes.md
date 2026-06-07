@@ -30,7 +30,7 @@ The Commit Database is a **mutation DAG**: each node contains a
 sequence of path-based mutations. Its `commitMerge` composes
 mutation sequences; when mutations target the same path,
 deterministic composition rules apply (last-writer-wins by
-fusion order). No conflict is ever surfaced.
+linearisation order). No conflict is ever surfaced.
 This is what makes mechanical reduction possible — and what makes the
 [Dual-Layer Contract](commit_contract.md) necessary.
 

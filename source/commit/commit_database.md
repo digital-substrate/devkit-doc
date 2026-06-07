@@ -368,6 +368,9 @@ engine — it's on the application.
   concurrently. `set()` replaces the whole document, so disjoint edits
   collide. `update`, `union_in_set`, `update_in_map`, etc. converge
   cleanly on disjoint paths — see [Why Paths Matter](#why-paths-matter).
+  But match the path to the semantic unit: letting `diff` split a bound
+  value into sub-paths is its own failure mode — see
+  [Re-entering the graph](commit_contract.md#re-entering-the-graph).
 - **Re-validate the state when you read it back, not when you build the
   mutations.** Under best-effort reduction, mutations may have been
   silently dropped and combined states may violate cross-field

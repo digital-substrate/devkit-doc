@@ -121,9 +121,10 @@ resolves each shared structure in one of two regimes:
   author — with several writers it cannot — but whether that is *owned* or
   *invented* depends on what the paths meant.
 
-That distinction is the whole of it. If each writer **owned** the path they
-touched — meant exactly that scope and no more — the union is the collective's
-intent, owned end to end: trustworthy, though no one person wrote the whole. If
+A writer **owns** a scope when their whole intent is exactly that scope — all
+of it, and nothing outside it. That distinction is the whole of it. If each
+writer owned the path they touched, the union is the collective's intent, owned
+end to end: trustworthy, though no one person wrote the whole. If
 instead `diff` split one author's whole-value intent across those paths, the
 union recombines *fragments* no one meant to stand alone — a structure that
 answers to no author. The two are indistinguishable field by field: with

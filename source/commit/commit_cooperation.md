@@ -81,7 +81,7 @@ language provides the levers — none of them new:
   granules**: grow-only `set` union and writes to non-overlapping
   keys / paths / positions. `xarray` insert is **accretive but not
   commutative**: no concurrent insert is lost, yet the relative order
-  of inserts from different streams is fixed by fusion order, not by
+  of inserts from different streams is fixed by linearisation order, not by
   their positions — rely on the element set, not on its order.
   Concurrent writes to the *same* element collapse to last-writer-wins,
   silently dropping one value. Prefer `xarray` over `vector` when

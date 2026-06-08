@@ -67,6 +67,40 @@ _FIXTURE_TUTO = os.path.join(os.path.dirname(__file__), '_fixtures', 'Tuto')
 coverage_modules = ['dsviper']
 coverage_show_missing_items = True
 
+# Workaround for a Sphinx 8.2.3 coverage-builder bug. The "modules specified
+# in coverage_modules but not documented" branch of
+# _determine_py_coverage_modules (sphinx/ext/coverage.py) calls
+# logger.warning() with a positional arg but no `%s` in the message →
+# TypeError in the logging handler: a non-fatal but alarming traceback in
+# every build log. The cross-check it guards is also meaningless here: our API
+# reference is generated with autosummary, which documents objects
+# (dsviper.CommitDatabase, …) without emitting any `py:module` directive, so
+# the builder's seen_modules is always empty and the check always "fails". We
+# keep coverage_modules (it drives the object-level python.txt report we rely
+# on) and reimplement the helper to drop only the seen/specified
+# reconciliation. Remove once the upstream warning is fixed.
+import sphinx.ext.coverage as _sphinx_coverage
+from sphinx.locale import __ as _cov_gettext
+
+
+def _determine_py_coverage_modules(coverage_modules, seen_modules,
+                                   ignored_module_exps, py_undoc):
+    if not coverage_modules:
+        return sorted(seen_modules)
+    modules = set()
+    for mod_name in coverage_modules:
+        try:
+            modules |= _sphinx_coverage._load_modules(mod_name, ignored_module_exps)
+        except ImportError as err:
+            _sphinx_coverage.logger.warning(
+                _cov_gettext('module %s could not be imported: %s'),
+                mod_name, err)
+            py_undoc[mod_name] = {'error': err}
+    return sorted(modules)
+
+
+_sphinx_coverage._determine_py_coverage_modules = _determine_py_coverage_modules
+
 doctest_global_setup = f'''
 from dsviper import *
 _builder = DSMBuilder.assemble({_FIXTURE_TUTO!r})

@@ -10,3 +10,12 @@
 article h1 {
     font-size: 1.8em;
 }
+
+/* Keep the first-column code token (CLI flags like --commit-id, the
+   tool/command/option name) from breaking mid-token. A narrow first column
+   was wrapping "--commit-id" into "--commit-/id". Scoped to the first column
+   on purpose: description-column code keeps wrapping, so long signatures
+   (e.g. CommitMergeAnalyzer.reconcile(...)) are unaffected. */
+article table td:first-child code {
+    white-space: nowrap;
+}

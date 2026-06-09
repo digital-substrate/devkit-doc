@@ -77,6 +77,7 @@ DevKit is the **distribution** that bundles **DSM** (the modeling language), **K
 
 - [Editors](https://docs.digitalsubstrate.io/dsviper-tools/editors.html): Standalone editor applications.
 - [dsm_util](https://docs.digitalsubstrate.io/dsviper-tools/dsm_util.html): CLI utility for DSM model inspection.
+- [Export & Import](https://docs.digitalsubstrate.io/dsviper-tools/export_import.html): Round-trip a database state through an open JSON bundle — portability and backup, no lock-in.
 - [Server](https://docs.digitalsubstrate.io/dsviper-tools/server.html): The dsviper server component.
 - [Widgets](https://docs.digitalsubstrate.io/dsviper-components/widgets.html): Reusable UI widgets over dsviper.
 - [Component architecture](https://docs.digitalsubstrate.io/dsviper-components/architecture.html): How components are structured.

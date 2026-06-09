@@ -59,6 +59,12 @@ Expose the database over the network for multi-client editing:
 
    python3 tools/commit_database_server.py project.cdb
 
+Export a database state to an open JSON bundle (and rebuild from it):
+
+.. code-block:: bash
+
+   python3 tools/database_export.py project.cdb --commit-id last
+
 
 Topics
 ------
@@ -74,6 +80,7 @@ Topics
    :caption: Database Tools
 
    editors
+   export_import
    server
 
 

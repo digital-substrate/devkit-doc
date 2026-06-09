@@ -234,6 +234,11 @@ title = "dsm_util"
 description = "CLI utility for DSM model inspection."
 sort = 20
 
+[overrides."https://docs.digitalsubstrate.io/dsviper-tools/export_import.html"]
+title = "Export & Import"
+description = "Round-trip a database state through an open JSON bundle — portability and backup, no lock-in."
+sort = 25
+
 [overrides."https://docs.digitalsubstrate.io/dsviper-tools/server.html"]
 title = "Server"
 description = "The dsviper server component."

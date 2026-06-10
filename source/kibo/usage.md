@@ -57,7 +57,6 @@ templates = [
     'Database',
     'Attachments', 'AttachmentFunctionPool_Attachments',
     'ValueType', 'ValueCodec', 'ValueHasher',
-    'Fuzz',
     'Test',
 ]
 

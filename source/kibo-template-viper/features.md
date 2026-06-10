@@ -53,9 +53,8 @@ Templates in `templates/cpp/` are organised by theme:
 
 | Feature   | Purpose                                          |
 |-----------|--------------------------------------------------|
-| `Fuzz`    | Random value generation                          |
-| `Test`    | Unit tests for fuzzing, JSON, streaming, storing |
-| `TestApp` | Test application entry points                    |
+| `Test`    | Unit tests for fuzzing, JSON, streaming, storing — including the seedable fuzz harness |
+| `TestApp` | Test application entry points (each accepts `--seed` for reproducible fuzz runs) |
 
 ## Python Templates
 
@@ -100,7 +99,7 @@ templates = [
 ]
 
 # With testing
-templates += ['Fuzz', 'Test', 'TestApp']
+templates += ['Test', 'TestApp']
 ```
 
 For invocation patterns, see [Kibo usage](../kibo/usage.md).

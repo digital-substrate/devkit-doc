@@ -12,9 +12,6 @@ one on commit ids, one on blob hashes. Each side copies what the
 other has and it lacks. The resulting DAG and blob pool on each
 side are the union of both — divergent heads included, unchanged.
 
-Sync **does not reduce** the resulting heads. That is a separate
-operation (see [Sync vs reduce](#sync-vs-reduce) below).
-
 ---
 
 ## Two deployment patterns
@@ -77,15 +74,10 @@ The operation in one pass:
    25 MB) to amortise network round-trips — without packing, a commit
    referencing many small blobs would cost one round-trip per blob.
 
-What sync **does not** do:
-
-- It never rewrites a commit. Append-only is preserved end-to-end.
-- It never picks a winner between divergent heads. Multiple heads
-  resulting from independent writes survive the sync intact, on
-  both sides.
-- It never reduces or transforms a commit's mutations — the opcode
-  payload is stored verbatim. It decodes a Mutations commit's opcodes
-  only to collect the blob references it must copy first (step 3).
+Sync is a **verbatim, append-only copy**: each commit and its opcode
+payload crosses the wire unchanged — it decodes a Mutations commit's opcodes
+only to find the blob references it must copy first (step 3). Both sides end
+with the **union of all commits, every divergent head preserved**.
 
 ---
 
@@ -102,31 +94,6 @@ the two possible directions across that pair (or both, for `Sync`).
 
 Modes are passed as strings to the Python constructor and exposed
 as the class constants `MODE_FETCH`, `MODE_PUSH`, `MODE_SYNC`.
-
----
-
-## Sync vs reduce
-
-These are **two distinct operations**. Confusing them is the most
-common source of surprise.
-
-| Operation    | What it does                                                                                                                 | Result                                                                                |
-|--------------|------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|
-| **Sync**     | Copies missing commits across sites. Append-only.                                                                            | Both sides see the union of commits. **Multiple heads may now coexist on each side.** |
-| **Reduce**   | Calls `commitMerge` on multiple heads to produce a merge commit. Append-only too — the merge is a new commit, not a rewrite. | One head (or fewer than before).                                                      |
-
-`CommitSynchronizer::sync()` performs only the first. The second is
-either:
-
-- automatic, if the application uses a `CommitStore` that calls
-  `reduceHeads()` after sync, or
-- explicit, via `commit_admin reduce_heads` against the database, or
-- bespoke, via direct `commitMerge` calls in application code.
-
-The split is intentional: a replicated topology may want to
-preserve multiple heads for inspection before reducing, or apply
-a domain-specific reduction order. Forcing reduction inside sync
-would foreclose that choice.
 
 ---
 

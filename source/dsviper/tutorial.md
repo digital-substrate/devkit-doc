@@ -93,7 +93,7 @@ Create a Login document:
 Create a mutable state, associate the document with the key, and commit:
 
 ```{doctest}
->>> mutable_state = CommitMutableState(db.initial_state())
+>>> mutable_state = CommitMutableState(CommitStateBuilder.initial_state(db))
 
 >>> mutable_state.attachment_mutating().set(TUTO_A_USER_LOGIN, key, login)
 
@@ -119,7 +119,7 @@ diagnostic and which mode applies to your application.
 Read the document back:
 
 ```{doctest}
->>> state = db.state(commit_id)
+>>> state = CommitStateBuilder.state(db, commit_id)
 >>> result = state.attachment_getting().get(TUTO_A_USER_LOGIN, key)
 >>> result
 Optional({nickname='zoop', password='robust'})
@@ -136,7 +136,7 @@ implicit "current commit" pointer, so chaining commits requires the
 explicit id:
 
 ```{doctest}
->>> mutable_state = CommitMutableState(db.state(commit_id))
+>>> mutable_state = CommitMutableState(CommitStateBuilder.state(db, commit_id))
 >>> mutable_state.attachment_mutating().update(TUTO_A_USER_LOGIN, key, TUTO_P_LOGIN_NICKNAME, "zoopy")
 >>> updated_id = db.commit_mutations("Update Nickname", mutable_state)
 ```
@@ -146,15 +146,15 @@ explicit id:
 Read from different commits:
 
 ```{doctest}
->>> state = db.state(updated_id)
+>>> state = CommitStateBuilder.state(db, updated_id)
 >>> state.attachment_getting().get(TUTO_A_USER_LOGIN, key)
 Optional({nickname='zoopy', password='robust'})
 
->>> state = db.state(commit_id)
+>>> state = CommitStateBuilder.state(db, commit_id)
 >>> state.attachment_getting().get(TUTO_A_USER_LOGIN, key)
 Optional({nickname='zoop', password='robust'})
 
->>> state = db.initial_state()
+>>> state = CommitStateBuilder.initial_state(db)
 >>> state.attachment_getting().get(TUTO_A_USER_LOGIN, key)
 nil
 ```

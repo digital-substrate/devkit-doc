@@ -40,7 +40,7 @@ Open a commit database, write a typed value, commit:
 
 .. code-block:: python
 
-   from dsviper import CommitDatabase, CommitMutableState
+   from dsviper import CommitDatabase, CommitStateBuilder, CommitMutableState
    import model.attachments as ma
 
    db = CommitDatabase.open("model.cdb")
@@ -49,7 +49,7 @@ Open a commit database, write a typed value, commit:
    login = ma.Tuto_Login()
    login.nickname = "alice"
 
-   state = CommitMutableState(db.initial_state())
+   state = CommitMutableState(CommitStateBuilder.initial_state(db))
    ma.tuto_user_login_set(state.attachment_mutating(), key, login)
    db.commit_mutations("Add user", state)
 

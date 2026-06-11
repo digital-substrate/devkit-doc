@@ -9,11 +9,13 @@ core of an interactive application.
 **CommitStore** is the in-memory wrapper that turns a `CommitDatabase`
 into the runtime surface a Commit Application actually uses. It:
 
-* owns a current state (the commit a UI is looking at),
+* reconstructs and owns a current state (the commit a UI is looking at) —
+  via `CommitStateBuilder`,
 * dispatches typed mutations as commits,
 * maintains an undo / redo stack,
 * notifies observers when any of the above changes,
-* exposes DAG navigation (multi-head, merge, forward).
+* navigates the DAG (multi-head, forward) and applies the default head
+  reduction — via `CommitDatabaseHelper`.
 
 This page introduces the four surfaces and points at the
 references for each. For full method signatures, see the

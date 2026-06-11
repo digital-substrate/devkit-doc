@@ -2,24 +2,34 @@ Commit Database
 ===============
 
 The Commit Database provides transactional persistence with history tracking.
+``CommitDatabase`` is the persistence layer; two stateless namespaces operate
+over it, each taking a ``CommitDatabase`` as its first argument:
 
-**When to use**: Use ``CommitDatabase`` for versioned persistence with history,
-divergence, and sync. A ``CommitStore`` wraps an open database to expose
-undo/redo and the dispatch surface for mutations.
+- ``CommitStateBuilder`` — **reconstruct** a ``CommitState`` from a chosen
+  commit: ``state(db, id)``, ``initial_state(db)``.
+- ``CommitDatabaseHelper`` — **reduce heads** and navigate:
+  ``reduce_heads(db, anchor)``, ``forward`` / ``fast_forward``.
+
+(``CommitDatabase`` itself answers topology queries — ``head_commit_ids``,
+``last_commit_id``, ``is_ancestor`` — and holds no "current" state.) A
+``CommitStore`` wraps the persistence layer and both namespaces behind a
+stateful facade (undo/redo, the dispatch surface) for interactive apps. For
+*why* a reconstructed state is a blind replay of the linearized trace, see
+:doc:`/commit/commit_database`.
 
 Quick Start
 -----------
 
 .. code-block:: python
 
-   from dsviper import CommitDatabase, CommitMutableState
+   from dsviper import CommitDatabase, CommitStateBuilder, CommitMutableState
 
    # Open commit database (created with dsm_util.py)
    db = CommitDatabase.open("model.cdb")
    db.definitions().inject()
 
    # Create mutable state from latest commit
-   state = db.state(db.last_commit_id())
+   state = CommitStateBuilder.state(db, db.last_commit_id())
    mutable = CommitMutableState(state)
 
    # Apply mutations via AttachmentMutating interface
@@ -43,7 +53,7 @@ different fields converge automatically.
 
 .. code-block:: python
 
-   from dsviper import CommitDatabase, CommitMutableState, Path
+   from dsviper import CommitDatabase, CommitStateBuilder, CommitMutableState, Path
 
    db = CommitDatabase.open("model.cdb")
    db.definitions().inject()
@@ -52,7 +62,7 @@ different fields converge automatically.
    path_city = Path.from_field("address").field("city").const()
 
    # Create mutable state
-   state = db.state(db.last_commit_id())
+   state = CommitStateBuilder.state(db, db.last_commit_id())
    mutable = CommitMutableState(state)
    mutating = mutable.attachment_mutating()
 
@@ -93,8 +103,11 @@ Choosing the Right Class
      - :class:`CommitDatabase`
      - ``db = CommitDatabase.open(path)``
    * - Read state at specific commit
-     - :class:`CommitState`
-     - ``state = db.state(commit_id)``
+     - :class:`CommitStateBuilder`
+     - ``state = CommitStateBuilder.state(db, commit_id)``
+   * - Reduce divergent heads
+     - :class:`CommitDatabaseHelper`
+     - ``CommitDatabaseHelper.reduce_heads(db)``
    * - Prepare mutations
      - :class:`CommitMutableState`
      - ``mutable = CommitMutableState(state)``
@@ -131,6 +144,7 @@ State Access
 
    dsviper.CommitState
    dsviper.CommitMutableState
+   dsviper.CommitStateBuilder
 
 History & DAG
 -------------
@@ -145,6 +159,7 @@ History & DAG
    dsviper.CommitHeader
    dsviper.CommitData
    dsviper.CommitEvalAction
+   dsviper.CommitDatabaseHelper
 
 Synchronization
 ---------------

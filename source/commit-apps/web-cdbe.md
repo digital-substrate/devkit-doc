@@ -133,7 +133,7 @@ definitions = db.definitions()
 viper_type = definitions.check_type(abstraction_runtime_id)
 type_key = TypeKey(viper_type)
 collected_keys = ValueSet(TypeSet(type_key))
-attachment_getting = db.state(db.last_commit_id()).attachment_getting()
+attachment_getting = CommitStateBuilder.state(db, db.last_commit_id()).attachment_getting()
 
 for attachment in definitions.attachments():
     if attachment.type_key() == type_key:
@@ -152,7 +152,7 @@ rooted at its `ValueKey`:
 
 ```python
 # app.py — documents (excerpt)
-attachment_getting = db.state(db.last_commit_id()).attachment_getting()
+attachment_getting = CommitStateBuilder.state(db, db.last_commit_id()).attachment_getting()
 doc = DocumentNode.create_documents(key, attachment_getting)
 renderer = HtmlDocumentsRenderer(doc, abstraction_runtime_id,
                                  key_namer, attachment_getting)
@@ -219,13 +219,13 @@ db = CommitDatabase.open(FILENAME)
 definitions = db.definitions()
 concept = definitions.check_concept(concept_runtime_id)
 key = ValueKey.create(concept, instance_id)
-attachment_getting = db.state(db.last_commit_id()).attachment_getting()
+attachment_getting = CommitStateBuilder.state(db, db.last_commit_id()).attachment_getting()
 doc = DocumentNode.create_documents(key, attachment_getting)
 
 node = find_node(node_uuid, doc)
 if node:
     value = value_to_python(node, value)
-    state = db.state(db.last_commit_id())
+    state = CommitStateBuilder.state(db, db.last_commit_id())
     mutable_state = CommitMutableState(state)
     mutable_state.attachment_mutating().update(
         node.attachment(), node.key(),

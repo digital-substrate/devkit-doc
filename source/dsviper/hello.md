@@ -8,11 +8,11 @@ that demonstrate the full value chain.
 >>> login = TUTO_A_USER_LOGIN.create_document()
 >>> login.nickname = "alice"
 
->>> mutable = CommitMutableState(db.initial_state())
+>>> mutable = CommitMutableState(CommitStateBuilder.initial_state(db))
 >>> mutable.attachment_mutating().set(TUTO_A_USER_LOGIN, key, login)
 >>> commit_id = db.commit_mutations("Add alice", mutable)
 
->>> db.state(commit_id).attachment_getting().get(TUTO_A_USER_LOGIN, key)
+>>> CommitStateBuilder.state(db, commit_id).attachment_getting().get(TUTO_A_USER_LOGIN, key)
 Optional({nickname='alice', password=''})
 ```
 

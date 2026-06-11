@@ -13,13 +13,13 @@ Quick Start
 
 .. code-block:: python
 
-   from dsviper import CommitDatabase, CommitMutableState
+   from dsviper import CommitDatabase, CommitStateBuilder, CommitMutableState
 
    db = CommitDatabase.open("model.cdb")
    db.definitions().inject()
 
    # Read via AttachmentGetting
-   state = db.state(db.last_commit_id())
+   state = CommitStateBuilder.state(db, db.last_commit_id())
    getting = state.attachment_getting()
    value = getting.get(MYAPP_A_USER, user_key)
 

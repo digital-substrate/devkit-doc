@@ -55,14 +55,14 @@ Real-world pattern for exposing Viper C++ data via REST:
 .. code-block:: python
 
    from flask import Flask, make_response
-   from dsviper import CommitDatabase, Value
+   from dsviper import CommitDatabase, CommitStateBuilder, Value
 
    app = Flask(__name__)
 
    @app.get("/material/<uuid:instance_id>")
    def material_api(instance_id):
        db = CommitDatabase.open("model.cdb")
-       doc = db.state(db.last_commit_id()).attachment_getting().get(
+       doc = CommitStateBuilder.state(db, db.last_commit_id()).attachment_getting().get(
            MYAPP_A_Material, ValueKey.create(MYAPP_C_Material, str(instance_id))
        )
        db.close()

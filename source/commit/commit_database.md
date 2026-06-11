@@ -1,8 +1,41 @@
 # Commit Database
 
-The Commit Database is the persistence layer: an immutable mutation
-DAG, transactional, with history and deterministic reduction across
-concurrent streams.
+The Commit Database is the **persistence layer**: an immutable, append-only
+mutation DAG, transactional, with history. It *stores* mutations; it does not,
+by itself, reduce divergence or reconstruct state. Reconstruction
+(`CommitStateBuilder`) and head reduction (`CommitDatabaseHelper`) are stateless
+namespaces that operate over it — see the {doc}`Commit API <../dsviper/api/commit>`
+for which class owns which call. (The `CommitStore` facade wraps all three for
+interactive apps.)
+
+## The reconstruction pipe
+
+A state is never *stored*; it is **rebuilt on demand** from the trace of
+mutations leading to a commit:
+
+```text
+CommitDatabase (the DAG)
+   │   CommitStateBuilder — prune the DAG, then linearize it
+   ▼
+Linearization — an ordered trace of opcodes (a computation trace);
+   │            Enable/Disable commits mask their targets, and on every
+   │            overlapping path the merge order settles target-wins (LWW)
+   ▼   CommitState — apply the trace opcode by opcode onto the 
+   │                initial state S₀: no interpretation, no conflict
+   ▼                check, no knowledge of the DAG it came from
+CommitState (the reconstructed state at that commit)
+```
+
+This is why a read is a **reconstruction, not a retrieval**: `CommitState`
+replays the linearized computation trace onto the initial state S₀ and
+validates nothing — it applies each opcode without interpreting it. That replay
+is not hidden: {py:class}`CommitStateTrace` exposes the exact trace per
+document, opcode by opcode (each opcode's exception included). The DAG
+topology and the merge order fix what that trace contains (see
+[How Reduction Picks a Winner](#how-reduction-picks-a-winner)); nothing
+downstream re-examines the result. The state you get back is therefore *input
+to re-validate*, not a stored fact — a read is "an import, not a load", the
+[Dual-Layer Contract](commit_contract.md#reading-the-state-is-an-import-not-a-load).
 
 ```{important}
 Before reading the API, identify your **mode of use**. The
@@ -56,7 +89,7 @@ True
 set()
 ```
 
-The `initial_state()` method always works and returns the empty
+`CommitStateBuilder.initial_state(db)` always works and returns the empty
 state. The example uses constants like `TUTO_A_USER_LOGIN` exposed
 by the database's embedded definitions — see
 [Embedded Definitions](#embedded-definitions) below; a one-line
@@ -64,7 +97,7 @@ by the database's embedded definitions — see
 namespace.
 
 ```{doctest}
->>> initial = db.initial_state()
+>>> initial = CommitStateBuilder.initial_state(db)
 >>> len(initial.attachment_getting().keys(TUTO_A_USER_LOGIN))
 0
 ```
@@ -90,7 +123,7 @@ Optional({...})
 Create a mutable state and apply changes:
 
 ```pycon
->>> mutable_state = CommitMutableState(db.state(db.last_commit_id()))
+>>> mutable_state = CommitMutableState(CommitStateBuilder.state(db, db.last_commit_id()))
 >>> mutating = mutable_state.attachment_mutating()
 
 >>> mutating.set(attachment, key, document)
@@ -119,11 +152,11 @@ Add an Alice document and read it back:
 >>> login.nickname = "alice"
 >>> login.password = "secret"
 
->>> mutable = CommitMutableState(db.initial_state())
+>>> mutable = CommitMutableState(CommitStateBuilder.initial_state(db))
 >>> mutable.attachment_mutating().set(TUTO_A_USER_LOGIN, key, login)
 >>> commit_id = db.commit_mutations("Add Alice", mutable)
 
->>> state = db.state(commit_id)
+>>> state = CommitStateBuilder.state(db, commit_id)
 >>> state.attachment_getting().get(TUTO_A_USER_LOGIN, key)
 Optional({nickname='alice', password='secret'})
 ```
@@ -133,8 +166,8 @@ Optional({nickname='alice', password='secret'})
 ## Path-Based Mutators
 
 Instead of replacing entire documents with `set()`, path-based mutators use
-**Paths** to target specific locations. This enables path-based merging when multiple
-users edit concurrently.
+**Paths** to target specific locations. This lets edits to **disjoint** paths
+compose when multiple users write concurrently.
 
 | Mutator            | Target | Operation             |
 |--------------------|--------|-----------------------|
@@ -162,7 +195,7 @@ When two users edit different fields simultaneously:
 User A: update(attachment, key, path_to_name, "Alice")
 User B: update(attachment, key, path_to_email, "bob@example.com")
 
-After convergence: Both updates apply (disjoint paths)
+After reduction: Both updates apply (disjoint paths)
 ```
 
 With `set()`, one user's changes would overwrite the other's.
@@ -196,8 +229,8 @@ The first commit's parent is the zero `ValueCommitId` (no ancestor).
 Navigate history by passing the explicit ids you captured:
 
 ```pycon
->>> state1 = db.state(first_commit_id)
->>> state2 = db.state(latest_commit_id)
+>>> state1 = CommitStateBuilder.state(db, first_commit_id)
+>>> state2 = CommitStateBuilder.state(db, latest_commit_id)
 ```
 
 ---
@@ -225,16 +258,17 @@ a fixed merge sequence — same inputs, same merges, same result on
 every client — but its mechanics are *structural*, not author- or
 time-meaningful.
 
-**The merge primitive.** `commitMerge(parent, target)` creates a
-merge commit. When the resulting state is reconstructed, `target`'s
-mutations are applied *after* `parent`'s — so on every overlapping
-path, the value from `target` survives. This is the only such rule
-the engine itself fixes, and it makes the operation non-commutative:
-`commitMerge(A, B) ≠ commitMerge(B, A)`.
+**The merge primitive.** `commitMerge(parent, target)` only *records* a
+merge commit — the pair `(parent, target)`; it resolves nothing. The ordering
+is realized later, at reconstruction: when `CommitStateBuilder` linearizes the
+DAG, `target`'s mutations land *after* `parent`'s, so `CommitState` replays
+them last and on every overlapping path `target`'s value survives. This is the
+only such rule the engine itself fixes, and it makes the operation
+non-commutative: `commitMerge(A, B) ≠ commitMerge(B, A)`.
 
 **Reducing multiple heads is a strategy, not a guarantee.** The
-built-in `reduceHeads` seeds the running result with the most recent
-head (`lastCommitId()`, by authoring timestamp) and folds the remaining
+built-in `CommitDatabaseHelper.reduceHeads` seeds the running result with the
+most recent head (`lastCommitId()`, by authoring timestamp) and folds the remaining
 heads into it in ascending `CommitId` order, calling `commitMerge` once
 per head with the running result as parent and the head as target. Applications are free to use a
 different order — or to skip `reduceHeads` entirely and issue their
@@ -254,8 +288,9 @@ client that reduces heads on a shared database must use the same strategy.** Two
 processes folding the same heads in different orders — one in ascending
 `CommitId`, another in, say, hash-table iteration order — produce different
 states on contested paths, and the shared history stops converging. Fix one
-reduction order for all writers of a shared store; the built-in `reduceHeads()`
-is the obvious choice, and it is transactional, where a hand-rolled fold can
+reduction order for all writers of a shared store; the built-in
+`CommitDatabaseHelper.reduceHeads()` is the obvious choice, and it is
+transactional, where a hand-rolled fold can
 leave a half-merged DAG if it is interrupted mid-merge.
 
 **On an overlapping path, the surviving value is structural, not
@@ -267,7 +302,7 @@ strategy.
 
 The implication for the application is treated in the
 [Dual-Layer Contract](commit_contract.md#reading-the-state-is-an-import-not-a-load):
-do not rely on a specific arbitration outcome; re-validate at read time.
+do not rely on a specific LWW outcome; re-validate at read time.
 
 ---
 
@@ -299,6 +334,13 @@ prior union. For long-running topologies that grow by accumulation,
 prefer either a tree structure with `set()` replacing the children
 list each commit, or a periodic flatten (see
 [Storage growth](#storage-growth)).
+
+This is not the whole-document `set()` that [Why Paths
+Matter](#why-paths-matter) warns against: here `set()` targets one
+subtree node, so concurrent writers on different nodes stay on disjoint
+paths. Splitting accumulation this way is
+[scope decomposition](commit_cooperation.md) — bounded cost *and*
+composable edits, not a trade between them.
 
 ### Validated scale
 

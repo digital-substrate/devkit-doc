@@ -120,7 +120,7 @@ directly: `ctx.modelGraph.new_vertex(...)` reaches the hand-written
 C++ implementation through the generated pool bridge.
 
 This mirrors what `PythonEditorModel(..., namespace_vars={...})` does
-for the Python profile. The two profiles converge on the same
+for the Python profile. The two profiles expose the same
 scripting surface — `ctx.dispatch("label", ...)` against the store —
 and differ only in whether the business functions are Python (Python
 profile) or C++ fronted by typed pools (C++ profile).
@@ -336,8 +336,8 @@ established application patterns:
 | **Observer (Adapter)** | Notifier bridge to the platform UI              |
 
 What's specific is the integration with the Commit Database: persistence,
-history, divergence, and multi-author reduction are intrinsic rather than
-bolted on.
+history, divergence, and deterministic reduction of divergent heads are
+intrinsic rather than bolted on.
 
 ## Implementing your own
 

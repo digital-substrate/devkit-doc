@@ -17,7 +17,8 @@ ships inside Viper and reaches Python through `dsviper`.
 The engine has no notion of conflict. Mechanical reduction linearises
 streams and collapses overlapping intent by structural rule, signalling
 nothing. A pairwise merge is target-wins and non-commutative; when several
-heads meet, `reduce_heads()` seeds the fold with the most recent head and
+heads meet, `CommitDatabaseHelper.reduce_heads()` seeds the fold with the most
+recent head and
 folds the rest into it in ascending `CommitId` order (their SHA-1 content
 hashes). The resolved state is therefore deterministic, but the determinant is
 the opcode shape, which head is most recent, and the hash ordering of the rest,
@@ -60,7 +61,7 @@ without loss — and a value-level three-way comparison cannot predict which
 case applies. The only authority is `state(merge)`, the result the engine
 actually produced.
 
-So the layer endures the merge, reads `merge_state = db.state(merge)`, and
+So the layer endures the merge, reads `merge_state = CommitStateBuilder.state(db, merge)`, and
 defines lost intent against it: a stream's intent is lost at an opcode's locus
 **iff that opcode's effect is not already present** in `merge_state`. The
 check is per opcode type — a `Set_Union` survived iff its elements are present,

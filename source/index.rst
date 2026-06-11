@@ -13,7 +13,7 @@ dsviper runtime gives you:
 
 .. code-block:: python
 
-   from dsviper import CommitDatabase, CommitMutableState
+   from dsviper import CommitDatabase, CommitStateBuilder, CommitMutableState
    import model.attachments as ma
 
    # Open a commit database
@@ -25,7 +25,7 @@ dsviper runtime gives you:
    login.nickname = "alice"
 
    # Commit the mutation
-   state = CommitMutableState(db.initial_state())
+   state = CommitMutableState(CommitStateBuilder.initial_state(db))
    ma.tuto_user_login_set(state.attachment_mutating(), key, login)
    db.commit_mutations("Add user", state)
 

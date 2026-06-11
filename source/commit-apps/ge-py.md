@@ -85,7 +85,7 @@ the active graph, and the `CommitStore` that drives undo/redo and UI
 notifications. The UI never talks to a `CommitDatabase` directly.
 
 ```python
-from dsviper import CommitStore, CommitDatabase, CommitState, CommitMutableState
+from dsviper import CommitStore, CommitDatabase, CommitStateBuilder, CommitState, CommitMutableState
 from ge import attachments, definitions
 from ge.data import Graph_GraphKey
 from model import graph
@@ -105,9 +105,9 @@ class Context:
 
     def use(self, database: CommitDatabase):
         if not database.commit_ids():
-            self._create_initial_commit(database, database.initial_state())
+            self._create_initial_commit(database, CommitStateBuilder.initial_state(database))
         commit_id = database.last_commit_id()
-        self.store.set_state(database.state(commit_id))
+        self.store.set_state(CommitStateBuilder.state(database, commit_id))
         self.store.set_database(database)
         self.store.notify_database_did_open()
         self.load()

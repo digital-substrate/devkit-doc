@@ -334,11 +334,11 @@ exposes a `Thumbnail` struct with a `blob` field, attached to `User` as
 >>> thumb
 {width=64, height=64, data=blob(5)}
 
->>> ms = CommitMutableState(db.initial_state())
+>>> ms = CommitMutableState(CommitStateBuilder.initial_state(db))
 >>> ms.attachment_mutating().set(TUTO_A_USER_AVATAR, user_key, thumb)
 >>> avatar_commit = db.commit_mutations("Add avatar", ms)
 
->>> db.state(avatar_commit).attachment_getting().get(TUTO_A_USER_AVATAR, user_key)
+>>> CommitStateBuilder.state(db, avatar_commit).attachment_getting().get(TUTO_A_USER_AVATAR, user_key)
 Optional({width=64, height=64, data=blob(5)})
 ```
 
@@ -358,11 +358,11 @@ as `portrait`:
 >>> texture.height = 1024
 >>> texture.pixels = texture_blob_id
 
->>> ms = CommitMutableState(db.state(avatar_commit))
+>>> ms = CommitMutableState(CommitStateBuilder.state(db, avatar_commit))
 >>> ms.attachment_mutating().set(TUTO_A_USER_PORTRAIT, user_key, texture)
 >>> portrait_commit = db.commit_mutations("Add portrait", ms)
 
->>> db.state(portrait_commit).attachment_getting().get(TUTO_A_USER_PORTRAIT, user_key)
+>>> CommitStateBuilder.state(db, portrait_commit).attachment_getting().get(TUTO_A_USER_PORTRAIT, user_key)
 Optional({width=1024, height=1024, pixels=...})
 ```
 

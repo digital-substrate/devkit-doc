@@ -66,10 +66,12 @@ Commit is structured as three layers, from the disk upward:
 * :doc:`Commit Database <commit_database>` — the persistence layer
   itself. An immutable mutation DAG, opened by path, mutated through
   explicit commit ids. No current state, no undo, no notifications.
-* :doc:`CommitStore <commit_store>` — the in-memory wrapper. Holds the
-  current state, dispatches typed mutations as commits, maintains
-  undo / redo, notifies observers through a framework-agnostic
-  protocol. The runtime surface an application actually uses.
+* :doc:`CommitStore <commit_store>` — the in-memory wrapper. Reconstructs
+  and holds the current state (via ``CommitStateBuilder``), dispatches typed
+  mutations as commits, applies the default head reduction on demand (via
+  ``CommitDatabaseHelper``), maintains undo / redo, and notifies observers
+  through a framework-agnostic protocol. The runtime surface an application
+  actually uses.
 * :doc:`Commit Application Model <commit_application_model>` — the
   architectural pattern. An Application Context owns the
   ``CommitStore``, exposes domain state, dispatches user actions, and

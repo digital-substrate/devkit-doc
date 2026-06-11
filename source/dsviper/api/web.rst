@@ -13,7 +13,7 @@ Quick Start
 .. code-block:: python
 
    from flask import Flask, render_template
-   from dsviper import CommitDatabase, DocumentNode, Html, ValueKey
+   from dsviper import CommitDatabase, CommitStateBuilder, DocumentNode, Html, ValueKey
 
    app = Flask(__name__)
 
@@ -24,7 +24,7 @@ Quick Start
 
        # Create key and get document accessor
        key = ValueKey.create(MYAPP_C_Entity, str(instance_id))
-       attachment_getting = db.state(db.last_commit_id()).attachment_getting()
+       attachment_getting = CommitStateBuilder.state(db, db.last_commit_id()).attachment_getting()
 
        # Build document tree for all attachments
        nodes = DocumentNode.create_documents(key, attachment_getting)

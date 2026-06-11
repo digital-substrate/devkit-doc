@@ -11,13 +11,12 @@ than the network.
 The core — type and value system, {term}`definitions`, codecs, and the
 commit machinery — contains no synchronization primitives by design.
 
-| Object class | Built-in guarantee | Caller responsibility |
-|---|---|---|
-| **Immutable** — scalar / leaf values (primitives, `Enumeration`, `Key`, `Void`), content-addressed {term}`commits <commit>`, `Type` / codec flyweights | freely shareable across threads, read-only | none |
-| **`Definitions`** | concurrent reads are safe once fully built | build on one thread; afterwards hold and share as `shared_ptr<Definitions const>`, never mutate it while shared (see below) |
-| **Mutable values** — every non-scalar value: `Vector` / `Map` / `Set`, `Tuple` / `XArray` / `Vec` / `Mat` / `Structure`, `Optional` / `Variant` / `Any` | none | serialize all access yourself, or hand off a `copy()` snapshot. `Optional` / `Variant` / `Any` are mutable too (`wrap` / `clear`) — do not treat them as constant when shared |
-| **{term}`CommitStore`** | none | own one per context; never share an instance across threads |
-| **Server layer** — {term}`Services <Service>`, `commit_database_server` | provides its own concurrency: per-connection isolation, or read-only sharing behind a single-writer mutex | — |
+| Object class                                                                                                                                            | Built-in guarantee                                                                                        | Caller responsibility                                                                                                                                                         |
+|---------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Immutable** — scalar / leaf values (primitives, `Enumeration`, `Key`, `Void`), content-addressed {term}`commits <commit>`, `Type` / codec flyweights  | freely shareable across threads, read-only                                                                | none                                                                                                                                                                          |
+| **`Definitions`**                                                                                                                                       | concurrent reads are safe once fully built                                                                | build on one thread; afterwards hold and share as `shared_ptr<Definitions const>`, never mutate it while shared (see below)                                                   |
+| **Mutable values** — every non-scalar value: `Vector` / `Map` / `Set`, `Tuple` / `XArray` / `Vec` / `Mat` / `Structure`, `Optional` / `Variant` / `Any` | none                                                                                                      | serialize all access yourself, or hand off a `copy()` snapshot. `Optional` / `Variant` / `Any` are mutable too (`wrap` / `clear`) — do not treat them as constant when shared |
+| **Server layer** — {term}`Services <Service>`, `commit_database_server`                                                                                 | provides its own concurrency: per-connection isolation, or read-only sharing behind a single-writer mutex | —                                                                                                                                                                             |
 
 ## The `Definitions` const handle
 

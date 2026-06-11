@@ -27,7 +27,7 @@ remove every domain-specific piece.
 | Layer of the Python profile      | Where in cdbe.py                                                                                 |
 |----------------------------------|--------------------------------------------------------------------------------------------------|
 | 1 — UI Layer                     | `cdbe.py` (`MainWindow` and dialogs)                                                             |
-| 2 — Application Context (facade) | Singletons `CommitStore.instance()` + `DSCommitStoreNotifier.instance()`, hosted by `MainWindow` |
+| 2 — Application Context (facade) | `MainWindow` constructs and owns a `CommitStore`, bound to the `DSCommitStoreNotifier.instance()` convenience singleton |
 | 3 — Business Logic               | **Empty** — no domain, no `model/`                                                               |
 | 4 — Generated Data (Kibo output) | **Empty** — no DSM model, no `ge/`                                                               |
 | 5 — dsviper Runtime              | `CommitStore`, `CommitDatabase`, `CommitSynchronizer`, introspection API                         |
@@ -55,7 +55,7 @@ layers**, because the two domain-bearing layers (3 and 4) are absent:
 │     MainWindow + admin dialogs (all from dsviper-components) │
 ├──────────────────────────────────────────────────────────────┤
 │  2. Application Context (host)                               │
-│     CommitStore.instance() + DSCommitStoreNotifier.instance()│
+│     CommitStore() (owned by MainWindow) + notifier singleton │
 │     — no domain state, no dispatch surface beyond raw store  │
 ├──────────────────────────────────────────────────────────────┤
 │ ─── 3 (Business Logic) and 4 (Generated Data): not used ───  │
@@ -84,21 +84,22 @@ There is no `model/`, no `ge/`, no `components/`. Everything visible
 to the user is either `cdbe.py` itself (≈800 lines of menu / action
 plumbing) or imported from `dsviper_components`.
 
-## The "Application Context" — singletons hosted by MainWindow
+## The "Application Context" — store and notifier hosted by MainWindow
 
 ge-py defines a `Context` class that owns its `CommitStore` and the
 domain state (`graph_key`). cdbe has no domain state, so there is no
 dedicated `Context` class either. Two roles take its place:
 
-* **The runtime singletons** — `CommitStore.instance()` and
-  `DSCommitStoreNotifier.instance()`. They are created once in `main`
-  and bound together:
+* **The store and the notifier** — `MainWindow` constructs its own
+  `CommitStore` and binds it to the `DSCommitStoreNotifier.instance()`
+  convenience singleton. They are wired together once, in
+  `MainWindow.__init__`:
 
   ```python
-  # cdbe.py — main()
-  store    = CommitStore.instance()
-  notifier = DSCommitStoreNotifier.instance()
-  store.set_notifier(CommitStoreNotifying.create(notifier))
+  # cdbe.py — MainWindow.__init__
+  self._store = CommitStore()
+  self._store.set_notifier(
+      CommitStoreNotifying.create(DSCommitStoreNotifier.instance()))
   ```
 
 * **The `MainWindow`** — hosts the central widget and all the admin
@@ -108,8 +109,8 @@ dedicated `Context` class either. Two roles take its place:
   cdbe — minus the domain.
 
 The result: when there is no domain to model, the Application
-Context degenerates into a Qt main window wired to the runtime
-singletons. The pattern is intact; the body shrinks.
+Context degenerates into a Qt main window wired to a `CommitStore` it
+owns and the notifier singleton. The pattern is intact; the body shrinks.
 
 ## The central widget — model-agnostic by construction
 
@@ -120,7 +121,7 @@ setup:
 # cdbe.py — _setup_central_widget
 def _setup_central_widget(self):
     self._documents = DSDocumentsCommitStore()
-    self._documents.set_store(CommitStore.instance())
+    self._documents.set_store(self._store)
     self.setCentralWidget(self._documents)
 ```
 
@@ -153,16 +154,16 @@ Because cdbe has no domain, it never calls business functions. Its
 
 ```python
 # cdbe.py — Commit / Edit actions
-def _forward_triggered(self):       CommitStore.instance().forward()
+def _forward_triggered(self):       self._store.forward()
 
 
-def _merge_heads_triggered(self):   CommitStore.instance().reduce_heads()
+def _merge_heads_triggered(self):   self._store.reduce_heads()
 
 
-def _undo_triggered(self):          CommitStore.instance().undo()
+def _undo_triggered(self):          self._store.undo()
 
 
-def _redo_triggered(self):          CommitStore.instance().redo()
+def _redo_triggered(self):          self._store.redo()
 ```
 
 Domain mutations (editing a field, changing an attachment) come from
@@ -211,7 +212,7 @@ constructed with the running `CommitStore`:
 
 ```python
 # cdbe.py — _setup_dialog (abridged)
-store = CommitStore.instance()
+store = self._store
 self._inspect_dialog = DSInspectDialog()
 self._commits_dialog = DSCommitsDialog(store)
 self._commit_program_dialog = DSCommitProgramDialog(store)
@@ -306,10 +307,9 @@ domain-specific imports needed.
 
 If you read the walkthroughs in order, **cdbe first** shows the
 Commit Application Model **stripped of its domain** — the bare
-skeleton of a Commit application: a Qt main window, the `CommitStore`
-
-+ Notifier singletons, a model-agnostic central widget, and the
-  shared library's admin dialogs. From there:
+skeleton of a Commit application: a Qt main window, a `CommitStore` it
+owns plus the notifier singleton, a model-agnostic central widget, and
+the shared library's admin dialogs. From there:
 
 * [ge-py](ge-py.md) re-introduces the domain — a DSM model, Kibo
   output, business functions in `model/`, and a `Context` class that
@@ -327,7 +327,7 @@ others are what gets added back when the domain is known.
 ## Where to read first
 
 1. `cdbe.py` — `_setup_central_widget` — the model-agnostic widget setup.
-2. `cdbe.py` — `main()` and `_setup_connections` — singletons + notifier wiring.
+2. `cdbe.py` — `MainWindow.__init__` and `_setup_connections` — store construction + notifier wiring.
 3. `cdbe.py` — `_setup_dialog` — the eight shared admin dialogs.
 4. `cdbe.py` — `_live_timer_timeout` and surrounding live-mode code —
    continuous background sync in its simplest form.
@@ -338,7 +338,7 @@ others are what gets added back when the domain is known.
 
 * [Commit Application Model](../commit/commit_application_model.md) — the pattern cdbe instantiates.
 * [dsviper](../dsviper/index.rst) — the runtime exercised through the
-  singleton `CommitStore`.
+  `CommitStore`.
 * [dsviper-components](../dsviper-components/index.rst) — the shared
   widget library that supplies the central widget and every dialog.
 * [dsviper-tools](../dsviper-tools/index.rst) — the package cdbe ships

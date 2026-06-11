@@ -25,3 +25,7 @@ sphinxext-opengraph
 
 # dsviper runtime (required by pyi_signatures extension to extract API type hints)
 dsviper
+
+# numpy — imported by the blobs.md doctests (`make check`); without it the
+# numpy-interop examples fail on a clean environment
+numpy

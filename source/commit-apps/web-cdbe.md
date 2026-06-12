@@ -4,7 +4,7 @@ Flask web application that demonstrates a **generic Commit Database
 Editor** built directly on top of `dsviper`. Pure HTML5, no JavaScript:
 every interaction is a normal browser navigation or a `POST` form.
 
-The canonical generic Commit Database Editor is the Qt Widgets tool
+The generic Commit Database Editor is the Qt Widgets tool
 [`cdbe.py`](../dsviper-tools/editors.md), shipped in `dsviper-tools` —
 that is the full-featured production editor. `web-cdbe` is a derived
 demonstration of the same idea, deliberately reduced to a minimum

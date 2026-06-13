@@ -43,6 +43,9 @@ or an automated policy.
 | **Surface**   | `CommitMergeConflict` (read-only, serialisable)          | `{attachment, key, path, base/ours/theirs/merged}`     |
 | **Reconcile** | `CommitMergeAnalyzer.reconcile(db, merge, [...], label)` | a survival commit, child of the merge                  |
 
+These name the post-merge functions; the same three steps also work before the
+merge commit is written, shown below.
+
 The supervisor reads the conflicts, decides per conflict, and expresses each
 decision as a `CommitMergeResolution`. Accepting the merge requires no
 resolution.
@@ -117,6 +120,27 @@ against. The layer degrades to a 2-way scan (candidates are every key where
 the streams differ) rather than failing; `CommitMergeAnalysis.two_way()`
 reports this mode. Survival is base-free either way, so reconciliation is
 identical.
+
+## Reconciling before the merge exists
+
+The triad above assumes the merge commit is already written. It need not be.
+The anchor is the *computed* merge state, and that state follows from the two
+heads alone — `CommitStateBuilder.merge_state(db, ours, theirs)` — with no
+merge commit persisted. The reconciliation is then identical; only the moment
+the merge commit is written moves. Two faces of one mechanism:
+
+| Face           | Anchor              | Path                                                                                              |
+|----------------|---------------------|---------------------------------------------------------------------------------------------------|
+| **post-merge** | the persisted merge | `analyze_merge(db, merge)` → `reconcile(db, merge, [...], label)`                                  |
+| **pre-merge**  | the two heads       | `analyze_virtual_merge(db, ours, theirs)` → `reconcile_state(merge_state, [...])` → `materialize_merge(db, ours, theirs, [...], merge_label, survival_label)` |
+
+The pre-merge path writes nothing until the last step. `analyze_virtual_merge`
+returns an analysis with no anchor — `CommitMergeAnalysis.merge_commit()` is
+empty — and `reconcile_state` renders the arbitrated result in memory as a
+`CommitMutableState`, so a supervisor can preview every decree and discard it
+with the graph untouched. Only `materialize_merge` commits, writing the merge
+and its survival child together. Detection stays advisory in both faces: it
+directs attention, it does not gate the merge.
 
 ## Honest bounds
 

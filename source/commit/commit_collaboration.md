@@ -52,16 +52,16 @@ returns one `CommitMergeDocument` per `(attachment, key)`, the unit
 `reconcile` operates on; `conflicts()` is the flattened view across all of
 them.
 
-## Why the anchor is post-merge
+## Why the anchor is the computed merge state
 
-The choice cannot be made *before* the merge. The merge result depends on the
+The choice cannot be made from the three-way values alone. The merge result depends on the
 **opcode shape** — an absolute `set` re-baselines the document and is then
 overwritten target-wins, while incremental path-based operations combine
 without loss — and a value-level three-way comparison cannot predict which
-case applies. The only authority is `state(merge)`, the result the engine
-actually produced.
+case applies. The only authority is the **computed merge state**, the result
+the engine's reduction actually produces.
 
-So the layer endures the merge, reads `merge_state = CommitStateBuilder.state(db, merge)`, and
+So the layer anchors on that computed state — `merge_state = CommitStateBuilder.state(db, merge)` — and
 defines lost intent against it: a stream's intent is lost at an opcode's locus
 **iff that opcode's effect is not already present** in `merge_state`. The
 check is per opcode type — a `Set_Union` survived iff its elements are present,

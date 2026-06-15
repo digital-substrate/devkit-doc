@@ -131,25 +131,6 @@ Logging
    dsviper.LoggerReport
    dsviper.LoggerNull
 
-Remote Services
----------------
-
-.. autosummary::
-   :toctree: generated/
-   :nosignatures:
-
-   dsviper.ServiceRemote
-   dsviper.ServiceRemoteFunction
-   dsviper.ServiceRemoteFunctionPool
-   dsviper.ServiceRemoteFunctionPoolFunction
-   dsviper.ServiceRemoteFunctionPoolFunctions
-   dsviper.ServiceRemoteFunctionPools
-   dsviper.ServiceRemoteAttachmentFunction
-   dsviper.ServiceRemoteAttachmentFunctionPool
-   dsviper.ServiceRemoteAttachmentFunctionPoolFunction
-   dsviper.ServiceRemoteAttachmentFunctionPoolFunctions
-   dsviper.ServiceRemoteAttachmentFunctionPools
-
 Utilities
 ---------
 

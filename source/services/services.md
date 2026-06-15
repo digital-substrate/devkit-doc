@@ -274,7 +274,7 @@ transport encryption. See {doc}`../ecosystem/security`.
   `dsviper.ServiceRemoteFunction`,
   `dsviper.ServiceRemoteAttachmentFunction`,
   `dsviper.ServiceRemoteAttachmentFunctionPoolFunction` — the client-side
-  surface (see {doc}`../dsviper/api/index`).
+  surface (see {doc}`../dsviper/api/services`).
 
 ### DSM language
 

@@ -15,6 +15,7 @@ by functional domain.
    commit
    reconciliation
    transfer
+   services
    blobs
    serialization
    dsm
@@ -44,6 +45,8 @@ Overview
      - Merge reconciliation (``CommitMergeAnalyzer``, ``CommitMergeConflict``, etc.)
    * - :doc:`transfer`
      - Database ↔ CommitDatabase transfer (``DatabaseCopier``, ``CommitDatabaseFlattener``, etc.)
+   * - :doc:`services`
+     - Service client surface (``ServiceRemote``, dynamic introspection, typed-proxy entry)
    * - :doc:`blobs`
      - Binary data (``BlobArray``, ``BlobPack``, ``BlobLayout``, etc.)
    * - :doc:`serialization`

@@ -1,12 +1,11 @@
 # Supervised Reconciliation
 
-The {ref}`three regimes <three-regimes>` place *collaboration* — arbitrating
-overlapping intentions, the manual-merge / review model — *above* the engine:
-"Commit provides none". [Cooperative Discipline](commit_cooperation.md#when-a-supervisor-is-required)
-says the same from the other side: when scope cannot be decomposed, "the
-supervisor is yours to build". This page documents one implementation
-of that supervisor: an API that **identifies, surfaces, and reconciles a
-reconstructed conflict** over a merge the engine has already performed.
+When scope cannot be decomposed and a supervisor becomes necessary —
+[Cooperative Discipline](commit_cooperation.md#when-a-supervisor-is-required)
+sets out when — that supervisor is yours to build; the engine provides none.
+This page documents one implementation: an API that **identifies, surfaces,
+and reconciles a reconstructed conflict** over a merge the engine has already
+performed.
 
 It is **additive**: a set of free functions over `CommitDatabase`'s public
 API, with no change to the engine, the storage format, or the runtime. It

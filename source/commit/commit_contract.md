@@ -1,27 +1,17 @@
 # The Dual-Layer Contract
 
 This page is load-bearing only for
-**[Multi-stream with strong invariants](commit_modes.md#multi-stream-with-strong-invariants)**.
-In every other mode listed in
-[Modes of Use](commit_modes.md), what follows is
-reference material. Reach this page from the diagnostic, not before.
+**[Multi-stream with strong invariants](commit_modes.md#multi-stream-with-strong-invariants)**;
+reach it from the {ref}`Modes of Use <local-vs-strong-invariants>`
+diagnostic, not before. In every other mode it is reference.
 
 The Commit Database produces **structurally sound but semantically
-untrusted output** under reduction. When your invariants are
-local, application-side re-validation closes the gap. When they are
-strong, re-validation cannot rebuild the intent the reduction
-dropped — the contract then describes a gap that must be closed
-*upstream*, by re-architecting toward local invariants (see
-[Cooperative Discipline](commit_cooperation.md)) or by supervising
-reduction with an application layer.
-
-The opposition that decides whether this contract is reference
-material or load-bearing — **local vs strong invariants** — is
-defined and elaborated in
-{ref}`Modes of Use <local-vs-strong-invariants>`.
-Re-validating at read time closes the gap for local invariants;
-it does **not** close it for strong invariants, where the intent
-dropped at reduction is not recoverable downstream.
+untrusted output** under reduction. Re-validating at read time closes
+the gap for *local* invariants. For *strong* invariants it cannot — the
+dropped intent is not recoverable downstream, so the gap must be closed
+*upstream*: re-architect toward local invariants (see
+[Cooperative Discipline](commit_cooperation.md)) or supervise reduction
+with an application layer.
 
 ## A change of discipline
 
@@ -45,29 +35,22 @@ relaxes at reduction time.
 
 ### Why the divide exists: complicated vs complex
 
-The boundary is not arbitrary. The engine and the application solve
-two qualitatively different problems:
+The boundary is not arbitrary — the engine and the application solve
+two different kinds of problem:
 
 - **Reduction is *complicated*.** Many moving parts — LWW
-  arbitration, merge ordering, structural drop rules — but the
-  problem is tractable and mechanical: given the same inputs and the
-  same merge sequence, the engine always picks the same outcome. It
-  is fully solvable in code, once and for all, with no knowledge of
-  your domain.
-- **Semantic validation is *complex*.** It is not a more elaborate
-  flavour of reduction. It is emergent, application-specific, and
-  has no closed-form solution: uniqueness, referential integrity,
-  cross-field invariants, domain rules all depend on what your data
-  *means*. No engine can solve it generically without becoming your
+  arbitration, merge ordering, structural drop rules — but mechanical:
+  the same inputs and the same merge sequence always yield the same
+  outcome. Solvable in code once, with no knowledge of your domain.
+- **Semantic validation is *complex*.** Emergent and
+  application-specific, with no closed-form solution: uniqueness,
+  referential integrity, cross-field invariants all depend on what your
+  data *means*. No engine solves it generically without becoming your
   application.
 
-The engine stops at reduction not because semantic validation is
-hard, but because it is *not the engine's problem to solve*. Pushing
-it inside would either require the engine to refuse states (breaking
-unsupervised reduction) or to encode every application's rules
-(breaking generality). The contract keeps the complicated part
-mechanical and the complex part where it belongs: at the application
-boundary.
+So the engine stops at reduction — pushing semantics inside would force
+it either to refuse states (breaking unsupervised reduction) or to
+encode every application's rules (breaking generality).
 
 ## The Contract
 

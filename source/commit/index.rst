@@ -12,25 +12,18 @@ semantically untrusted.
 Start here
 ----------
 
-Most of this chapter is reference material you can skip. The pages you
-need turn on **one question**: can more than one author write to the
-database?
+Most of this chapter is reference you can skip. It turns on **one
+question: can more than one author write to the database?**
 
 - **No — a single author (the common case).** Read
   :doc:`Commit Database <commit_database>`,
   :doc:`CommitStore <commit_store>` and
-  :doc:`Commit Application Model <commit_application_model>`. Skip the
-  rest: with a linear history, every read returns exactly what you
-  wrote.
-- **Yes — several authors writing concurrently.** The engine will
-  silently collapse overlapping intent; your task is to keep writes
-  inside the envelope where that cannot happen, or coordinate above it.
-  Start with the :doc:`Modes of Use <commit_modes>` diagnostic; it tells
-  you which of the remaining pages apply, and how much.
-
-Unsure — or might a second author appear later? The choice is hard to
-reverse once a model is sealed, so read
-:doc:`Modes of Use <commit_modes>` before you settle on single-stream.
+  :doc:`Commit Application Model <commit_application_model>`; skip the
+  rest, since every read returns exactly what you wrote.
+- **Yes, or maybe later.** Start with the
+  :doc:`Modes of Use <commit_modes>` diagnostic — it tells you which
+  remaining pages apply, and how much. The choice is hard to reverse
+  once a model is sealed, so read it before settling on single-stream.
 
 .. _three-regimes:
 

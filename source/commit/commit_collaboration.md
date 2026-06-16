@@ -145,11 +145,11 @@ directs attention, it does not gate the merge.
 ## Honest bounds
 
 - **It inherits the engine's reduction; it does not repair it.** The merge
-  it reconciles is still hash-ordered and target-wins. This layer makes the
-  lost intent observable and correctable — nothing more.
-- **It is *a* supervisor, not *the* supervisor.** Other supervised regimes —
-  a semantic gate that refuses commits, a service that mediates allocation of
-  strong invariants — occupy the same row and are not provided here. See
+  stays hash-ordered and target-wins — this layer only makes the lost intent
+  observable and correctable.
+- **It is *a* supervisor, not *the* supervisor.** Other supervised regimes
+  (a semantic gate that refuses commits, a service mediating strong
+  invariants) are not provided here — see
   [Cooperative Discipline](commit_cooperation.md#when-a-supervisor-is-required).
 - **Intent beyond commit headers is not recoverable.** The layer surfaces
   *that* values collided and *what* each was, never *why* an author wanted it.

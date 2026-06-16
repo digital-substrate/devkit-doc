@@ -34,16 +34,14 @@ merge, no semantic rule allowed to refuse — faces the same dual-layer
 contract.
 
 - CRDTs converge with semantic validity *only* where semantic equals
-  structural: counters, grow-only sets, two-phase sets.
-- Rich-document CRDTs (Automerge, Yjs) guarantee that characters or
-  nodes do not duplicate or vanish, but cannot guarantee the resulting
-  document means what either author intended.
-- Operational Transformation (Google-Docs-style) needs a central
-  server that arbitrates operation order. Remove the server and OT
-  collapses back to mechanical reduction.
-- Line-based text auto-merge succeeds silently on textually disjoint
-  edits even when they are semantically incompatible — the "successful
-  merge, broken build" pattern.
+  structural (counters, grow-only sets); rich-document CRDTs (Automerge,
+  Yjs) keep characters from duplicating or vanishing but cannot
+  guarantee the result means what either author intended.
+- Operational Transformation (Google-Docs-style) needs a central server
+  to arbitrate operation order — remove it and OT collapses back to
+  mechanical reduction; line-based auto-merge shows the same "successful
+  merge, broken build" pattern on textually-disjoint-but-incompatible
+  edits.
 
 Mechanical reduction is the strongest guarantee any unsupervised
 system can deliver. Richer guarantees require a supervisor. The

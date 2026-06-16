@@ -91,11 +91,9 @@ merge happens, but one person owns the resulting state.
 In single-stream every read returns exactly what you wrote. In
 multi-stream every read is an
 [import](commit_contract.md#reading-the-state-is-an-import-not-a-load)
-— a state structurally sound but semantically untrusted, to be
-re-validated at read time. This includes reads of *past* states,
-because that state was itself produced by `commitMerge`. The three
-operations above do not change between the two contexts; what changes
-is the contract around the state they read.
+— including reads of *past* states, since that state too was produced
+by `commitMerge`. The three operations above do not change between the
+two contexts; what changes is the contract around the state they read.
 ```
 
 ---

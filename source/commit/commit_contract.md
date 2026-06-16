@@ -348,22 +348,14 @@ The contract shapes how you should write code on top of `dsviper.Commit*`:
 >
 > — The Dual-Layer Contract
 
-Whether re-validation closes the loop depends on the architecture
-upstream of this page:
-
-- **Naturally local invariants** — nothing for the engine to
-  silently break. Re-validation is unnecessary; the contract is
-  reference material.
-- **Defensive-by-design** — the application is built to tolerate
-  broken integrity (load robustly, surface, expose correction).
-  Re-validation is part of the design. The Graph Editor's
-  `ModelIntegrity` pool exemplifies this — an uncommon
-  architectural choice.
-- **Standard application with strong invariants** — re-validation
-  cannot close the loop. The intent dropped at reduction is not
-  recoverable, and the application was not built to tolerate the
-  drop. The contract describes a gap; closing it requires
-  re-architecting upstream, not a better outcome downstream.
+Whether that re-validation closes the loop is not decided here — it is
+decided by **which mode you are in** ([Modes of Use](commit_modes.md)).
+Under *naturally local* invariants there is nothing for reduction to
+break, so this contract is reference. Under *defensive-by-design* the
+application is built to tolerate the drop, and re-validation is part of
+that design. Under *strong invariants* re-validation can detect the
+violation but cannot rebuild the dropped intent — the gap closes only by
+re-architecting upstream, never by a better outcome downstream.
 
 ## See Also
 

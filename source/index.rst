@@ -62,6 +62,7 @@ Documentation
    kibo/index
    kibo-template-viper/index
    dsviper/index
+   dsviper-node/index
    commit/index
    commit-apps/index
    services/index

@@ -26,6 +26,11 @@ sphinxext-opengraph
 # dsviper runtime (required by pyi_signatures extension to extract API type hints)
 dsviper
 
+# sphinx-js — generates the Node API reference (dsviper-node/api/) from the
+# @digitalsubstrate/dsviper TypeScript declarations via TypeDoc. Needs Node +
+# the root `npm install` (see CLAUDE.md Build Commands).
+sphinx-js
+
 # numpy — imported by the blobs.md doctests (`make check`); without it the
 # numpy-interop examples fail on a clean environment
 numpy

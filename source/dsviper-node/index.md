@@ -97,6 +97,8 @@ docstring to extract, because their Python origins are operator dunders
 (`__eq__`, `__lt__`, `__hash__`) that carry none. Those few are worth a
 hand-written line on the relevant pages.
 
+The full generated reference is in {doc}`api/index`.
+
 ## Topics
 
 ```{toctree}

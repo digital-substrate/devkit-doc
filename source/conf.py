@@ -32,7 +32,23 @@ extensions = [
 	'sphinxext.opengraph',
 	'dsm_lexer',
 	'pyi_signatures',
+	'sphinx_js',
 ]
+
+# --- Node API reference (sphinx-js + TypeDoc) ---------------------------------
+# Mirrors how the Python API reference consumes the installed `dsviper` wheel:
+# the `@digitalsubstrate/dsviper` npm package supplies the TypeScript
+# declarations (`index.d.ts`), which sphinx-js feeds to TypeDoc to generate the
+# `dsviper-node/api/` pages. The package is installed at the repo root via
+# `npm install` (see the root package.json) — required before `make html`, just
+# as `pip install dsviper` is required for the Python reference.
+_REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+_NODE_BINDING = os.path.join(
+	_REPO_ROOT, 'node_modules', '@digitalsubstrate', 'dsviper')
+js_language = 'typescript'
+root_for_relative_js_paths = _NODE_BINDING
+js_source_path = os.path.join(_NODE_BINDING, 'index.d.ts')
+jsdoc_tsconfig_path = os.path.join(_REPO_ROOT, 'tsconfig.typedoc.json')
 
 templates_path = ['_templates']
 exclude_patterns = ['_fixtures']

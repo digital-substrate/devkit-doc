@@ -69,6 +69,7 @@ Documentation
    dsviper-tools/index
    dsviper-components/index
    dsviper/api/index
+   dsviper-node/api/index
    legal/index
 
 

@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "types": ["node"],
+    "lib": ["ES2022"],
+    "noEmit": true,
+    "skipLibCheck": true
+  },
+  "files": ["node_modules/@digitalsubstrate/dsviper/index.d.ts"]
+}

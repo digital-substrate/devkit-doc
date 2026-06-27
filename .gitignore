@@ -7,3 +7,6 @@ tools/__pycache__/
 # Claude Code workspace — local only, not for distribution
 CLAUDE.md
 .claude/
+
+# Node API reference (sphinx-js + TypeDoc) — installed via root package.json
+node_modules/

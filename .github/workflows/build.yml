@@ -33,7 +33,7 @@ jobs:
       # Node powers the Node API reference: during `make html`, sphinx-js runs
       # TypeDoc over the @digitalsubstrate/dsviper TypeScript declarations
       # (see source/conf.py + the root package.json).
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: "20"
           cache: npm

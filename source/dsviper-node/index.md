@@ -108,6 +108,7 @@ The full generated reference is in {doc}`api/index`.
 
 installation
 hello
+tutorial
 types_values
 collections
 structures

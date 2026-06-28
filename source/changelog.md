@@ -97,7 +97,7 @@ Initial release.
 The PyPI wheel (`pip install dsviper`). Its `PATCH` stream is independent of the
 runtime; each release notes the runtime version it ships.
 
-### 1.2.17
+### 1.2.17 — 2026-06-28
 - **Added** — `viper_version()` reports the embedded Viper runtime version,
   distinct from `version()` (the wheel version); the wheel's `PATCH` stream now
   moves independently of the runtime over the shared `1.2` contract.
@@ -114,6 +114,7 @@ runtime; each release notes the runtime version it ships.
 - **Fixed** — packaging: the documentation URL now points at the dsviper landing
   page; the PyPI Quick Start routes through `CommitStateBuilder.initial_state(db)`
   / `state(db, commit_id)`.
+- *Ships runtime 1.2.17.*
 
 ### 1.2.16 — 2026-06-13
 - **Fixed** — memory-safety hardening in the binding (reference-count leaks across

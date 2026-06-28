@@ -70,6 +70,7 @@ Documentation
    dsviper-components/index
    dsviper/api/index
    dsviper-node/api/index
+   changelog
    legal/index
 
 

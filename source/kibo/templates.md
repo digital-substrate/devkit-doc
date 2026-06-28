@@ -39,7 +39,7 @@ for common selections by use case.
 
 * **Use an existing template pack** — for the Viper world, that
   pack is [kibo-template-viper](../kibo-template-viper/index.rst), which
-  ships C++ and Python templates for every layer of the stack.
+  ships C++, Python, and TypeScript templates for every layer of the stack.
 * **Write your own** — Kibo's template format is generic. You can build a
   template targeting any language or runtime. See
   [Template Model Reference](template_model.md) for the type-suffix

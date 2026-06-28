@@ -37,8 +37,10 @@ As with the Python runtime, there are two ways to reach the engine:
   {doc}`../dsviper/serialization`. This path is available today and is what the
   pages in this section cover.
 - **Static TS API** — typed TypeScript packages generated from a DSM model by
-  Kibo (the Node analogue of the Python static path). This path is planned for a
-  later release and is not covered here yet.
+  Kibo, using the `kibo-template-viper` TypeScript templates (the Node analogue
+  of the Python static path). The generated surface is catalogued under
+  {doc}`../kibo-template-viper/features`; this section documents the dynamic API
+  only.
 
 ## Value semantics: Java-like, not Pythonic
 

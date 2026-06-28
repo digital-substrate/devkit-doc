@@ -1,7 +1,7 @@
 # Templated Features
 
 The catalogue of templated features shipped with `kibo-template-viper` —
-what each one does, in C++ and in Python. Use this page to pick the
+what each one does, in C++, Python, and TypeScript. Use this page to pick the
 features you need; pass each to Kibo via the `-t` flag (see the
 [Kibo usage guide](../kibo/usage.md)).
 
@@ -77,6 +77,35 @@ pure Python on top of `dsviper`'s dynamic API.
 | `package/function_pool_remotes`            | Typed remote-call proxies                      |
 | `package/attachment_function_pool_remotes` | Typed remote stateful-call proxies             |
 | `wheel/pyproject.toml`                     | Minimal `pyproject.toml` to build a wheel      |
+
+## TypeScript Templates
+
+Templates in `templates/typescript/`. Emitted as a single npm package —
+**typed TypeScript classes that delegate to the
+`@digitalsubstrate/dsviper` Node binding**. The TypeScript analogue of the
+Python package: the same model-shaped surface and the same Dual Reality
+split, over the Node runtime instead of CPython.
+
+| Feature                                 | Purpose                                          |
+|-----------------------------------------|--------------------------------------------------|
+| `index.ts`                              | Package entry point — re-exports `data`          |
+| `definitions.ts`                        | DSM type definitions                             |
+| `data.ts`                               | Classes for concepts, clubs, enums, structures   |
+| `attachments.ts`                        | Typed attachment proxies (over the Node binding) |
+| `database_attachments.ts`               | Typed database-attachment proxies                |
+| `path.ts`                               | Field path constants                             |
+| `value_type.ts`                         | Dynamic type definitions                         |
+| `function_pool_remotes.ts`              | Typed remote-call clients (over `ServiceRemote`) |
+| `attachment_function_pool_remotes.ts`   | Typed remote stateful-call clients               |
+| `project/package.json`                  | Minimal `package.json` to publish an npm package |
+| `project/tsconfig.json`                 | TypeScript compiler configuration for the package |
+
+```{note}
+Unlike the Python package, the TypeScript surface ships **only the remote**
+function-pool clients. The Node binding reaches function pools over
+`ServiceRemote`, so there is no local (`function_pools` /
+`attachment_function_pools`) variant.
+```
 
 ## Picking a feature set
 

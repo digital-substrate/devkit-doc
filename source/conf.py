@@ -185,6 +185,33 @@ latex_engine = 'xelatex'
 # bundled `makeindex` instead.
 latex_use_xindy = False
 
+# Work around a Sphinx LaTeX-writer crash on JS/TS signatures.
+#
+# LaTeXTranslator sizes `list_is_required_param` from the *top-level* children
+# of a signature's parameter list, but sphinx_js emits JS/TS signatures whose
+# parameter-departure events can outnumber those children. The writer then
+# indexes that list with `param_group_index` past its end and raises
+# IndexError, aborting `make latexpdf` (the HTML writer is unaffected). Pad the
+# list defensively so the index access — and the `param_group_index + 1`
+# look-ahead — stay in range. Surplus groups are treated as optional, which at
+# worst nudges comma placement in the PDF for those signatures; it never
+# touches the HTML / online docs.
+from sphinx.writers.latex import LaTeXTranslator as _LaTeXTranslator
+
+_orig_depart_sig_parameter = _LaTeXTranslator._depart_sig_parameter
+
+
+def _guarded_depart_sig_parameter(self, node):
+    need = self.param_group_index + 2
+    if len(self.list_is_required_param) < need:
+        self.list_is_required_param = list(self.list_is_required_param) + [
+            False
+        ] * (need - len(self.list_is_required_param))
+    return _orig_depart_sig_parameter(self, node)
+
+
+_LaTeXTranslator._depart_sig_parameter = _guarded_depart_sig_parameter
+
 
 # -- Build hooks -------------------------------------------------------------
 

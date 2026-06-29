@@ -195,6 +195,21 @@ Initial release.
 
 The npm package `@digitalsubstrate/dsviper`. See {doc}`dsviper-node/index`.
 
+### 1.2.1 — 2026-06-29
+- **Added** — `ServiceRemote` by-name accessors `functionPoolFunc(poolIdOrName, name)`
+  and `attachmentFunctionPoolFunc(...)` — fetch a single callable remote function
+  directly, without iterating the whole pool.
+- **Added** — restored the macOS Intel (x86_64) prebuilt binary; the package again
+  ships a binary for every Linux / macOS / Windows × x64 / arm64 target.
+- **Fixed** — `Definitions.decode` / `DefinitionsConst.encode` honor the optional
+  `streamCodecInstancing` argument and default to the token-binary stream codec
+  (previously pinned to the plain-binary codec), so a definitions blob round-trips at
+  the default codec — consistent with the Python binding and with default-encoded
+  embedded definitions.
+- **Changed** — package homepage and README point at the dsviper-node documentation
+  page.
+- *Ships runtime 1.2.17.*
+
 ### 1.2.0 — 2026-06-27
 First release — the in-process Node.js binding over the Viper runtime, bound
 roughly 1:1 with the Python surface via N-API.

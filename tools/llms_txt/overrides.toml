@@ -265,3 +265,75 @@ sort = 10
 title = "Third-party notices"
 description = "Embedded BSD-3-Clause / MIT / zlib-style / public-domain components."
 sort = 20
+
+# ---- dsviper — Node binding ------------------------------------------
+# Guide pages first (sort 10–110, mirroring the section toctree); the
+# generated api/ class reference falls after them (default sort), led by
+# its index.
+
+[overrides."https://docs.digitalsubstrate.io/dsviper-node/installation.html"]
+title = "Installation"
+description = "Installing the @digitalsubstrate/dsviper Node binding."
+sort = 10
+
+[overrides."https://docs.digitalsubstrate.io/dsviper-node/hello.html"]
+title = "Hello dsviper"
+description = "Shortest end-to-end use from Node.js: define a schema, write a record, read it back."
+sort = 20
+
+[overrides."https://docs.digitalsubstrate.io/dsviper-node/tutorial.html"]
+title = "Tutorial"
+description = "Eleven-step User/Login walkthrough over an in-memory CommitDatabase from Node."
+sort = 30
+
+[overrides."https://docs.digitalsubstrate.io/dsviper-node/types_values.html"]
+title = "Types and values"
+description = "The runtime type and value system, with Java-like value semantics."
+sort = 40
+
+[overrides."https://docs.digitalsubstrate.io/dsviper-node/collections.html"]
+title = "Collections"
+description = "Vector, set, map and other container values."
+sort = 50
+
+[overrides."https://docs.digitalsubstrate.io/dsviper-node/structures.html"]
+title = "Structures"
+description = "Building and navigating structure values via .at / .set and Path."
+sort = 60
+
+[overrides."https://docs.digitalsubstrate.io/dsviper-node/errors.html"]
+title = "Errors"
+description = "Viper runtime errors surface as a JS Error whose name is 'ViperError'."
+sort = 70
+
+[overrides."https://docs.digitalsubstrate.io/dsviper-node/dsm.html"]
+title = "DSM processing"
+description = "Building runtime definitions in memory and loading DSM files from Node."
+sort = 80
+
+[overrides."https://docs.digitalsubstrate.io/dsviper-node/database.html"]
+title = "Database"
+description = "CommitDatabase lifecycle: create, define, mutate, commit, read; the Path primitive."
+sort = 90
+
+[overrides."https://docs.digitalsubstrate.io/dsviper-node/blobs.html"]
+title = "Blobs"
+description = "Binary value blobs and their base64 round-trips."
+sort = 100
+
+[overrides."https://docs.digitalsubstrate.io/dsviper-node/serialization.html"]
+title = "Serialization"
+description = "Encoding and decoding values across the stream codecs."
+sort = 110
+
+[overrides."https://docs.digitalsubstrate.io/dsviper-node/api/index.html"]
+title = "Node API reference"
+description = "Complete @digitalsubstrate/dsviper class reference, generated from its TypeScript declarations."
+sort = 200
+
+# ---- Release notes ---------------------------------------------------
+
+[overrides."https://docs.digitalsubstrate.io/changelog.html"]
+title = "Release notes"
+description = "Curated changelog for the runtime, the Python wheel and the Node binding across the 1.2.x line."
+sort = 10

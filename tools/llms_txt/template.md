@@ -24,6 +24,10 @@ DevKit is the **distribution** that bundles **DSM** (the modeling language), **K
 
 {{auto:source/dsviper/*.md}}
 
+## dsviper — Node binding
+
+{{auto:source/dsviper-node/*.md}}
+
 ## Commit
 
 {{auto:source/commit/*.md}}
@@ -39,6 +43,10 @@ DevKit is the **distribution** that bundles **DSM** (the modeling language), **K
 ## Tools and components
 
 {{auto:source/dsviper-tools/*.md,source/dsviper-components/*.md}}
+
+## Release notes
+
+{{auto:source/changelog.md}}
 
 ## For LLM agents and RAG pipelines
 

@@ -44,8 +44,10 @@ As with the Python runtime, there are two ways to reach the engine:
 
 ## Value semantics: Java-like, not Pythonic
 
-The Node surface corresponds to the Python type stub **without the function
-pools and without Python's `__dunder__` methods**. Where Python overloads
+The Node surface corresponds to the Python type stub **without the local function
+pools and without Python's `__dunder__` methods**. It does keep the *remote* service
+clients (`ServiceRemote`): a Node back-end consumes function pools over the wire, it
+just doesn't host them. Where Python overloads
 operators, Node exposes **explicit, Java-like methods** — `equals`, `hash`,
 `compare` are the value contract. When porting a Python snippet, translate
 through this table:

@@ -86,6 +86,11 @@ Templates in `templates/typescript/`. Emitted as a single npm package —
 Python package: the same model-shaped surface and the same Dual Reality
 split, over the Node runtime instead of CPython.
 
+One difference from the Python pack: a Node back-end consumes services as a
+remote client only, so the TypeScript surface ships the remote function-pool
+clients (`function_pool_remotes.ts`, `attachment_function_pool_remotes.ts`)
+but not the local pools (`function_pools`, `attachment_function_pools`).
+
 | Feature                                 | Purpose                                          |
 |-----------------------------------------|--------------------------------------------------|
 | `index.ts`                              | Package entry point — re-exports `data`          |

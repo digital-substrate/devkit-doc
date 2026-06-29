@@ -8,6 +8,6 @@
     "@types/node": "^26.0.0"
   },
   "dependencies": {
-    "@digitalsubstrate/dsviper": "^1.2.0"
+    "@digitalsubstrate/dsviper": "^1.2.1"
   }
 }

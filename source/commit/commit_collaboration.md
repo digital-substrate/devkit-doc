@@ -141,6 +141,46 @@ with the graph untouched. Only `materialize_merge` commits, writing the merge
 and its survival child together. Detection stays advisory in both faces: it
 directs attention, it does not gate the merge.
 
+## Why the pre-merge face is load-bearing
+
+The two faces are not conveniences of equal weight. On an append-only DAG
+nothing is ever un-written: once the merge and its survival child are
+materialised, a reconciliation you come to regret cannot be removed, only
+**compensated** — a revert, a fresh survival that re-decrees, stacked on top.
+The state you now call wrong stayed momentarily real and reachable; another
+head may have branched from it, and the history keeps the hesitation. There is
+no `delete_commit` to reach for — it is a live-demo trick, not a feature (see
+[Storage growth](commit_database.md#storage-growth)). Immutability splits
+"undo" into two different acts, and only the pre-merge face reaches the cheap
+one:
+
+- **abort** (virtual) — the arbitrated result lives only in memory as a
+  `CommitMutableState`; discarding it costs nothing and leaves no trace, the
+  graph untouched.
+- **compensate** (post-merge) — the merge is written, so the correction is
+  another commit, and the wrong state stays forever visible and reachable in
+  the DAG.
+
+The virtual merge moves the decision point in front of the irreversible write.
+That is what lets a supervisor *deliberate*: they may explore a whole
+reconciliation and decide against it without engraving the attempt. Without
+this face, every "let me see what this reconciliation would produce" becomes a
+commit, and the DAG records the supervisor's drafts rather than their
+decisions. `materialize_merge` is the line between the two — deliberation stays
+in memory, only the decision is graved.
+
+Two bounds keep the gate honest:
+
+- **It is a session abort, before publication — not a distributed undo.** The
+  window closes at `materialize_merge`, the publication frontier. Once the
+  merge is materialised and shared, everyone who can already see it is back in
+  the compensate-only regime.
+- **It discards the resolution attempt, not the divergence.** The two heads
+  still diverge; throwing the virtual merge away returns you to the unresolved
+  conflict — which, being [reconstructed on
+  demand](#a-conflict-is-reconstructed-not-reported), is still there, ready for
+  another attempt.
+
 ## Honest bounds
 
 - **It inherits the engine's reduction; it does not repair it.** The merge

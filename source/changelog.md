@@ -195,6 +195,27 @@ Initial release.
 
 The npm package `@digitalsubstrate/dsviper`. See {doc}`dsviper-node/index`.
 
+### 1.2.2 — 2026-06-30
+- **Added** — `hashKey()` on every value type: a 128-bit `bigint` value-identity key
+  usable directly in a JS `Map` / `Set` / `Map.groupBy` (which key by identity and call
+  no custom hash/equals). It folds the value's type into the hash, so width variants
+  (`Int8(1)` / `Int16(1)` / `Int64(1)`) and empty typed containers stay distinct where the
+  raw `hash()` is type-blind. It is a hash — collisions are possible.
+- **Added** — `[Symbol.dispose]` / `using`: resource handles (`Database`, `CommitDatabase`,
+  `CommitStore`, `ServiceRemote`, file streams) release deterministically at scope exit — the
+  JS analogue of the Python binding's refcount finalization (guarded on engines without
+  `Symbol.dispose`).
+- **Added** — recursive `Value.deduce`: the `any` input bridge now deduces nested natives
+  (Array → `Vector`, Set → `ValueSet`, Map → `ValueMap`, object → `Map<string, …>`, plus
+  scalars / `Blob` / `Void`), inferring a heterogeneous element type as `Variant`.
+- **Fixed** — `compare()` / `equals()` expose the runtime's total, trans-type order instead of
+  pre-decoding the operand to the receiver's exact type and throwing on a mismatch:
+  `compare(other)` orders any two values (a heterogeneous collection sorts deterministically),
+  `equals(other)` is total (false across types, never raises).
+- **Changed** — type declarations (`index.d.ts`) clarify `dumps` depth and the encoded vs.
+  deep-projection regimes.
+- *Ships runtime 1.2.17.*
+
 ### 1.2.1 — 2026-06-29
 - **Added** — `ServiceRemote` by-name accessors `functionPoolFunc(poolIdOrName, name)`
   and `attachmentFunctionPoolFunc(...)` — fetch a single callable remote function

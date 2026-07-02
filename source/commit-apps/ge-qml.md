@@ -20,7 +20,7 @@ for Qt Quick:
 |------------|-------------------------------------------|-------------------------------------------------------|
 | DSM model  | DSM definitions of the Graph              | [DSM](../dsm/index.rst)                               |
 | Code-gen   | `graph_editor/ge/` package (Kibo output)  | [Kibo](../kibo/index.rst)                             |
-| Runtime    | `dsviper.CommitStore` usage               | [dsviper](../dsviper/index.rst)                       |
+| Runtime    | `dsviper.CommitStore` usage               | [dsviper](../dsviper-python/index.rst)                       |
 | Shared QML | `dsviper_components_qml/` (vendored copy) | [dsviper-components](../dsviper-components/index.rst) |
 
 The interesting comparison with ge-py is what changes — and what doesn't —
@@ -418,7 +418,7 @@ their own — is walked through in [cdbe](cdbe.md).
 
 * [DSM](../dsm/index.rst) — the language ge-qml's data model is written in.
 * [Kibo](../kibo/index.rst) — the generator that produces `ge/`.
-* [dsviper](../dsviper/index.rst) — the runtime exercised through
+* [dsviper](../dsviper-python/index.rst) — the runtime exercised through
   `Context.store`.
 * [dsviper-components](../dsviper-components/index.rst) — the shared
   widget / QML library the UI is built on.

@@ -4,7 +4,7 @@ PySide6 desktop application that opens **any** commit database — no
 domain, no Kibo output, no business logic. Built almost entirely by
 composing widgets from
 [`dsviper-components`](../dsviper-components/index.rst), driven by the
-runtime introspection API of [`dsviper`](../dsviper/index.rst). Ships
+runtime introspection API of [`dsviper`](../dsviper-python/index.rst). Ships
 inside [`dsviper-tools`](../dsviper-tools/index.rst) as the working
 tool the DevKit uses to inspect, mutate, and synchronise commit
 databases.
@@ -337,7 +337,7 @@ others are what gets added back when the domain is known.
 ## Reference
 
 * [Commit Application Model](../commit/commit_application_model.md) — the pattern cdbe instantiates.
-* [dsviper](../dsviper/index.rst) — the runtime exercised through the
+* [dsviper](../dsviper-python/index.rst) — the runtime exercised through the
   `CommitStore`.
 * [dsviper-components](../dsviper-components/index.rst) — the shared
   widget library that supplies the central widget and every dialog.

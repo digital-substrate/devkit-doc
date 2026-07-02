@@ -112,7 +112,7 @@ try {
 
 See also the {doc}`serialization guide <../serialization>`, the
 {doc}`blobs reference <blobs>` for `ValueBlob`, and the equivalent
-{doc}`Python serialization reference <../../dsviper/api/serialization>`.
+{doc}`Python serialization reference <../../dsviper-python/api/serialization>`.
 
 Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d.ts`) by TypeDoc.
 

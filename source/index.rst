@@ -61,14 +61,14 @@ Documentation
    dsm/index
    kibo/index
    kibo-template-viper/index
-   dsviper/index
+   dsviper-python/index
    dsviper-node/index
    commit/index
    commit-apps/index
    services/index
    dsviper-tools/index
    dsviper-components/index
-   dsviper/api/index
+   dsviper-python/api/index
    dsviper-node/api/index
    changelog
    legal/index

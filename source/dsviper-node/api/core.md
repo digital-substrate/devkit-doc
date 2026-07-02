@@ -65,7 +65,7 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 | {js:class}`NameSpace` | Group registered types under a UUID | `new NameSpace(uuid, 'App')` |
 | {js:class}`Definitions` | Register custom DSM types | `new Definitions()` |
 
-The mirror of this page for the Python binding is {doc}`../../dsviper/api/core`.
+The mirror of this page for the Python binding is {doc}`../../dsviper-python/api/core`.
 
 ## Summary
 

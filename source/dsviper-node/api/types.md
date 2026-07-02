@@ -53,7 +53,7 @@ v.encoded();                                  // "hi"
 | Concurrent list | {js:class}`TypeXArray` | `new TypeXArray(Type.STRING)` |
 | Fixed-size tuple | {js:class}`TypeTuple` | `new TypeTuple([Type.INT64, Type.STRING])` |
 
-The mirror of this page for the Python binding is {doc}`../../dsviper/api/types`;
+The mirror of this page for the Python binding is {doc}`../../dsviper-python/api/types`;
 for a narrative walkthrough of types and values together, see
 {doc}`../types_values`.
 

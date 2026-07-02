@@ -69,7 +69,7 @@ a file first with `Database.isCompatible(path)`. A failed operation (opening a
 missing file, writing through a read-only handle, using a closed database)
 throws a JS `Error` whose `.name === 'ViperError'`.
 
-For the same API in Python, see {doc}`../../dsviper/api/database`.
+For the same API in Python, see {doc}`../../dsviper-python/api/database`.
 
 Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d.ts`) by TypeDoc.
 

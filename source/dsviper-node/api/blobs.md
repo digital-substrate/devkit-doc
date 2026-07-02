@@ -81,7 +81,7 @@ The full database blob surface — `createBlob`, `createBlobFromBuffer`,
 `blobIds`, `blob`, `readBlob`, `blobInfo`, `blobInfos`, `blobStatistics`, and
 the `blobStreamCreate`/`blobStreamAppend`/`blobStreamClose` streaming API — is
 documented on {doc}`database`. The Python counterpart of this page is
-{doc}`../../dsviper/api/blobs`.
+{doc}`../../dsviper-python/api/blobs`.
 {/tip}
 
 Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d.ts`) by TypeDoc.

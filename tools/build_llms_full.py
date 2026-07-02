@@ -18,7 +18,7 @@ marker so an LLM can cite precise sources while keeping the document
 valid Markdown.
 
 Excluded from inlining:
-  - dsviper/api/generated/*  — autosummary stubs (noisy reference)
+  - dsviper-python/api/generated/*  — autosummary stubs (noisy reference)
   - source/legal/*           — license/notice text (not useful for Q&A)
 
 Usage:
@@ -67,7 +67,7 @@ _EXCLUDED_PREFIXES = (
     "source/legal/",
 )
 _EXCLUDED_SUBSTRINGS = (
-    "dsviper/api/generated/",
+    "dsviper-python/api/generated/",
 )
 
 

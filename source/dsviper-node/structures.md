@@ -3,7 +3,7 @@
 Structures (named-field records) and enumerations are user-defined types that
 must be registered with `Definitions` before use. This chapter covers creating
 and working with both from Node. The Python equivalent is
-{doc}`../dsviper/structures`; the type system is identical — only the idiom
+{doc}`../dsviper-python/structures`; the type system is identical — only the idiom
 differs. The one real difference is field access: Node has no attribute protocol
 (see the warning below), so reads and writes go through explicit methods.
 

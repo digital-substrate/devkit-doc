@@ -1,7 +1,7 @@
 # Collections
 
 Viper C++ provides strongly-typed collections that mirror the JavaScript built-ins
-while enforcing type safety. The Python equivalent is {doc}`../dsviper/collections`;
+while enforcing type safety. The Python equivalent is {doc}`../dsviper-python/collections`;
 the collections are identical — only the idiom differs.
 
 Each collection comes as a `TypeX` (the parameterized type) and a `ValueX` (a value

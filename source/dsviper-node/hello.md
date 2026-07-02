@@ -2,7 +2,7 @@
 
 The shortest possible end-to-end use of the runtime from Node.js — define a
 tiny schema, write a record in a commit, read it back. This is the Node twin
-of the Python {doc}`../dsviper/hello` page.
+of the Python {doc}`../dsviper-python/hello` page.
 
 ```js
 const {

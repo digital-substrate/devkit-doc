@@ -11,7 +11,7 @@ own — it is rebuilt on demand from the trace of mutations leading to a commit.
 | `CommitState`          | A read-only snapshot reconstructed at a commit    |
 | `Path`                 | Navigates / edits a portion of a nested value     |
 
-This page is the Node twin of the Python {doc}`../dsviper/database` and its
+This page is the Node twin of the Python {doc}`../dsviper-python/database` and its
 companion {doc}`../commit/index` overview, which explain the reconstruction
 pipeline (the DAG, linearization, last-writer-wins) in depth. Here we cover the
 Node lifecycle: create, define, mutate, commit, read — and the `Path` primitive

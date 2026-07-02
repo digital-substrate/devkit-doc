@@ -26,9 +26,9 @@ Kibo template
    targets dsviper and Viper C++.
 
 dsviper
-   The Python runtime — strongly typed Python API over the
-   {term}`Viper C++` engine. Distributed exclusively on PyPI
-   (`pip install dsviper`).
+   The Python runtime, branded **dsviper for Python** — a strongly typed
+   Python API over the {term}`Viper C++` engine. Distributed exclusively on
+   PyPI (`pip install dsviper`).
 
 Viper
    Umbrella term covering both {term}`Viper C++` and {term}`dsviper`.
@@ -107,7 +107,7 @@ blob
    Large opaque binary data stored alongside DSM-typed values. Indexed by a
    `BlobId`; stored through blob layouts and packs. Used for images, files,
    serialized assets, or any payload that does not benefit from typed
-   structure. See {doc}`../dsviper/blobs`.
+   structure. See {doc}`../dsviper-python/blobs`.
 
 codec
    A serialization strategy — how typed values are encoded to and from bytes.

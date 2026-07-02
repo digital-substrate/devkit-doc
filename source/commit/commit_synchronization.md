@@ -5,7 +5,7 @@ sites. A `CommitDatabase` is made of **two content-addressed
 spaces**: the **DAG of commits**, and the **pool of blobs** —
 immutable binary payloads identified by their hash and referenced
 from inside commits (see
-[Binary Data (Blobs)](../dsviper/blobs.md)). Both are append-only
+[Binary Data (Blobs)](../dsviper-python/blobs.md)). Both are append-only
 and content-addressed
 independently. Sync replicates both, by **two set differences**:
 one on commit ids, one on blob hashes. Each side copies what the
@@ -67,7 +67,7 @@ The operation in one pass:
    then create the commit itself. This guarantees the invariant that
    **a commit on the target never references a blob the target does
    not have** — the
-   [`blob_id` constraint](../dsviper/blobs.md#blob_id-reference)
+   [`blob_id` constraint](../dsviper-python/blobs.md#blob_id-reference)
    stated in the blob API.
 
    Blobs are packed into batches of `size_of_packed_blobs` (default
@@ -114,7 +114,7 @@ info = synchronizer.sync()
 The returned `CommitSynchronizerInfo` reports how many commits and
 blobs flowed in each direction and whether DSM definitions were
 extended. See the
-[CommitSynchronizer API reference](../dsviper/api/commit.rst) for
+[CommitSynchronizer API reference](../dsviper-python/api/commit.rst) for
 the full surface.
 
 ### Command line
@@ -177,7 +177,7 @@ it pays off.
 
 | Tool                                                                     | Role                                                                                            |
 |--------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------|
-| [`dsviper.CommitSynchronizer`](../dsviper/api/commit.rst)                | The runtime class. Python API.                                                                  |
+| [`dsviper.CommitSynchronizer`](../dsviper-python/api/commit.rst)                | The runtime class. Python API.                                                                  |
 | [`commit_admin sync`](../dsviper-tools/server.md#sync-local-with-remote) | CLI wrapper for one-shot or continuous sync against a remote server.                            |
 | [`commit_admin reduce_heads`](../dsviper-tools/server.md#reduce-heads)   | Reduce multiple heads after sync. Separate operation.                                           |
 | [`commit_database_server.py`](../dsviper-tools/server.md)                | Network-exposed CommitDatabase. The remote endpoint of replicated sync.                         |

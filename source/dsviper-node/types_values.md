@@ -2,7 +2,7 @@
 
 The Viper C++ type system provides strong typing with runtime validation. This
 chapter covers how to create values from Node and how the type system surfaces
-through the binding. The Python equivalent is {doc}`../dsviper/types_values`; the
+through the binding. The Python equivalent is {doc}`../dsviper-python/types_values`; the
 type system is identical — only the idiom differs.
 
 Examples assume the binding is in scope:

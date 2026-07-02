@@ -3,7 +3,7 @@
 This tutorial walks through a complete example from Node.js: loading a data
 model, seeding a database, and performing a full write / read / history cycle
 with `CommitDatabase`. It is the Node twin of the Python
-{doc}`../dsviper/tutorial`.
+{doc}`../dsviper-python/tutorial`.
 
 > **Prerequisites**: This tutorial assumes you have read {doc}`dsm` and
 > understand the `assemble → parse → introspect` workflow, plus the

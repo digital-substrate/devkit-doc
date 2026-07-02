@@ -85,7 +85,7 @@ language provides the levers — none of them new:
   silently dropping one value. Prefer `xarray` over `vector` when
   concurrent inserts must not be lost — `vector`'s integer indices
   collide under concurrency; see
-  [Vector vs XArray](../dsviper/collections.md#vector-vs-xarray-when-to-use-each).
+  [Vector vs XArray](../dsviper-python/collections.md#vector-vs-xarray-when-to-use-each).
 - **References that tolerate breakage** — accept that a `key<X>`
   may outlive its target. This is a *whole-application commitment*,
   not just a DSM choice: the app must load robustly, surface the

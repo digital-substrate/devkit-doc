@@ -10,7 +10,7 @@ class (`ValueString`, `ValueInt64`, ...) is constructible directly.
 values encode to native `bigint`; every other integer and float encodes to `number`.
 
 For the conceptual guide see {doc}`../types_values`; for the type system see
-{doc}`types`. The Python equivalent is {doc}`../../dsviper/api/values`.
+{doc}`types`. The Python equivalent is {doc}`../../dsviper-python/api/values`.
 
 ## Quick Start
 

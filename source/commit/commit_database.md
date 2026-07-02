@@ -4,7 +4,7 @@ The Commit Database is the **persistence layer**: an immutable, append-only
 mutation DAG, transactional, with history. It *stores* mutations; it does not,
 by itself, reduce divergence or reconstruct state. Reconstruction
 (`CommitStateBuilder`) and head reduction (`CommitDatabaseHelper`) are stateless
-namespaces that operate over it — see the {doc}`Commit API <../dsviper/api/commit>`
+namespaces that operate over it — see the {doc}`Commit API <../dsviper-python/api/commit>`
 for which class owns which call. (The `CommitStore` facade wraps all three for
 interactive apps.)
 
@@ -55,7 +55,7 @@ A `CommitDatabase` holds **two content-addressed spaces**:
 - The **pool of blobs** — immutable binary payloads (textures,
   meshes, raw buffers, …) identified by their hash and referenced
   from inside commits. See
-  [Binary Data (Blobs)](../dsviper/blobs.md) for the blob API.
+  [Binary Data (Blobs)](../dsviper-python/blobs.md) for the blob API.
 
 Both spaces are append-only and content-addressed independently.
 They are replicated together by
@@ -377,7 +377,7 @@ The `dsviper` binding ships this pattern as a ready-made converter,
 single-commit target, keeping only the blobs that commit still references
 and dropping superseded history blobs. The source is left untouched — the
 converter automates the pattern, it does not trim history in place. See
-{doc}`Database Transfer <../dsviper/api/transfer>` for the full transfer
+{doc}`Database Transfer <../dsviper-python/api/transfer>` for the full transfer
 toolkit.
 
 ```{warning}

@@ -1,5 +1,5 @@
-dsviper API
-===========
+dsviper for Python API
+======================
 
 This reference documents all public classes in the ``dsviper`` module, organized
 by functional domain.

@@ -20,7 +20,7 @@ before any commercial use.
 ## Place in the ecosystem
 
 - **Depends on** — {term}`Viper C++`.
-- **Sibling of** — the Python {doc}`dsviper <../dsviper/index>` runtime: a second
+- **Sibling of** — the Python {doc}`dsviper <../dsviper-python/index>` runtime: a second
   binding over the same engine, not a replacement.
 - **Distribution** — the `@digitalsubstrate/dsviper` npm package
   (`npm install @digitalsubstrate/dsviper`), shipped as prebuilt native
@@ -33,8 +33,8 @@ As with the Python runtime, there are two ways to reach the engine:
 - **Dynamic API** — load definitions at runtime and work through the runtime
   type system, value system, and commit tier (`Type*`, `Value*`, `Definitions`,
   `CommitMutableState`, `Attachment*`). These are the **same class names**
-  documented for Python under {doc}`../dsviper/dsm` and
-  {doc}`../dsviper/serialization`. This path is available today and is what the
+  documented for Python under {doc}`../dsviper-python/dsm` and
+  {doc}`../dsviper-python/serialization`. This path is available today and is what the
   pages in this section cover.
 - **Static TS API** — typed TypeScript packages generated from a DSM model by
   Kibo, using the `kibo-template-viper` TypeScript templates (the Node analogue

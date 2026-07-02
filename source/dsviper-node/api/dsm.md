@@ -96,7 +96,7 @@ runtime failure (an unknown type, a duplicate case) surfaces as a JS `Error` who
 | Query types by name | {js:class}`DefinitionsInspector` | `query*` (returns the type or `undefined`) / `check*` (throws on miss) |
 | Introspect a parsed model | {js:class}`DSMDefinitions` | `structures()` / `concepts()` / `enumerations()` / `attachments()` |
 
-The mirror of this page for the Python binding is {doc}`../../dsviper/api/dsm`; for a
+The mirror of this page for the Python binding is {doc}`../../dsviper-python/api/dsm`; for a
 narrative walkthrough see the {doc}`DSM guide <../dsm>`. The type classes referenced
 by fields live on {doc}`types`.
 

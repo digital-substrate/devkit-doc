@@ -26,9 +26,9 @@ package, no hand-written business logic, no domain widgets.
 | Layer     | Where in web-cdbe                            | DevKit doc                                           |
 |-----------|----------------------------------------------|------------------------------------------------------|
 | Schema    | `definitions()` from any opened database     | [DSM](../dsm/index.rst) (the language behind it)     |
-| Runtime   | `CommitDatabase`, `CommitMutableState`       | [dsviper](../dsviper/index.rst)                      |
-| Rendering | `DocumentNode` tree → HTML in Python         | [dsviper](../dsviper/index.rst) (DocumentNode API)   |
-| Mutation  | `attachment_mutating().update(...)` + commit | [dsviper](../dsviper/index.rst) (CommitMutableState) |
+| Runtime   | `CommitDatabase`, `CommitMutableState`       | [dsviper](../dsviper-python/index.rst)                      |
+| Rendering | `DocumentNode` tree → HTML in Python         | [dsviper](../dsviper-python/index.rst) (DocumentNode API)   |
+| Mutation  | `attachment_mutating().update(...)` + commit | [dsviper](../dsviper-python/index.rst) (CommitMutableState) |
 
 The takeaway: a working editor for **any** commit database in ~450
 lines of Python plus three Jinja templates. The same introspection API
@@ -278,7 +278,7 @@ context:
 
 ## Reference
 
-* [dsviper](../dsviper/index.rst) — the runtime web-cdbe is built on,
+* [dsviper](../dsviper-python/index.rst) — the runtime web-cdbe is built on,
   including `CommitDatabase`, `CommitMutableState`, and `DocumentNode`.
 * [DSM](../dsm/index.rst) — the modelling language whose definitions
   are read back here through `db.definitions()`.

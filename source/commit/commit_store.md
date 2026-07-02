@@ -19,7 +19,7 @@ into the runtime surface a Commit Application actually uses. It:
 
 This page introduces the four surfaces and points at the
 references for each. For full method signatures, see the
-[CommitStore API reference](../dsviper/api/commit.rst).
+[CommitStore API reference](../dsviper-python/api/commit.rst).
 
 ---
 
@@ -161,5 +161,5 @@ into.
   application's responsibility.
 * [Component architecture](../dsviper-components/architecture.md) — the
   Qt adapter for `CommitStoreNotifying`.
-* [CommitStore API reference](../dsviper/api/commit.rst) — full method
+* [CommitStore API reference](../dsviper-python/api/commit.rst) — full method
   signatures.

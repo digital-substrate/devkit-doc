@@ -75,7 +75,7 @@ for the invocation patterns and :doc:`../kibo-template-viper/features` for
 the C++ feature catalogue.
 
 To use a model without code generation — load it through dsviper's dynamic
-API at runtime — see :doc:`../dsviper/dsm`.
+API at runtime — see :doc:`../dsviper-python/dsm`.
 
 
 Topics

@@ -97,7 +97,7 @@ View the undo stack in the **Undo** panel (`Cmd+5`).
 
 A standard CRUD inspector for the plain `Database` backend (the
 non-versioned key-value store, see
-[Database](../dsviper/database.md)). No commits, no history, no DAG —
+[Database](../dsviper-python/database.md)). No commits, no history, no DAG —
 just open, browse documents, view blobs, and inspect definitions. Use
 `dbe.py` when there is no versioning in play; reach for `cdbe.py`
 whenever the file is a `CommitDatabase`.

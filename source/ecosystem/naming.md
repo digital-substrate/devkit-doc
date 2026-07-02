@@ -26,7 +26,7 @@ separately from PyPI (see below).
 Versioning tracks ecosystem releases (e.g. `1.2.x`). Distribution and
 download from the website (digitalsubstrate.io).
 
-## dsviper
+## dsviper for Python
 
 *What runs in your Python apps.*
 

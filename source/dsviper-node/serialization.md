@@ -3,7 +3,7 @@
 The runtime offers several ways to turn a `Value` into bytes (or text) and
 back: JSON, a compact binary stream codec, and a native JS bridge
 (`dumps`/`loads`). DSM definitions have their own JSON and binary codecs. This
-is the Node twin of the Python {doc}`../dsviper/serialization` page.
+is the Node twin of the Python {doc}`../dsviper-python/serialization` page.
 
 Every form is type-driven on the way back: a decode needs both the target
 `Type` and a definitions snapshot. Build a frozen, empty snapshot with:

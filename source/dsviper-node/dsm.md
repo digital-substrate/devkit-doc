@@ -6,7 +6,7 @@ type universe is constructed or parsed at runtime, with no code generation. The
 **static path** — importing a typed TypeScript package produced by Kibo — is a
 separate route, planned for a later release.
 
-This is the Node twin of the Python {doc}`../dsviper/dsm` page.
+This is the Node twin of the Python {doc}`../dsviper-python/dsm` page.
 
 ```js
 const {

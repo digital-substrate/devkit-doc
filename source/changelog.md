@@ -6,7 +6,7 @@ There is **one runtime contract** — Viper C++ on the `1.2` line (`MAJOR.MINOR`
 delivered through **two installable packages**, each with its **own independent
 `PATCH` stream**:
 
-- **dsviper** — the Python wheel on PyPI (`pip install dsviper`)
+- **dsviper for Python** — the wheel on PyPI (`pip install dsviper`)
 - **@digitalsubstrate/dsviper** — the Node.js binding on npm
 
 See {doc}`ecosystem/naming` for how these names relate. The Viper C++ runtime is
@@ -92,7 +92,7 @@ Initial release.
   single structured exception type.
 - Platforms: macOS 15, Windows 10/11, Linux Ubuntu 24.04 LTS (x86_64 / arm64).
 
-## dsviper (Python)
+## dsviper for Python
 
 The PyPI wheel (`pip install dsviper`). Its `PATCH` stream is independent of the
 runtime; each release notes the runtime version it ships.

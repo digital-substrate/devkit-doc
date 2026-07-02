@@ -35,20 +35,21 @@ DevKit is the **distribution** that bundles **DSM** (the modeling language), **K
 
 - [Features](https://docs.digitalsubstrate.io/kibo-template-viper/features.html): What the first-party template pack emits — C++/Python surfaces, RPC, dispatch.
 - [Wheels](https://docs.digitalsubstrate.io/kibo-template-viper/wheels.html): Generated wheel layout and build options.
+- [npm Packages](https://docs.digitalsubstrate.io/kibo-template-viper/node.html): Creating a distributable npm package from your DSM model — the TypeScript analogue of Python wheels <wheels>, over the @digitalsubstrate/dsviper Node binding instead of CPython.
 
-## dsviper — Python runtime
+## dsviper for Python
 
-- [Installation](https://docs.digitalsubstrate.io/dsviper/installation.html): `pip install dsviper`.
-- [Hello, dsviper](https://docs.digitalsubstrate.io/dsviper/hello.html): Minimal first program.
-- [Tutorial](https://docs.digitalsubstrate.io/dsviper/tutorial.html): End-to-end walkthrough.
-- [Database](https://docs.digitalsubstrate.io/dsviper/database.html): Opening and managing a CommitDatabase.
-- [Structures](https://docs.digitalsubstrate.io/dsviper/structures.html): Records and aggregates.
-- [Collections](https://docs.digitalsubstrate.io/dsviper/collections.html): Lists, sets, maps.
-- [Types and values](https://docs.digitalsubstrate.io/dsviper/types_values.html): Type system at runtime.
-- [Blobs](https://docs.digitalsubstrate.io/dsviper/blobs.html): Binary payload handling.
-- [Serialization](https://docs.digitalsubstrate.io/dsviper/serialization.html): On-disk and wire formats.
-- [DSM from Python](https://docs.digitalsubstrate.io/dsviper/dsm.html): Loading DSM definitions dynamically.
-- [Errors](https://docs.digitalsubstrate.io/dsviper/errors.html): Error model and exceptions.
+- [Installation](https://docs.digitalsubstrate.io/dsviper-python/installation.html): `pip install dsviper`.
+- [Hello, dsviper](https://docs.digitalsubstrate.io/dsviper-python/hello.html): Minimal first program.
+- [Tutorial](https://docs.digitalsubstrate.io/dsviper-python/tutorial.html): End-to-end walkthrough.
+- [Database](https://docs.digitalsubstrate.io/dsviper-python/database.html): Opening and managing a CommitDatabase.
+- [Structures](https://docs.digitalsubstrate.io/dsviper-python/structures.html): Records and aggregates.
+- [Collections](https://docs.digitalsubstrate.io/dsviper-python/collections.html): Lists, sets, maps.
+- [Types and values](https://docs.digitalsubstrate.io/dsviper-python/types_values.html): Type system at runtime.
+- [Blobs](https://docs.digitalsubstrate.io/dsviper-python/blobs.html): Binary payload handling.
+- [Serialization](https://docs.digitalsubstrate.io/dsviper-python/serialization.html): On-disk and wire formats.
+- [DSM from Python](https://docs.digitalsubstrate.io/dsviper-python/dsm.html): Loading DSM definitions dynamically.
+- [Errors](https://docs.digitalsubstrate.io/dsviper-python/errors.html): Error model and exceptions.
 
 ## dsviper — Node binding
 
@@ -84,7 +85,7 @@ DevKit is the **distribution** that bundles **DSM** (the modeling language), **K
 - [Cooperative Discipline](https://docs.digitalsubstrate.io/commit/commit_cooperation.html): Scope decomposition methodology — avoid conflicts by construction rather than reconcile them on read.
 - [Supervised Reconciliation](https://docs.digitalsubstrate.io/commit/commit_collaboration.html): Reference supervisor — reconstruct, surface and reconcile a conflict after a merge; additive over the public API.
 - [Modes of Use](https://docs.digitalsubstrate.io/commit/commit_modes.html): This page is the diagnostic that decides what the rest of the chapter means for you — whether you are building a Commit Application, a service over the Commit Database, a CLI tool, or a batch script. The architectural choice between single-stream and multi-stream usage — and within multi-stream, between local and strong invariants — is effectively irreversible once a DSM model is sealed: Commit carries no migration tooling, so switching regimes after the fact is a schema rewrite that invalidates existing data.
-- [Database synchronisation](https://docs.digitalsubstrate.io/commit/commit_synchronization.html): CommitSynchronizer replicates a CommitDatabase between two sites. A CommitDatabase is made of two content-addressed spaces: the DAG of commits, and the pool of blobs — immutable binary payloads identified by their hash and referenced from inside commits (see [Binary Data (Blobs)](../dsviper/blobs.md)). Both are append-only and content-addressed independently. Sync replicates both, by two set differences: one on commit ids, one on blob hashes. Each side copies what the other has and it lacks. The resulting DAG and blob pool on each side are the union of both — divergent heads included, unchanged.
+- [Database synchronisation](https://docs.digitalsubstrate.io/commit/commit_synchronization.html): CommitSynchronizer replicates a CommitDatabase between two sites. A CommitDatabase is made of two content-addressed spaces: the DAG of commits, and the pool of blobs — immutable binary payloads identified by their hash and referenced from inside commits (see [Binary Data (Blobs)](../dsviper-python/blobs.md)). Both are append-only and content-addressed independently. Sync replicates both, by two set differences: one on commit ids, one on blob hashes. Each side copies what the other has and it lacks. The resulting DAG and blob pool on each side are the union of both — divergent heads included, unchanged.
 
 ## Services
 

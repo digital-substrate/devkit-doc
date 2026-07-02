@@ -2,7 +2,7 @@
 
 Blobs hold raw binary data — images, meshes, audio, any byte buffer — with a
 typed layout that gives the bytes meaning. From Node they interoperate directly
-with the standard `Buffer`. The Python equivalent is {doc}`../dsviper/blobs`; the
+with the standard `Buffer`. The Python equivalent is {doc}`../dsviper-python/blobs`; the
 type system is identical, only the idiom differs (value semantics, `Buffer`
 instead of `bytes`).
 

@@ -22,9 +22,9 @@ dives — is conveyed even when a tool ingests them out of order:
 Each original page is preceded by a `<!-- FILE: <relative-path> -->` marker
 so an LLM can cite precise sources while keeping the bundle valid Markdown.
 
-Auto-generated API stub pages under dsviper/api/generated/ are excluded:
+Auto-generated API stub pages under dsviper-python/api/generated/ are excluded:
 they are noisy reference material that does not help conversational Q&A.
-The curated dsviper/api/*.md category pages are kept inside the dsviper
+The curated dsviper-python/api/*.md category pages are kept inside the dsviper
 bundle. Legal notices are excluded entirely (not useful for Q&A).
 
 Alongside the bundles the script writes:
@@ -78,8 +78,8 @@ BUNDLES: tuple[Bundle, ...] = (
     ),
     Bundle(
         "30-devkit-dsviper",
-        "dsviper — Python runtime: types, structures, collections, serialization, error model.",
-        ("dsviper",),
+        "dsviper for Python — the Python runtime: types, structures, collections, serialization, error model.",
+        ("dsviper-python",),
         exclude=lambda p: "api/generated" in p.as_posix(),
     ),
     Bundle(

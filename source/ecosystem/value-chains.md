@@ -39,7 +39,7 @@ dsviper  →  dsviper-components  →  Commit Application Model
 
 **Goal.** Run a typed Python application with versioned, persistent data.
 
-**dsviper** — the Python runtime. Strong-typed Python API over the Viper C++
+**dsviper for Python** — the runtime. Strong-typed Python API over the Viper C++
 engine. The foundation: type system, value system, mutation DAG, database tier.
 Distributed exclusively on PyPI (`pip install dsviper`) — not bundled in the
 DevKit ZIP. Public test suite at

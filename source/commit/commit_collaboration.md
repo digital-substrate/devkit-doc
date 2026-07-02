@@ -194,7 +194,7 @@ Two bounds keep the gate honest:
   *that* values collided and *what* each was, never *why* an author wanted it.
 
 The full class surface — signatures, accessors, and a runnable example —
-is the API reference: {doc}`Merge Reconciliation </dsviper/api/reconciliation>`.
+is the API reference: {doc}`Merge Reconciliation </dsviper-python/api/reconciliation>`.
 
 ## See Also
 

@@ -24,7 +24,7 @@ friends): see [Merge reconciliation](#merge-reconciliation) below.
 Reach for this page's classes when you persist DSM documents **with history** —
 every write is a commit, and earlier states stay reconstructible. If you only
 need flat CRUD without versioning, use {doc}`database` instead. The Python
-counterpart is {doc}`../../dsviper/api/commit`.
+counterpart is {doc}`../../dsviper-python/api/commit`.
 
 ## Quick Start
 

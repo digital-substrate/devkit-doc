@@ -363,4 +363,4 @@ re-architecting upstream, never by a better outcome downstream.
 - [Cooperative Discipline](commit_cooperation.md) — the modelling exit for applications whose invariants are too strong
   for mechanical reduction
 - [Commit Database](commit_database.md) — using the commit API from Python
-- [Errors](../dsviper/errors.md) — `dsviper.Error` and exception handling
+- [Errors](../dsviper-python/errors.md) — `dsviper.Error` and exception handling

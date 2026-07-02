@@ -20,9 +20,9 @@ DevKit is the **distribution** that bundles **DSM** (the modeling language), **K
 
 {{auto:source/kibo-template-viper/*.md}}
 
-## dsviper — Python runtime
+## dsviper for Python
 
-{{auto:source/dsviper/*.md}}
+{{auto:source/dsviper-python/*.md}}
 
 ## dsviper — Node binding
 

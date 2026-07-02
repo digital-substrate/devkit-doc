@@ -19,7 +19,7 @@ isolation:
 |-----------|------------------------------|-------------------------------------------------------|
 | DSM model | DSM definitions of the Graph | [DSM](../dsm/index.rst)                               |
 | Code-gen  | `ge/` package (Kibo output)  | [Kibo](../kibo/index.rst)                             |
-| Runtime   | `dsviper.CommitStore` usage  | [dsviper](../dsviper/index.rst)                       |
+| Runtime   | `dsviper.CommitStore` usage  | [dsviper](../dsviper-python/index.rst)                       |
 | Shared UI | `dsviper_components/`        | [dsviper-components](../dsviper-components/index.rst) |
 
 A single Python application reads its data model from one DSM source and
@@ -381,7 +381,7 @@ is walked through in [cdbe](cdbe.md).
 
 * [DSM](../dsm/index.rst) — the language ge-py's data model is written in.
 * [Kibo](../kibo/index.rst) — the generator that produces `ge/`.
-* [dsviper](../dsviper/index.rst) — the runtime exercised through
+* [dsviper](../dsviper-python/index.rst) — the runtime exercised through
   `Context.store`.
 * [dsviper-components](../dsviper-components/index.rst) — the shared
   widget library the UI is built on.

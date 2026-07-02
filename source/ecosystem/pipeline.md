@@ -55,7 +55,7 @@ behave identically across surfaces. Your data is strongly typed end-to-end;
 type mismatches raise exceptions immediately rather than silently coercing
 values.
 
-→ Reference: {doc}`../dsviper/index` (Python).
+→ Reference: {doc}`../dsviper-python/index` (Python).
 
 When you need the structural view — components, dependency rules, partial
 uses — see [value-chains](value-chains.md).

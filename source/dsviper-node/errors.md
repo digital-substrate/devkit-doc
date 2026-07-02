@@ -2,7 +2,7 @@
 
 When a Viper C++ operation fails, the Node binding raises a regular JavaScript
 `Error`. This chapter explains how to catch, interpret, and recover from those
-errors. The Python equivalent is {doc}`../dsviper/errors`; the error model is
+errors. The Python equivalent is {doc}`../dsviper-python/errors`; the error model is
 identical — only the idiom differs.
 
 ## The thrown ViperError

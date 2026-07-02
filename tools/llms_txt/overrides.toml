@@ -101,57 +101,57 @@ sort = 20
 
 # ---- dsviper ---------------------------------------------------------
 
-[overrides."https://docs.digitalsubstrate.io/dsviper/installation.html"]
+[overrides."https://docs.digitalsubstrate.io/dsviper-python/installation.html"]
 title = "Installation"
 description = "`pip install dsviper`."
 sort = 10
 
-[overrides."https://docs.digitalsubstrate.io/dsviper/hello.html"]
+[overrides."https://docs.digitalsubstrate.io/dsviper-python/hello.html"]
 title = "Hello, dsviper"
 description = "Minimal first program."
 sort = 20
 
-[overrides."https://docs.digitalsubstrate.io/dsviper/tutorial.html"]
+[overrides."https://docs.digitalsubstrate.io/dsviper-python/tutorial.html"]
 title = "Tutorial"
 description = "End-to-end walkthrough."
 sort = 30
 
-[overrides."https://docs.digitalsubstrate.io/dsviper/database.html"]
+[overrides."https://docs.digitalsubstrate.io/dsviper-python/database.html"]
 title = "Database"
 description = "Opening and managing a CommitDatabase."
 sort = 40
 
-[overrides."https://docs.digitalsubstrate.io/dsviper/structures.html"]
+[overrides."https://docs.digitalsubstrate.io/dsviper-python/structures.html"]
 title = "Structures"
 description = "Records and aggregates."
 sort = 50
 
-[overrides."https://docs.digitalsubstrate.io/dsviper/collections.html"]
+[overrides."https://docs.digitalsubstrate.io/dsviper-python/collections.html"]
 title = "Collections"
 description = "Lists, sets, maps."
 sort = 60
 
-[overrides."https://docs.digitalsubstrate.io/dsviper/types_values.html"]
+[overrides."https://docs.digitalsubstrate.io/dsviper-python/types_values.html"]
 title = "Types and values"
 description = "Type system at runtime."
 sort = 70
 
-[overrides."https://docs.digitalsubstrate.io/dsviper/blobs.html"]
+[overrides."https://docs.digitalsubstrate.io/dsviper-python/blobs.html"]
 title = "Blobs"
 description = "Binary payload handling."
 sort = 80
 
-[overrides."https://docs.digitalsubstrate.io/dsviper/serialization.html"]
+[overrides."https://docs.digitalsubstrate.io/dsviper-python/serialization.html"]
 title = "Serialization"
 description = "On-disk and wire formats."
 sort = 90
 
-[overrides."https://docs.digitalsubstrate.io/dsviper/dsm.html"]
+[overrides."https://docs.digitalsubstrate.io/dsviper-python/dsm.html"]
 title = "DSM from Python"
 description = "Loading DSM definitions dynamically."
 sort = 100
 
-[overrides."https://docs.digitalsubstrate.io/dsviper/errors.html"]
+[overrides."https://docs.digitalsubstrate.io/dsviper-python/errors.html"]
 title = "Errors"
 description = "Error model and exceptions."
 sort = 110

@@ -62,7 +62,7 @@ Operations on a closed `CommitDatabase`, or a commit that violates an
 attachment's type constraints, throw a JS `Error` whose `name` is
 `'ViperError'`.
 
-See also: the Python {doc}`reference <../../dsviper/api/attachments>`, the
+See also: the Python {doc}`reference <../../dsviper-python/api/attachments>`, the
 {doc}`database guide <../database>`, and the {doc}`commit <commit>` API.
 
 Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d.ts`) by TypeDoc.

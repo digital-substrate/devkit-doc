@@ -195,6 +195,28 @@ Initial release.
 
 The npm package `@digitalsubstrate/dsviper`. See {doc}`dsviper-node/index`.
 
+### 1.2.3 — 2026-07-02
+- **Stable** — 1.2.3 stabilises the Node binding surface. It is the last release to carry
+  breaking renames/removals; the binding is stable from here.
+- **Added** — ES2022 negative indexing (`.at(-1)`, with `.set(-1, …)`) on the indexed
+  sequences — `ValueVector`, `ValueVec`, `ValueTuple`, ordered `ValueSet`, blob views, and
+  `ValueMat` (per-axis); out-of-range still throws.
+- **Added** — `toArray()` on `ValueVec` / `ValueMat`, and an iterable `ValueVec` (`for..of`,
+  spread, `Array.from`) yielding `number` — or `bigint` for 64-bit ints.
+- **Added** — Blob ⇆ TypedArray for GPU / WebGL — `BlobView`/`BlobArray.toTypedArray()`,
+  `BlobLayout.glAttribParams()`, and `BlobArray.fromTypedArray(layout, ta)`.
+- **Added** — `toJSON()` on every value (`JSON.stringify(value)` yields a JSON-ready POD;
+  64-bit ints promote to a number when exact, else throw; Blob → base64). BSON
+  (`toBsonBlob` / `fromBsonBlob`) and the streaming / DSM entry points that were
+  not-yet-usable stubs are now bound.
+- **Fixed** — argument errors cross the boundary as their real `TypeError` / `RangeError`; a
+  sweep of `index.d.ts` corrected declared constructors against runtime reality; the shared
+  JSON codec accepts a bare integer for a `float`/`double` field (`5` → `5.0`).
+- **Breaking** — codec methods renamed to the `to…` / `from…` convention
+  (`jsonEncode` → `toJsonString`, `bsonEncode` → `toBsonBlob`, …; old names removed);
+  `toTuple()` → `toArray()`; the raw `ValueOpcode` codec and `Logging.create(object)` are
+  removed.
+
 ### 1.2.2 — 2026-06-30
 - **Added** — `hashKey()` on every value type: a 128-bit `bigint` value-identity key
   usable directly in a JS `Map` / `Set` / `Map.groupBy` (which key by identity and call

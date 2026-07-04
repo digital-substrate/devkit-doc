@@ -17,7 +17,20 @@ notes the runtime version it carries. Only released versions are listed, and
 ## Viper C++ runtime
 
 The engine shipped inside both bindings; `viperVersion()` reports this version.
-Releases with no runtime change are omitted.
+Binding- or packaging-only releases are omitted — except a *phantom* version (a runtime
+number minted with no runtime change, from a lockstep bump), listed to explain the gap.
+
+### 1.2.18 — 2026-07-03
+- **Fixed** — JSON codec: the value decoder accepts a bare integer literal for a
+  `float`/`double` field (`5` is read as `5.0`; JSON has a single number type), instead of
+  rejecting it. Encoder output is unchanged. Fixes interop with third-party JSON producers
+  that drop the decimal point of a whole-number double.
+
+### 1.2.17 — 2026-06-28 (phantom)
+- *No runtime change. The runtime number was bumped in lockstep with the dsviper Python
+  wheel 1.2.17 (a binding bug-fix release) — the last lockstep bump before `viper_version()`
+  decoupled the wheel and runtime streams. Shipped unchanged by dsviper for Node.js 1.2.1
+  and 1.2.2.*
 
 ### 1.2.16 — 2026-06-13
 - **Added** — Commit engine: pre-merge (virtual) reconciliation on
@@ -97,6 +110,14 @@ Initial release.
 The PyPI wheel (`pip install dsviper`). Its `PATCH` stream is independent of the
 runtime; each release notes the runtime version it ships.
 
+### 1.2.18 — 2026-07-03
+- **Fixed** — the binding's `TypeAnyConcept` comparison (`==` / `!=`) delegated to the
+  `TypeAny` singleton, so `Type.ANY_CONCEPT == Type.ANY_CONCEPT` was `False` and
+  `Type.ANY_CONCEPT == Type.ANY` was `True`; the runtime was already correct.
+- **Changed** — packaging: the documentation URL now points at the `dsviper-python` landing
+  page (`docs.digitalsubstrate.io/dsviper-python/`), following the documentation chapter rename.
+- *Ships runtime 1.2.18.*
+
 ### 1.2.17 — 2026-06-28
 - **Added** — `viper_version()` reports the embedded Viper runtime version,
   distinct from `version()` (the wheel version); the wheel's `PATCH` stream now
@@ -114,7 +135,7 @@ runtime; each release notes the runtime version it ships.
 - **Fixed** — packaging: the documentation URL now points at the dsviper landing
   page; the PyPI Quick Start routes through `CommitStateBuilder.initial_state(db)`
   / `state(db, commit_id)`.
-- *Ships runtime 1.2.17.*
+- *Ships runtime 1.2.17 (phantom — see the runtime section).*
 
 ### 1.2.16 — 2026-06-13
 - **Fixed** — memory-safety hardening in the binding (reference-count leaks across

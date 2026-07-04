@@ -3,11 +3,11 @@
   "private": true,
   "description": "TypeDoc inputs for the Node API reference (sphinx-js). Build-time only; not part of the published documentation. Provides the @digitalsubstrate/dsviper declarations that sphinx-js feeds to TypeDoc, mirroring how the Python API reference consumes the installed dsviper wheel.",
   "devDependencies": {
+    "@types/node": "^26.0.0",
     "typedoc": "0.28.19",
-    "typescript": "6.0.3",
-    "@types/node": "^26.0.0"
+    "typescript": "6.0.3"
   },
   "dependencies": {
-    "@digitalsubstrate/dsviper": "^1.2.2"
+    "@digitalsubstrate/dsviper": "^1.2.3"
   }
 }

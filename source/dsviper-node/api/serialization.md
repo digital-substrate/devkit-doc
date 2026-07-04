@@ -6,7 +6,7 @@ streams those codecs are built on.
 
 Most code never touches a stream directly. To turn a {js:class}`Value` into a
 blob and back you call `Value.encode` / `Value.decode` (binary),
-`Value.jsonEncode` / `Value.jsonDecode` (JSON, for web and REST), or
+`Value.toJsonString` / `Value.fromJsonString` (JSON, for web and REST), or
 `Value.dumps` / `Value.loads` (the native format). Decoding always needs the
 `Type` and a const {js:class}`Definitions` so the decoder knows the shape it is
 reading. The classes on this page are the machinery underneath: pick a named
@@ -39,8 +39,8 @@ const decoded = Value.decode(blob, Type.STRING, defs);
 console.log(value.equals(decoded)); // true
 
 // JSON: same round-trip, for web and REST integration.
-const json = Value.jsonEncode(value);
-console.log(value.equals(Value.jsonDecode(json, Type.STRING, defs))); // true
+const json = Value.toJsonString(value);
+console.log(value.equals(Value.fromJsonString(json, Type.STRING, defs))); // true
 
 // Native dumps/loads: the same shape again.
 console.log(value.equals(Value.loads(Value.dumps(value), Type.STRING, defs))); // true
@@ -103,7 +103,7 @@ try {
 | Use case | API | Note |
 |----------|-----|------|
 | Binary serialization | `Value.encode` / `Value.decode` | Default codec; decode needs type + const definitions |
-| JSON for web / REST | `Value.jsonEncode` / `Value.jsonDecode` | Web integration |
+| JSON for web / REST | `Value.toJsonString` / `Value.fromJsonString` | Web integration |
 | Native format | `Value.dumps` / `Value.loads` | Round-trips like the others |
 | Specific wire format | {js:class}`Codec` | `STREAM_BINARY`, `STREAM_RAW`, `StreamTokenBinary`, ... |
 | Encoder / decoder / sizer | {js:class}`StreamCodecInstancing` | `createEncoder` / `createDecoder` / `createSizer` |

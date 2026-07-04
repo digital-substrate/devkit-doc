@@ -82,7 +82,7 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 | {js:class}`ValueKey` | A class used to represent a value of type key<element_type> |
 | {js:class}`ValueMap` | A class used to represent a value of type map<key_type, element_type> |
 | {js:class}`ValueMat` | A class used to represent a value of type mat<element_type, columns, rows> |
-| {js:class}`ValueOpcode` | A utility class to handle opcodes encoder and streamer |
+| {js:class}`ValueOpcode` | Base class for mutation opcodes — produced by the Commit merge/diff APIs and read via its concrete subclasses |
 | {js:class}`ValueOpcodeDocumentSet` | A class used to represent the type and the arguments of an opcode |
 | {js:class}`ValueOpcodeDocumentUpdate` | A class used to represent the type and the arguments of an opcode |
 | {js:class}`ValueOpcodeKey` | A class used to retrieve the mutation opcodes for an instance of a concept for an attachment |

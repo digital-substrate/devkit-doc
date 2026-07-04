@@ -26,11 +26,11 @@ v.equals(Value.decode(Value.encode(v), type, defs));   // true
 
 ### Encoding values
 
-`Value.jsonEncode(value)` returns a JSON string.
+`Value.toJsonString(value)` returns a JSON string.
 
 ### Decoding values
 
-`Value.jsonDecode(string, type, defs)` reconstructs the value. The type tells
+`Value.fromJsonString(string, type, defs)` reconstructs the value. The type tells
 the decoder how to read the document, so a JSON round-trip reads:
 
 ```js
@@ -40,7 +40,7 @@ const defs = new Definitions().const();
 const t = new TypeVector(Type.INT64);
 const v = new ValueVector(t, [1n, 2n, 3n]);
 
-v.equals(Value.jsonDecode(Value.jsonEncode(v), t, defs));   // true
+v.equals(Value.fromJsonString(Value.toJsonString(v), t, defs));   // true
 ```
 
 ## Binary stream codec
@@ -195,9 +195,9 @@ const [report, dsm] = DSMBuilder.assemble('model.dsm').parse();
 if (report.hasError()) throw new Error('parse failed');
 
 // JSON
-const json = dsm.jsonEncode();
-const fromJson = DSMDefinitions.jsonDecode(json);
-DSMDefinitions.jsonDecode(json).jsonEncode() === json;   // true (stable)
+const json = dsm.toJsonString();
+const fromJson = DSMDefinitions.fromJsonString(json);
+DSMDefinitions.fromJsonString(json).toJsonString() === json;   // true (stable)
 
 // Binary
 const blob = dsm.encode();                 // a ValueBlob
@@ -250,7 +250,7 @@ const v = fuzzer.fuzz(Type.DOUBLE);
 
 // All three codecs round-trip the same value.
 v.equals(Value.decode(Value.encode(v), Type.DOUBLE, defs));            // binary
-v.equals(Value.jsonDecode(Value.jsonEncode(v), Type.DOUBLE, defs));    // JSON
+v.equals(Value.fromJsonString(Value.toJsonString(v), Type.DOUBLE, defs));    // JSON
 v.equals(Value.loads(Value.dumps(v), Type.DOUBLE, defs));              // native
 ```
 
@@ -260,9 +260,9 @@ Render a database's definitions for an external system — as DSM source or as a
 JSON schema:
 
 ```js
-const dsm = DSMDefinitions.jsonDecode(json);   // or from a live database's definitions
+const dsm = DSMDefinitions.fromJsonString(json);   // or from a live database's definitions
 console.log(dsm.toDsm());                       // DSM language
-console.log(dsm.jsonEncode());                  // JSON schema
+console.log(dsm.toJsonString());                  // JSON schema
 ```
 
 ```{note}

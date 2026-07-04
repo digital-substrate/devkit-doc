@@ -307,18 +307,18 @@ available directly on `DefinitionsConst`.
 
 ### JSON
 
-The canonical on-disk form consumed by Kibo and `dsm_util`. `jsonEncode()`
-returns a string; `DSMDefinitions.jsonDecode(str)` rebuilds it. Encode → decode
+The canonical on-disk form consumed by Kibo and `dsm_util`. `toJsonString()`
+returns a string; `DSMDefinitions.fromJsonString(str)` rebuilds it. Encode → decode
 → re-encode is byte-stable:
 
 ```js
 const { DSMDefinitions } = require('@digitalsubstrate/dsviper');
 
-const json = dsmDefs.jsonEncode();
-const restored = DSMDefinitions.jsonDecode(json);
-restored.jsonEncode() === json;             // true
+const json = dsmDefs.toJsonString();
+const restored = DSMDefinitions.fromJsonString(json);
+restored.toJsonString() === json;             // true
 
-DSMDefinitions.jsonDecode('invalid json{{{'); // throws a ViperError
+DSMDefinitions.fromJsonString('invalid json{{{'); // throws a ViperError
 ```
 
 A malformed payload throws a `ViperError` whose message quotes a JSON path
@@ -327,13 +327,13 @@ locating the offending node (e.g. `structures[2].fields[0].type`).
 ### Binary and BSON
 
 `encode()` returns a compact binary `ValueBlob` (`DSMDefinitions.decode(blob)`
-restores it); `bsonEncode()` / `bsonDecode()` is the BSON equivalent. All three
+restores it); `toBsonBlob()` / `fromBsonBlob()` is the BSON equivalent. All three
 codecs cross-convert — a binary blob decoded and re-emitted as JSON matches a
 direct JSON encode:
 
 ```js
 const blob = dsmDefs.encode();              // a ValueBlob
-DSMDefinitions.decode(blob).jsonEncode() === dsmDefs.jsonEncode();  // true
+DSMDefinitions.decode(blob).toJsonString() === dsmDefs.toJsonString();  // true
 ```
 
 The runtime registry itself also has a binary codec: `defs.encode()` returns a

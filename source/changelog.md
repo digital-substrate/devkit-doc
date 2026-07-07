@@ -20,6 +20,11 @@ The engine shipped inside both bindings; `viperVersion()` reports this version.
 Binding- or packaging-only releases are omitted — except a *phantom* version (a runtime
 number minted with no runtime change, from a lockstep bump), listed to explain the gap.
 
+### 1.2.19 — 2026-07-06
+- **Added** — XML wire format: a third dialect (after JSON and BSON) of the type-driven
+  serializer, round-tripping both values and DSM definitions on the vendored pugixml parser.
+  Purely additive — the existing JSON/BSON surface is unchanged.
+
 ### 1.2.18 — 2026-07-03
 - **Fixed** — JSON codec: the value decoder accepts a bare integer literal for a
   `float`/`double` field (`5` is read as `5.0`; JSON has a single number type), instead of
@@ -110,6 +115,13 @@ Initial release.
 The PyPI wheel (`pip install dsviper`). Its `PATCH` stream is independent of the
 runtime; each release notes the runtime version it ships.
 
+### 1.2.19 — 2026-07-06
+- **Added** — XML wire format: `Value.to_xml_string(value, indent=…)` /
+  `Value.from_xml_string(string, type, definitions)` and `DSMDefinitions.to_xml_string(indent=…)` /
+  `DSMDefinitions.from_xml_string(string)` — the XML dialect of the type-driven serializer,
+  alongside the existing JSON/BSON codecs. Additive — no change to the existing surface.
+- *Ships runtime 1.2.19.*
+
 ### 1.2.18 — 2026-07-03
 - **Fixed** — the binding's `TypeAnyConcept` comparison (`==` / `!=`) delegated to the
   `TypeAny` singleton, so `Type.ANY_CONCEPT == Type.ANY_CONCEPT` was `False` and
@@ -179,10 +191,6 @@ runtime; each release notes the runtime version it ships.
   `reduceHeads` atomicity; `lastCommitId` tie-break).
 
 ### 1.2.9 — 2026-05-08
-- **Changed** — the Python unit suite moved to the public, MIT-licensed
-  [`dsviper-tests`](https://github.com/digital-substrate/dsviper-tests) repo; the
-  publish pipeline self-gates on it. Added cross-codec round-trip equivalence
-  tests (`DSMDefinitions`: binary ↔ JSON ↔ BSON).
 - *Ships runtime 1.2.9.*
 
 ### 1.2.8 — 2026-05-03
@@ -215,6 +223,13 @@ Initial release.
 ## dsviper for Node.js
 
 The npm package `@digitalsubstrate/dsviper`. See {doc}`dsviper-node/index`.
+
+### 1.2.4 — 2026-07-06
+- **Added** — XML wire format: `Value.toXmlString(value, indent?)` /
+  `Value.fromXmlString(string, type, definitions)` and `DSMDefinitions.toXmlString(indent?)` /
+  `DSMDefinitions.fromXmlString(string)` — the XML dialect of the type-driven serializer,
+  alongside the existing JSON/BSON codecs. Additive.
+- *Ships runtime 1.2.19.*
 
 ### 1.2.3 — 2026-07-02
 - **Stable** — 1.2.3 stabilises the Node binding surface. It is the last release to carry

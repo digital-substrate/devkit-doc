@@ -4,7 +4,7 @@ This chapter covers installing and verifying the `dsviper` Node.js binding.
 
 ## Prerequisites
 
-- Node 16+ (the binding targets the N-API ABI; the test suite uses Node 18+).
+- Node 16+ (the binding targets the N-API ABI).
 - npm (or any package manager that installs from the npm registry).
 
 No C++ toolchain is required to consume the package: it ships **prebuilt native

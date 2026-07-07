@@ -76,14 +76,6 @@ equality — `a == b` is `false` even when they hold the same value, so always u
 `Symbol.toPrimitive`.)
 ```
 
-## Verified examples
-
-Every page in this section draws its examples from the public
-`dsviper-node-tests` suite — the Node twin of the Python
-[`dsviper-tests`](https://github.com/digital-substrate/dsviper-tests). That repo
-is the canonical place to read working, runtime-verified Node usage, for humans
-and agents alike.
-
 ## API reference
 
 The complete Node class reference is generated from the package's TypeScript

@@ -84,14 +84,6 @@ is reachable from Python. The Commit Database in particular is documented in
 the peer :doc:`Commit <../commit/index>` section.
 
 
-Further examples
-----------------
-
-For a broader corpus of runnable usage examples, see the public test
-suite at `digital-substrate/dsviper-tests
-<https://github.com/digital-substrate/dsviper-tests>`_.
-
-
 Topics
 ------
 

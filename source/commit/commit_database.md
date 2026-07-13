@@ -340,9 +340,11 @@ paths. Splitting accumulation this way is
 [scope decomposition](commit_cooperation.md) — bounded cost *and*
 composable edits, not a trade between them.
 
-### Validated scale
+### Measured scale
 
-Commit has been benchmarked at:
+Commit imposes no built-in ceiling on document count, database size, or
+concurrent processes. The figures below are the largest points we have
+*measured* to date — reference data, not limits:
 
 - ~6 600 documents per database — about 3 MB of structural data,
   alongside ~3 GB of associated blobs on CAD workloads (structure is
@@ -350,11 +352,13 @@ Commit has been benchmarked at:
 - up to 8 concurrent processes sharing a single SQLite database with
   applicative jitter between commits.
 
-State reconstruction is linear in document count: a full warm-up via
-`CommitState.cache_preload()` runs at ~1.5–2 µs per document across
-this range — 0.4 ms at 230 documents, 14 ms at 6 600.
+State reconstruction is linear in document count, so cost extrapolates
+predictably past these points: a full warm-up via
+`CommitState.cache_preload()` runs at ~1.5–2 µs per document — 0.4 ms at
+230 documents, 14 ms at 6 600, and proportionally beyond.
 
-Behaviour beyond those envelopes is not characterised.
+Larger workloads are expected to work; they simply have not been
+benchmarked yet, so we quote no numbers for them.
 
 ---
 

@@ -20,6 +20,23 @@ The engine shipped inside both bindings; `viperVersion()` reports this version.
 Binding- or packaging-only releases are omitted — except a *phantom* version (a runtime
 number minted with no runtime change, from a lockstep bump), listed to explain the gap.
 
+### 1.2.20 — 2026-07-12
+- **Added** — CommitId collection: `CommitIdCollector`, the commit-id twin of `BlobIdCollector`
+  — `useCommitId(type)` prunes any subtree whose type cannot hold a `CommitId`, then a typed
+  value walk gathers every `CommitId` a value references. A `CommitId` content-addresses a DAG
+  commit, so a schema-change rebuild can discover intra-DAG references. Additive — no change to
+  the type/value system or on-disk format.
+- **Fixed** — a conflicting schema upgrade no longer corrupts a database: `extendDefinitions`
+  against a store whose schema redefined an existing type under a **new** `runtimeId` (e.g. a
+  regenerated `.dsm`) used to commit a second, same-named definition, leaving the base unopenable
+  (`AlreadyDefinedName` on every `open()`). The type-name governance check now runs first and
+  raises before any write, so the transaction rolls back and the base stays openable. Preventive
+  only — a database already poisoned by an older runtime must still be restored from backup.
+- **Fixed** — DSM governance: a `Definitions` built through the construction API can no longer
+  escape DSM-expressibility. DSM grammar keywords, forked/cyclic namespaces, non-literal field
+  defaults, and duplicate parameter names are now rejected at construction. Safe against existing
+  DSM — any `.dsm` that parses already cleared these gates.
+
 ### 1.2.19 — 2026-07-06
 - **Added** — XML wire format: a third dialect (after JSON and BSON) of the type-driven
   serializer, round-tripping both values and DSM definitions on the vendored pugixml parser.
@@ -114,6 +131,25 @@ Initial release.
 
 The PyPI wheel (`pip install dsviper`). Its `PATCH` stream is independent of the
 runtime; each release notes the runtime version it ships.
+
+### 1.2.20 — 2026-07-13
+- **Added** — `Value.collect_commit_ids(value, type, definitions)` and `Type.use_commit_id(type)`
+  — gather every `CommitId` a value references (the commit-id twin of `collect_blob_ids`);
+  `use_commit_id` is the pruning predicate over a type, so a schema-change rebuild can discover
+  intra-DAG references.
+- **Added** — `ValueXArray.items(encoded=…)` keyword now matches `ValueMap.items` (default
+  `True`); `encoded=False` yields typed `Value` elements, so an xarray of scalar elements can be
+  walked and rebuilt faithfully. New `ValueXArray.rebuild_from(source, …)` performs an atomic
+  trans-definitions rewrite (positions + tombstones copied, re-mapped elements swapped in a
+  single memento, no partial state exposed).
+- **Fixed** — a conflicting schema upgrade no longer corrupts a database: `extend_definitions`
+  against a schema that redefined an existing type under a new `runtimeId` used to commit a
+  second, same-named definition and leave the base unopenable; it now fails cleanly before any
+  write.
+- **Changed** — construction-time DSM governance: a `DSMDefinitions` built through the binding
+  can no longer escape DSM-expressibility — DSM keywords, forked/cyclic namespaces, non-literal
+  field defaults, and duplicate parameter names are rejected at construction.
+- *Ships runtime 1.2.20.*
 
 ### 1.2.19 — 2026-07-06
 - **Added** — XML wire format: `Value.to_xml_string(value, indent=…)` /
@@ -223,6 +259,28 @@ Initial release.
 ## dsviper for Node.js
 
 The npm package `@digitalsubstrate/dsviper`. See {doc}`dsviper-node/index`.
+
+### 1.2.5 — 2026-07-13
+- **Added** — `Value.collectCommitIds(value, type, definitions)` and `Type.useCommitId(type)`
+  — gather every `CommitId` a value references (the commit-id twin of `collectBlobIds`);
+  `useCommitId` is the pruning predicate over a type, so a schema-change rebuild can discover
+  intra-DAG references.
+- **Added** — `ValueXArray.items(encoded?)` gains the `encoded` argument (default `true`,
+  matching prior behaviour); `items(false)` yields typed `Value` elements, so an xarray of
+  scalar elements can be walked and rebuilt faithfully. New `ValueXArray.rebuildFrom(source, …)`
+  performs an atomic trans-definitions rewrite (positions + tombstones copied, re-mapped
+  elements swapped in a single memento, no partial state exposed).
+- **Fixed** — a conflicting schema upgrade no longer corrupts a database: `extendDefinitions`
+  against a schema that redefined an existing type under a new `runtimeId` used to commit a
+  second, same-named definition and leave the base unopenable; it now fails cleanly before any
+  write.
+- **Fixed** — `decodeVariant` short-circuits an already-wrapped `ValueVariant`: placing a typed
+  `ValueVariant` handle into a struct field re-elaborated it as an arm and dropped the inner
+  value (`x: 9` → `0`); it now recognises the wrapped handle first, mirroring `decodeEnumeration`.
+- **Changed** — construction-time DSM governance: a `DSMDefinitions` built through the binding
+  can no longer escape DSM-expressibility — DSM keywords, forked/cyclic namespaces, non-literal
+  field defaults, and duplicate parameter names are rejected at construction.
+- *Ships runtime 1.2.20.*
 
 ### 1.2.4 — 2026-07-06
 - **Added** — XML wire format: `Value.toXmlString(value, indent?)` /

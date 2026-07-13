@@ -88,6 +88,28 @@ DSM schema can also be exported for client-side validation:
        res.mimetype = "application/json"
        return res
 
+XML Serialization
+-----------------
+
+The XML dialect of the type-driven serializer, alongside JSON — use
+``Value.to_xml_string()`` / ``Value.from_xml_string()`` when a downstream
+consumer expects XML. As with JSON, decoding requires the type and definitions.
+
+.. code-block:: python
+
+   from dsviper import Value, ValueString, Type, Definitions
+
+   # Encode primitive to XML
+   value = ValueString("hello")
+   xml_str = Value.to_xml_string(value, indent=2)
+
+   # Decode XML (requires type and definitions)
+   defs = Definitions()
+   decoded = Value.from_xml_string(xml_str, Type.STRING, defs.const())
+
+A parsed DSM schema serializes to XML the same way, via
+``DSMDefinitions.to_xml_string(indent=...)`` / ``DSMDefinitions.from_xml_string(string)``.
+
 Choosing the Right Approach
 ---------------------------
 
@@ -107,6 +129,9 @@ Choosing the Right Approach
    * - JSON for web APIs
      - ``Value.json_encode()``
      - REST/web integration
+   * - XML for XML consumers
+     - ``Value.to_xml_string()``
+     - Same type-driven codec, XML dialect
    * - Custom codec
      - ``Codec.STREAM_*``
      - Raw, binary, token formats

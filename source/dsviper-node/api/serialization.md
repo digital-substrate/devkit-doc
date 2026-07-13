@@ -6,7 +6,8 @@ streams those codecs are built on.
 
 Most code never touches a stream directly. To turn a {js:class}`Value` into a
 blob and back you call `Value.encode` / `Value.decode` (binary),
-`Value.toJsonString` / `Value.fromJsonString` (JSON, for web and REST), or
+`Value.toJsonString` / `Value.fromJsonString` (JSON, for web and REST),
+`Value.toXmlString` / `Value.fromXmlString` (XML), or
 `Value.dumps` / `Value.loads` (the native format). Decoding always needs the
 `Type` and a const {js:class}`Definitions` so the decoder knows the shape it is
 reading. The classes on this page are the machinery underneath: pick a named
@@ -41,6 +42,10 @@ console.log(value.equals(decoded)); // true
 // JSON: same round-trip, for web and REST integration.
 const json = Value.toJsonString(value);
 console.log(value.equals(Value.fromJsonString(json, Type.STRING, defs))); // true
+
+// XML: the XML dialect of the same type-driven codec.
+const xml = Value.toXmlString(value);
+console.log(value.equals(Value.fromXmlString(xml, Type.STRING, defs))); // true
 
 // Native dumps/loads: the same shape again.
 console.log(value.equals(Value.loads(Value.dumps(value), Type.STRING, defs))); // true
@@ -104,6 +109,7 @@ try {
 |----------|-----|------|
 | Binary serialization | `Value.encode` / `Value.decode` | Default codec; decode needs type + const definitions |
 | JSON for web / REST | `Value.toJsonString` / `Value.fromJsonString` | Web integration |
+| XML for XML consumers | `Value.toXmlString` / `Value.fromXmlString` | Same type-driven codec, XML dialect |
 | Native format | `Value.dumps` / `Value.loads` | Round-trips like the others |
 | Specific wire format | {js:class}`Codec` | `STREAM_BINARY`, `STREAM_RAW`, `StreamTokenBinary`, ... |
 | Encoder / decoder / sizer | {js:class}`StreamCodecInstancing` | `createEncoder` / `createDecoder` / `createSizer` |

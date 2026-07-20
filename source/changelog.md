@@ -20,6 +20,26 @@ The engine shipped inside both bindings; `viperVersion()` reports this version.
 Binding- or packaging-only releases are omitted — except a *phantom* version (a runtime
 number minted with no runtime change, from a lockstep bump), listed to explain the gap.
 
+### 1.2.21 — 2026-07-19
+- **Fixed** — HTML-output escaping (XSS / attribute injection): the HTML renderer emitted
+  names, strings, docstrings, keys and type references verbatim, so content carrying
+  `& < > " '` (reachable through unvalidated JSON/XML import) could inject markup or
+  attributes. Every content leaf is now escaped at the sink.
+- **Fixed** — byte-exact XML value codec: no longer truncates on `U+0000`, normalises
+  CR/CRLF, or drops whitespace-only text; XML-forbidden C0 controls are rejected, a carriage
+  return survives as `&#13;`, and whitespace-only text survives. Containers round-trip
+  unchanged.
+- **Fixed** — symmetric string escaping across DSM string literals, `repr`, and docstrings
+  (a value carrying `"`, `'` or `\` no longer produces unparseable text); imported
+  identifiers are validated against the identifier policy; DSM parse errors at end-of-input
+  carry their source file and a 1-based column; variant arms are de-duplicated by
+  `runtimeId`, not description.
+- **Added** — DSM-vocabulary parse diagnostics: the offending token is quoted and the
+  expected concept is named (`a value` / `a type` / `a definition`).
+- **Changed** — a `ValueString` must now be valid UTF-8, and a documentation string must be
+  DSM-expressible (no `"""`); both reject input previously accepted. The type/value system
+  and on-disk format are unchanged.
+
 ### 1.2.20 — 2026-07-12
 - **Added** — CommitId collection: `CommitIdCollector`, the commit-id twin of `BlobIdCollector`
   — `useCommitId(type)` prunes any subtree whose type cannot hold a `CommitId`, then a typed
@@ -131,6 +151,15 @@ Initial release.
 
 The PyPI wheel (`pip install dsviper`). Its `PATCH` stream is independent of the
 runtime; each release notes the runtime version it ships.
+
+### 1.2.21 — 2026-07-20
+- **Fixed** — interior NUL preserved across the Python string frontier: `str` decode/encode
+  used the null-terminated `PyUnicode_AsUTF8` / `PyUnicode_FromString`, so a `ValueString`
+  carrying an interior `\0` was silently truncated at the first null; the frontier is now
+  size-aware (`PyUnicode_AsUTF8AndSize` / `PyUnicode_FromStringAndSize`) and such a string
+  round-trips faithfully. (The Node binding was already size-correct.)
+- *Ships runtime 1.2.21 (HTML-output escaping fix; byte-exact XML codec; UTF-8 `ValueString`;
+  DSM-expressible docstrings — see the runtime section).*
 
 ### 1.2.20 — 2026-07-13
 - **Added** — `Value.collect_commit_ids(value, type, definitions)` and `Type.use_commit_id(type)`
@@ -259,6 +288,15 @@ Initial release.
 ## dsviper for Node.js
 
 The npm package `@digitalsubstrate/dsviper`. See {doc}`dsviper-node/index`.
+
+### 1.2.6 — 2026-07-19
+- **Added** — non-mutating container combinators: `ValueVector.concat` (`v1 + v2`, also
+  accepts a native array) returns a new vector and `ValueMap.merge` (`m1 | m2`, the other
+  map wins on a shared key) returns a new map, both leaving the operands untouched (the
+  in-place `extend` / `update` remain). `ValueSet.contains` / `ValueXArray.contains` are now
+  declared in the typings (the runtime already exposed them).
+- *Ships runtime 1.2.21 (HTML-output escaping fix; byte-exact XML codec; UTF-8 `ValueString`;
+  DSM-expressible docstrings — see the runtime section).*
 
 ### 1.2.5 — 2026-07-13
 - **Added** — `Value.collectCommitIds(value, type, definitions)` and `Type.useCommitId(type)`

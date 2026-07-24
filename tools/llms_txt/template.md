@@ -20,6 +20,10 @@ DevKit is the **distribution** that bundles **DSM** (the modeling language), **K
 
 {{auto:source/kibo-template-viper/*.md}}
 
+## Using your generated SDK
+
+{{auto:source/using-generated-sdk/*.md}}
+
 ## dsviper for Python
 
 {{auto:source/dsviper-python/*.md}}

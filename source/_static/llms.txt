@@ -37,6 +37,13 @@ DevKit is the **distribution** that bundles **DSM** (the modeling language), **K
 - [Wheels](https://docs.digitalsubstrate.io/kibo-template-viper/wheels.html): Generated wheel layout and build options.
 - [npm Packages](https://docs.digitalsubstrate.io/kibo-template-viper/node.html): Creating a distributable npm package from your DSM model — the TypeScript analogue of Python wheels <wheels>, over the @digitalsubstrate/dsviper Node binding instead of CPython.
 
+## Using your generated SDK
+
+- [Using your generated SDK](https://docs.digitalsubstrate.io/using-generated-sdk/index.html): The generated consumer SDK layer — one self-contained page per language.
+- [Generated SDK in Python](https://docs.digitalsubstrate.io/using-generated-sdk/python.html): Types, the proxy posture, attachment-verb mutation, and the commit loop.
+- [Generated SDK in Node](https://docs.digitalsubstrate.io/using-generated-sdk/node.html): Types, attachment-verb objects, and the commit loop in TypeScript.
+- [Generated SDK in C++](https://docs.digitalsubstrate.io/using-generated-sdk/cpp.html): Native value types and the static/dynamic ValueEncoder/ValueDecoder bridge.
+
 ## dsviper for Python
 
 - [Installation](https://docs.digitalsubstrate.io/dsviper-python/installation.html): `pip install dsviper`.

@@ -99,6 +99,28 @@ title = "Wheels"
 description = "Generated wheel layout and build options."
 sort = 20
 
+# ---- Using your generated SDK ----------------------------------------
+
+[overrides."https://docs.digitalsubstrate.io/using-generated-sdk/index.html"]
+title = "Using your generated SDK"
+description = "The generated consumer SDK layer — one self-contained page per language."
+sort = 10
+
+[overrides."https://docs.digitalsubstrate.io/using-generated-sdk/python.html"]
+title = "Generated SDK in Python"
+description = "Types, the proxy posture, attachment-verb mutation, and the commit loop."
+sort = 20
+
+[overrides."https://docs.digitalsubstrate.io/using-generated-sdk/node.html"]
+title = "Generated SDK in Node"
+description = "Types, attachment-verb objects, and the commit loop in TypeScript."
+sort = 30
+
+[overrides."https://docs.digitalsubstrate.io/using-generated-sdk/cpp.html"]
+title = "Generated SDK in C++"
+description = "Native value types and the static/dynamic ValueEncoder/ValueDecoder bridge."
+sort = 40
+
 # ---- dsviper ---------------------------------------------------------
 
 [overrides."https://docs.digitalsubstrate.io/dsviper-python/installation.html"]

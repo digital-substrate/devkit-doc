@@ -20,6 +20,28 @@ The engine shipped inside both bindings; `viperVersion()` reports this version.
 Binding- or packaging-only releases are omitted — except a *phantom* version (a runtime
 number minted with no runtime change, from a lockstep bump), listed to explain the gap.
 
+### 1.2.23 — 2026-07-23
+- **Fixed** — commit-read cache isolation: `CommitState::get` memoizes each `(attachment, key)`
+  lookup, but the cache-miss path returned the very `ValueOptional` it had just cached. A
+  document value is mutable, so mutating a first (cache-miss) result — `wrap`/`clear`, or
+  mutating the unwrapped container — poisoned the cache, and every later read of that key
+  then returned the corrupted value. The miss path now copies too (matching the hit path), so
+  the memoized snapshot stays immutable from the caller's side. Reachable from both bindings
+  via `AttachmentGetting.get`. The type/value system and on-disk format are unchanged.
+
+### 1.2.22 — 2026-07-22
+- **Added** — DSM parser source map: passing a `DSMSourceMap` to `DSMBuilder::parse` records the
+  exact source span of every declaration, field, case, namespace, type sub-expression and
+  *resolved* type-reference. This is the primitive behind a span-precise `.dsm` codemod — patch a
+  hand-authored schema source in place under a transformation (file split, comments and ordering
+  preserved) instead of regenerating it. Opt-in: `parse` without a source map is unchanged.
+- **Fixed** — a merge decree is frozen at arbitration: `CommitMergeResolution` now copies its
+  `chosen` value instead of storing the caller's handle, so the resolution owns an immutable
+  snapshot; mutating the passed value after building the resolution can no longer alter the
+  decree. The reconciled state is unchanged (reconcile already copied at consumption). The
+  ambiguous-reference type-resolution diagnostic is also spelled correctly. The type/value system
+  and on-disk format are unchanged.
+
 ### 1.2.21 — 2026-07-19
 - **Fixed** — HTML-output escaping (XSS / attribute injection): the HTML renderer emitted
   names, strings, docstrings, keys and type references verbatim, so content carrying
@@ -151,6 +173,26 @@ Initial release.
 
 The PyPI wheel (`pip install dsviper`). Its `PATCH` stream is independent of the
 runtime; each release notes the runtime version it ships.
+
+### 1.2.23 — 2026-07-23
+- **Fixed** — `AttachmentGetting.get` returns a document isolated from the commit state's
+  cache: on a cache miss the runtime handed back the cached `ValueOptional` itself, so mutating
+  a read result (`wrap` / `clear`, or mutating the unwrapped container) poisoned the state's
+  cache and corrupted every later read of that key. The frozen-snapshot contract that
+  read/query layers rely on is restored.
+- *Ships runtime 1.2.23 (commit-read cache isolation — see the runtime section).*
+
+### 1.2.22 — 2026-07-22
+- **Added** — `DSMSourceMap` exposed to Python: a `DSMSourceMap()` passed to
+  `DSMBuilder.parse(source_map=…)` collects, as a parse by-product, the source span of every
+  declaration, field, case, namespace, type sub-expression and *resolved* type-reference (with
+  `.pyi` typings for the whole surface) — enabling an in-place patch of a `.dsm` tree under a
+  schema change instead of regenerating it.
+- **Fixed** — `CommitMergeResolution.chosen` no longer leaks a mutable alias into the immutable
+  stored decree; the accessor now returns a copy, matching every other `Value const` accessor in
+  the binding.
+- *Ships runtime 1.2.22 (DSM parser source map; merge-decree value-semantics fix — see the
+  runtime section).*
 
 ### 1.2.21 — 2026-07-20
 - **Fixed** — interior NUL preserved across the Python string frontier: `str` decode/encode
@@ -288,6 +330,32 @@ Initial release.
 ## dsviper for Node.js
 
 The npm package `@digitalsubstrate/dsviper`. See {doc}`dsviper-node/index`.
+
+### 1.2.8 — 2026-07-23
+- **Fixed** — `AttachmentGetting.get` returns a document isolated from the commit state's
+  cache: on a cache miss the runtime handed back the cached `ValueOptional` itself, so mutating
+  a read result (`wrap` / `clear`, or mutating the unwrapped container) poisoned the state's
+  cache and corrupted every later read of that key. The frozen-snapshot contract that
+  read/query layers rely on is restored.
+- *Ships runtime 1.2.23 (commit-read cache isolation — see the runtime section).*
+
+### 1.2.7 — 2026-07-22
+- **Added** — `DSMSourceMap` exposed to Node: a `new DSMSourceMap()` passed to
+  `DSMBuilder.parse(sourceMap)` collects, as a parse by-product, the source span of every
+  declaration, field, case, namespace, type sub-expression and *resolved* type-reference —
+  enabling an in-place patch of a hand-authored `.dsm` tree under a schema change (file split,
+  comments and ordering preserved) instead of regenerating it.
+- **Fixed** — `ValueMap.items` / `keys` / `values` now hand out typed handles: `items` returned
+  a single `ValueVector` of tuples that native-decodes on a JS destructure, so `items(false)`
+  yielded native scalars instead of `Value` handles (breaking every `Map<_, scalar>` data
+  migration). `items` now returns a JS array of `[key, value]` pairs (key copied, value carried);
+  `keys` / `values` return the wrapped element.
+- **Fixed** — immutable values are copied, never const-cast, across the JS frontier: every
+  accessor that hands out an immutable value (set elements, map keys, the merge decree
+  `CommitMergeResolution.chosen`) now returns a copy, so a caller can no longer reach in and
+  corrupt the container or decree in place.
+- *Ships runtime 1.2.22 (DSM parser source map; merge-decree value-semantics fix — see the
+  runtime section).*
 
 ### 1.2.6 — 2026-07-19
 - **Added** — non-mutating container combinators: `ValueVector.concat` (`v1 + v2`, also

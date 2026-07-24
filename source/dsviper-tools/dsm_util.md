@@ -71,13 +71,17 @@ python3 tools/dsm_util.py create_python_package model.dsm --repos /path/to/repos
 
 ### Generated Package Contents
 
-| Module              | Description                             |
-|---------------------|-----------------------------------------|
-| `model.definitions` | Type definitions for Viper C++              |
-| `model.data`        | Classes for concepts, structures, enums |
-| `model.attachments` | Attachment accessors with type hints    |
-| `model.database`    | Database API with type hints            |
-| `model.value_types` | Type mappings                           |
+| Module              | Description                                                    |
+|---------------------|---------------------------------------------------------------|
+| `model.data`        | Proxy classes for concepts, clubs, enums, structs, containers |
+| `model.attachments` | Attachment accessors (get / set / enumerate), type-hinted     |
+| `model.definitions` | Runtime type catalog (`definitions()`) and `RuntimeIds`       |
+| `model.value_type`  | Viper `Type` handles used by `data` / `attachments`           |
+| `model.path`        | Field-path constants for fine-grained attachment setters      |
+| `model.resources`   | Packed definitions blob decoded by `model.definitions`        |
+
+A model that declares function pools also emits `model.function_pools`
+(and the RPC / attachment-pool variants).
 
 ### Usage
 

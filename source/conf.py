@@ -8,6 +8,11 @@ import doctest
 import os
 import sys
 sys.path.insert(0, os.path.abspath('./_ext'))
+# Committed Kibo-generated Tuto SDK (`_fixtures/model/`), imported by the
+# "Using your generated SDK" doctests so their examples run against the real
+# generated surface. Regenerate with tools/regen_model_fixture.sh after any
+# template change (it is a build artifact, not hand-edited).
+sys.path.insert(0, os.path.abspath('./_fixtures'))
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
@@ -130,6 +135,11 @@ def _new_tuto_db():
     return _db
 
 db = _new_tuto_db()
+
+# The committed Kibo-generated Tuto SDK, for the "Using your generated SDK"
+# chapter. `md` = types, `ma` = attachment verbs.
+import model.data as md
+import model.attachments as ma
 '''
 
 

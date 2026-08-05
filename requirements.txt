@@ -2,8 +2,17 @@
 #
 # Install with: pip install -r requirements.txt
 
-# Sphinx documentation generator
-sphinx
+# Sphinx documentation generator.
+#
+# Capped below 9: under Sphinx 9 the `pyi_signatures` extension fails to format
+# nine members of the dsviper API — `Value.create`, both `create_blob_from_buffer`,
+# `Attachment.create_structure`, `DSMDefinitionsInspector.check_attachment_function_pool`,
+# and the `funcs` / `pools` / `attachment_pools` properties. Autodoc reports
+# `list assignment index out of range` and then drops each of them from the page
+# entirely, with no anchor and no entry. They are warnings, not errors, so the
+# build succeeds and `make check` stays green while the reference silently loses
+# nine public members. Lift the cap once the extension handles Sphinx 9.
+sphinx<9
 
 # Furo theme (clean, responsive)
 furo

@@ -20,6 +20,38 @@ The engine shipped inside both bindings; `viperVersion()` reports this version.
 Binding- or packaging-only releases are omitted — except a *phantom* version (a runtime
 number minted with no runtime change, from a lockstep bump), listed to explain the gap.
 
+### 1.2.24 — 2026-08-04
+- **Added** — cooperative server termination: `CommitDatabaseServer`, `ServiceServer` and the
+  repository server now stop on a `Cancelation` directive rather than on a socket shutdown.
+  `step(timeoutInSec)` is a *bounded* wait, so the host keeps its own event loop, timers and signal
+  handlers alive between calls; `finishBefore(sec)` bounds the teardown and **returns how many client
+  threads it could not join**, so a host driving a user interface can act on the answer instead of
+  blocking on a Stop button. Supporting primitives: `RPCConnection::stepFor` (a third outcome beside
+  "read a packet" and "connection closed" — nothing arrived within the timeout, honoured as an Idle
+  read) and `Socket::waitReadable`, the read counterpart of `acceptNonBlock`.
+- **Fixed** — `createZeroBlob` over RPC had never worked: the side server answered with
+  `ReturnOptionalInt64` while the client waited for `ReturnBool`, so every remote call died on
+  `RPCProtocolErrors:10` and the streaming write path was unreachable over RPC for eighteen months.
+  The interface's return type had changed from `optional<int64_t>` to `bool` with only the client
+  migrated; the implicit conversion kept the compiler silent. Found by a new round-trip test that
+  calls every `CommitDatabasing` method against a live server.
+- **Fixed** — network transport: a partial `send()` no longer truncates the payload on POSIX (the
+  write loops until everything is out), and the accept `fd_set` is rebuilt on each pass instead of
+  being reused after `select()` has modified it; a length header announcing an empty payload is
+  rejected; an exception escaping a client thread no longer takes the process with it, and a client
+  that cannot open the database is reported rather than left to wedge the accept loop.
+- **Fixed** — Windows builds outside ATL-bearing Visual Studio editions (`<rpc.h>` for `UuidCreate`);
+  three declared XML decoder guards are now wired; a scalar default on a vec or mat field raises the
+  guard meant for it; `dsm_check` and `DSMHelper::assemble` reject a path that does not exist; the
+  repository server exits non-zero when it cannot start.
+- **Changed** — every error domain string now matches its namespace (`DatabaseErrors::Domain` is
+  `"DatabaseErrors"`, and so on). The domain is informative; the code stays the contract.
+- **Removed** — five runtime surfaces with no caller anywhere (measured across the runtime, both
+  bindings, the Kibo templates and every sibling application, with the git history checked for a
+  caller that once existed), five guards no call site could reach, and two RPC packets left over
+  from superseded signatures (`UnsetDatabase`, `ReturnOptionalInt64`). The type/value system and
+  on-disk format are unchanged.
+
 ### 1.2.23 — 2026-07-23
 - **Fixed** — commit-read cache isolation: `CommitState::get` memoizes each `(attachment, key)`
   lookup, but the cache-miss path returned the very `ValueOptional` it had just cached. A
@@ -173,6 +205,23 @@ Initial release.
 
 The PyPI wheel (`pip install dsviper`). Its `PATCH` stream is independent of the
 runtime; each release notes the runtime version it ships.
+
+### 1.2.24 — 2026-08-04
+- **Added** — `CommitDatabaseServer.finish_before(timeout_in_sec)` bounds the teardown wait and
+  **returns how many client threads it could not join** — zero meaning every client ended, non-zero
+  meaning the process is not idle yet. `step(timeout_in_sec)` is likewise a bounded wait, which is
+  what lets a Python host run its `SIGINT` handler between calls and stop within one timeout.
+- **Added** — `Socket.close()` / `Socket.is_closed()`: a passive local socket **is a file on disk**,
+  and deallocation depends on the last reference going away, which a host cannot always predict.
+  Every other resource handle in the binding carried `close()`; this one did not, so a host that
+  abandoned a socket (a failed bind, a reconfiguration, a shutdown) had no way to say so.
+- **Fixed** — a logger that calls back into Python is refused by `CommitDatabaseServer`: clients are
+  served on C++ threads that sit *outside* the GIL and must never re-enter the interpreter, so
+  `LoggerPrint` and a logger built with `Logging.create` now raise a `TypeError` at construction
+  instead of corrupting the interpreter later. The check is a marker type, not a name list. Use
+  `LoggerConsole`, `LoggerNull` or `LoggerReport`.
+- *Ships runtime 1.2.24 (cooperative server termination; POSIX transport truncation; remote
+  `createZeroBlob`; Windows build — see the runtime section).*
 
 ### 1.2.23 — 2026-07-23
 - **Fixed** — `AttachmentGetting.get` returns a document isolated from the commit state's
@@ -330,6 +379,22 @@ Initial release.
 ## dsviper for Node.js
 
 The npm package `@digitalsubstrate/dsviper`. See {doc}`dsviper-node/index`.
+
+### 1.2.9 — 2026-08-04
+- **Added** — `CommitDatabaseServer`, `Socket` and `Cancelation`: a Node host can now **serve** a
+  commit database, not only consume one over RPC — running a server no longer means installing the
+  Python wheel for a program that is C++ on both sides. The loop belongs to the host:
+  `step(timeoutInSec)` is a bounded wait, so a `setImmediate` between calls keeps timers, I/O and
+  signal delivery alive and `SIGINT` is honoured within one timeout; `finishBefore(sec)` bounds the
+  teardown and returns the number of client threads still running. `Socket` exposes only
+  `createPassiveLocal` and `createPassiveInet` — a host consumes a service through the `*Remote`
+  classes, it does not drive a socket by hand.
+- **Added** — `Socket.close()` / `Socket.isClosed()`, and `Socket` joins the resource handles that
+  implement `[Symbol.dispose]`, so `using socket = Socket.createPassiveLocal(path)` releases it at
+  scope exit. A passive local socket **is a file on disk**, and V8 releases nothing on a schedule a
+  host can rely on.
+- *Ships runtime 1.2.24 (cooperative server termination; POSIX transport truncation; remote
+  `createZeroBlob`; Windows build — see the runtime section).*
 
 ### 1.2.8 — 2026-07-23
 - **Fixed** — `AttachmentGetting.get` returns a document isolated from the commit state's

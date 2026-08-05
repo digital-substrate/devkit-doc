@@ -102,6 +102,22 @@ by fields live on {doc}`types`.
 
 Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d.ts`) by TypeDoc.
 
+## Source map
+
+Pass a `DSMSourceMap` to `DSMBuilder.parse(sourceMap)` and the parser records, as a
+by-product, the exact source span of every declaration, field, case, namespace, type
+sub-expression and *resolved* type-reference. That is what makes a span-precise codemod
+possible: patch a hand-authored `.dsm` in place under a transformation — file split,
+comments and ordering preserved — instead of regenerating it. Opt-in: a `parse` without a
+source map is unchanged.
+
+```js
+const { DSMBuilder, DSMSourceMap } = require('@digitalsubstrate/dsviper');
+
+const sourceMap = new DSMSourceMap();
+const [report, dsmDefs, defs] = DSMBuilder.assemble('model.dsm').parse(sourceMap);
+```
+
 ## Summary
 
 | Class | Description |
@@ -125,6 +141,14 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 | {js:class}`DSMLiteralValue` | A class used to represent the definition of a literal value |
 | {js:class}`DSMParseError` | A class used to represent a parse error |
 | {js:class}`DSMParseReport` | A class used to collect the error occurred while parsing the assembled definitions |
+| {js:class}`DSMSourceCase` | An enumeration case and the source spans of its name and doc |
+| {js:class}`DSMSourceDeclaration` | A definition declaration, its identifier and its source spans |
+| {js:class}`DSMSourceField` | A struct field and its source spans (name, type, declaration, doc) |
+| {js:class}`DSMSourceMap` | The source spans collected while parsing DSM |
+| {js:class}`DSMSourceNameSpace` | A namespace header and the source spans of its name and UUID |
+| {js:class}`DSMSourceReference` | A resolved type-reference site: its source span and its referent |
+| {js:class}`DSMSourceSpan` | A source text span (line, start, stop) of a definition token |
+| {js:class}`DSMSourceType` | A type sub-expression occurrence: its source span and qualified name |
 | {js:class}`DSMStructure` | A class used to represent the definition of a struct |
 | {js:class}`DSMStructureField` | A class used to represent the definition of a field for a struct |
 | {js:class}`DSMType` |  |
@@ -221,6 +245,38 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 ```
 
 ```{js:autoclass} DSMParseReport
+:members:
+```
+
+```{js:autoclass} DSMSourceCase
+:members:
+```
+
+```{js:autoclass} DSMSourceDeclaration
+:members:
+```
+
+```{js:autoclass} DSMSourceField
+:members:
+```
+
+```{js:autoclass} DSMSourceMap
+:members:
+```
+
+```{js:autoclass} DSMSourceNameSpace
+:members:
+```
+
+```{js:autoclass} DSMSourceReference
+:members:
+```
+
+```{js:autoclass} DSMSourceSpan
+:members:
+```
+
+```{js:autoclass} DSMSourceType
 :members:
 ```
 

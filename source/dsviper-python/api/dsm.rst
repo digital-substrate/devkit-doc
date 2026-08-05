@@ -107,3 +107,33 @@ Literals
 
    dsviper.DSMLiteralValue
    dsviper.DSMLiteralList
+
+Source Map
+----------
+
+Pass a ``DSMSourceMap`` to ``DSMBuilder.parse(source_map=…)`` and the parser
+records, as a by-product, the exact source span of every declaration, field,
+case, namespace, type sub-expression and *resolved* type-reference. This is what
+makes a span-precise codemod possible: patch a hand-authored ``.dsm`` in place
+under a transformation — file split, comments and ordering preserved — instead
+of regenerating it. Opt-in; a ``parse`` without a source map is unchanged.
+
+.. code-block:: python
+
+   from dsviper import DSMBuilder, DSMSourceMap
+
+   source_map = DSMSourceMap()
+   report, dsm_defs, defs = DSMBuilder.assemble("model.dsm").parse(source_map=source_map)
+
+.. autosummary::
+   :toctree: generated/
+   :nosignatures:
+
+   dsviper.DSMSourceMap
+   dsviper.DSMSourceSpan
+   dsviper.DSMSourceDeclaration
+   dsviper.DSMSourceField
+   dsviper.DSMSourceCase
+   dsviper.DSMSourceNameSpace
+   dsviper.DSMSourceReference
+   dsviper.DSMSourceType

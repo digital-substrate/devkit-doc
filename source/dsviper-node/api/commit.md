@@ -71,6 +71,7 @@ on a closed `CommitDatabase` throw a `ViperError` (a JS `Error` whose
 | Inspect commit metadata | {js:class}`CommitHeader` | `db.commitHeader(id)` |
 | Redux-style store (dispatch, undo/redo) | {js:class}`CommitStore` | `store.use(db); store.dispatch(label, fn)` |
 | Reconcile a merge | {js:class}`CommitMergeAnalyzer` | see below |
+| Serve a database over a socket | {js:class}`CommitDatabaseServer` | see [Serving a database](#serving-a-database) below |
 
 ## Merge reconciliation
 
@@ -103,6 +104,54 @@ erroring. For the model behind identify / surface / reconcile, see
 
 Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d.ts`) by TypeDoc.
 
+## Serving a database
+
+A Node host can **serve** a commit database, not only consume one:
+{js:class}`CommitDatabaseServer` opens the database behind a passive socket and serves each
+client on its own C++ thread. The client side is unchanged —
+{js:class}`CommitDatabaseRemote` (`connectLocal` / `connect`).
+
+The loop belongs to the host. `step(timeoutInSec)` is a *bounded* wait, so the server must
+yield to the event loop between calls; a loop that never yields starves timers, I/O and
+signal delivery.
+
+```js
+const { CommitDatabase, CommitDatabaseServer, Cancelation, Socket, LoggerNull } =
+    require('@digitalsubstrate/dsviper');
+
+CommitDatabase.create(databasePath).close();
+
+const cancelation = new Cancelation();
+const socket = Socket.createPassiveLocal(socketPath);
+const server = new CommitDatabaseServer(databasePath, socket,
+                                        new LoggerNull().logging(), cancelation);
+
+process.on('SIGINT', () => cancelation.cancel());   // honoured within one timeout
+
+const tick = () => {
+    if (!server.step(1) || cancelation.requested()) { server.finishBefore(5); return; }
+    setImmediate(tick);
+};
+server.start(); tick();
+```
+
+`finishBefore(timeoutInSec)` bounds the teardown and **returns the number of client threads
+it could not join** — zero means every client ended, non-zero means the process is not idle
+yet. `finish()` waits without a bound.
+
+`Socket` exposes only the passive factories a server needs (`createPassiveLocal`,
+`createPassiveInet`): a host consumes a service through the `*Remote` classes, it does not
+drive a socket by hand. A passive local socket **is a file on disk**, and V8 releases nothing
+on a schedule a host can rely on — release it explicitly with `socket.close()`, or through
+`[Symbol.dispose]`: `using socket = Socket.createPassiveLocal(socketPath)`.
+
+```{note}
+On macOS and Linux a unix-domain socket path is limited to ~104 bytes; a longer path fails
+`bind` with a misleading "Address already in use".
+```
+
+Available from the Node binding 1.2.9 (runtime 1.2.24) — see {doc}`../../changelog`.
+
 ## Summary
 
 | Class | Description |
@@ -114,6 +163,7 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 | {js:class}`CommitDatabaseHelper` | A utility class for a Commit Database |
 | {js:class}`CommitDatabaseRemote` | A low-level class used to represent a remote Commit database through the CommitDatabasing interface |
 | {js:class}`CommitDatabaseSQLite` | A low-level class used to represent the database based on SQLite3 through the CommitDatabasing interface |
+| {js:class}`CommitDatabaseServer` | Serve a CommitDatabase over a socket, one C++ thread per client |
 | {js:class}`CommitDatabaseToDatabaseConverter` | Converts a CommitDatabase into a Database |
 | {js:class}`CommitDatabasing` | An interface used to abstract the implementation of the persistence layer for a Commit database |
 | {js:class}`CommitEvalAction` | A class used by the evaluator to reconstruct a value by executing mutation opcodes |
@@ -166,6 +216,10 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 ```
 
 ```{js:autoclass} CommitDatabaseSQLite
+:members:
+```
+
+```{js:autoclass} CommitDatabaseServer
 :members:
 ```
 

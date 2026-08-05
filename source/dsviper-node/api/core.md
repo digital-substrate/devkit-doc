@@ -71,6 +71,7 @@ The mirror of this page for the Python binding is {doc}`../../dsviper-python/api
 
 | Class | Description |
 |-------|-------------|
+| {js:class}`Cancelation` | A cooperative cancellation flag shared between a host signal handler and a server loop |
 | {js:class}`Databasing` | An interface used to abstract the implementation of the persistence layer for a CRUD like database |
 | {js:class}`DocumentNode` | A class used to represent a node in the tree representation of a value |
 | {js:class}`Error` | The structured error raised by Viper: component, domain, code and message |
@@ -106,8 +107,13 @@ The mirror of this page for the Python binding is {doc}`../../dsviper-python/api
 | {js:class}`ServiceRemoteFunctionPoolFunction` | A class used to represent a remote function |
 | {js:class}`ServiceRemoteFunctionPoolFunctions` | A class used to represent the functions of a pool |
 | {js:class}`SharedMemory` | A class used to represent a shared memory region |
+| {js:class}`Socket` | A passive (listening) socket for a server |
 
 ## Reference
+
+```{js:autoclass} Cancelation
+:members:
+```
 
 ```{js:autoclass} Databasing
 :members:
@@ -246,5 +252,9 @@ The mirror of this page for the Python binding is {doc}`../../dsviper-python/api
 ```
 
 ```{js:autoclass} SharedMemory
+:members:
+```
+
+```{js:autoclass} Socket
 :members:
 ```

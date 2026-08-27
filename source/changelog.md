@@ -20,6 +20,27 @@ The engine shipped inside both bindings; `viperVersion()` reports this version.
 Binding- or packaging-only releases are omitted — except a *phantom* version (a runtime
 number minted with no runtime change, from a lockstep bump), listed to explain the gap.
 
+### 1.2.25 — 2026-08-27
+- **Fixed** — `TypeTuple` and `TypeVariant` answered a representation from whichever namespace
+  asked first: `representationIn(nameSpace)` memoized its first answer in a member that was not
+  keyed on the namespace, so every later caller got the first caller's namespace back.
+  `representation()` must answer the fully qualified name and `representation(nameSpace)` the
+  namespace-relative one; instead the result depended on call order and was wrong in both
+  directions — a global caller could receive an unqualified, ambiguous name. It was also a data
+  race: one `Definitions` is shared across a server's client threads, so filling either memo from
+  two of them at once was an unsynchronized write under a `const` method, reachable remotely
+  through any type-mismatch message. The memos are dropped and recomputed, as `TypeMap`,
+  `TypeKey`, `TypeMat`, `TypeOptional` and `TypeVec` already do — a few tens of nanoseconds on a
+  path only descriptions and error messages take.
+- **Changed** — `FunctionLambda` is now `FunctionCallable` and takes its name at construction. The
+  old class named itself after the syntax of the body it wraps and took only that body, so
+  `FunctionPrototype::makeFromTypes` named every instance `"lambda"`; a `FunctionPool` indexes by
+  name, so it could hold exactly one before the second silently replaced the first. Exposed to
+  neither binding, and with no caller anywhere.
+- **Removed** — two dead RPC surfaces: `RPCPacketReturnBlobId`, the return half of the id-less
+  `createBlob` whose call half 1.2.24 dropped, and `RPCSideClientCall::returnVectorOfUUId`,
+  declared since 2024 and never defined. The type/value system and on-disk format are unchanged.
+
 ### 1.2.24 — 2026-08-04
 - **Added** — cooperative server termination: `CommitDatabaseServer`, `ServiceServer` and the
   repository server now stop on a `Cancelation` directive rather than on a socket shutdown.
@@ -206,6 +227,23 @@ Initial release.
 The PyPI wheel (`pip install dsviper`). Its `PATCH` stream is independent of the
 runtime; each release notes the runtime version it ships.
 
+### 1.2.25 — 2026-08-27
+- **Fixed** — `Type.representation()` no longer depends on call order: on a tuple or a variant, the
+  no-argument form answers the fully qualified name and `representation(namespace=ns)` the form
+  relative to that namespace. Whichever was asked first used to fix the answer for every later
+  caller, in both directions, so a caller wanting the qualified name could receive an unqualified,
+  ambiguous one. It surfaces wherever a composite type is described — `dumps` output, a type
+  mismatch's message, any `Type` a tuple or a variant appears in. A host serving a commit database
+  was exposed to the race half as well: `CommitDatabaseServer` serves every client on its own C++
+  thread, outside the GIL, and those threads share one `Definitions`. Nothing memoizes the
+  representation now, so there is nothing left to race on.
+- **Fixed** — a wrong argument type passed to `ValueXArray.rebuild_from` raises CPython's own
+  message: the check moved to argument parsing instead of a hand-written test in the body.
+- *No change to the binding surface — `__init__.pyi` is untouched, no method added, removed or
+  renamed.*
+- *Ships runtime 1.2.25 (namespace-keyed tuple and variant representations — see the runtime
+  section).*
+
 ### 1.2.24 — 2026-08-04
 - **Added** — `CommitDatabaseServer.finish_before(timeout_in_sec)` bounds the teardown wait and
   **returns how many client threads it could not join** — zero meaning every client ended, non-zero
@@ -379,6 +417,20 @@ Initial release.
 ## dsviper for Node.js
 
 The npm package `@digitalsubstrate/dsviper`. See {doc}`dsviper-node/index`.
+
+### 1.2.10 — 2026-08-27
+- **Fixed** — `type.representation()` no longer depends on call order: on a tuple or a variant, the
+  no-argument form answers the fully qualified name and `representation(nameSpace)` the form
+  relative to that namespace. Whichever was asked first used to decide the answer for every later
+  caller, in both directions, so a caller wanting the qualified name could receive an unqualified,
+  ambiguous one. It surfaces wherever a composite type is described — `dumps` output, a type
+  mismatch's message, any `Type` a tuple or a variant appears in. A Node host that serves a commit
+  database was exposed to the race half as well: `CommitDatabaseServer` — new in 1.2.9 — serves
+  every client on its own C++ thread, and those threads share one `Definitions`. Nothing memoizes
+  the representation now, so there is nothing left to race on.
+- *No change to the binding surface — not one signature in `index.d.ts` differs.*
+- *Ships runtime 1.2.25 (namespace-keyed tuple and variant representations — see the runtime
+  section).*
 
 ### 1.2.9 — 2026-08-04
 - **Added** — `CommitDatabaseServer`, `Socket` and `Cancelation`: a Node host can now **serve** a

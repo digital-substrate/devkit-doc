@@ -159,20 +159,13 @@ Available from the Node binding 1.2.9 (runtime 1.2.24) — see {doc}`../../chang
 | {js:class}`Commit` | A class used to represent a commit |
 | {js:class}`CommitData` | A class used to represent data associated with a commit during the synchronization of two databases |
 | {js:class}`CommitDatabase` | A Commit database keeps the history of mutations in a DAG of commit |
-| {js:class}`CommitDatabaseFlattener` | Flattens a CommitDatabase commit into a single-commit CommitDatabase |
 | {js:class}`CommitDatabaseHelper` | A utility class for a Commit Database |
 | {js:class}`CommitDatabaseRemote` | A low-level class used to represent a remote Commit database through the CommitDatabasing interface |
 | {js:class}`CommitDatabaseSQLite` | A low-level class used to represent the database based on SQLite3 through the CommitDatabasing interface |
 | {js:class}`CommitDatabaseServer` | Serve a CommitDatabase over a socket, one C++ thread per client |
-| {js:class}`CommitDatabaseToDatabaseConverter` | Converts a CommitDatabase into a Database |
 | {js:class}`CommitDatabasing` | An interface used to abstract the implementation of the persistence layer for a Commit database |
 | {js:class}`CommitEvalAction` | A class used by the evaluator to reconstruct a value by executing mutation opcodes |
 | {js:class}`CommitHeader` | A class used to represent the header of a commit |
-| {js:class}`CommitMergeAnalysis` | The result of a 3-way merge analysis: the merge base and the list of reconstructed conflicts between the two branches |
-| {js:class}`CommitMergeAnalyzer` | Additive, post-merge 3-way reconciliation over a CommitDatabase |
-| {js:class}`CommitMergeConflict` | A single locus, anchored on a path, where one branch's intent did not survive the merge, reconstructed as base/ours/theirs/merged values |
-| {js:class}`CommitMergeDocument` | All conflicts of one document (attachment, key) — the unit reconcile operates on |
-| {js:class}`CommitMergeResolution` | A supervisor's decree for one conflict: the chosen value should survive at the conflict's locus |
 | {js:class}`CommitMutableState` | A class used to register the mutations of a value executed through the attachmentMutating interface |
 | {js:class}`CommitNode` | A class used to represent a node in the commit DAG |
 | {js:class}`CommitNodeGrid` | A class used to represent the location of a commit node in the grid |
@@ -203,10 +196,6 @@ Available from the Node binding 1.2.9 (runtime 1.2.24) — see {doc}`../../chang
 :members:
 ```
 
-```{js:autoclass} CommitDatabaseFlattener
-:members:
-```
-
 ```{js:autoclass} CommitDatabaseHelper
 :members:
 ```
@@ -223,10 +212,6 @@ Available from the Node binding 1.2.9 (runtime 1.2.24) — see {doc}`../../chang
 :members:
 ```
 
-```{js:autoclass} CommitDatabaseToDatabaseConverter
-:members:
-```
-
 ```{js:autoclass} CommitDatabasing
 :members:
 ```
@@ -236,26 +221,6 @@ Available from the Node binding 1.2.9 (runtime 1.2.24) — see {doc}`../../chang
 ```
 
 ```{js:autoclass} CommitHeader
-:members:
-```
-
-```{js:autoclass} CommitMergeAnalysis
-:members:
-```
-
-```{js:autoclass} CommitMergeAnalyzer
-:members:
-```
-
-```{js:autoclass} CommitMergeConflict
-:members:
-```
-
-```{js:autoclass} CommitMergeDocument
-:members:
-```
-
-```{js:autoclass} CommitMergeResolution
 :members:
 ```
 

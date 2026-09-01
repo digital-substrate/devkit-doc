@@ -108,6 +108,24 @@ Literals
    dsviper.DSMLiteralValue
    dsviper.DSMLiteralList
 
+Definitions
+-----------
+
+``Definitions`` is the registry a DSM model is loaded into: the concepts, clubs,
+attachments and types an application declares. Everything else on this page
+describes the model; these classes hold it at runtime.
+
+.. autosummary::
+   :toctree: generated/
+   :nosignatures:
+
+   dsviper.Definitions
+   dsviper.DefinitionsConst
+   dsviper.DefinitionsCollector
+   dsviper.DefinitionsInspector
+   dsviper.DefinitionsMapper
+   dsviper.DefinitionsExtendInfo
+
 Source Map
 ----------
 

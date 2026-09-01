@@ -1,7 +1,9 @@
 Core Utilities
 ==============
 
-Core classes for definitions, namespaces, paths, and utilities.
+Core classes for namespaces, paths, and cross-cutting utilities.
+``Definitions`` itself is documented with the DSM surface it registers, in
+:doc:`dsm`.
 
 **When to use**: Use ``Definitions`` to register custom types, ``Path`` to
 navigate nested structures, and ``Logging`` for debug output.
@@ -55,20 +57,6 @@ Key Classes
    * - :class:`Error`
      - Parse error messages
      - ``Error.parse(str(e))``
-
-Definitions
------------
-
-.. autosummary::
-   :toctree: generated/
-   :nosignatures:
-
-   dsviper.Definitions
-   dsviper.DefinitionsConst
-   dsviper.DefinitionsCollector
-   dsviper.DefinitionsInspector
-   dsviper.DefinitionsMapper
-   dsviper.DefinitionsExtendInfo
 
 Namespace
 ---------
@@ -145,6 +133,5 @@ Utilities
    dsviper.SharedMemory
    dsviper.Socket
    dsviper.Float16
-   dsviper.Fuzzer
    dsviper.KeyHelper
    dsviper.KeyNamer

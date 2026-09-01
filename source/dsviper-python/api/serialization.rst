@@ -148,6 +148,7 @@ Codec
 
    dsviper.Codec
    dsviper.StreamCodecInstancing
+   dsviper.Fuzzer
 
 Binary Streams
 --------------

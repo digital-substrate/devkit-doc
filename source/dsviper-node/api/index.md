@@ -8,10 +8,14 @@ The complete class reference for the `@digitalsubstrate/dsviper` binding, genera
 types
 values
 attachments
-commit
 database
-dsm
+commit
+reconciliation
+transfer
+services
 blobs
 serialization
+dsm
+web
 core
 ```

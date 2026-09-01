@@ -72,8 +72,6 @@ The mirror of this page for the Python binding is {doc}`../../dsviper-python/api
 | Class | Description |
 |-------|-------------|
 | {js:class}`Cancelation` | A cooperative cancellation flag shared between a host signal handler and a server loop |
-| {js:class}`Databasing` | An interface used to abstract the implementation of the persistence layer for a CRUD like database |
-| {js:class}`DocumentNode` | A class used to represent a node in the tree representation of a value |
 | {js:class}`Error` | The structured error raised by Viper: component, domain, code and message |
 | {js:class}`Float16` | A class used to handle float16 representation |
 | {js:class}`FunctionPrototype` | A class used to represent the prototype of a function |
@@ -83,7 +81,6 @@ The mirror of this page for the Python binding is {doc}`../../dsviper-python/api
 | {js:class}`HashSHA256` | A class used to hash data with SHA256 |
 | {js:class}`HashSHA3` | A class used to hash a data with SHA3 |
 | {js:class}`Hashing` | An interface to abstract a hasher |
-| {js:class}`Html` | A class used to generate HTML representation |
 | {js:class}`KeyHelper` | A class used to collect keys, attachments and missing attachments for a key |
 | {js:class}`KeyNamer` | A class used to get a name for a key from available attachments |
 | {js:class}`LoggerConsole` | A class used to display a message on the console |
@@ -96,30 +93,12 @@ The mirror of this page for the Python binding is {doc}`../../dsviper-python/api
 | {js:class}`PathConst` | A class used to retrieve a value from a Path |
 | {js:class}`PathElementInfo` | A class used to represent the various information for an element of a set |
 | {js:class}`PathEntryKeyInfo` | A class used to represent various information for an entry of a map |
-| {js:class}`SQLite` | A class used to retrieve the configuration of SQLite3 |
-| {js:class}`ServiceRemote` | A class used to connect to a remote service |
-| {js:class}`ServiceRemoteAttachmentFunction` | A class used to call a remote attachment function |
-| {js:class}`ServiceRemoteAttachmentFunctionPool` | A class used to represent a remote attachment function pool |
-| {js:class}`ServiceRemoteAttachmentFunctionPoolFunction` | A class used to represent a remote attachment function |
-| {js:class}`ServiceRemoteAttachmentFunctionPoolFunctions` | A class used to represent the remote attachment functions |
-| {js:class}`ServiceRemoteFunction` | A class used to call a remote function |
-| {js:class}`ServiceRemoteFunctionPool` | A class used to represent a remote function pool |
-| {js:class}`ServiceRemoteFunctionPoolFunction` | A class used to represent a remote function |
-| {js:class}`ServiceRemoteFunctionPoolFunctions` | A class used to represent the functions of a pool |
 | {js:class}`SharedMemory` | A class used to represent a shared memory region |
 | {js:class}`Socket` | A passive (listening) socket for a server |
 
 ## Reference
 
 ```{js:autoclass} Cancelation
-:members:
-```
-
-```{js:autoclass} Databasing
-:members:
-```
-
-```{js:autoclass} DocumentNode
 :members:
 ```
 
@@ -156,10 +135,6 @@ The mirror of this page for the Python binding is {doc}`../../dsviper-python/api
 ```
 
 ```{js:autoclass} Hashing
-:members:
-```
-
-```{js:autoclass} Html
 :members:
 ```
 
@@ -208,46 +183,6 @@ The mirror of this page for the Python binding is {doc}`../../dsviper-python/api
 ```
 
 ```{js:autoclass} PathEntryKeyInfo
-:members:
-```
-
-```{js:autoclass} SQLite
-:members:
-```
-
-```{js:autoclass} ServiceRemote
-:members:
-```
-
-```{js:autoclass} ServiceRemoteAttachmentFunction
-:members:
-```
-
-```{js:autoclass} ServiceRemoteAttachmentFunctionPool
-:members:
-```
-
-```{js:autoclass} ServiceRemoteAttachmentFunctionPoolFunction
-:members:
-```
-
-```{js:autoclass} ServiceRemoteAttachmentFunctionPoolFunctions
-:members:
-```
-
-```{js:autoclass} ServiceRemoteFunction
-:members:
-```
-
-```{js:autoclass} ServiceRemoteFunctionPool
-:members:
-```
-
-```{js:autoclass} ServiceRemoteFunctionPoolFunction
-:members:
-```
-
-```{js:autoclass} ServiceRemoteFunctionPoolFunctions
 :members:
 ```
 

@@ -76,21 +76,16 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 ## Summary
 
 | Class | Description |
-|-------|-------------|
 | {js:class}`Database` | A Database is a CRUD like transactional database |
-| {js:class}`DatabaseCopier` | Copies a Database into another Database |
 | {js:class}`DatabaseRemote` | A low-level class used to access a CRUD like database from a remote repository through the Databasing interface |
 | {js:class}`DatabaseSQLite` | A low-level class used to represent a CRUD like database based on SQLite3 through the Databasing interface |
-| {js:class}`DatabaseToCommitDatabaseConverter` | Converts a Database into a CommitDatabase |
-| {js:class}`DatabaseTransferInfo` | Result of a database conversion: counts of copied documents and blobs |
+| {js:class}`Databasing` | An interface used to abstract the implementation of the persistence layer for a CRUD like database |
+| {js:class}`SQLite` | A class used to retrieve the configuration of SQLite3 |
+|-------|-------------|
 
 ## Reference
 
 ```{js:autoclass} Database
-:members:
-```
-
-```{js:autoclass} DatabaseCopier
 :members:
 ```
 
@@ -102,10 +97,11 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 :members:
 ```
 
-```{js:autoclass} DatabaseToCommitDatabaseConverter
+```{js:autoclass} Databasing
 :members:
 ```
 
-```{js:autoclass} DatabaseTransferInfo
+```{js:autoclass} SQLite
 :members:
 ```
+

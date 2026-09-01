@@ -185,5 +185,3 @@ Tracing
    dsviper.CommitStateTracing
    dsviper.CommitStateTrace
    dsviper.CommitStateTraceProgram
-   dsviper.ValueProcessorTrace
-   dsviper.ValueProcessorTraceOpcode

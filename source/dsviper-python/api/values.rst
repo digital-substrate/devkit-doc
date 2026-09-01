@@ -153,3 +153,13 @@ Each opcode represents an atomic operation (set, update, union, subtract, etc.).
    dsviper.ValueOpcodeXArrayRemove
    dsviper.ValueOpcodeXArrayUpdate
 
+Executing a program leaves a trace of the opcodes it ran, in the same
+vocabulary:
+
+.. autosummary::
+   :toctree: generated/
+   :nosignatures:
+
+   dsviper.ValueProcessorTrace
+   dsviper.ValueProcessorTraceOpcode
+

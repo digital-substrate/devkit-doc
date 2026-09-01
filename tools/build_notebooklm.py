@@ -14,7 +14,7 @@ dives — is conveyed even when a tool ingests them out of order:
                          (CommitDatabase, CommitStore, Commit
                          Application Model) plus the dual-layer contract
     36-devkit-commit-instances  Walkthroughs of the Commit Application
-                         Model: cdbe (shipped), ge-py, ge-qml, web-cdbe
+                         Model: cdbe (shipped), dsviper-ge, dsviper-ge-qml, dsviper-web-cdbe
     37-devkit-services   The Service mechanism: function pools across
                          the wire, Remote-Local protocol, safety
     40-devkit-tools      Tools and UI components consuming dsviper
@@ -89,7 +89,7 @@ BUNDLES: tuple[Bundle, ...] = (
     ),
     Bundle(
         "36-devkit-commit-instances",
-        "Walkthroughs of the Commit Application Model — cdbe.py (shipped, generic), ge-py, ge-qml, web-cdbe.",
+        "Walkthroughs of the Commit Application Model — cdbe.py (shipped, generic), dsviper-ge, dsviper-ge-qml, dsviper-web-cdbe.",
         ("commit-apps",),
     ),
     Bundle(

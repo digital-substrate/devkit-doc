@@ -72,13 +72,13 @@ class DSCommitsDialog(QDialog):
 
 The widget does not subclass anything domain-specific; it does not reach
 out to a global. The application owns the store and **injects** it into
-each component, so it imposes no single topology. Both ge-py and ge-qml run one
+each component, so it imposes no single topology. Both dsviper-ge and dsviper-ge-qml run one
 `CommitStore` behind a `Context` singleton; what differs is how each supplies
 the notifier:
 
-- **ge-py** has each component reach the `DSCommitStoreNotifier.instance()`
+- **dsviper-ge** has each component reach the `DSCommitStoreNotifier.instance()`
   convenience singleton;
-- **ge-qml** injects an explicit notifier into every component instead;
+- **dsviper-ge-qml** injects an explicit notifier into every component instead;
 - **headless tools** build a `CommitStore` for a one-off task.
 
 ```{tip}
@@ -140,4 +140,4 @@ and leaves only the domain-specific part to write.
 For the catalogue of what the library exposes, see
 [Widgets](widgets.md). For a worked example of the integration in a
 real application, see the
-[ge-py walk-through](../commit-apps/ge-py.md).
+[dsviper-ge walk-through](../commit-apps/dsviper-ge.md).

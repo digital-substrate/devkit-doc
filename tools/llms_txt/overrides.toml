@@ -229,18 +229,18 @@ title = "cdbe"
 description = "Commit Database Editor — generic Commit Application reference."
 sort = 10
 
-[overrides."https://docs.digitalsubstrate.io/commit-apps/ge-py.html"]
-title = "ge-py"
+[overrides."https://docs.digitalsubstrate.io/commit-apps/dsviper-ge.html"]
+title = "dsviper-ge"
 description = "Pure-Python reference application (Graph Editor)."
 sort = 20
 
-[overrides."https://docs.digitalsubstrate.io/commit-apps/ge-qml.html"]
-title = "ge-qml"
+[overrides."https://docs.digitalsubstrate.io/commit-apps/dsviper-ge-qml.html"]
+title = "dsviper-ge-qml"
 description = "Qt Quick / QML reference application (Graph Editor)."
 sort = 30
 
-[overrides."https://docs.digitalsubstrate.io/commit-apps/web-cdbe.html"]
-title = "web-cdbe"
+[overrides."https://docs.digitalsubstrate.io/commit-apps/dsviper-web-cdbe.html"]
+title = "dsviper-web-cdbe"
 description = "Web-based commit-database editor."
 sort = 40
 

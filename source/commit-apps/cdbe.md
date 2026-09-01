@@ -18,7 +18,7 @@ databases.
 ## What it demonstrates
 
 cdbe is the **degenerate case** of the Commit Application Model:
-the same pattern as ge-py / ge-qml, but with the domain-specific
+the same pattern as dsviper-ge / dsviper-ge-qml, but with the domain-specific
 layers collapsed because there is no domain. It is what remains
 when you take the
 [Commit Application Model](../commit/commit_application_model.md) and
@@ -86,7 +86,7 @@ plumbing) or imported from `dsviper_components`.
 
 ## The "Application Context" — store and notifier hosted by MainWindow
 
-ge-py defines a `Context` class that owns its `CommitStore` and the
+dsviper-ge defines a `Context` class that owns its `CommitStore` and the
 domain state (`graph_key`). cdbe has no domain state, so there is no
 dedicated `Context` class either. Two roles take its place:
 
@@ -172,7 +172,7 @@ inside the central widget — `DSDocumentsCommitStore` calls
 `MainWindow` never touches dispatch with a domain lambda; it only
 drives DAG navigation and undo/redo.
 
-Compare with ge-py, where `_random_vertex_triggered` calls
+Compare with dsviper-ge, where `_random_vertex_triggered` calls
 `context.store.dispatch("Random Vertex", λ)` with a lambda routed to
 `model.random.add_vertex(...)`. There is no equivalent in cdbe — the
 moment domain logic is needed, you are no longer writing a generic
@@ -180,7 +180,7 @@ editor.
 
 ## Notification flow
 
-Same shape as ge-py: the `MainWindow` connects to the notifier's
+Same shape as dsviper-ge: the `MainWindow` connects to the notifier's
 signals once, and every mutation arriving from the central widget or
 from a sync round-trip lands in the same handlers.
 
@@ -283,7 +283,7 @@ background, optionally reducing heads whenever a divergence appears.
 
 ### Embedded Python — DSCodeEditorDialog
 
-Same as ge-py: a `PythonEditorModel` exposes the live `store` (and the
+Same as dsviper-ge: a `PythonEditorModel` exposes the live `store` (and the
 documents panel) as namespace globals to the embedded editor, so any
 script written from inside cdbe operates on the open database.
 Because cdbe has no domain, the namespace is minimal:
@@ -311,12 +311,12 @@ skeleton of a Commit application: a Qt main window, a `CommitStore` it
 owns plus the notifier singleton, a model-agnostic central widget, and
 the shared library's admin dialogs. From there:
 
-* [ge-py](ge-py.md) re-introduces the domain — a DSM model, Kibo
+* [dsviper-ge](dsviper-ge.md) re-introduces the domain — a DSM model, Kibo
   output, business functions in `model/`, and a `Context` class that
   owns the `graph_key`. Same Model, with the layers 3 and 4 filled in.
-* [ge-qml](ge-qml.md) keeps the same domain and swaps the
+* [dsviper-ge-qml](dsviper-ge-qml.md) keeps the same domain and swaps the
   presentation tier from Qt Widgets to Qt Quick / QML.
-* [web-cdbe](web-cdbe.md) takes the same model-agnostic posture as
+* [dsviper-web-cdbe](dsviper-web-cdbe.md) takes the same model-agnostic posture as
   cdbe but ports the central-widget idea to a server-rendered
   HTML/CSS surface.
 

@@ -1,4 +1,4 @@
-# web-cdbe
+# dsviper-web-cdbe
 
 Flask web application that demonstrates a **generic Commit Database
 Editor** built directly on top of `dsviper`. Pure HTML5, no JavaScript:
@@ -6,24 +6,24 @@ every interaction is a normal browser navigation or a `POST` form.
 
 The generic Commit Database Editor is the Qt Widgets tool
 [`cdbe.py`](../dsviper-tools/editors.md), shipped in `dsviper-tools` —
-that is the full-featured production editor. `web-cdbe` is a derived
+that is the full-featured production editor. `dsviper-web-cdbe` is a derived
 demonstration of the same idea, deliberately reduced to a minimum
 surface so the runtime API is visible without the framework noise of a
 desktop GUI.
 
 * **Source repository** —
-  [`digital-substrate/web-cdbe`](https://github.com/digital-substrate/web-cdbe).
+  [`digital-substrate/dsviper-web-cdbe`](https://github.com/digital-substrate/dsviper-web-cdbe).
 * **Entry point** — `app.py`.
 * **Dependencies** — `flask >= 3.0`, `dsviper >= 1.2.7` (from PyPI).
 
 ## What it demonstrates
 
-Unlike `ge-py` / `ge-qml`, web-cdbe is **not specialised for a particular
+Unlike `dsviper-ge` / `dsviper-ge-qml`, dsviper-web-cdbe is **not specialised for a particular
 DSM model**. It opens any commit database and reads its schema at
 runtime through dsviper's introspection API — there is no Kibo-generated
 package, no hand-written business logic, no domain widgets.
 
-| Layer     | Where in web-cdbe                            | DevKit doc                                           |
+| Layer     | Where in dsviper-web-cdbe                            | DevKit doc                                           |
 |-----------|----------------------------------------------|------------------------------------------------------|
 | Schema    | `definitions()` from any opened database     | [DSM](../dsm/index.rst) (the language behind it)     |
 | Runtime   | `CommitDatabase`, `CommitMutableState`       | [dsviper](../dsviper-python/index.rst)                      |
@@ -33,7 +33,7 @@ package, no hand-written business logic, no domain widgets.
 The takeaway: a working editor for **any** commit database in ~450
 lines of Python plus three Jinja templates. The same introspection API
 powers `dsviper-tools` (Qt Widgets, including `cdbe.py`) and
-`dsviper-tools-qml`; web-cdbe is the browser-shaped sibling.
+`dsviper-tools-qml`; dsviper-web-cdbe is the browser-shaped sibling.
 
 ## Architecture
 
@@ -60,7 +60,7 @@ the database, reads the last commit, renders or mutates, and returns.
 ## Repository layout
 
 ```text
-web-cdbe/
+dsviper-web-cdbe/
 ├── app.py                       # Flask routes and request handlers
 ├── html_documents_renderer.py   # DocumentNode → HTML (forms + <details>)
 ├── html_renderer.py             # Small span/keyword/uuid helpers
@@ -161,7 +161,7 @@ content = renderer.html()
 
 `DocumentNode.create_documents(...)` is the same tree that the Qt
 Widgets `DSDocumentsCommitStore` and the QML `DocumentsPanel` consume —
-web-cdbe is just another renderer on top of it.
+dsviper-web-cdbe is just another renderer on top of it.
 
 ## Rendering: `DocumentNode` → HTML
 
@@ -253,7 +253,7 @@ place in the tree — without a single line of JavaScript.
 
 ## Why "no JavaScript" is the point
 
-Removing JavaScript is not a stylistic choice; it makes web-cdbe the
+Removing JavaScript is not a stylistic choice; it makes dsviper-web-cdbe the
 **minimum-surface demonstration** of the dsviper runtime in a web
 context:
 
@@ -278,7 +278,7 @@ context:
 
 ## Reference
 
-* [dsviper](../dsviper-python/index.rst) — the runtime web-cdbe is built on,
+* [dsviper](../dsviper-python/index.rst) — the runtime dsviper-web-cdbe is built on,
   including `CommitDatabase`, `CommitMutableState`, and `DocumentNode`.
 * [DSM](../dsm/index.rst) — the modelling language whose definitions
   are read back here through `db.definitions()`.

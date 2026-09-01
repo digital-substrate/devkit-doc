@@ -9,8 +9,8 @@ language profiles — is documented in the :doc:`Commit <../commit/index>`
 chapter; this chapter is **instances**.
 
 The pattern stripped of its domain first (``cdbe``), then with a domain
-on top (``ge-py``, ``ge-qml``), then re-stripped on a different tier
-(``web-cdbe``). They are not products in their own right — read them as
+on top (``dsviper-ge``, ``dsviper-ge-qml``), then re-stripped on a different tier
+(``dsviper-web-cdbe``). They are not products in their own right — read them as
 worked examples.
 
 
@@ -30,8 +30,8 @@ Context.
   `digital-substrate/dsviper-tools <https://github.com/digital-substrate/dsviper-tools>`_.
 * **Walk-through** — :doc:`cdbe`.
 
-ge-py
------
+dsviper-ge
+----------
 
 Graph Editor — PySide6 desktop application demonstrating dsviper
 end-to-end with a graph database visualization. Built on the Qt
@@ -41,31 +41,31 @@ Kibo-generated typed accessors, business functions, and a ``Context``
 class that owns the domain state.
 
 * **Source repository** —
-  `digital-substrate/ge-py <https://github.com/digital-substrate/ge-py>`_.
-* **Walk-through** — :doc:`ge-py`.
+  `digital-substrate/dsviper-ge <https://github.com/digital-substrate/dsviper-ge>`_.
+* **Walk-through** — :doc:`dsviper-ge`.
 
-ge-qml
-------
+dsviper-ge-qml
+--------------
 
-Graph Editor — QML port of ge-py, built on the Qt Quick
+Graph Editor — QML port of dsviper-ge, built on the Qt Quick
 infrastructure (``dsviper-components-qml``). Same value chain, same
 business logic, same ``CommitStore`` facade — the UI is QML driven by
 Python ``QObject`` models registered as QML context properties.
 
 * **Source repository** —
-  `digital-substrate/ge-qml <https://github.com/digital-substrate/ge-qml>`_.
-* **Walk-through** — :doc:`ge-qml`.
+  `digital-substrate/dsviper-ge-qml <https://github.com/digital-substrate/dsviper-ge-qml>`_.
+* **Walk-through** — :doc:`dsviper-ge-qml`.
 
-web-cdbe
---------
+dsviper-web-cdbe
+----------------
 
 Flask web application — a generic Commit Database Editor. Pure
 HTML5, no JavaScript. Same model-agnostic posture as cdbe, ported to
 a server-rendered HTML/CSS surface.
 
 * **Source repository** —
-  `digital-substrate/web-cdbe <https://github.com/digital-substrate/web-cdbe>`_.
-* **Walk-through** — :doc:`web-cdbe`.
+  `digital-substrate/dsviper-web-cdbe <https://github.com/digital-substrate/dsviper-web-cdbe>`_.
+* **Walk-through** — :doc:`dsviper-web-cdbe`.
 
 
 C++ realizations
@@ -73,7 +73,7 @@ C++ realizations
 
 Concrete C++ realizations of the same pattern exist in parallel — a Qt
 profile and an AppKit (macOS) profile, with a generic Commit Database
-Editor and a Graph Editor mirroring ``cdbe`` and ``ge-py``. They follow
+Editor and a Graph Editor mirroring ``cdbe`` and ``dsviper-ge``. They follow
 the six-layer C++ profile described in
 :doc:`../commit/commit_application_model` and ship alongside
 :term:`Viper C++`. :doc:`Contact us <../ecosystem/naming>` for access.
@@ -83,6 +83,6 @@ the six-layer C++ profile described in
    :hidden:
 
    cdbe
-   ge-py
-   ge-qml
-   web-cdbe
+   dsviper-ge
+   dsviper-ge-qml
+   dsviper-web-cdbe

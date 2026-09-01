@@ -1,4 +1,4 @@
-# ge-py
+# dsviper-ge
 
 PySide6 desktop application that exercises the **whole DevKit value chain**
 from a single DSM model: code generation with Kibo, persistence and
@@ -6,16 +6,16 @@ versioning through `dsviper`, and a Qt Widgets UI assembled from the shared
 `dsviper-components` library.
 
 * **Source repository** —
-  [`digital-substrate/ge-py`](https://github.com/digital-substrate/ge-py).
+  [`digital-substrate/dsviper-ge`](https://github.com/digital-substrate/dsviper-ge).
 * **Entry point** — `graph_editor.py`.
 * **Dependencies** — `PySide6`, `dsviper` (from PyPI).
 
 ## What it demonstrates
 
-ge-py is a worked example of every layer the documentation introduces in
+dsviper-ge is a worked example of every layer the documentation introduces in
 isolation:
 
-| Layer     | Where in ge-py               | DevKit doc                                            |
+| Layer     | Where in dsviper-ge               | DevKit doc                                            |
 |-----------|------------------------------|-------------------------------------------------------|
 | DSM model | DSM definitions of the Graph | [DSM](../dsm/index.rst)                               |
 | Code-gen  | `ge/` package (Kibo output)  | [Kibo](../kibo/index.rst)                             |
@@ -54,7 +54,7 @@ boundary.
 ## Repository layout
 
 ```text
-ge-py/
+dsviper-ge/
 ├── graph_editor.py          # Application entry point (QApplication, MainWindow)
 ├── ge/                      # Kibo-generated infrastructure
 │   ├── data.py              # Concept keys, structures, enums
@@ -117,7 +117,7 @@ The `Context` exposes the store directly (`context.store.dispatch(...)`)
 and adds a small facade for scripting (`context.dispatch`,
 `context.undo`, `context.redo`).
 
-See `ge-py/model/context.py` for the full implementation.
+See `dsviper-ge/model/context.py` for the full implementation.
 
 ## The dispatch pattern
 
@@ -142,7 +142,7 @@ def _random_vertex_triggered(self):
 The body of the lambda is **plain Python** that calls into `model/`. Since
 business logic is already in Python, no function pool is needed — the
 lambda calls `model.random.add_vertex()` directly. This is the central
-simplification that distinguishes ge-py (and ge-qml) from the C++
+simplification that distinguishes dsviper-ge (and dsviper-ge-qml) from the C++
 equivalent.
 
 ```{tip}
@@ -197,7 +197,7 @@ The mapping from DSM concepts to Python identifiers follows
 ## Notification flow
 
 The `CommitStore` exposes signals that the UI subscribes to. The two most
-load-bearing for ge-py:
+load-bearing for dsviper-ge:
 
 ```python
 # graph_editor.py — _setup_connections
@@ -227,10 +227,10 @@ UI action  ──►  store.dispatch(label, λ)
 
 ## What dsviper-components ships with the application
 
-Beyond the panels ge-py builds for its own domain (`components/`), the
+Beyond the panels dsviper-ge builds for its own domain (`components/`), the
 application **inherits a complete suite of administration, sync,
 and scripting features by importing from `dsviper-components`**. None of
-this code lives in ge-py — the application only instantiates the widgets
+this code lives in dsviper-ge — the application only instantiates the widgets
 and wires them into its menus.
 
 This is the load-bearing reason every Commit-based application in the
@@ -241,7 +241,7 @@ embedded Python REPL — none of which are domain-specific.
 
 ### The Admin menu — database introspection and history
 
-The `Admin` menu of ge-py is assembled from eight pre-built dialogs:
+The `Admin` menu of dsviper-ge is assembled from eight pre-built dialogs:
 
 ```python
 # graph_editor.py — _setup_dialog
@@ -277,7 +277,7 @@ every Commit-based editor in the ecosystem.
 
 ### Sync — fetch / push over a commit server
 
-ge-py's File menu and toolbar expose three actions — **Fetch**, **Push**,
+dsviper-ge's File menu and toolbar expose three actions — **Fetch**, **Push**,
 **Sync** — that operate on a remote commit server. The wiring is again
 fully in `dsviper-components`:
 
@@ -307,7 +307,7 @@ the commit DAG is for.
 
 ### Embedded Python scripting — DSCodeEditorDialog
 
-ge-py embeds a fully functional Python editor that runs scripts in the
+dsviper-ge embeds a fully functional Python editor that runs scripts in the
 **same interpreter** as the running application — with the application's
 `Context` and `CommitStore` exposed as globals:
 
@@ -338,7 +338,7 @@ The scripts a user writes from the Editor have direct access to:
   exposed to the menu actions.
 
 The editor itself contributes a pre-wired **Editor menu** (open / save /
-run / show description / refresh syntax). ge-py's `_setup_menu` simply
+run / show description / refresh syntax). dsviper-ge's `_setup_menu` simply
 appends those actions:
 
 ```python
@@ -379,7 +379,7 @@ is walked through in [cdbe](cdbe.md).
 
 ## Reference
 
-* [DSM](../dsm/index.rst) — the language ge-py's data model is written in.
+* [DSM](../dsm/index.rst) — the language dsviper-ge's data model is written in.
 * [Kibo](../kibo/index.rst) — the generator that produces `ge/`.
 * [dsviper](../dsviper-python/index.rst) — the runtime exercised through
   `Context.store`.

@@ -10,7 +10,7 @@ backends** and play different roles:
 
 Both are built with PySide6 and share components from
 [`dsviper-components`](../dsviper-components/index.rst).
-[`web-cdbe`](../commit-apps/web-cdbe.md) is a browser-side demo of the
+[`dsviper-web-cdbe`](../commit-apps/dsviper-web-cdbe.md) is a browser-side demo of the
 same generic-editor idea — minimum-surface example, not a substitute for
 `cdbe.py`.
 

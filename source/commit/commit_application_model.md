@@ -10,9 +10,9 @@ platform notifications, so that all state changes flow through the
 reduction, and audit trail.
 
 Concrete walkthroughs in different languages and on different
-presentation tiers — `cdbe.py`, [ge-py](../commit-apps/ge-py.md),
-[ge-qml](../commit-apps/ge-qml.md),
-[web-cdbe](../commit-apps/web-cdbe.md) — live under
+presentation tiers — `cdbe.py`, [dsviper-ge](../commit-apps/dsviper-ge.md),
+[dsviper-ge-qml](../commit-apps/dsviper-ge-qml.md),
+[dsviper-web-cdbe](../commit-apps/dsviper-web-cdbe.md) — live under
 [Commit Applications](../commit-apps/index.rst). They are instances of
 this single Model; the Model is what they have in common.
 
@@ -197,7 +197,7 @@ lambda calls the model functions directly.
 └─────────────────────────────────────────────────────────────┘
 ```
 
-A real Python Application Context, abridged from `ge-py`
+A real Python Application Context, abridged from `dsviper-ge`
 (`model/context.py`):
 
 ```python
@@ -242,18 +242,18 @@ walked through in the DevKit:
 | Application                              | Domain              | UI tier                  |
 |------------------------------------------|---------------------|--------------------------|
 | `cdbe.py`                                | Generic (no domain) | Qt Widgets (PySide6)     |
-| [ge-py](../commit-apps/ge-py.md)         | Graph               | Qt Widgets (PySide6)     |
-| [ge-qml](../commit-apps/ge-qml.md)       | Graph               | Qt Quick / QML (PySide6) |
-| [web-cdbe](../commit-apps/web-cdbe.md)   | Generic (no domain) | Server-rendered HTML/CSS |
+| [dsviper-ge](../commit-apps/dsviper-ge.md)         | Graph               | Qt Widgets (PySide6)     |
+| [dsviper-ge-qml](../commit-apps/dsviper-ge-qml.md)       | Graph               | Qt Quick / QML (PySide6) |
+| [dsviper-web-cdbe](../commit-apps/dsviper-web-cdbe.md)   | Generic (no domain) | Server-rendered HTML/CSS |
 
-`cdbe.py` and `web-cdbe` are **generic** — they have no DSM model
+`cdbe.py` and `dsviper-web-cdbe` are **generic** — they have no DSM model
 of their own and no Kibo-generated infrastructure. They open any
 `CommitDatabase` through the dynamic introspection API, which means
 their layer 3 (business logic) and layer 4 (generated data) collapse
 to a thin glue layer over the runtime. The pattern still applies, but
 with three layers in practice instead of five.
 
-`ge-py` and `ge-qml` are **domain-specific** — they have a DSM model
+`dsviper-ge` and `dsviper-ge-qml` are **domain-specific** — they have a DSM model
 (`Graph`, `Vertex`, `Edge`), Kibo-generated typed accessors, and
 hand-written Python business logic. They are the full five-layer
 instances of the Model.
@@ -309,12 +309,12 @@ rationale and when it becomes load-bearing.
 
 The same Model produces two distinct kinds of application:
 
-* **Generic instances** — `cdbe.py` and `web-cdbe`. No DSM model, no
+* **Generic instances** — `cdbe.py` and `dsviper-web-cdbe`. No DSM model, no
   Kibo output, no business logic. They open any `CommitDatabase` and
   drive its mutation DAG through the dynamic introspection API of the
   runtime. Their value is universality.
 
-* **Domain-specific instances** — `ge-py`, `ge-qml`, and any
+* **Domain-specific instances** — `dsviper-ge`, `dsviper-ge-qml`, and any
   third-party Commit Application. They have a DSM model that defines
   the domain (graphs, materials, schedules, …), Kibo-generated typed
   accessors, and hand-written business logic that encodes the domain

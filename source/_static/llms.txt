@@ -102,9 +102,9 @@ DevKit is the **distribution** that bundles **DSM** (the modeling language), **K
 ## Commit Applications
 
 - [cdbe](https://docs.digitalsubstrate.io/commit-apps/cdbe.html): Commit Database Editor — generic Commit Application reference.
-- [ge-py](https://docs.digitalsubstrate.io/commit-apps/ge-py.html): Pure-Python reference application (Graph Editor).
-- [ge-qml](https://docs.digitalsubstrate.io/commit-apps/ge-qml.html): Qt Quick / QML reference application (Graph Editor).
-- [web-cdbe](https://docs.digitalsubstrate.io/commit-apps/web-cdbe.html): Web-based commit-database editor.
+- [dsviper-ge](https://docs.digitalsubstrate.io/commit-apps/dsviper-ge.html): Pure-Python reference application (Graph Editor).
+- [dsviper-ge-qml](https://docs.digitalsubstrate.io/commit-apps/dsviper-ge-qml.html): Qt Quick / QML reference application (Graph Editor).
+- [dsviper-web-cdbe](https://docs.digitalsubstrate.io/commit-apps/dsviper-web-cdbe.html): Web-based commit-database editor.
 
 ## Tools and components
 

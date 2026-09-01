@@ -126,8 +126,8 @@ backend.
 Commit Applications
 -------------------
 
-For Commit Applications built on the Commit Database (``ge-py``, ``ge-qml``,
-``web-cdbe``), see :doc:`../commit-apps/index`.
+For Commit Applications built on the Commit Database (``dsviper-ge``, ``dsviper-ge-qml``,
+``dsviper-web-cdbe``), see :doc:`../commit-apps/index`.
 
 
 Topics

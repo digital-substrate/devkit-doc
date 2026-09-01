@@ -94,7 +94,7 @@ applications that want to expose a generic document tree on their own.
 
 ```{tip}
 Pass the application's `Context` (or any object the user should be able
-to script against) through `namespace_vars`. ge-py exposes
+to script against) through `namespace_vars`. dsviper-ge exposes
 `{"ctx": Context.instance(), "store": store}` so scripts can call
 `ctx.dispatch("…", λ)` exactly like the menu actions.
 ```
@@ -113,5 +113,5 @@ to script against) through `namespace_vars`. ge-py exposes
 
 - [Architecture](architecture.md) — the Notifier Bridge and the integration
   recipe each widget assumes.
-- [ge-py walk-through](../commit-apps/ge-py.md) — a real application that
+- [dsviper-ge walk-through](../commit-apps/dsviper-ge.md) — a real application that
   uses most of these widgets, with the wiring code visible.

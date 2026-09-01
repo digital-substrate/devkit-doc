@@ -83,7 +83,7 @@ devkit-doc/
 │   ├── dsviper/                # dsviper Python API
 │   ├── dsviper-tools/          # Database / CommitDatabase tooling
 │   ├── dsviper-components/     # Qt Widgets / QML component library
-│   ├── reference-apps/         # ge-py, ge-qml, web-cdbe, dsviper-blender
+│   ├── commit-apps/            # cdbe, dsviper-ge, dsviper-ge-qml, dsviper-web-cdbe
 │   └── legal/                  # License and legal content
 ├── tools/
 │   └── build_notebooklm.py     # Bundles Sphinx output into NotebookLM .md

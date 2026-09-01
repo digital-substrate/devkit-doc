@@ -1,36 +1,36 @@
-# ge-qml
+# dsviper-ge-qml
 
-PySide6 + QML desktop application — the QML port of [ge-py](ge-py.md). Same
+PySide6 + QML desktop application — the QML port of [dsviper-ge](dsviper-ge.md). Same
 DSM model, same generated `ge/` package, same hand-written `model/`
 business logic, same `CommitStore` facade. The UI is QML, driven by Python
 `QObject` models registered as QML context properties. Built on the Qt
 Quick variant of `dsviper-components`.
 
 * **Source repository** —
-  [`digital-substrate/ge-qml`](https://github.com/digital-substrate/ge-qml).
+  [`digital-substrate/dsviper-ge-qml`](https://github.com/digital-substrate/dsviper-ge-qml).
 * **Entry point** — `graph_editor.py` (shim that runs `graph_editor/main.py`).
 * **Dependencies** — `PySide6` (Qt Quick + Quick Controls + Dialogs), `dsviper` (from PyPI).
 
 ## What it demonstrates
 
-ge-qml is the same value-chain walk-through as ge-py, swapping Qt Widgets
+dsviper-ge-qml is the same value-chain walk-through as dsviper-ge, swapping Qt Widgets
 for Qt Quick:
 
-| Layer      | Where in ge-qml                           | DevKit doc                                            |
+| Layer      | Where in dsviper-ge-qml                           | DevKit doc                                            |
 |------------|-------------------------------------------|-------------------------------------------------------|
 | DSM model  | DSM definitions of the Graph              | [DSM](../dsm/index.rst)                               |
 | Code-gen   | `graph_editor/ge/` package (Kibo output)  | [Kibo](../kibo/index.rst)                             |
 | Runtime    | `dsviper.CommitStore` usage               | [dsviper](../dsviper-python/index.rst)                       |
 | Shared QML | `dsviper_components_qml/` (vendored copy) | [dsviper-components](../dsviper-components/index.rst) |
 
-The interesting comparison with ge-py is what changes — and what doesn't —
+The interesting comparison with dsviper-ge is what changes — and what doesn't —
 when the UI moves from imperative widgets to declarative QML. `model/`,
-`ge/`, and `Context` are essentially identical to ge-py: the entire
+`ge/`, and `Context` are essentially identical to dsviper-ge: the entire
 business stack is reused.
 
 ## Architecture
 
-QML adds one layer above ge-py's five-layer stack — a thin **QObject
+QML adds one layer above dsviper-ge's five-layer stack — a thin **QObject
 bridge** that exposes the application state to QML through Qt properties
 and slots. Six layers in total:
 
@@ -59,12 +59,12 @@ and slots. Six layers in total:
 
 The bridge layer is what makes a QML application different from a Widgets
 application — and why the `model/` and `ge/` layers are bit-for-bit
-shareable with ge-py.
+shareable with dsviper-ge.
 
 ## Repository layout
 
 ```text
-ge-qml/
+dsviper-ge-qml/
 ├── graph_editor.py             # Entry-point shim — runs graph_editor/main.py
 ├── graph_editor/               # Application package
 │   ├── main.py                 # QApplication + QQmlApplicationEngine setup
@@ -72,8 +72,8 @@ ge-qml/
 │   ├── Graph*Panel.qml         # Domain panels (vertex, list, tags, comments, render)
 │   ├── *_model.py              # QObject bridges exposed to QML
 │   ├── transient_notifier.py   # Live-preview channel (illusion pattern)
-│   ├── ge/                     # Kibo-generated infrastructure (same as ge-py)
-│   ├── model/                  # Hand-written business logic (same as ge-py)
+│   ├── ge/                     # Kibo-generated infrastructure (same as dsviper-ge)
+│   ├── model/                  # Hand-written business logic (same as dsviper-ge)
 │   │   ├── context.py          # Singleton: store + graph_key + facade
 │   │   ├── graph.py, vertex.py, edge.py, …
 │   │   └── script_*.py         # Reusable scripts
@@ -91,7 +91,7 @@ directory; the real entry point is `graph_editor/main.py`.
 ## The Context singleton
 
 `graph_editor/model/context.py` is identical in spirit (and almost
-character-for-character) to ge-py's `Context`. Same singleton, same
+character-for-character) to dsviper-ge's `Context`. Same singleton, same
 `CommitStore`, same `Graph_GraphKey`, same `use(database)` lifecycle,
 same `dispatch` / `undo` / `redo` facade for scripting.
 
@@ -124,7 +124,7 @@ class Context:
         self.load()
 ```
 
-That this file is essentially copy-pasted between ge-py and ge-qml is the
+That this file is essentially copy-pasted between dsviper-ge and dsviper-ge-qml is the
 point: **the Commit-facing layer is UI-agnostic**. Switching toolkits
 costs you the bridge and the views, not the application core.
 
@@ -156,7 +156,7 @@ SpinBox {
 ```
 
 The body of the lambda is **plain Python** that calls into `model/` and
-the generated `ge.attachments` API — exactly as in ge-py. The only
+the generated `ge.attachments` API — exactly as in dsviper-ge. The only
 difference is the firing path: QML ➔ Slot ➔ dispatch ➔ business logic.
 
 ```{tip}
@@ -167,7 +167,7 @@ The QML port keeps the same convention — labels describe user intent
 
 ## The QObject bridge — `*_model.py`
 
-This is the layer ge-py does not have. Each `*_model.py` is a
+This is the layer dsviper-ge does not have. Each `*_model.py` is a
 `QObject` subclass that:
 
 - exposes view-state as Qt **Properties** with `notify` signals — QML
@@ -220,7 +220,7 @@ in the application itself.
 ### Live preview — the `TransientNotifier`
 
 QML controls (sliders, color pickers, draggable handles) emit a flood of
-intermediate values that should not each become a commit. ge-qml uses a
+intermediate values that should not each become a commit. dsviper-ge-qml uses a
 **transient channel** — `TransientNotifier` — for the in-flight values,
 and only calls `dispatch` on release.
 
@@ -244,7 +244,7 @@ only `dispatch` writes to the DAG.
 
 ## Business logic — `model/`
 
-Identical role and almost identical code to ge-py: pure-Python functions
+Identical role and almost identical code to dsviper-ge: pure-Python functions
 taking an `AttachmentMutating` plus the keys/values they need, returning
 the keys they create.
 
@@ -272,7 +272,7 @@ in one direction.
 ## Generated data — `ge/`
 
 `graph_editor/ge/` is the Kibo Python output for the Graph DSM model —
-same structure as ge-py:
+same structure as dsviper-ge:
 
 | File                | Purpose                                                |
 |---------------------|--------------------------------------------------------|
@@ -315,17 +315,17 @@ QML control  ──►  model.someSlot(value)
 ```
 
 The bridge is where the imperative Python world meets the declarative
-QML world. Below it, everything is identical to ge-py.
+QML world. Below it, everything is identical to dsviper-ge.
 
 ## What dsviper-components-qml ships with the application
 
-As in ge-py, the application **inherits a complete suite of
+As in dsviper-ge, the application **inherits a complete suite of
 administration, sync, and scripting features by importing from
-`dsviper-components-qml`**. None of this code lives in ge-qml — `main.py`
+`dsviper-components-qml`**. None of this code lives in dsviper-ge-qml — `main.py`
 instantiates the model classes and exposes them to QML; the QML side
 does no Python-specific wiring.
 
-This is the same load-bearing observation as in ge-py: adopting the
+This is the same load-bearing observation as in dsviper-ge: adopting the
 shared library gives a new application a database inspector, a commit-DAG
 browser, an undo-stack viewer, a remote-server sync pipeline, and an
 embedded Python REPL — all already implemented.
@@ -352,7 +352,7 @@ writes.
 
 ### The Documents panel
 
-`DocumentsPanelModel` is the QML equivalent of ge-py's
+`DocumentsPanelModel` is the QML equivalent of dsviper-ge's
 `DSCommitDocumentsDialog` — it owns abstraction / key / document /
 navigation state, and `main.py` exposes it the same way:
 
@@ -361,7 +361,7 @@ documents_panel = DocumentsPanelModel(mgr, commit_mode=True)
 documents_panel.registerContextProperties(engine)
 ```
 
-ge-qml's `RenderModel` wires its `inspectKey` signal into the
+dsviper-ge-qml's `RenderModel` wires its `inspectKey` signal into the
 documents panel so that "Inspect this vertex" from the canvas
 focuses the corresponding key in the panel:
 
@@ -371,7 +371,7 @@ render_model.inspectKey.connect(documents_panel.navigateToKey)
 
 ### Embedded Python scripting — `PythonEditorModel`
 
-Same pattern as ge-py's `DSCodeEditorDialog`, exposed to QML through a
+Same pattern as dsviper-ge's `DSCodeEditorDialog`, exposed to QML through a
 single model. `main.py` builds it with the application's `Context` in the
 script namespace:
 
@@ -405,7 +405,7 @@ their own — is walked through in [cdbe](cdbe.md).
    documents / scripting models, the domain bridge models, and the QML
    engine boot.
 2. `graph_editor/model/context.py` — the singleton facade and database
-   lifecycle (compare side-by-side with ge-py's `model/context.py`).
+   lifecycle (compare side-by-side with dsviper-ge's `model/context.py`).
 3. `graph_editor/vertex_model.py` — a complete bridge model:
    Properties, Slots, notifier subscription, `TransientNotifier`
    preview, dispatch.
@@ -416,10 +416,10 @@ their own — is walked through in [cdbe](cdbe.md).
 
 ## Reference
 
-* [DSM](../dsm/index.rst) — the language ge-qml's data model is written in.
+* [DSM](../dsm/index.rst) — the language dsviper-ge-qml's data model is written in.
 * [Kibo](../kibo/index.rst) — the generator that produces `ge/`.
 * [dsviper](../dsviper-python/index.rst) — the runtime exercised through
   `Context.store`.
 * [dsviper-components](../dsviper-components/index.rst) — the shared
   widget / QML library the UI is built on.
-* [ge-py](ge-py.md) — the Qt Widgets sibling of this application.
+* [dsviper-ge](dsviper-ge.md) — the Qt Widgets sibling of this application.

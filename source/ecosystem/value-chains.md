@@ -58,9 +58,9 @@ itself; the walkthroughs that exercise the *whole* ecosystem
 end-to-end (dsm, kibo, template, dsviper-components, runtime) are:
 
 - `cdbe` — the Commit Database Editor.
-- `ge-py` — Graph Editor, PySide6 desktop app (Qt Widgets).
-- `ge-qml` — Graph Editor, PySide6 desktop app (Qt Quick / QML).
-- `web-cdbe` — Flask web application, server-rendered HTML5.
+- `dsviper-ge` — Graph Editor, PySide6 desktop app (Qt Widgets).
+- `dsviper-ge-qml` — Graph Editor, PySide6 desktop app (Qt Quick / QML).
+- `dsviper-web-cdbe` — Flask web application, server-rendered HTML5.
 
 ## Services
 

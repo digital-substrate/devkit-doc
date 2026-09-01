@@ -1,4 +1,4 @@
-# Binary data (blobs)
+# Binary Data (Blobs)
 
 Blobs store raw binary payloads — images, meshes, buffers — under a typed
 {js:class}`BlobLayout` that records the element data type (`float`, `int`,

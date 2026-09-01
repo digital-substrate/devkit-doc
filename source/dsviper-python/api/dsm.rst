@@ -1,4 +1,4 @@
-DSM Introspection
+DSM & Definitions
 =================
 
 DSM classes provide parsing and introspection of Digital Substrate Model files.

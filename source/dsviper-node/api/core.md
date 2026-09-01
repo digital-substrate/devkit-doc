@@ -1,4 +1,4 @@
-# Core utilities
+# Core Utilities
 
 This is the catch-all bucket for the cross-cutting primitives the rest of the
 binding builds on: `Definitions` and `NameSpace` register the DSM types of an

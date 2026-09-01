@@ -1,4 +1,4 @@
-# Types
+# Type System
 
 The type system defines every type the Viper runtime understands. `Type` is the
 base class: it exposes the primitive types as static accessors (`Type.INT64`,

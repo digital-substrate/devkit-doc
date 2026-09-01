@@ -1,4 +1,4 @@
-# Commit & versioning
+# Commit Database
 
 The versioned persistence tier. `CommitDatabase` keeps the history of mutations
 in a DAG of commits; two stateless namespaces operate over it, each taking a

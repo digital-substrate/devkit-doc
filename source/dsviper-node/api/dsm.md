@@ -1,4 +1,4 @@
-# DSM & definitions
+# DSM & Definitions
 
 This bucket holds the two ways to obtain runtime definitions: build them in code
 with {js:class}`Definitions`, or parse them from `.dsm` source with

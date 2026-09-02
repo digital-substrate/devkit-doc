@@ -128,16 +128,16 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 |-------|-------------|
 | {js:class}`Codec` | The registry of named codecs: ask for one by name with query() or check() |
 | {js:class}`StreamCodecInstancing` | An interface used to create encoder, decoder and sizer |
-| {js:class}`Fuzzer` | A class used to generate a random value |
+| {js:class}`Fuzzer` | Generates random values against a set of definitions |
 
 ## Binary Streams
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`StreamBinaryReader` | A class used to read data through the StreamRawReading interface |
-| {js:class}`StreamBinaryWriter` | A class used to write data through the StreamRawWriting interface |
-| {js:class}`StreamTokenBinaryReader` | A class used to read through the StreamRawReading interface |
-| {js:class}`StreamTokenBinaryWriter` | A class used to write through the StreamRawWriting interface |
+| {js:class}`StreamBinaryReader` | Reads values in a fixed byte order, portable across machines |
+| {js:class}`StreamBinaryWriter` | Writes values in a fixed byte order, portable across machines |
+| {js:class}`StreamTokenBinaryReader` | Reads a portable binary stream that carries a type token per value |
+| {js:class}`StreamTokenBinaryWriter` | Writes a portable binary stream with a type token per value |
 
 ## Stream I/O
 
@@ -156,16 +156,16 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 |-------|-------------|
 | {js:class}`StreamReading` | The typed read interface |
 | {js:class}`StreamWriting` | The typed write interface |
-| {js:class}`StreamEncoding` | An interface used to write data to a blob |
-| {js:class}`StreamDecoding` | An interface used to read data from a blob |
-| {js:class}`StreamSizing` | An interface used to get the size of data |
+| {js:class}`StreamEncoding` | Writes typed values into a blob |
+| {js:class}`StreamDecoding` | Reads typed values back from a blob |
+| {js:class}`StreamSizing` | Computes the size a value will occupy, without writing it |
 
 ## Raw Streams
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`StreamRawReader` | An class used to read data through the StreamRawReading interface |
-| {js:class}`StreamRawWriter` | A class used to write data through the StreamRawWriting interface |
+| {js:class}`StreamRawReader` | Reads values in the machine's own byte order |
+| {js:class}`StreamRawWriter` | Writes values in the machine's own byte order |
 | {js:class}`StreamRawReading` | The byte-level read interface: a stream of bytes and its size. The typed |
 | {js:class}`StreamRawWriting` | The byte-level write interface: bytes out, nothing typed. The typed writes |
 

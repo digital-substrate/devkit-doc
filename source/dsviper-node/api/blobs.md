@@ -94,7 +94,7 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 | {js:class}`BlobArray` | A class used to reinterpret the blob of the internal BlobView as |
 | {js:class}`BlobPack` | Several memory regions packed into one blob, described by a BlobPackDescriptor |
 | {js:class}`BlobPackDescriptor` | A class used to describe binary regions |
-| {js:class}`BlobPackRegion` | One region of a BlobPack, exposed through the Python buffer protocol |
+| {js:class}`BlobPackRegion` | One region of a BlobPack, filled from a Buffer, a TypedArray or an ArrayBuffer |
 
 ## Blob I/O
 

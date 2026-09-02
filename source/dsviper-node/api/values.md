@@ -66,13 +66,13 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`Value` | A utility class to handle value instantiation and representation |
+| {js:class}`Value` | Creates values, and converts between them and native JS values |
 
 ## Primitive Values
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`ValueVoid` | A class used to represent a value of type void. Seamless with Python None. Or |
+| {js:class}`ValueVoid` | A class used to represent a value of type void |
 | {js:class}`ValueBool` | A class used to represent a value of type bool |
 | {js:class}`ValueUInt8` | A class used to represent a value of type uint8 |
 | {js:class}`ValueUInt16` | A class used to represent a value of type uint16 |
@@ -108,8 +108,8 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 |-------|-------------|
 | {js:class}`ValueTuple` | A class used to represent a value of type tuple<T0, ...> |
 | {js:class}`ValueTupleIter` | Iterator for ValueTuple elements |
-| {js:class}`ValueVec` | A class used to represent a value of type vec<element_type, size> |
-| {js:class}`ValueMat` | A class used to represent a value of type mat<element_type, columns, rows> |
+| {js:class}`ValueVec` | A class used to represent a value of type vec<numeric_type, size> |
+| {js:class}`ValueMat` | A class used to represent a value of type mat<numeric_type, columns, rows> |
 | {js:class}`ValueVariant` | A class used to represent a value of type variant<T0, ...> |
 | {js:class}`ValueAny` | A class used to represent a value of any type |
 
@@ -118,16 +118,16 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 | Class | Description |
 |-------|-------------|
 | {js:class}`ValueStructure` | A class used to represent a value of type struct |
-| {js:class}`ValueEnumeration` | A class used to represent a value of type struct |
+| {js:class}`ValueEnumeration` | A class used to represent a value of type enum |
 | {js:class}`ValueKey` | A class used to represent a value of type key<element_type>. Use the static |
 
 ## Value Program
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`ValueProgram` | A class used to retrieve opcodes |
+| {js:class}`ValueProgram` | The sequence of opcodes a commit carries |
 | {js:class}`ValueOpcodeKey` | A class used to retrieve the mutation opcodes for an instance of a concept for |
-| {js:class}`ValueOpcode` | A utility class to handle opcodes encoder and streamer |
+| {js:class}`ValueOpcode` | The base of the opcode hierarchy |
 | {js:class}`ValueOpcodeDocumentSet` | A class used to represent the type and the arguments of an opcode |
 | {js:class}`ValueOpcodeDocumentUpdate` | A class used to represent the type and the arguments of an opcode |
 | {js:class}`ValueOpcodeMapUnion` | A class used to represent the type and the arguments of an opcode |

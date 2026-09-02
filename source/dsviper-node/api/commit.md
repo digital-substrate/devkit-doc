@@ -167,8 +167,8 @@ Available from the Node binding 1.2.9 (runtime 1.2.24) — see {doc}`../../chang
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`CommitState` | A class used to represent data at a specific commit. Use the attachmentGetting |
-| {js:class}`CommitMutableState` | A class used to register the mutations of a value executed through the |
+| {js:class}`CommitState` | A class used to represent data at a specific commit |
+| {js:class}`CommitMutableState` | A class used to register the mutations of a value executed through the AttachmentMutating interface |
 | {js:class}`CommitStateBuilder` | Reconstructs a CommitState from a chosen commit |
 
 ## History & DAG

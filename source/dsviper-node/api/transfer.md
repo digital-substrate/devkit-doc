@@ -99,10 +99,10 @@ The mirror of this page for the Python binding is {doc}`../../dsviper-python/api
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`CommitDatabaseFlattener` | Flattens a CommitDatabase commit into a single-commit CommitDatabase |
-| {js:class}`CommitDatabaseToDatabaseConverter` | Converts a CommitDatabase into a Database |
-| {js:class}`DatabaseCopier` | Copies a Database into another Database |
-| {js:class}`DatabaseToCommitDatabaseConverter` | Converts a Database into a CommitDatabase |
+| {js:class}`CommitDatabaseFlattener` | Collapses one chosen commit into a fresh single-commit CommitDatabase: history and superseded blobs are discarded, the state is kept |
+| {js:class}`CommitDatabaseToDatabaseConverter` | Materializes one chosen commit as a flat, history-free Database |
+| {js:class}`DatabaseCopier` | Copies a Database into another Database, faithfully: every blob comes over, orphans included |
+| {js:class}`DatabaseToCommitDatabaseConverter` | Brings a flat Database under version control: the whole source state becomes one commit, under a label you give |
 | {js:class}`DatabaseTransferInfo` | Result of a database conversion: counts of copied documents and blobs |
 
 ## Reference

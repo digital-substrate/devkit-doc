@@ -184,7 +184,6 @@ const [report, dsmDefs, defs] = DSMBuilder.assemble('model.dsm').parse(sourceMap
 | {js:class}`DefinitionsConst` | A class used to retrieve registered concepts, clubs, enumerations, structures and attachments |
 | {js:class}`DefinitionsCollector` | A class used to collect referenced types |
 | {js:class}`DefinitionsInspector` | A class used to retrieve registered concepts, clubs, enumerations, structures and attachments from TypeName |
-| {js:class}`DefinitionsMapper` | A class use for INTERNAL DEVELOPMENT |
 | {js:class}`DefinitionsExtendInfo` | A class used to represent the types exchanged during the synchronization of two databases |
 
 ## Source Map
@@ -350,9 +349,6 @@ const [report, dsmDefs, defs] = DSMBuilder.assemble('model.dsm').parse(sourceMap
 :members:
 ```
 
-```{js:autoclass} DefinitionsMapper
-:members:
-```
 ```{js:autoclass} DefinitionsExtendInfo
 :members:
 ```

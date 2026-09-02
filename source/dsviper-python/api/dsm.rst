@@ -123,7 +123,6 @@ describes the model; these classes hold it at runtime.
    dsviper.DefinitionsConst
    dsviper.DefinitionsCollector
    dsviper.DefinitionsInspector
-   dsviper.DefinitionsMapper
    dsviper.DefinitionsExtendInfo
 
 Source Map

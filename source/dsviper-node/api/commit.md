@@ -157,7 +157,7 @@ Available from the Node binding 1.2.9 (runtime 1.2.24) — see {doc}`../../chang
 | Class | Description |
 |-------|-------------|
 | {js:class}`Commit` | One commit as it is stored |
-| {js:class}`CommitDatabase` | A Commit database keeps the history of mutations in a DAG of commit |
+| {js:class}`CommitDatabase` | A Commit database keeps the history of mutations in a DAG of commits |
 | {js:class}`CommitDatabaseSQLite` | A low-level class used to represent the database based on SQLite3 through the |
 | {js:class}`CommitDatabaseRemote` | A low-level class used to represent a remote Commit database through the |
 | {js:class}`CommitDatabaseServer` | A CommitDatabaseServer provide network access to a CommitDatabase |
@@ -178,7 +178,7 @@ Available from the Node binding 1.2.9 (runtime 1.2.24) — see {doc}`../../chang
 | {js:class}`CommitNode` | A class used to represent a node in the commit DAG |
 | {js:class}`CommitNodeGrid` | A class used to represent the location of a commit node in the grid |
 | {js:class}`CommitNodeGridBuilder` | A class used to build the grid layout of the commit DAG |
-| {js:class}`CommitHeader` | A class used to represent the header of a commit |
+| {js:class}`CommitHeader` | What identifies a commit, without its content |
 | {js:class}`CommitData` | A class used to represent data associated with a commit during the |
 | {js:class}`CommitEvalAction` | A class used by the evaluator to reconstruct a value by executing mutation |
 | {js:class}`CommitDatabaseHelper` | Navigates the commit DAG |
@@ -198,7 +198,7 @@ Available from the Node binding 1.2.9 (runtime 1.2.24) — see {doc}`../../chang
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`CommitStateTracing` | An interface used to trace a value (aka document) |
+| {js:class}`CommitStateTracing` | Asks a state for the trace of one document |
 | {js:class}`CommitStateTrace` | The replay of one document |
 | {js:class}`CommitStateTraceProgram` | One commit's contribution to a document |
 

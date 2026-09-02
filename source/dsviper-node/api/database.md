@@ -86,7 +86,7 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`SQLite` | A class used to retrieve the configuration of SQLite3 |
+| {js:class}`SQLite` | The settings and limits of one database file: its pragmas, page size, maximum size, and the options the SQLite3 library was compiled with |
 
 ## Reference
 

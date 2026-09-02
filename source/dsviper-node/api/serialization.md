@@ -122,36 +122,60 @@ See also the {doc}`serialization guide <../serialization>`, the
 
 Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d.ts`) by TypeDoc.
 
-## Summary
+## Codec
 
 | Class | Description |
 |-------|-------------|
 | {js:class}`Codec` | A class used to instantiate a codec |
+| {js:class}`StreamCodecInstancing` | An interface used to create encoder, decoder and sizer |
 | {js:class}`Fuzzer` | A class used to generate a random value |
+
+## Binary Streams
+
+| Class | Description |
+|-------|-------------|
 | {js:class}`StreamBinaryReader` | A class used to read data through the StreamRawReading interface (handle endianness) |
 | {js:class}`StreamBinaryWriter` | A class used to write data through the StreamRawWriting interface (handle endianness) |
-| {js:class}`StreamCodecInstancing` | An interface used to create encoder, decoder and sizer |
-| {js:class}`StreamDecoding` | An interface used to read data from a blob |
-| {js:class}`StreamEncoding` | An interface used to write data to a blob |
-| {js:class}`StreamRawReader` | An class used to read data through the StreamRawReading interface |
-| {js:class}`StreamRawReading` | An interface used to read data |
-| {js:class}`StreamRawWriter` | A class used to write data through the StreamRawWriting interface |
-| {js:class}`StreamRawWriting` | An interface to write data |
+| {js:class}`StreamTokenBinaryReader` | A class used to read through the StreamRawReading interface (handle endianness) |
+| {js:class}`StreamTokenBinaryWriter` | A class used to write through the StreamRawWriting interface (handle endianness) |
+
+## Stream I/O
+
+| Class | Description |
+|-------|-------------|
 | {js:class}`StreamReaderBlob` | A class used to read data from a blob |
 | {js:class}`StreamReaderFile` | A class used to read data from a file |
 | {js:class}`StreamReaderSharedMemory` | A class used to read data from a shared memory region |
-| {js:class}`StreamReading` | An interface used to read data |
-| {js:class}`StreamSizing` | An interface used to get the size of data |
-| {js:class}`StreamTokenBinaryReader` | A class used to read through the StreamRawReading interface (handle endianness) |
-| {js:class}`StreamTokenBinaryWriter` | A class used to write through the StreamRawWriting interface (handle endianness) |
 | {js:class}`StreamWriterBlob` | A class used to write data to a blob |
 | {js:class}`StreamWriterFile` | A class used to write data to a file |
 | {js:class}`StreamWriterSharedMemory` | A class used to write data to a shared memory region |
+
+## Protocols
+
+| Class | Description |
+|-------|-------------|
+| {js:class}`StreamReading` | An interface used to read data |
 | {js:class}`StreamWriting` | An interface used to read data |
+| {js:class}`StreamEncoding` | An interface used to write data to a blob |
+| {js:class}`StreamDecoding` | An interface used to read data from a blob |
+| {js:class}`StreamSizing` | An interface used to get the size of data |
+
+## Raw Streams
+
+| Class | Description |
+|-------|-------------|
+| {js:class}`StreamRawReader` | An class used to read data through the StreamRawReading interface |
+| {js:class}`StreamRawWriter` | A class used to write data through the StreamRawWriting interface |
+| {js:class}`StreamRawReading` | An interface used to read data |
+| {js:class}`StreamRawWriting` | An interface to write data |
 
 ## Reference
 
 ```{js:autoclass} Codec
+:members:
+```
+
+```{js:autoclass} StreamCodecInstancing
 :members:
 ```
 
@@ -167,31 +191,11 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 :members:
 ```
 
-```{js:autoclass} StreamCodecInstancing
+```{js:autoclass} StreamTokenBinaryReader
 :members:
 ```
 
-```{js:autoclass} StreamDecoding
-:members:
-```
-
-```{js:autoclass} StreamEncoding
-:members:
-```
-
-```{js:autoclass} StreamRawReader
-:members:
-```
-
-```{js:autoclass} StreamRawReading
-:members:
-```
-
-```{js:autoclass} StreamRawWriter
-:members:
-```
-
-```{js:autoclass} StreamRawWriting
+```{js:autoclass} StreamTokenBinaryWriter
 :members:
 ```
 
@@ -207,22 +211,6 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 :members:
 ```
 
-```{js:autoclass} StreamReading
-:members:
-```
-
-```{js:autoclass} StreamSizing
-:members:
-```
-
-```{js:autoclass} StreamTokenBinaryReader
-:members:
-```
-
-```{js:autoclass} StreamTokenBinaryWriter
-:members:
-```
-
 ```{js:autoclass} StreamWriterBlob
 :members:
 ```
@@ -235,6 +223,37 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 :members:
 ```
 
+```{js:autoclass} StreamReading
+:members:
+```
+
 ```{js:autoclass} StreamWriting
+:members:
+```
+```{js:autoclass} StreamEncoding
+:members:
+```
+
+```{js:autoclass} StreamDecoding
+:members:
+```
+
+```{js:autoclass} StreamSizing
+:members:
+```
+
+```{js:autoclass} StreamRawReader
+:members:
+```
+
+```{js:autoclass} StreamRawWriter
+:members:
+```
+
+```{js:autoclass} StreamRawReading
+:members:
+```
+
+```{js:autoclass} StreamRawWriting
 :members:
 ```

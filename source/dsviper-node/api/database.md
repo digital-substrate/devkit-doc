@@ -73,15 +73,20 @@ For the same API in Python, see {doc}`../../dsviper-python/api/database`.
 
 Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d.ts`) by TypeDoc.
 
-## Summary
+## Core Classes
 
 | Class | Description |
-| {js:class}`Database` | A Database is a CRUD like transactional database |
-| {js:class}`DatabaseRemote` | A low-level class used to access a CRUD like database from a remote repository through the Databasing interface |
-| {js:class}`DatabaseSQLite` | A low-level class used to represent a CRUD like database based on SQLite3 through the Databasing interface |
-| {js:class}`Databasing` | An interface used to abstract the implementation of the persistence layer for a CRUD like database |
-| {js:class}`SQLite` | A class used to retrieve the configuration of SQLite3 |
 |-------|-------------|
+| {js:class}`Database` | A Database is a CRUD like transactional database |
+| {js:class}`DatabaseSQLite` | A low-level class used to represent a CRUD like database based on SQLite3 through the Databasing interface |
+| {js:class}`DatabaseRemote` | A low-level class used to access a CRUD like database from a remote repository through the Databasing interface |
+| {js:class}`Databasing` | An interface used to abstract the implementation of the persistence layer for a CRUD like database |
+
+## Low-Level
+
+| Class | Description |
+|-------|-------------|
+| {js:class}`SQLite` | A class used to retrieve the configuration of SQLite3 |
 
 ## Reference
 
@@ -89,11 +94,11 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 :members:
 ```
 
-```{js:autoclass} DatabaseRemote
+```{js:autoclass} DatabaseSQLite
 :members:
 ```
 
-```{js:autoclass} DatabaseSQLite
+```{js:autoclass} DatabaseRemote
 :members:
 ```
 
@@ -104,4 +109,3 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 ```{js:autoclass} SQLite
 :members:
 ```
-

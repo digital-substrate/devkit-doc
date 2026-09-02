@@ -56,7 +56,7 @@ comes from `CommitStateBuilder.mergeState(db, ours, theirs)`.
 
 The mirror of this page for the Python binding is {doc}`../../dsviper-python/api/reconciliation`.
 
-## Summary
+## Classes
 
 | Class | Description |
 |-------|-------------|

@@ -95,7 +95,7 @@ no `StepperDelegate` class to expose.
 
 The mirror of this page for the Python binding is {doc}`../../dsviper-python/api/transfer`.
 
-## Summary
+## Classes
 
 | Class | Description |
 |-------|-------------|

@@ -86,51 +86,41 @@ documented on {doc}`database`. The Python counterpart of this page is
 
 Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d.ts`) by TypeDoc.
 
-## Summary
+## Core Classes
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`BlobArray` | A class used to reinterpret the blob of the internal BlobView as an array<blob_layout.data_type> |
-| {js:class}`BlobData` | A class used to represent the data associated with a blob during the synchronization of two databases |
-| {js:class}`BlobEncoder` | A class used to encode a blob |
-| {js:class}`BlobEncoderLayout` | A class used to represent the layout of one element |
-| {js:class}`BlobGetting` | An interface used to retrieve blobs from a persistence layer |
-| {js:class}`BlobInfo` | A class used to represent various information of a blob in the persistence layer |
 | {js:class}`BlobLayout` | A class used to describe the layout of the element in a blob |
+| {js:class}`BlobArray` | A class used to reinterpret the blob of the internal BlobView as an array<blob_layout.data_type> |
 | {js:class}`BlobPack` | A class used to implements memory regions in one blob |
 | {js:class}`BlobPackDescriptor` | A class used to describe binary regions |
 | {js:class}`BlobPackRegion` | A class used for a region that implement the buffer protocol |
-| {js:class}`BlobStatistics` | A class used to represent the statistics about blobs |
+
+## Blob I/O
+
+| Class | Description |
+|-------|-------------|
 | {js:class}`BlobStream` | A class used to copy a huge blob (> 2GB) to a database |
+| {js:class}`BlobEncoder` | A class used to encode a blob |
+| {js:class}`BlobEncoderLayout` | A class used to represent the layout of one element |
 | {js:class}`BlobView` | A class used to interpret the bytes of a blob from the layout |
+| {js:class}`BlobData` | A class used to represent the data associated with a blob during the synchronization of two databases |
+
+## Database Integration
+
+| Class | Description |
+|-------|-------------|
+| {js:class}`BlobGetting` | An interface used to retrieve blobs from a persistence layer |
+| {js:class}`BlobInfo` | A class used to represent various information of a blob in the persistence layer |
+| {js:class}`BlobStatistics` | A class used to represent the statistics about blobs |
 
 ## Reference
 
-```{js:autoclass} BlobArray
-:members:
-```
-
-```{js:autoclass} BlobData
-:members:
-```
-
-```{js:autoclass} BlobEncoder
-:members:
-```
-
-```{js:autoclass} BlobEncoderLayout
-:members:
-```
-
-```{js:autoclass} BlobGetting
-:members:
-```
-
-```{js:autoclass} BlobInfo
-:members:
-```
-
 ```{js:autoclass} BlobLayout
+:members:
+```
+
+```{js:autoclass} BlobArray
 :members:
 ```
 
@@ -146,14 +136,33 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 :members:
 ```
 
-```{js:autoclass} BlobStatistics
-:members:
-```
-
 ```{js:autoclass} BlobStream
 :members:
 ```
 
+```{js:autoclass} BlobEncoder
+:members:
+```
+
+```{js:autoclass} BlobEncoderLayout
+:members:
+```
+
 ```{js:autoclass} BlobView
+:members:
+```
+```{js:autoclass} BlobData
+:members:
+```
+
+```{js:autoclass} BlobGetting
+:members:
+```
+
+```{js:autoclass} BlobInfo
+:members:
+```
+
+```{js:autoclass} BlobStatistics
 :members:
 ```

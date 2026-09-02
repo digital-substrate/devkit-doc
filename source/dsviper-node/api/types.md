@@ -59,49 +59,74 @@ for a narrative walkthrough of types and values together, see
 
 Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d.ts`) by TypeDoc.
 
-## Summary
+## Base Class
 
 | Class | Description |
 |-------|-------------|
 | {js:class}`Type` | A utility class to handle type representation |
-| {js:class}`TypeAny` | A class used to represent the any type |
-| {js:class}`TypeAnyConcept` | A class used to represent the any_concept type |
-| {js:class}`TypeBlob` | A class used to represent the blob type |
-| {js:class}`TypeBlobId` | A class used to represent the blob_id type |
-| {js:class}`TypeBool` | A class used to represent the bool type |
-| {js:class}`TypeClub` | A class used to represent a club type |
-| {js:class}`TypeCommitId` | A class used to represent the commit_id type |
-| {js:class}`TypeConcept` | A class used to represent a concept type |
-| {js:class}`TypeDouble` | A class used to represent the double type |
-| {js:class}`TypeEnumeration` | A class used to represent an enum type |
-| {js:class}`TypeEnumerationCase` | A class used to represent a case for an enum type |
-| {js:class}`TypeEnumerationDescriptor` | A class used to describe the cases of an enum |
-| {js:class}`TypeFloat` | A class used to represent the float type |
-| {js:class}`TypeInt16` | A class used to represent the int16 type |
-| {js:class}`TypeInt32` | A class used to represent the int32 type |
-| {js:class}`TypeInt64` | A class used to represent the int64 type |
-| {js:class}`TypeInt8` | A class used to represent the int8 type |
-| {js:class}`TypeKey` | A class used to represent a key<element_type> type where element_type is a concept, club or any_concept |
-| {js:class}`TypeMap` | A class used to represent a map<element_type> type |
-| {js:class}`TypeMat` | A class used to represent a mat<numeric_type, columns, rows> type |
 | {js:class}`TypeName` | A class used to describe the name of a type |
-| {js:class}`TypeOptional` | A class used to represent an optional<element_type> type |
-| {js:class}`TypeSet` | A class used to represent a set<element_type> type |
-| {js:class}`TypeString` | A class used to represent the string type |
-| {js:class}`TypeStructure` | A class used to represent a struct type |
-| {js:class}`TypeStructureDescriptor` | A class used to describe the fields of a struct |
-| {js:class}`TypeStructureField` | A class used to represent a field for a struct |
-| {js:class}`TypeTuple` | A class used to represent a tuple<T0, ...> type |
+
+## Primitive Types
+
+| Class | Description |
+|-------|-------------|
+| {js:class}`TypeVoid` | A class used to represent the void type |
+| {js:class}`TypeBool` | A class used to represent the bool type |
+| {js:class}`TypeUInt8` | A class used to represent the uint8 type |
 | {js:class}`TypeUInt16` | A class used to represent the uint16 type |
 | {js:class}`TypeUInt32` | A class used to represent the uint32 type |
 | {js:class}`TypeUInt64` | A class used to represent the uint64 type |
-| {js:class}`TypeUInt8` | A class used to represent the uint8 type |
+| {js:class}`TypeInt8` | A class used to represent the int8 type |
+| {js:class}`TypeInt16` | A class used to represent the int16 type |
+| {js:class}`TypeInt32` | A class used to represent the int32 type |
+| {js:class}`TypeInt64` | A class used to represent the int64 type |
+| {js:class}`TypeFloat` | A class used to represent the float type |
+| {js:class}`TypeDouble` | A class used to represent the double type |
+| {js:class}`TypeString` | A class used to represent the string type |
+| {js:class}`TypeBlob` | A class used to represent the blob type |
+| {js:class}`TypeBlobId` | A class used to represent the blob_id type |
+| {js:class}`TypeCommitId` | A class used to represent the commit_id type |
 | {js:class}`TypeUUId` | A class used to represent the uuid type |
-| {js:class}`TypeVariant` | A class used to represent a variant<T0, ...> type |
-| {js:class}`TypeVec` | A class used to represent a vec<element_type, size> type |
+
+## Container Types
+
+| Class | Description |
+|-------|-------------|
 | {js:class}`TypeVector` | A class used to represent a vector<element_type> type |
-| {js:class}`TypeVoid` | A class used to represent the void type |
+| {js:class}`TypeSet` | A class used to represent a set<element_type> type |
+| {js:class}`TypeMap` | A class used to represent a map<element_type> type |
 | {js:class}`TypeXArray` | A class used to represent a xarray<element_type> type |
+| {js:class}`TypeOptional` | A class used to represent an optional<element_type> type |
+
+## Algebraic Types
+
+| Class | Description |
+|-------|-------------|
+| {js:class}`TypeTuple` | A class used to represent a tuple<T0, ...> type |
+| {js:class}`TypeVec` | A class used to represent a vec<element_type, size> type |
+| {js:class}`TypeMat` | A class used to represent a mat<numeric_type, columns, rows> type |
+| {js:class}`TypeVariant` | A class used to represent a variant<T0, ...> type |
+| {js:class}`TypeAny` | A class used to represent the any type |
+
+## User-Defined Types
+
+| Class | Description |
+|-------|-------------|
+| {js:class}`TypeStructure` | A class used to represent a struct type |
+| {js:class}`TypeStructureDescriptor` | A class used to describe the fields of a struct |
+| {js:class}`TypeStructureField` | A class used to represent a field for a struct |
+| {js:class}`TypeEnumeration` | A class used to represent an enum type |
+| {js:class}`TypeEnumerationCase` | A class used to represent a case for an enum type |
+| {js:class}`TypeEnumerationDescriptor` | A class used to describe the cases of an enum |
+
+## Concept Types
+
+| Class | Description |
+|-------|-------------|
+| {js:class}`TypeConcept` | A class used to represent a concept type |
+| {js:class}`TypeClub` | A class used to represent a club type |
+| {js:class}`TypeKey` | A class used to represent a key<element_type> type where element_type is a concept, club or any_concept |
+| {js:class}`TypeAnyConcept` | A class used to represent the any_concept type |
 
 ## Reference
 
@@ -109,19 +134,11 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 :members:
 ```
 
-```{js:autoclass} TypeAny
+```{js:autoclass} TypeName
 :members:
 ```
 
-```{js:autoclass} TypeAnyConcept
-:members:
-```
-
-```{js:autoclass} TypeBlob
-:members:
-```
-
-```{js:autoclass} TypeBlobId
+```{js:autoclass} TypeVoid
 :members:
 ```
 
@@ -129,95 +146,7 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 :members:
 ```
 
-```{js:autoclass} TypeClub
-:members:
-```
-
-```{js:autoclass} TypeCommitId
-:members:
-```
-
-```{js:autoclass} TypeConcept
-:members:
-```
-
-```{js:autoclass} TypeDouble
-:members:
-```
-
-```{js:autoclass} TypeEnumeration
-:members:
-```
-
-```{js:autoclass} TypeEnumerationCase
-:members:
-```
-
-```{js:autoclass} TypeEnumerationDescriptor
-:members:
-```
-
-```{js:autoclass} TypeFloat
-:members:
-```
-
-```{js:autoclass} TypeInt16
-:members:
-```
-
-```{js:autoclass} TypeInt32
-:members:
-```
-
-```{js:autoclass} TypeInt64
-:members:
-```
-
-```{js:autoclass} TypeInt8
-:members:
-```
-
-```{js:autoclass} TypeKey
-:members:
-```
-
-```{js:autoclass} TypeMap
-:members:
-```
-
-```{js:autoclass} TypeMat
-:members:
-```
-
-```{js:autoclass} TypeName
-:members:
-```
-
-```{js:autoclass} TypeOptional
-:members:
-```
-
-```{js:autoclass} TypeSet
-:members:
-```
-
-```{js:autoclass} TypeString
-:members:
-```
-
-```{js:autoclass} TypeStructure
-:members:
-```
-
-```{js:autoclass} TypeStructureDescriptor
-:members:
-```
-
-```{js:autoclass} TypeStructureField
-:members:
-```
-
-```{js:autoclass} TypeTuple
+```{js:autoclass} TypeUInt8
 :members:
 ```
 
@@ -233,7 +162,43 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 :members:
 ```
 
-```{js:autoclass} TypeUInt8
+```{js:autoclass} TypeInt8
+:members:
+```
+
+```{js:autoclass} TypeInt16
+:members:
+```
+
+```{js:autoclass} TypeInt32
+:members:
+```
+
+```{js:autoclass} TypeInt64
+:members:
+```
+
+```{js:autoclass} TypeFloat
+:members:
+```
+
+```{js:autoclass} TypeDouble
+:members:
+```
+
+```{js:autoclass} TypeString
+:members:
+```
+
+```{js:autoclass} TypeBlob
+:members:
+```
+
+```{js:autoclass} TypeBlobId
+:members:
+```
+
+```{js:autoclass} TypeCommitId
 :members:
 ```
 
@@ -241,7 +206,26 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 :members:
 ```
 
-```{js:autoclass} TypeVariant
+```{js:autoclass} TypeVector
+:members:
+```
+
+```{js:autoclass} TypeSet
+:members:
+```
+
+```{js:autoclass} TypeMap
+:members:
+```
+
+```{js:autoclass} TypeXArray
+:members:
+```
+```{js:autoclass} TypeOptional
+:members:
+```
+
+```{js:autoclass} TypeTuple
 :members:
 ```
 
@@ -249,14 +233,54 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 :members:
 ```
 
-```{js:autoclass} TypeVector
+```{js:autoclass} TypeMat
 :members:
 ```
 
-```{js:autoclass} TypeVoid
+```{js:autoclass} TypeVariant
 :members:
 ```
 
-```{js:autoclass} TypeXArray
+```{js:autoclass} TypeAny
+:members:
+```
+
+```{js:autoclass} TypeStructure
+:members:
+```
+
+```{js:autoclass} TypeStructureDescriptor
+:members:
+```
+
+```{js:autoclass} TypeStructureField
+:members:
+```
+
+```{js:autoclass} TypeEnumeration
+:members:
+```
+
+```{js:autoclass} TypeEnumerationCase
+:members:
+```
+
+```{js:autoclass} TypeEnumerationDescriptor
+:members:
+```
+
+```{js:autoclass} TypeConcept
+:members:
+```
+
+```{js:autoclass} TypeClub
+:members:
+```
+
+```{js:autoclass} TypeKey
+:members:
+```
+
+```{js:autoclass} TypeAnyConcept
 :members:
 ```

@@ -80,7 +80,7 @@ Its Python twin `dsviper-web-cdbe` renders the same tree through Flask.
 
 The mirror of this page for the Python binding is {doc}`../../dsviper-python/api/web`.
 
-## Summary
+## Classes
 
 | Class | Description |
 |-------|-------------|

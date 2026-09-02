@@ -152,35 +152,55 @@ On macOS and Linux a unix-domain socket path is limited to ~104 bytes; a longer 
 
 Available from the Node binding 1.2.9 (runtime 1.2.24) — see {doc}`../../changelog`.
 
-## Summary
+## Core Classes
 
 | Class | Description |
 |-------|-------------|
 | {js:class}`Commit` | A class used to represent a commit |
-| {js:class}`CommitData` | A class used to represent data associated with a commit during the synchronization of two databases |
 | {js:class}`CommitDatabase` | A Commit database keeps the history of mutations in a DAG of commit |
-| {js:class}`CommitDatabaseHelper` | A utility class for a Commit Database |
-| {js:class}`CommitDatabaseRemote` | A low-level class used to represent a remote Commit database through the CommitDatabasing interface |
 | {js:class}`CommitDatabaseSQLite` | A low-level class used to represent the database based on SQLite3 through the CommitDatabasing interface |
+| {js:class}`CommitDatabaseRemote` | A low-level class used to represent a remote Commit database through the CommitDatabasing interface |
 | {js:class}`CommitDatabaseServer` | Serve a CommitDatabase over a socket, one C++ thread per client |
 | {js:class}`CommitDatabasing` | An interface used to abstract the implementation of the persistence layer for a Commit database |
-| {js:class}`CommitEvalAction` | A class used by the evaluator to reconstruct a value by executing mutation opcodes |
-| {js:class}`CommitHeader` | A class used to represent the header of a commit |
+
+## State Access
+
+| Class | Description |
+|-------|-------------|
+| {js:class}`CommitState` | A class used to represent data at a specific commit |
 | {js:class}`CommitMutableState` | A class used to register the mutations of a value executed through the attachmentMutating interface |
+| {js:class}`CommitStateBuilder` | A utility class to build CommitState |
+
+## History & DAG
+
+| Class | Description |
+|-------|-------------|
 | {js:class}`CommitNode` | A class used to represent a node in the commit DAG |
 | {js:class}`CommitNodeGrid` | A class used to represent the location of a commit node in the grid |
 | {js:class}`CommitNodeGridBuilder` | A class used to build the grid layout of the commit DAG |
-| {js:class}`CommitState` | A class used to represent data at a specific commit |
-| {js:class}`CommitStateBuilder` | A utility class to build CommitState |
-| {js:class}`CommitStateTrace` | A class used to represent traced opcode |
-| {js:class}`CommitStateTraceProgram` | A class used to represent traced opcode |
-| {js:class}`CommitStateTracing` | An interface used to trace a value (aka document) |
+| {js:class}`CommitHeader` | A class used to represent the header of a commit |
+| {js:class}`CommitData` | A class used to represent data associated with a commit during the synchronization of two databases |
+| {js:class}`CommitEvalAction` | A class used by the evaluator to reconstruct a value by executing mutation opcodes |
+| {js:class}`CommitDatabaseHelper` | A utility class for a Commit Database |
+
+## Synchronization
+
+| Class | Description |
+|-------|-------------|
 | {js:class}`CommitStore` | A high-level application class used to implement the store, dispatch, undo/redo and notification concepts inspired by the redux approach |
 | {js:class}`CommitStoreNotifying` | An interface used to represent the notification emitted by a store |
-| {js:class}`CommitSyncData` | A class used to represent data exchanged during the synchronization of two databases |
 | {js:class}`CommitSynchronizer` | A class used to synchronize two concrete databases through the CommitDatabasing interface (low-level driver interface) |
 | {js:class}`CommitSynchronizerInfo` | A class used to represent data exchanged during the synchronization of two databases |
 | {js:class}`CommitSynchronizerInfoTransmit` | A class used to represent statistics of data exchanged during the synchronization of two databases |
+| {js:class}`CommitSyncData` | A class used to represent data exchanged during the synchronization of two databases |
+
+## Tracing
+
+| Class | Description |
+|-------|-------------|
+| {js:class}`CommitStateTracing` | An interface used to trace a value (aka document) |
+| {js:class}`CommitStateTrace` | A class used to represent traced opcode |
+| {js:class}`CommitStateTraceProgram` | A class used to represent traced opcode |
 
 ## Reference
 
@@ -188,23 +208,15 @@ Available from the Node binding 1.2.9 (runtime 1.2.24) — see {doc}`../../chang
 :members:
 ```
 
-```{js:autoclass} CommitData
-:members:
-```
-
 ```{js:autoclass} CommitDatabase
 :members:
 ```
 
-```{js:autoclass} CommitDatabaseHelper
+```{js:autoclass} CommitDatabaseSQLite
 :members:
 ```
 
 ```{js:autoclass} CommitDatabaseRemote
-:members:
-```
-
-```{js:autoclass} CommitDatabaseSQLite
 :members:
 ```
 
@@ -216,15 +228,15 @@ Available from the Node binding 1.2.9 (runtime 1.2.24) — see {doc}`../../chang
 :members:
 ```
 
-```{js:autoclass} CommitEvalAction
-:members:
-```
-
-```{js:autoclass} CommitHeader
+```{js:autoclass} CommitState
 :members:
 ```
 
 ```{js:autoclass} CommitMutableState
+:members:
+```
+
+```{js:autoclass} CommitStateBuilder
 :members:
 ```
 
@@ -240,23 +252,19 @@ Available from the Node binding 1.2.9 (runtime 1.2.24) — see {doc}`../../chang
 :members:
 ```
 
-```{js:autoclass} CommitState
+```{js:autoclass} CommitHeader
 :members:
 ```
 
-```{js:autoclass} CommitStateBuilder
+```{js:autoclass} CommitData
 :members:
 ```
 
-```{js:autoclass} CommitStateTrace
+```{js:autoclass} CommitEvalAction
 :members:
 ```
 
-```{js:autoclass} CommitStateTraceProgram
-:members:
-```
-
-```{js:autoclass} CommitStateTracing
+```{js:autoclass} CommitDatabaseHelper
 :members:
 ```
 
@@ -265,10 +273,6 @@ Available from the Node binding 1.2.9 (runtime 1.2.24) — see {doc}`../../chang
 ```
 
 ```{js:autoclass} CommitStoreNotifying
-:members:
-```
-
-```{js:autoclass} CommitSyncData
 :members:
 ```
 
@@ -281,5 +285,20 @@ Available from the Node binding 1.2.9 (runtime 1.2.24) — see {doc}`../../chang
 ```
 
 ```{js:autoclass} CommitSynchronizerInfoTransmit
+:members:
+```
+```{js:autoclass} CommitSyncData
+:members:
+```
+
+```{js:autoclass} CommitStateTracing
+:members:
+```
+
+```{js:autoclass} CommitStateTrace
+:members:
+```
+
+```{js:autoclass} CommitStateTraceProgram
 :members:
 ```

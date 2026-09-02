@@ -118,85 +118,95 @@ const sourceMap = new DSMSourceMap();
 const [report, dsmDefs, defs] = DSMBuilder.assemble('model.dsm').parse(sourceMap);
 ```
 
-## Summary
+## Parsing
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`DSMAttachment` | A class used to represent the definition of an attachment |
-| {js:class}`DSMAttachmentFunction` | A class used to represent the definition of an attachment function |
-| {js:class}`DSMAttachmentFunctionPool` | A class used to represent the definition of an attachment function pool |
 | {js:class}`DSMBuilder` | A class used to assemble a collection of DSM Definitions from various sources |
 | {js:class}`DSMBuilderPart` | A class used to represent a part of the assembled definitions |
-| {js:class}`DSMClub` | A class used to represent the definition of a club |
-| {js:class}`DSMConcept` | A class used to represent the definition of a concept |
 | {js:class}`DSMDefinitions` | A class used to represent DSM definitions |
 | {js:class}`DSMDefinitionsInspector` | DSMDefinitionsInspector(definitions) |
+| {js:class}`DSMParseReport` | A class used to collect the error occurred while parsing the assembled definitions |
+| {js:class}`DSMParseError` | A class used to represent a parse error |
+
+## Model Elements
+
+| Class | Description |
+|-------|-------------|
+| {js:class}`DSMConcept` | A class used to represent the definition of a concept |
+| {js:class}`DSMClub` | A class used to represent the definition of a club |
+| {js:class}`DSMStructure` | A class used to represent the definition of a struct |
+| {js:class}`DSMStructureField` | A class used to represent the definition of a field for a struct |
 | {js:class}`DSMEnumeration` | A class used to represent the definition of an enum |
 | {js:class}`DSMEnumerationCase` | A class used to represent the definition of a case for an enum |
+| {js:class}`DSMAttachment` | A class used to represent the definition of an attachment |
+
+## DSM Types
+
+| Class | Description |
+|-------|-------------|
+| {js:class}`DSMType` |  |
+| {js:class}`DSMTypeKey` | A class used to represent the type key<element_type> |
+| {js:class}`DSMTypeVector` | A class used to represent the type vector<element_type> |
+| {js:class}`DSMTypeSet` | A class used to represent the type set<element_type> |
+| {js:class}`DSMTypeMap` | A class used to represent the type map<key_type, element_type> |
+| {js:class}`DSMTypeXArray` | A class used to represent the type xarray<element_type> |
+| {js:class}`DSMTypeOptional` | A class used to represent the type optional<element_type> |
+| {js:class}`DSMTypeTuple` | A class used to represent the type tuple<T0, ...> |
+| {js:class}`DSMTypeVec` | A class used to represent the type vec<element_type, size> |
+| {js:class}`DSMTypeMat` | A class used to represent the type vec<element_type, columns, rows> |
+| {js:class}`DSMTypeVariant` | A class used to represent the type variant<T0, ...> |
+| {js:class}`DSMTypeReference` | A class used to represent a reference to a type |
+
+## Functions
+
+| Class | Description |
+|-------|-------------|
 | {js:class}`DSMFunction` | A class used to represent the definition of a function |
 | {js:class}`DSMFunctionPool` | A class used to represent the definition of a function pool |
 | {js:class}`DSMFunctionPrototype` | A class used to represent the definition of a function prototype |
+| {js:class}`DSMAttachmentFunction` | A class used to represent the definition of an attachment function |
+| {js:class}`DSMAttachmentFunctionPool` | A class used to represent the definition of an attachment function pool |
+
+## Literals
+
+| Class | Description |
+|-------|-------------|
 | {js:class}`DSMLiteral` |  |
-| {js:class}`DSMLiteralList` | A class used to represent the definition of a literal list |
 | {js:class}`DSMLiteralValue` | A class used to represent the definition of a literal value |
-| {js:class}`DSMParseError` | A class used to represent a parse error |
-| {js:class}`DSMParseReport` | A class used to collect the error occurred while parsing the assembled definitions |
-| {js:class}`DSMSourceCase` | An enumeration case and the source spans of its name and doc |
-| {js:class}`DSMSourceDeclaration` | A definition declaration, its identifier and its source spans |
-| {js:class}`DSMSourceField` | A struct field and its source spans (name, type, declaration, doc) |
-| {js:class}`DSMSourceMap` | The source spans collected while parsing DSM |
-| {js:class}`DSMSourceNameSpace` | A namespace header and the source spans of its name and UUID |
-| {js:class}`DSMSourceReference` | A resolved type-reference site: its source span and its referent |
-| {js:class}`DSMSourceSpan` | A source text span (line, start, stop) of a definition token |
-| {js:class}`DSMSourceType` | A type sub-expression occurrence: its source span and qualified name |
-| {js:class}`DSMStructure` | A class used to represent the definition of a struct |
-| {js:class}`DSMStructureField` | A class used to represent the definition of a field for a struct |
-| {js:class}`DSMType` |  |
-| {js:class}`DSMTypeKey` | A class used to represent the type key<element_type> |
-| {js:class}`DSMTypeMap` | A class used to represent the type map<key_type, element_type> |
-| {js:class}`DSMTypeMat` | A class used to represent the type vec<element_type, columns, rows> |
-| {js:class}`DSMTypeOptional` | A class used to represent the type optional<element_type> |
-| {js:class}`DSMTypeReference` | A class used to represent a reference to a type |
-| {js:class}`DSMTypeSet` | A class used to represent the type set<element_type> |
-| {js:class}`DSMTypeTuple` | A class used to represent the type tuple<T0, ...> |
-| {js:class}`DSMTypeVariant` | A class used to represent the type variant<T0, ...> |
-| {js:class}`DSMTypeVec` | A class used to represent the type vec<element_type, size> |
-| {js:class}`DSMTypeVector` | A class used to represent the type vector<element_type> |
-| {js:class}`DSMTypeXArray` | A class used to represent the type xarray<element_type> |
+| {js:class}`DSMLiteralList` | A class used to represent the definition of a literal list |
+
+## Definitions
+
+| Class | Description |
+|-------|-------------|
 | {js:class}`Definitions` | A class used to register concept, club, enumeration, structure and attachment |
-| {js:class}`DefinitionsCollector` | A class used to collect referenced types |
 | {js:class}`DefinitionsConst` | A class used to retrieve registered concepts, clubs, enumerations, structures and attachments |
-| {js:class}`DefinitionsExtendInfo` | A class used to represent the types exchanged during the synchronization of two databases |
+| {js:class}`DefinitionsCollector` | A class used to collect referenced types |
 | {js:class}`DefinitionsInspector` | DefinitionsInspector(definitions) |
 | {js:class}`DefinitionsMapper` | A class use for INTERNAL DEVELOPMENT |
+| {js:class}`DefinitionsExtendInfo` | A class used to represent the types exchanged during the synchronization of two databases |
+
+## Source Map
+
+| Class | Description |
+|-------|-------------|
+| {js:class}`DSMSourceMap` | The source spans collected while parsing DSM |
+| {js:class}`DSMSourceSpan` | A source text span (line, start, stop) of a definition token |
+| {js:class}`DSMSourceDeclaration` | A definition declaration, its identifier and its source spans |
+| {js:class}`DSMSourceField` | A struct field and its source spans (name, type, declaration, doc) |
+| {js:class}`DSMSourceCase` | An enumeration case and the source spans of its name and doc |
+| {js:class}`DSMSourceNameSpace` | A namespace header and the source spans of its name and UUID |
+| {js:class}`DSMSourceReference` | A resolved type-reference site: its source span and its referent |
+| {js:class}`DSMSourceType` | A type sub-expression occurrence: its source span and qualified name |
 
 ## Reference
-
-```{js:autoclass} DSMAttachment
-:members:
-```
-
-```{js:autoclass} DSMAttachmentFunction
-:members:
-```
-
-```{js:autoclass} DSMAttachmentFunctionPool
-:members:
-```
 
 ```{js:autoclass} DSMBuilder
 :members:
 ```
 
 ```{js:autoclass} DSMBuilderPart
-:members:
-```
-
-```{js:autoclass} DSMClub
-:members:
-```
-
-```{js:autoclass} DSMConcept
 :members:
 ```
 
@@ -208,11 +218,87 @@ const [report, dsmDefs, defs] = DSMBuilder.assemble('model.dsm').parse(sourceMap
 :members:
 ```
 
+```{js:autoclass} DSMParseReport
+:members:
+```
+
+```{js:autoclass} DSMParseError
+:members:
+```
+
+```{js:autoclass} DSMConcept
+:members:
+```
+
+```{js:autoclass} DSMClub
+:members:
+```
+
+```{js:autoclass} DSMStructure
+:members:
+```
+
+```{js:autoclass} DSMStructureField
+:members:
+```
+
 ```{js:autoclass} DSMEnumeration
 :members:
 ```
 
 ```{js:autoclass} DSMEnumerationCase
+:members:
+```
+
+```{js:autoclass} DSMAttachment
+:members:
+```
+
+```{js:autoclass} DSMType
+:members:
+```
+
+```{js:autoclass} DSMTypeKey
+:members:
+```
+
+```{js:autoclass} DSMTypeVector
+:members:
+```
+
+```{js:autoclass} DSMTypeSet
+:members:
+```
+
+```{js:autoclass} DSMTypeMap
+:members:
+```
+
+```{js:autoclass} DSMTypeXArray
+:members:
+```
+
+```{js:autoclass} DSMTypeOptional
+:members:
+```
+
+```{js:autoclass} DSMTypeTuple
+:members:
+```
+
+```{js:autoclass} DSMTypeVec
+:members:
+```
+
+```{js:autoclass} DSMTypeMat
+:members:
+```
+
+```{js:autoclass} DSMTypeVariant
+:members:
+```
+
+```{js:autoclass} DSMTypeReference
 :members:
 ```
 
@@ -228,11 +314,15 @@ const [report, dsmDefs, defs] = DSMBuilder.assemble('model.dsm').parse(sourceMap
 :members:
 ```
 
-```{js:autoclass} DSMLiteral
+```{js:autoclass} DSMAttachmentFunction
 :members:
 ```
 
-```{js:autoclass} DSMLiteralList
+```{js:autoclass} DSMAttachmentFunctionPool
+:members:
+```
+
+```{js:autoclass} DSMLiteral
 :members:
 ```
 
@@ -240,15 +330,38 @@ const [report, dsmDefs, defs] = DSMBuilder.assemble('model.dsm').parse(sourceMap
 :members:
 ```
 
-```{js:autoclass} DSMParseError
+```{js:autoclass} DSMLiteralList
 :members:
 ```
 
-```{js:autoclass} DSMParseReport
+```{js:autoclass} Definitions
 :members:
 ```
 
-```{js:autoclass} DSMSourceCase
+```{js:autoclass} DefinitionsConst
+:members:
+```
+
+```{js:autoclass} DefinitionsCollector
+:members:
+```
+
+```{js:autoclass} DefinitionsInspector
+:members:
+```
+
+```{js:autoclass} DefinitionsMapper
+:members:
+```
+```{js:autoclass} DefinitionsExtendInfo
+:members:
+```
+
+```{js:autoclass} DSMSourceMap
+:members:
+```
+
+```{js:autoclass} DSMSourceSpan
 :members:
 ```
 
@@ -260,7 +373,7 @@ const [report, dsmDefs, defs] = DSMBuilder.assemble('model.dsm').parse(sourceMap
 :members:
 ```
 
-```{js:autoclass} DSMSourceMap
+```{js:autoclass} DSMSourceCase
 :members:
 ```
 
@@ -272,90 +385,6 @@ const [report, dsmDefs, defs] = DSMBuilder.assemble('model.dsm').parse(sourceMap
 :members:
 ```
 
-```{js:autoclass} DSMSourceSpan
-:members:
-```
-
 ```{js:autoclass} DSMSourceType
-:members:
-```
-
-```{js:autoclass} DSMStructure
-:members:
-```
-
-```{js:autoclass} DSMStructureField
-:members:
-```
-
-```{js:autoclass} DSMType
-:members:
-```
-
-```{js:autoclass} DSMTypeKey
-:members:
-```
-
-```{js:autoclass} DSMTypeMap
-:members:
-```
-
-```{js:autoclass} DSMTypeMat
-:members:
-```
-
-```{js:autoclass} DSMTypeOptional
-:members:
-```
-
-```{js:autoclass} DSMTypeReference
-:members:
-```
-
-```{js:autoclass} DSMTypeSet
-:members:
-```
-
-```{js:autoclass} DSMTypeTuple
-:members:
-```
-
-```{js:autoclass} DSMTypeVariant
-:members:
-```
-
-```{js:autoclass} DSMTypeVec
-:members:
-```
-
-```{js:autoclass} DSMTypeVector
-:members:
-```
-
-```{js:autoclass} DSMTypeXArray
-:members:
-```
-
-```{js:autoclass} Definitions
-:members:
-```
-
-```{js:autoclass} DefinitionsCollector
-:members:
-```
-
-```{js:autoclass} DefinitionsConst
-:members:
-```
-
-```{js:autoclass} DefinitionsExtendInfo
-:members:
-```
-
-```{js:autoclass} DefinitionsInspector
-:members:
-```
-
-```{js:autoclass} DefinitionsMapper
 :members:
 ```

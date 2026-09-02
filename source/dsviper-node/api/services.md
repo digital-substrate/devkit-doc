@@ -58,19 +58,29 @@ comfort layer over exactly these calls — the same shape the Python REPL client
 
 The mirror of this page for the Python binding is {doc}`../../dsviper-python/api/services`.
 
-## Summary
+## Connection
 
 | Class | Description |
 |-------|-------------|
 | {js:class}`ServiceRemote` | A class used to connect to a remote service |
-| {js:class}`ServiceRemoteAttachmentFunction` | A class used to call a remote attachment function |
-| {js:class}`ServiceRemoteAttachmentFunctionPool` | A class used to represent a remote attachment function pool |
-| {js:class}`ServiceRemoteAttachmentFunctionPoolFunction` | A class used to represent a remote attachment function |
-| {js:class}`ServiceRemoteAttachmentFunctionPoolFunctions` | A class used to represent the remote attachment functions |
-| {js:class}`ServiceRemoteFunction` | A class used to call a remote function |
+
+## Stateless Pools
+
+| Class | Description |
+|-------|-------------|
 | {js:class}`ServiceRemoteFunctionPool` | A class used to represent a remote function pool |
-| {js:class}`ServiceRemoteFunctionPoolFunction` | A class used to represent a remote function |
 | {js:class}`ServiceRemoteFunctionPoolFunctions` | A class used to represent the functions of a pool |
+| {js:class}`ServiceRemoteFunctionPoolFunction` | A class used to represent a remote function |
+| {js:class}`ServiceRemoteFunction` | A class used to call a remote function |
+
+## Stateful Pools
+
+| Class | Description |
+|-------|-------------|
+| {js:class}`ServiceRemoteAttachmentFunctionPool` | A class used to represent a remote attachment function pool |
+| {js:class}`ServiceRemoteAttachmentFunctionPoolFunctions` | A class used to represent the remote attachment functions |
+| {js:class}`ServiceRemoteAttachmentFunctionPoolFunction` | A class used to represent a remote attachment function |
+| {js:class}`ServiceRemoteAttachmentFunction` | A class used to call a remote attachment function |
 
 ## Reference
 
@@ -78,31 +88,7 @@ The mirror of this page for the Python binding is {doc}`../../dsviper-python/api
 :members:
 ```
 
-```{js:autoclass} ServiceRemoteAttachmentFunction
-:members:
-```
-
-```{js:autoclass} ServiceRemoteAttachmentFunctionPool
-:members:
-```
-
-```{js:autoclass} ServiceRemoteAttachmentFunctionPoolFunction
-:members:
-```
-
-```{js:autoclass} ServiceRemoteAttachmentFunctionPoolFunctions
-:members:
-```
-
-```{js:autoclass} ServiceRemoteFunction
-:members:
-```
-
 ```{js:autoclass} ServiceRemoteFunctionPool
-:members:
-```
-
-```{js:autoclass} ServiceRemoteFunctionPoolFunction
 :members:
 ```
 
@@ -110,3 +96,26 @@ The mirror of this page for the Python binding is {doc}`../../dsviper-python/api
 :members:
 ```
 
+```{js:autoclass} ServiceRemoteFunctionPoolFunction
+:members:
+```
+
+```{js:autoclass} ServiceRemoteFunction
+:members:
+```
+
+```{js:autoclass} ServiceRemoteAttachmentFunctionPool
+:members:
+```
+
+```{js:autoclass} ServiceRemoteAttachmentFunctionPoolFunctions
+:members:
+```
+
+```{js:autoclass} ServiceRemoteAttachmentFunctionPoolFunction
+:members:
+```
+
+```{js:autoclass} ServiceRemoteAttachmentFunction
+:members:
+```

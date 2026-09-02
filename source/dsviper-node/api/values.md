@@ -62,59 +62,84 @@ ValueDouble.ONE.encoded();                  // 1.0
 
 Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d.ts`) by TypeDoc.
 
-## Summary
+## Base Class
 
 | Class | Description |
 |-------|-------------|
 | {js:class}`Value` | A utility class to handle value instantiation and representation |
-| {js:class}`ValueAny` | A class used to represent a value of any type |
-| {js:class}`ValueBlob` | A class used to represent a value of type blob |
-| {js:class}`ValueBlobId` | A class used to represent a value of type blob_id |
+
+## Primitive Values
+
+| Class | Description |
+|-------|-------------|
+| {js:class}`ValueVoid` | A class used to represent a value of type void |
 | {js:class}`ValueBool` | A class used to represent a value of type bool |
-| {js:class}`ValueCommitId` | A class used to represent a value of type commit_id |
-| {js:class}`ValueDouble` | A class used to represent a value of type double |
-| {js:class}`ValueEnumeration` | A class used to represent a value of type struct |
-| {js:class}`ValueFloat` | A class used to represent a value of type float |
-| {js:class}`ValueInt16` | A class used to represent a value of type int16 |
-| {js:class}`ValueInt32` | A class used to represent a value of type int32 |
-| {js:class}`ValueInt64` | A class used to represent a value of type int64 |
-| {js:class}`ValueInt8` | A class used to represent a value of type int8 |
-| {js:class}`ValueKey` | A class used to represent a value of type key<element_type> |
-| {js:class}`ValueMap` | A class used to represent a value of type map<key_type, element_type> |
-| {js:class}`ValueMat` | A class used to represent a value of type mat<element_type, columns, rows> |
-| {js:class}`ValueOpcode` | Base class for mutation opcodes — produced by the Commit merge/diff APIs and read via its concrete subclasses |
-| {js:class}`ValueOpcodeDocumentSet` | A class used to represent the type and the arguments of an opcode |
-| {js:class}`ValueOpcodeDocumentUpdate` | A class used to represent the type and the arguments of an opcode |
-| {js:class}`ValueOpcodeKey` | A class used to retrieve the mutation opcodes for an instance of a concept for an attachment |
-| {js:class}`ValueOpcodeMapSubtract` | A class used to represent the type and the arguments of an opcode |
-| {js:class}`ValueOpcodeMapUnion` | A class used to represent the type and the arguments of an opcode |
-| {js:class}`ValueOpcodeMapUpdate` | A class used to represent the type and the arguments of an opcode |
-| {js:class}`ValueOpcodeSetSubtract` | A class used to represent the type and the arguments of an opcode |
-| {js:class}`ValueOpcodeSetUnion` | A class used to represent the type and the arguments of an opcode |
-| {js:class}`ValueOpcodeXArrayInsert` | A class used to represent the type and the arguments of an opcode |
-| {js:class}`ValueOpcodeXArrayRemove` | A class used to represent the type and the arguments of an opcode |
-| {js:class}`ValueOpcodeXArrayUpdate` | A class used to represent the type and the arguments of an opcode |
-| {js:class}`ValueOptional` | A class used to represent a value of type optional<element_type> |
-| {js:class}`ValueProcessorTrace` | A class used to represent traced opcode |
-| {js:class}`ValueProcessorTraceOpcode` | A class used to represent a traced opcode |
-| {js:class}`ValueProgram` | A class used to retrieve opcodes |
-| {js:class}`ValueSet` | A class used to represent a value of type set<element_type> |
-| {js:class}`ValueSetIter` | Iterator for ValueSet elements |
-| {js:class}`ValueString` | A class used to represent a value of type string |
-| {js:class}`ValueStructure` | A class used to represent a value of type struct |
-| {js:class}`ValueTuple` | A class used to represent a value of type tuple<T0, ...> |
-| {js:class}`ValueTupleIter` | Iterator for ValueTuple elements |
+| {js:class}`ValueUInt8` | A class used to represent a value of type uint8 |
 | {js:class}`ValueUInt16` | A class used to represent a value of type uint16 |
 | {js:class}`ValueUInt32` | A class used to represent a value of type uint32 |
 | {js:class}`ValueUInt64` | A class used to represent a value of type uint64 |
-| {js:class}`ValueUInt8` | A class used to represent a value of type uint8 |
+| {js:class}`ValueInt8` | A class used to represent a value of type int8 |
+| {js:class}`ValueInt16` | A class used to represent a value of type int16 |
+| {js:class}`ValueInt32` | A class used to represent a value of type int32 |
+| {js:class}`ValueInt64` | A class used to represent a value of type int64 |
+| {js:class}`ValueFloat` | A class used to represent a value of type float |
+| {js:class}`ValueDouble` | A class used to represent a value of type double |
+| {js:class}`ValueString` | A class used to represent a value of type string |
+| {js:class}`ValueBlob` | A class used to represent a value of type blob |
+| {js:class}`ValueBlobId` | A class used to represent a value of type blob_id |
+| {js:class}`ValueCommitId` | A class used to represent a value of type commit_id |
 | {js:class}`ValueUUId` | A class used to represent a value of type uuid |
-| {js:class}`ValueVariant` | ValueVariant(type_variant, initial_value) |
-| {js:class}`ValueVec` | ValueVec(type_vec [, initial_value]) |
+
+## Container Values
+
+| Class | Description |
+|-------|-------------|
 | {js:class}`ValueVector` | A class used to represent a value of type vector<element_type> |
 | {js:class}`ValueVectorIter` | Iterator for ValueVector elements |
-| {js:class}`ValueVoid` | A class used to represent a value of type void |
+| {js:class}`ValueSet` | A class used to represent a value of type set<element_type> |
+| {js:class}`ValueSetIter` | Iterator for ValueSet elements |
+| {js:class}`ValueMap` | A class used to represent a value of type map<key_type, element_type> |
 | {js:class}`ValueXArray` | A class used to represent a value of type xarray<element_type> |
+| {js:class}`ValueOptional` | A class used to represent a value of type optional<element_type> |
+
+## Algebraic Values
+
+| Class | Description |
+|-------|-------------|
+| {js:class}`ValueTuple` | A class used to represent a value of type tuple<T0, ...> |
+| {js:class}`ValueTupleIter` | Iterator for ValueTuple elements |
+| {js:class}`ValueVec` | ValueVec(type_vec [, initial_value]) |
+| {js:class}`ValueMat` | A class used to represent a value of type mat<element_type, columns, rows> |
+| {js:class}`ValueVariant` | ValueVariant(type_variant, initial_value) |
+| {js:class}`ValueAny` | A class used to represent a value of any type |
+
+## User-Defined Values
+
+| Class | Description |
+|-------|-------------|
+| {js:class}`ValueStructure` | A class used to represent a value of type struct |
+| {js:class}`ValueEnumeration` | A class used to represent a value of type struct |
+| {js:class}`ValueKey` | A class used to represent a value of type key<element_type> |
+
+## Value Program
+
+| Class | Description |
+|-------|-------------|
+| {js:class}`ValueProgram` | A class used to retrieve opcodes |
+| {js:class}`ValueOpcodeKey` | A class used to retrieve the mutation opcodes for an instance of a concept for an attachment |
+| {js:class}`ValueOpcode` | Base class for mutation opcodes — produced by the Commit merge/diff APIs and read via its concrete subclasses |
+| {js:class}`ValueOpcodeDocumentSet` | A class used to represent the type and the arguments of an opcode |
+| {js:class}`ValueOpcodeDocumentUpdate` | A class used to represent the type and the arguments of an opcode |
+| {js:class}`ValueOpcodeMapUnion` | A class used to represent the type and the arguments of an opcode |
+| {js:class}`ValueOpcodeMapSubtract` | A class used to represent the type and the arguments of an opcode |
+| {js:class}`ValueOpcodeMapUpdate` | A class used to represent the type and the arguments of an opcode |
+| {js:class}`ValueOpcodeSetUnion` | A class used to represent the type and the arguments of an opcode |
+| {js:class}`ValueOpcodeSetSubtract` | A class used to represent the type and the arguments of an opcode |
+| {js:class}`ValueOpcodeXArrayInsert` | A class used to represent the type and the arguments of an opcode |
+| {js:class}`ValueOpcodeXArrayRemove` | A class used to represent the type and the arguments of an opcode |
+| {js:class}`ValueOpcodeXArrayUpdate` | A class used to represent the type and the arguments of an opcode |
+| {js:class}`ValueProcessorTrace` | A class used to represent traced opcode |
+| {js:class}`ValueProcessorTraceOpcode` | A class used to represent a traced opcode |
 
 ## Reference
 
@@ -122,15 +147,7 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 :members:
 ```
 
-```{js:autoclass} ValueAny
-:members:
-```
-
-```{js:autoclass} ValueBlob
-:members:
-```
-
-```{js:autoclass} ValueBlobId
+```{js:autoclass} ValueVoid
 :members:
 ```
 
@@ -138,135 +155,7 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 :members:
 ```
 
-```{js:autoclass} ValueCommitId
-:members:
-```
-
-```{js:autoclass} ValueDouble
-:members:
-```
-
-```{js:autoclass} ValueEnumeration
-:members:
-```
-
-```{js:autoclass} ValueFloat
-:members:
-```
-
-```{js:autoclass} ValueInt16
-:members:
-```
-
-```{js:autoclass} ValueInt32
-:members:
-```
-
-```{js:autoclass} ValueInt64
-:members:
-```
-
-```{js:autoclass} ValueInt8
-:members:
-```
-
-```{js:autoclass} ValueKey
-:members:
-```
-
-```{js:autoclass} ValueMap
-:members:
-```
-
-```{js:autoclass} ValueMat
-:members:
-```
-
-```{js:autoclass} ValueOpcode
-:members:
-```
-
-```{js:autoclass} ValueOpcodeDocumentSet
-:members:
-```
-
-```{js:autoclass} ValueOpcodeDocumentUpdate
-:members:
-```
-
-```{js:autoclass} ValueOpcodeKey
-:members:
-```
-
-```{js:autoclass} ValueOpcodeMapSubtract
-:members:
-```
-
-```{js:autoclass} ValueOpcodeMapUnion
-:members:
-```
-
-```{js:autoclass} ValueOpcodeMapUpdate
-:members:
-```
-
-```{js:autoclass} ValueOpcodeSetSubtract
-:members:
-```
-
-```{js:autoclass} ValueOpcodeSetUnion
-:members:
-```
-
-```{js:autoclass} ValueOpcodeXArrayInsert
-:members:
-```
-
-```{js:autoclass} ValueOpcodeXArrayRemove
-:members:
-```
-
-```{js:autoclass} ValueOpcodeXArrayUpdate
-:members:
-```
-
-```{js:autoclass} ValueOptional
-:members:
-```
-
-```{js:autoclass} ValueProcessorTrace
-:members:
-```
-
-```{js:autoclass} ValueProcessorTraceOpcode
-:members:
-```
-
-```{js:autoclass} ValueProgram
-:members:
-```
-
-```{js:autoclass} ValueSet
-:members:
-```
-
-```{js:autoclass} ValueSetIter
-:members:
-```
-
-```{js:autoclass} ValueString
-:members:
-```
-
-```{js:autoclass} ValueStructure
-:members:
-```
-
-```{js:autoclass} ValueTuple
-:members:
-```
-
-```{js:autoclass} ValueTupleIter
+```{js:autoclass} ValueUInt8
 :members:
 ```
 
@@ -282,19 +171,47 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 :members:
 ```
 
-```{js:autoclass} ValueUInt8
+```{js:autoclass} ValueInt8
+:members:
+```
+
+```{js:autoclass} ValueInt16
+:members:
+```
+
+```{js:autoclass} ValueInt32
+:members:
+```
+
+```{js:autoclass} ValueInt64
+:members:
+```
+
+```{js:autoclass} ValueFloat
+:members:
+```
+
+```{js:autoclass} ValueDouble
+:members:
+```
+
+```{js:autoclass} ValueString
+:members:
+```
+
+```{js:autoclass} ValueBlob
+:members:
+```
+
+```{js:autoclass} ValueBlobId
+:members:
+```
+
+```{js:autoclass} ValueCommitId
 :members:
 ```
 
 ```{js:autoclass} ValueUUId
-:members:
-```
-
-```{js:autoclass} ValueVariant
-:members:
-```
-
-```{js:autoclass} ValueVec
 :members:
 ```
 
@@ -306,10 +223,117 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 :members:
 ```
 
-```{js:autoclass} ValueVoid
+```{js:autoclass} ValueSet
+:members:
+```
+
+```{js:autoclass} ValueSetIter
+:members:
+```
+
+```{js:autoclass} ValueMap
 :members:
 ```
 
 ```{js:autoclass} ValueXArray
+:members:
+```
+```{js:autoclass} ValueOptional
+:members:
+```
+
+```{js:autoclass} ValueTuple
+:members:
+```
+
+```{js:autoclass} ValueTupleIter
+:members:
+```
+
+```{js:autoclass} ValueVec
+:members:
+```
+
+```{js:autoclass} ValueMat
+:members:
+```
+
+```{js:autoclass} ValueVariant
+:members:
+```
+
+```{js:autoclass} ValueAny
+:members:
+```
+
+```{js:autoclass} ValueStructure
+:members:
+```
+
+```{js:autoclass} ValueEnumeration
+:members:
+```
+
+```{js:autoclass} ValueKey
+:members:
+```
+
+```{js:autoclass} ValueProgram
+:members:
+```
+
+```{js:autoclass} ValueOpcodeKey
+:members:
+```
+
+```{js:autoclass} ValueOpcode
+:members:
+```
+
+```{js:autoclass} ValueOpcodeDocumentSet
+:members:
+```
+
+```{js:autoclass} ValueOpcodeDocumentUpdate
+:members:
+```
+
+```{js:autoclass} ValueOpcodeMapUnion
+:members:
+```
+
+```{js:autoclass} ValueOpcodeMapSubtract
+:members:
+```
+
+```{js:autoclass} ValueOpcodeMapUpdate
+:members:
+```
+
+```{js:autoclass} ValueOpcodeSetUnion
+:members:
+```
+
+```{js:autoclass} ValueOpcodeSetSubtract
+:members:
+```
+
+```{js:autoclass} ValueOpcodeXArrayInsert
+:members:
+```
+
+```{js:autoclass} ValueOpcodeXArrayRemove
+:members:
+```
+
+```{js:autoclass} ValueOpcodeXArrayUpdate
+:members:
+```
+
+```{js:autoclass} ValueProcessorTrace
+:members:
+```
+
+```{js:autoclass} ValueProcessorTraceOpcode
 :members:
 ```

@@ -67,11 +67,16 @@ See also: the Python {doc}`reference <../../dsviper-python/api/attachments>`, th
 
 Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d.ts`) by TypeDoc.
 
-## Summary
+## Core Classes
 
 | Class | Description |
 |-------|-------------|
 | {js:class}`Attachment` | A class used to represent an attachment |
+
+## Attachment Interfaces
+
+| Class | Description |
+|-------|-------------|
 | {js:class}`AttachmentGetting` | An interface used to retrieve a value (aka document) state |
 | {js:class}`AttachmentMutating` | An interface used to express fine-grained mutations of a value |
 

@@ -67,50 +67,91 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 
 The mirror of this page for the Python binding is {doc}`../../dsviper-python/api/core`.
 
-## Summary
+## Namespace
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`Cancelation` | A cooperative cancellation flag shared between a host signal handler and a server loop |
-| {js:class}`Error` | The structured error raised by Viper: component, domain, code and message |
-| {js:class}`Float16` | A class used to handle float16 representation |
+| {js:class}`NameSpace` | A class used to describe a namespace |
+
+## Paths
+
+| Class | Description |
+|-------|-------------|
+| {js:class}`Path` | A class used to construct the location of a portion of a value |
+| {js:class}`PathConst` | A class used to retrieve a value from a Path |
+| {js:class}`PathComponent` | A class used to represent a component of a Path |
+| {js:class}`PathElementInfo` | A class used to represent the various information for an element of a set |
+| {js:class}`PathEntryKeyInfo` | A class used to represent various information for an entry of a map |
+
+## Function Pools
+
+| Class | Description |
+|-------|-------------|
 | {js:class}`FunctionPrototype` | A class used to represent the prototype of a function |
+
+## Hashing
+
+| Class | Description |
+|-------|-------------|
+| {js:class}`Hashing` | An interface to abstract a hasher |
 | {js:class}`HashCRC32` | A class used to hash data with CRC32 |
 | {js:class}`HashMD5` | A class used to hash data with MD5 |
 | {js:class}`HashSHA1` | A class used to hash data with SHA1 |
 | {js:class}`HashSHA256` | A class used to hash data with SHA256 |
 | {js:class}`HashSHA3` | A class used to hash a data with SHA3 |
-| {js:class}`Hashing` | An interface to abstract a hasher |
-| {js:class}`KeyHelper` | A class used to collect keys, attachments and missing attachments for a key |
-| {js:class}`KeyNamer` | A class used to get a name for a key from available attachments |
-| {js:class}`LoggerConsole` | A class used to display a message on the console |
-| {js:class}`LoggerNull` | A class used to discard messages |
-| {js:class}`LoggerReport` | A class used to collect messages |
+
+## Logging
+
+| Class | Description |
+|-------|-------------|
 | {js:class}`Logging` | An interface to emit a message |
-| {js:class}`NameSpace` | A class used to describe a namespace |
-| {js:class}`Path` | A class used to construct the location of a portion of a value |
-| {js:class}`PathComponent` | A class used to represent a component of a Path |
-| {js:class}`PathConst` | A class used to retrieve a value from a Path |
-| {js:class}`PathElementInfo` | A class used to represent the various information for an element of a set |
-| {js:class}`PathEntryKeyInfo` | A class used to represent various information for an entry of a map |
+| {js:class}`LoggerConsole` | A class used to display a message on the console |
+| {js:class}`LoggerReport` | A class used to collect messages |
+| {js:class}`LoggerNull` | A class used to discard messages |
+
+## Utilities
+
+| Class | Description |
+|-------|-------------|
+| {js:class}`Error` | The structured error raised by Viper: component, domain, code and message |
+| {js:class}`Cancelation` | A cooperative cancellation flag shared between a host signal handler and a server loop |
 | {js:class}`SharedMemory` | A class used to represent a shared memory region |
 | {js:class}`Socket` | A passive (listening) socket for a server |
+| {js:class}`Float16` | A class used to handle float16 representation |
+| {js:class}`KeyHelper` | A class used to collect keys, attachments and missing attachments for a key |
+| {js:class}`KeyNamer` | A class used to get a name for a key from available attachments |
 
 ## Reference
 
-```{js:autoclass} Cancelation
+```{js:autoclass} NameSpace
 :members:
 ```
 
-```{js:autoclass} Error
+```{js:autoclass} Path
 :members:
 ```
 
-```{js:autoclass} Float16
+```{js:autoclass} PathConst
+:members:
+```
+
+```{js:autoclass} PathComponent
+:members:
+```
+
+```{js:autoclass} PathElementInfo
+:members:
+```
+
+```{js:autoclass} PathEntryKeyInfo
 :members:
 ```
 
 ```{js:autoclass} FunctionPrototype
+:members:
+```
+
+```{js:autoclass} Hashing
 :members:
 ```
 
@@ -134,15 +175,7 @@ The mirror of this page for the Python binding is {doc}`../../dsviper-python/api
 :members:
 ```
 
-```{js:autoclass} Hashing
-:members:
-```
-
-```{js:autoclass} KeyHelper
-:members:
-```
-
-```{js:autoclass} KeyNamer
+```{js:autoclass} Logging
 :members:
 ```
 
@@ -150,39 +183,19 @@ The mirror of this page for the Python binding is {doc}`../../dsviper-python/api
 :members:
 ```
 
-```{js:autoclass} LoggerNull
-:members:
-```
-
 ```{js:autoclass} LoggerReport
 :members:
 ```
 
-```{js:autoclass} Logging
+```{js:autoclass} LoggerNull
 :members:
 ```
 
-```{js:autoclass} NameSpace
+```{js:autoclass} Error
 :members:
 ```
 
-```{js:autoclass} Path
-:members:
-```
-
-```{js:autoclass} PathComponent
-:members:
-```
-
-```{js:autoclass} PathConst
-:members:
-```
-
-```{js:autoclass} PathElementInfo
-:members:
-```
-
-```{js:autoclass} PathEntryKeyInfo
+```{js:autoclass} Cancelation
 :members:
 ```
 
@@ -191,5 +204,16 @@ The mirror of this page for the Python binding is {doc}`../../dsviper-python/api
 ```
 
 ```{js:autoclass} Socket
+:members:
+```
+```{js:autoclass} Float16
+:members:
+```
+
+```{js:autoclass} KeyHelper
+:members:
+```
+
+```{js:autoclass} KeyNamer
 :members:
 ```

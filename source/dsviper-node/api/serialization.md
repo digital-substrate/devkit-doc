@@ -126,7 +126,7 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`Codec` | A class used to instantiate a codec |
+| {js:class}`Codec` | The registry of named codecs: ask for one by name with query() or check() |
 | {js:class}`StreamCodecInstancing` | An interface used to create encoder, decoder and sizer |
 | {js:class}`Fuzzer` | A class used to generate a random value |
 
@@ -154,8 +154,8 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`StreamReading` | An interface used to read data |
-| {js:class}`StreamWriting` | An interface used to write data |
+| {js:class}`StreamReading` | The typed read interface: read_bool, read_string, read_uuid and the rest, over the bytes a StreamRawReading supplies |
+| {js:class}`StreamWriting` | The typed write interface: write_bool, write_string, write_uuid and the rest, onto the bytes a StreamRawWriting accepts |
 | {js:class}`StreamEncoding` | An interface used to write data to a blob |
 | {js:class}`StreamDecoding` | An interface used to read data from a blob |
 | {js:class}`StreamSizing` | An interface used to get the size of data |
@@ -166,8 +166,8 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 |-------|-------------|
 | {js:class}`StreamRawReader` | An class used to read data through the StreamRawReading interface |
 | {js:class}`StreamRawWriter` | A class used to write data through the StreamRawWriting interface |
-| {js:class}`StreamRawReading` | An interface used to read data |
-| {js:class}`StreamRawWriting` | An interface to write data |
+| {js:class}`StreamRawReading` | The byte-level read interface: a stream of bytes and its size |
+| {js:class}`StreamRawWriting` | The byte-level write interface: bytes out, nothing typed |
 
 ## Reference
 

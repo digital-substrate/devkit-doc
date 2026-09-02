@@ -17,6 +17,13 @@ stateful facade (undo/redo, the dispatch surface) for interactive apps. For
 *why* a reconstructed state is a blind replay of the linearized trace, see
 :doc:`/commit/commit_database`.
 
+**When to use**: Use these classes to persist DSM documents **with history** —
+every write is a commit, and earlier states stay reconstructible. For flat CRUD
+without versioning, use :doc:`database` instead. Within this page, reach for
+``CommitStore`` when an interactive application needs undo/redo and a dispatch
+surface, and for the two stateless namespaces when a script or service drives
+the database directly.
+
 Quick Start
 -----------
 

@@ -8,13 +8,17 @@ conflict over a merge — already persisted, or computed from the two heads
 before it is written — and lets a caller make a chosen value survive. It adds
 no engine, storage-format, or runtime change.
 
+**When to use**: Use this family when the application, not the engine, must
+decide which value survives where two streams touched the same locus. If
+mechanical reduction is acceptable, none of this is needed.
+
 .. seealso::
 
    :doc:`/commit/commit_collaboration` — the model, the headless
    identify / surface / reconcile triad, and its bounds.
 
-Example
--------
+Quick Start
+-----------
 
 .. code-block:: python
 

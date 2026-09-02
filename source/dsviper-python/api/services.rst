@@ -13,6 +13,10 @@ proxies (``function_pool_remotes``, ``attachment_function_pool_remotes``) are a
 comfort layer that wraps this same surface. For *what* a service is, the two
 pool kinds, and the server side, see :doc:`/services/index`.
 
+**When to use**: Use this family when a Viper service already runs somewhere and
+this process is its client. Nothing here starts a service — the server side is
+C++ only.
+
 .. note::
 
    The server side (``Viper::Service``, ``Viper::ServiceServer``) is C++ only —

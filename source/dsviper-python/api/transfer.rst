@@ -9,6 +9,10 @@ filesystem paths — so a transfer works over both local and remote transports.
 Every direction returns a :class:`DatabaseTransferInfo` reporting how many
 documents and blobs it moved.
 
+**When to use**: Use a converter when data must change store kind or be
+replicated — not to read or mutate it in place, which is what
+:doc:`database` and :doc:`commit` are for.
+
 .. seealso::
 
    :doc:`/commit/commit_database` — the ``CommitDatabase`` model, including
@@ -60,8 +64,8 @@ side.
 Blobs are streamed in 64 MiB chunks, so payloads larger than 2 GB transfer
 without failing.
 
-Example
--------
+Quick Start
+-----------
 
 .. code-block:: python
 

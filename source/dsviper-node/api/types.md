@@ -63,7 +63,7 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`Type` | A utility class to handle type representation |
+| {js:class}`Type` | The primitive types, and the utilities that act on any type |
 | {js:class}`TypeName` | A class used to describe the name of a type |
 
 ## Primitive Types
@@ -94,7 +94,7 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 |-------|-------------|
 | {js:class}`TypeVector` | A class used to represent a vector<element_type> type |
 | {js:class}`TypeSet` | A class used to represent a set<element_type> type |
-| {js:class}`TypeMap` | A class used to represent a map<element_type> type |
+| {js:class}`TypeMap` | A class used to represent a map<key_type, element_type> type |
 | {js:class}`TypeXArray` | A class used to represent a xarray<element_type> type |
 | {js:class}`TypeOptional` | A class used to represent an optional<element_type> type |
 
@@ -103,7 +103,7 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 | Class | Description |
 |-------|-------------|
 | {js:class}`TypeTuple` | A class used to represent a tuple<T0, ...> type |
-| {js:class}`TypeVec` | A class used to represent a vec<element_type, size> type |
+| {js:class}`TypeVec` | A class used to represent a vec<numeric_type, size> type |
 | {js:class}`TypeMat` | A class used to represent a mat<numeric_type, columns, rows> type |
 | {js:class}`TypeVariant` | A class used to represent a variant<T0, ...> type |
 | {js:class}`TypeAny` | A class used to represent the any type |

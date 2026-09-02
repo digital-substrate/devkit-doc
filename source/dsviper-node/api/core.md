@@ -78,16 +78,16 @@ The mirror of this page for the Python binding is {doc}`../../dsviper-python/api
 | Class | Description |
 |-------|-------------|
 | {js:class}`Path` | A class used to construct the location of a portion of a value |
-| {js:class}`PathConst` | A class used to retrieve a value from a Path |
-| {js:class}`PathComponent` | A class used to represent a component of a Path |
-| {js:class}`PathElementInfo` | A class used to represent the various information for an element of a set |
-| {js:class}`PathEntryKeyInfo` | A class used to represent various information for an entry of a map |
+| {js:class}`PathConst` | A finished Path: read a value through it, or write one |
+| {js:class}`PathComponent` | One step of a Path: a field name, a key, or an index |
+| {js:class}`PathElementInfo` | Where an element sits inside a set |
+| {js:class}`PathEntryKeyInfo` | Where an entry sits inside a map |
 
 ## Function Pools
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`FunctionPrototype` | A class used to represent the prototype of a function |
+| {js:class}`FunctionPrototype` | The signature of a function: its return type and its parameters |
 
 ## Hashing
 

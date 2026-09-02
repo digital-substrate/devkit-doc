@@ -148,7 +148,7 @@ nothing is ever un-written: once the merge and its survival child are
 materialised, a reconciliation you come to regret cannot be removed, only
 **compensated** — a revert, a fresh survival that re-decrees, stacked on top.
 The state you now call wrong stayed momentarily real and reachable; another
-head may have branched from it, and the history keeps the hesitation. There is
+head may have diverged from it, and the history keeps the hesitation. There is
 no `delete_commit` to reach for — it is a live-demo trick, not a feature (see
 [Storage growth](commit_database.md#storage-growth)). Immutability splits
 "undo" into two different acts, and only the pre-merge face reaches the cheap

@@ -60,9 +60,9 @@ The mirror of this page for the Python binding is {doc}`../../dsviper-python/api
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`CommitMergeAnalysis` | The result of a 3-way merge analysis: the merge base and the list of reconstructed conflicts between the two branches |
+| {js:class}`CommitMergeAnalysis` | The result of a 3-way merge analysis: the merge base and the list of reconstructed conflicts between the two heads |
 | {js:class}`CommitMergeAnalyzer` | Additive, post-merge 3-way reconciliation over a CommitDatabase |
-| {js:class}`CommitMergeConflict` | A single locus, anchored on a path, where one branch's intent did not survive the merge, reconstructed as base/ours/theirs/merged values |
+| {js:class}`CommitMergeConflict` | A single locus, anchored on a path, where one head's intent did not survive the merge, reconstructed as base/ours/theirs/merged values |
 | {js:class}`CommitMergeDocument` | All conflicts of one document (attachment, key) — the unit reconcile operates on |
 | {js:class}`CommitMergeResolution` | A supervisor's decree for one conflict: the chosen value should survive at the conflict's locus |
 

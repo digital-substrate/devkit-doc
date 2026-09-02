@@ -108,9 +108,9 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 |-------|-------------|
 | {js:class}`ValueTuple` | A class used to represent a value of type tuple<T0, ...> |
 | {js:class}`ValueTupleIter` | Iterator for ValueTuple elements |
-| {js:class}`ValueVec` | ValueVec(type_vec [, initial_value]) |
+| {js:class}`ValueVec` | A class used to represent a value of type vec<element_type, size> |
 | {js:class}`ValueMat` | A class used to represent a value of type mat<element_type, columns, rows> |
-| {js:class}`ValueVariant` | ValueVariant(type_variant, initial_value) |
+| {js:class}`ValueVariant` | A class used to represent a value of type variant<T0, ...> |
 | {js:class}`ValueAny` | A class used to represent a value of any type |
 
 ## User-Defined Values
@@ -138,7 +138,7 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 | {js:class}`ValueOpcodeXArrayInsert` | A class used to represent the type and the arguments of an opcode |
 | {js:class}`ValueOpcodeXArrayRemove` | A class used to represent the type and the arguments of an opcode |
 | {js:class}`ValueOpcodeXArrayUpdate` | A class used to represent the type and the arguments of an opcode |
-| {js:class}`ValueProcessorTrace` | A class used to represent traced opcode |
+| {js:class}`ValueProcessorTrace` | The execution of one program: whether it ran, and the opcodes it applied |
 | {js:class}`ValueProcessorTraceOpcode` | A class used to represent a traced opcode |
 
 ## Reference

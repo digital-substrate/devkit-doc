@@ -125,7 +125,7 @@ const [report, dsmDefs, defs] = DSMBuilder.assemble('model.dsm').parse(sourceMap
 | {js:class}`DSMBuilder` | A class used to assemble a collection of DSM Definitions from various sources |
 | {js:class}`DSMBuilderPart` | A class used to represent a part of the assembled definitions |
 | {js:class}`DSMDefinitions` | A class used to represent DSM definitions |
-| {js:class}`DSMDefinitionsInspector` | DSMDefinitionsInspector(definitions) |
+| {js:class}`DSMDefinitionsInspector` | A class used to retrieve registered concepts, clubs, enumerations, structures from TypeName and attachments from identifier |
 | {js:class}`DSMParseReport` | A class used to collect the error occurred while parsing the assembled definitions |
 | {js:class}`DSMParseError` | A class used to represent a parse error |
 
@@ -183,7 +183,7 @@ const [report, dsmDefs, defs] = DSMBuilder.assemble('model.dsm').parse(sourceMap
 | {js:class}`Definitions` | A class used to register concept, club, enumeration, structure and attachment |
 | {js:class}`DefinitionsConst` | A class used to retrieve registered concepts, clubs, enumerations, structures and attachments |
 | {js:class}`DefinitionsCollector` | A class used to collect referenced types |
-| {js:class}`DefinitionsInspector` | DefinitionsInspector(definitions) |
+| {js:class}`DefinitionsInspector` | A class used to retrieve registered concepts, clubs, enumerations, structures and attachments from TypeName |
 | {js:class}`DefinitionsMapper` | A class use for INTERNAL DEVELOPMENT |
 | {js:class}`DefinitionsExtendInfo` | A class used to represent the types exchanged during the synchronization of two databases |
 

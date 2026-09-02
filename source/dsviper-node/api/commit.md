@@ -190,7 +190,7 @@ Available from the Node binding 1.2.9 (runtime 1.2.24) — see {doc}`../../chang
 | {js:class}`CommitStore` | A high-level application class used to implement the store, dispatch, undo/redo and notification concepts inspired by the redux approach |
 | {js:class}`CommitStoreNotifying` | An interface used to represent the notification emitted by a store |
 | {js:class}`CommitSynchronizer` | A class used to synchronize two concrete databases through the CommitDatabasing interface (low-level driver interface) |
-| {js:class}`CommitSynchronizerInfo` | A class used to represent data exchanged during the synchronization of two databases |
+| {js:class}`CommitSynchronizerInfo` | What a synchronization found: whether anything needs transmitting, what was fetched and pushed, and whether the definitions changed |
 | {js:class}`CommitSynchronizerInfoTransmit` | A class used to represent statistics of data exchanged during the synchronization of two databases |
 | {js:class}`CommitSyncData` | A class used to represent data exchanged during the synchronization of two databases |
 
@@ -199,8 +199,8 @@ Available from the Node binding 1.2.9 (runtime 1.2.24) — see {doc}`../../chang
 | Class | Description |
 |-------|-------------|
 | {js:class}`CommitStateTracing` | An interface used to trace a value (aka document) |
-| {js:class}`CommitStateTrace` | A class used to represent traced opcode |
-| {js:class}`CommitStateTraceProgram` | A class used to represent traced opcode |
+| {js:class}`CommitStateTrace` | The replay of one document: its attachment, key and resulting value, with the programs that produced it |
+| {js:class}`CommitStateTraceProgram` | One commit's contribution to a document: its header and the trace of what it executed |
 
 ## Reference
 

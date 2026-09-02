@@ -71,7 +71,7 @@ The mirror of this page for the Python binding is {doc}`../../dsviper-python/api
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`NameSpace` | A class used to describe a namespace |
+| {js:class}`NameSpace` | A UUID and a name, under which DSM types are registered |
 
 ## Paths
 
@@ -114,10 +114,10 @@ The mirror of this page for the Python binding is {doc}`../../dsviper-python/api
 | Class | Description |
 |-------|-------------|
 | {js:class}`Error` | The structured error raised by Viper: component, domain, code and message |
-| {js:class}`Cancelation` | A cooperative cancellation flag shared between a host signal handler and a server loop |
-| {js:class}`SharedMemory` | A class used to represent a shared memory region |
+| {js:class}`Cancelation` | A cooperative cancellation flag, shared between a host signal handler and a server loop |
+| {js:class}`SharedMemory` | A named memory region, created or opened by name so that separate processes map the same bytes |
 | {js:class}`Socket` | A passive (listening) socket for a server |
-| {js:class}`Float16` | A class used to handle float16 representation |
+| {js:class}`Float16` | The 16-bit storage of a float value, converted to and from float |
 | {js:class}`KeyHelper` | A class used to collect keys, attachments and missing attachments for a key |
 | {js:class}`KeyNamer` | A class used to get a name for a key from available attachments |
 

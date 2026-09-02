@@ -155,7 +155,7 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 | Class | Description |
 |-------|-------------|
 | {js:class}`StreamReading` | An interface used to read data |
-| {js:class}`StreamWriting` | An interface used to read data |
+| {js:class}`StreamWriting` | An interface used to write data |
 | {js:class}`StreamEncoding` | An interface used to write data to a blob |
 | {js:class}`StreamDecoding` | An interface used to read data from a blob |
 | {js:class}`StreamSizing` | An interface used to get the size of data |

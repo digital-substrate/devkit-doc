@@ -156,7 +156,7 @@ Available from the Node binding 1.2.9 (runtime 1.2.24) — see {doc}`../../chang
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`Commit` | A class used to represent a commit |
+| {js:class}`Commit` | One commit as it is stored: its header and the program of opcodes it contributes to the state |
 | {js:class}`CommitDatabase` | A Commit database keeps the history of mutations in a DAG of commit |
 | {js:class}`CommitDatabaseSQLite` | A low-level class used to represent the database based on SQLite3 through the CommitDatabasing interface |
 | {js:class}`CommitDatabaseRemote` | A low-level class used to represent a remote Commit database through the CommitDatabasing interface |
@@ -169,7 +169,7 @@ Available from the Node binding 1.2.9 (runtime 1.2.24) — see {doc}`../../chang
 |-------|-------------|
 | {js:class}`CommitState` | A class used to represent data at a specific commit |
 | {js:class}`CommitMutableState` | A class used to register the mutations of a value executed through the attachmentMutating interface |
-| {js:class}`CommitStateBuilder` | A utility class to build CommitState |
+| {js:class}`CommitStateBuilder` | Reconstructs a CommitState from a chosen commit — state(db, id), initial_state(db), merge_state(db, ours, theirs) |
 
 ## History & DAG
 
@@ -181,7 +181,7 @@ Available from the Node binding 1.2.9 (runtime 1.2.24) — see {doc}`../../chang
 | {js:class}`CommitHeader` | A class used to represent the header of a commit |
 | {js:class}`CommitData` | A class used to represent data associated with a commit during the synchronization of two databases |
 | {js:class}`CommitEvalAction` | A class used by the evaluator to reconstruct a value by executing mutation opcodes |
-| {js:class}`CommitDatabaseHelper` | A utility class for a Commit Database |
+| {js:class}`CommitDatabaseHelper` | Navigates the commit DAG: reduce_heads(db, anchor) to converge multiple heads, forward and fast_forward to move along it |
 
 ## Synchronization
 

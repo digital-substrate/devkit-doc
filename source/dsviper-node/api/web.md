@@ -84,8 +84,8 @@ The mirror of this page for the Python binding is {doc}`../../dsviper-python/api
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`DocumentNode` | One node of a document seen as a tree: its component name, its value, its type, and what a renderer needs to decide — editable, expandable, and which concrete type it holds |
-| {js:class}`Html` | Render Viper data as HTML: a value, a type, a document tree, or a whole styled page |
+| {js:class}`DocumentNode` | One node of a document seen as a tree |
+| {js:class}`Html` | Renders Viper data as HTML |
 
 ## Reference
 

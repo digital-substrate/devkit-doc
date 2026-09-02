@@ -72,7 +72,7 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`ValueVoid` | A class used to represent a value of type void |
+| {js:class}`ValueVoid` | A class used to represent a value of type void. Seamless with Python None. Or |
 | {js:class}`ValueBool` | A class used to represent a value of type bool |
 | {js:class}`ValueUInt8` | A class used to represent a value of type uint8 |
 | {js:class}`ValueUInt16` | A class used to represent a value of type uint16 |
@@ -108,9 +108,9 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 |-------|-------------|
 | {js:class}`ValueTuple` | A class used to represent a value of type tuple<T0, ...> |
 | {js:class}`ValueTupleIter` | Iterator for ValueTuple elements |
-| {js:class}`ValueVec` | A class used to represent a value of type vec<element_type, size> |
+| {js:class}`ValueVec` | ValueVec(type_vec [, initial_value]) |
 | {js:class}`ValueMat` | A class used to represent a value of type mat<element_type, columns, rows> |
-| {js:class}`ValueVariant` | A class used to represent a value of type variant<T0, ...> |
+| {js:class}`ValueVariant` | ValueVariant(type_variant, initial_value) |
 | {js:class}`ValueAny` | A class used to represent a value of any type |
 
 ## User-Defined Values
@@ -119,15 +119,15 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 |-------|-------------|
 | {js:class}`ValueStructure` | A class used to represent a value of type struct |
 | {js:class}`ValueEnumeration` | A class used to represent a value of type struct |
-| {js:class}`ValueKey` | A class used to represent a value of type key<element_type> |
+| {js:class}`ValueKey` | A class used to represent a value of type key<element_type>. Use the static |
 
 ## Value Program
 
 | Class | Description |
 |-------|-------------|
 | {js:class}`ValueProgram` | A class used to retrieve opcodes |
-| {js:class}`ValueOpcodeKey` | A class used to retrieve the mutation opcodes for an instance of a concept for an attachment |
-| {js:class}`ValueOpcode` | Base class for mutation opcodes — produced by the Commit merge/diff APIs and read via its concrete subclasses |
+| {js:class}`ValueOpcodeKey` | A class used to retrieve the mutation opcodes for an instance of a concept for |
+| {js:class}`ValueOpcode` | A utility class to handle opcodes encoder and streamer |
 | {js:class}`ValueOpcodeDocumentSet` | A class used to represent the type and the arguments of an opcode |
 | {js:class}`ValueOpcodeDocumentUpdate` | A class used to represent the type and the arguments of an opcode |
 | {js:class}`ValueOpcodeMapUnion` | A class used to represent the type and the arguments of an opcode |
@@ -138,7 +138,7 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 | {js:class}`ValueOpcodeXArrayInsert` | A class used to represent the type and the arguments of an opcode |
 | {js:class}`ValueOpcodeXArrayRemove` | A class used to represent the type and the arguments of an opcode |
 | {js:class}`ValueOpcodeXArrayUpdate` | A class used to represent the type and the arguments of an opcode |
-| {js:class}`ValueProcessorTrace` | The execution of one program: whether it ran, and the opcodes it applied |
+| {js:class}`ValueProcessorTrace` | The execution of one program: whether it ran, and the opcodes it |
 | {js:class}`ValueProcessorTraceOpcode` | A class used to represent a traced opcode |
 
 ## Reference

@@ -71,13 +71,13 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`Attachment` | The declaration binding a concept to a value type: from it, keys are minted and documents created |
+| {js:class}`Attachment` | The declaration binding a concept to a value type |
 
 ## Attachment Interfaces
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`AttachmentGetting` | Read access to the documents attached to a set of keys: keys, has, get, enumerate, and diff_keys against another state |
+| {js:class}`AttachmentGetting` | Read access to the documents attached to a set of keys |
 | {js:class}`AttachmentMutating` | An interface used to express fine-grained mutations of a value |
 
 ## Reference

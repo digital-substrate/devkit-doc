@@ -122,12 +122,12 @@ const [report, dsmDefs, defs] = DSMBuilder.assemble('model.dsm').parse(sourceMap
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`DSMBuilder` | A class used to assemble a collection of DSM Definitions from various sources |
+| {js:class}`DSMBuilder` | A class used to assemble a collection of DSM Definitions from various |
 | {js:class}`DSMBuilderPart` | A class used to represent a part of the assembled definitions |
-| {js:class}`DSMDefinitions` | A parsed model, whole: the definitions it declares plus the function pools attached to them |
-| {js:class}`DSMDefinitionsInspector` | A class used to retrieve registered concepts, clubs, enumerations, structures from TypeName and attachments from identifier |
-| {js:class}`DSMParseReport` | A class used to collect the error occurred while parsing the assembled definitions |
-| {js:class}`DSMParseError` | One parse failure: the source it came from, the line and position, and the message |
+| {js:class}`DSMDefinitions` | A parsed model, whole |
+| {js:class}`DSMDefinitionsInspector` | DSMDefinitionsInspector(definitions) |
+| {js:class}`DSMParseReport` | A class used to collect the error occurred while parsing the assembled |
+| {js:class}`DSMParseError` | One parse failure |
 
 ## Model Elements
 
@@ -180,24 +180,24 @@ const [report, dsmDefs, defs] = DSMBuilder.assemble('model.dsm').parse(sourceMap
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`Definitions` | A class used to register concept, club, enumeration, structure and attachment |
-| {js:class}`DefinitionsConst` | A class used to retrieve registered concepts, clubs, enumerations, structures and attachments |
+| {js:class}`Definitions` | A class used to register concept, club, enumeration, structure and |
+| {js:class}`DefinitionsConst` | A class used to retrieve registered concepts, clubs, enumerations, structures |
 | {js:class}`DefinitionsCollector` | A class used to collect referenced types |
-| {js:class}`DefinitionsInspector` | A class used to retrieve registered concepts, clubs, enumerations, structures and attachments from TypeName |
-| {js:class}`DefinitionsExtendInfo` | A class used to represent the types exchanged during the synchronization of two databases |
+| {js:class}`DefinitionsInspector` | DefinitionsInspector(definitions) |
+| {js:class}`DefinitionsExtendInfo` | A class used to represent the types exchanged during the synchronization of two |
 
 ## Source Map
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`DSMSourceMap` | The source spans collected while parsing DSM |
+| {js:class}`DSMSourceMap` | A source-map collected while parsing DSM: the exact source spans of every |
 | {js:class}`DSMSourceSpan` | A source text span (line, start, stop) of a definition token |
-| {js:class}`DSMSourceDeclaration` | A definition declaration, its identifier and its source spans |
-| {js:class}`DSMSourceField` | A struct field and its source spans (name, type, declaration, doc) |
-| {js:class}`DSMSourceCase` | An enumeration case and the source spans of its name and doc |
+| {js:class}`DSMSourceDeclaration` | A definition declaration, its identifier and its source spans (name, block, |
+| {js:class}`DSMSourceField` | A struct field and its source spans (name, type, whole declaration, doc) |
+| {js:class}`DSMSourceCase` | An enumeration case and its source spans (name, doc) |
 | {js:class}`DSMSourceNameSpace` | A namespace header and the source spans of its name and UUID |
-| {js:class}`DSMSourceReference` | A resolved type-reference site: its source span and its referent |
-| {js:class}`DSMSourceType` | A type sub-expression occurrence: its source span and qualified name |
+| {js:class}`DSMSourceReference` | A resolved type-reference site: its source span and its referent TypeName |
+| {js:class}`DSMSourceType` | A type sub-expression occurrence: its source span and its fully-qualified |
 
 ## Reference
 

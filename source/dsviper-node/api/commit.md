@@ -156,20 +156,20 @@ Available from the Node binding 1.2.9 (runtime 1.2.24) — see {doc}`../../chang
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`Commit` | One commit as it is stored: its header and the program of opcodes it contributes to the state |
+| {js:class}`Commit` | One commit as it is stored |
 | {js:class}`CommitDatabase` | A Commit database keeps the history of mutations in a DAG of commit |
-| {js:class}`CommitDatabaseSQLite` | A low-level class used to represent the database based on SQLite3 through the CommitDatabasing interface |
-| {js:class}`CommitDatabaseRemote` | A low-level class used to represent a remote Commit database through the CommitDatabasing interface |
-| {js:class}`CommitDatabaseServer` | Serve a CommitDatabase over a socket, one C++ thread per client |
-| {js:class}`CommitDatabasing` | An interface used to abstract the implementation of the persistence layer for a Commit database |
+| {js:class}`CommitDatabaseSQLite` | A low-level class used to represent the database based on SQLite3 through the |
+| {js:class}`CommitDatabaseRemote` | A low-level class used to represent a remote Commit database through the |
+| {js:class}`CommitDatabaseServer` | A CommitDatabaseServer provide network access to a CommitDatabase |
+| {js:class}`CommitDatabasing` | An interface used to abstract the implementation of the persistence layer for a |
 
 ## State Access
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`CommitState` | A class used to represent data at a specific commit |
-| {js:class}`CommitMutableState` | A class used to register the mutations of a value executed through the attachmentMutating interface |
-| {js:class}`CommitStateBuilder` | Reconstructs a CommitState from a chosen commit — state(db, id), initial_state(db), merge_state(db, ours, theirs) |
+| {js:class}`CommitState` | A class used to represent data at a specific commit. Use the attachmentGetting |
+| {js:class}`CommitMutableState` | A class used to register the mutations of a value executed through the |
+| {js:class}`CommitStateBuilder` | Reconstructs a CommitState from a chosen commit |
 
 ## History & DAG
 
@@ -179,28 +179,28 @@ Available from the Node binding 1.2.9 (runtime 1.2.24) — see {doc}`../../chang
 | {js:class}`CommitNodeGrid` | A class used to represent the location of a commit node in the grid |
 | {js:class}`CommitNodeGridBuilder` | A class used to build the grid layout of the commit DAG |
 | {js:class}`CommitHeader` | A class used to represent the header of a commit |
-| {js:class}`CommitData` | A class used to represent data associated with a commit during the synchronization of two databases |
-| {js:class}`CommitEvalAction` | A class used by the evaluator to reconstruct a value by executing mutation opcodes |
-| {js:class}`CommitDatabaseHelper` | Navigates the commit DAG: reduce_heads(db, anchor) to converge multiple heads, forward and fast_forward to move along it |
+| {js:class}`CommitData` | A class used to represent data associated with a commit during the |
+| {js:class}`CommitEvalAction` | A class used by the evaluator to reconstruct a value by executing mutation |
+| {js:class}`CommitDatabaseHelper` | Navigates the commit DAG |
 
 ## Synchronization
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`CommitStore` | A high-level application class used to implement the store, dispatch, undo/redo and notification concepts inspired by the redux approach |
+| {js:class}`CommitStore` | A high-level application class used to implement the store, dispatch, |
 | {js:class}`CommitStoreNotifying` | An interface used to represent the notification emitted by a store |
-| {js:class}`CommitSynchronizer` | A class used to synchronize two concrete databases through the CommitDatabasing interface (low-level driver interface) |
-| {js:class}`CommitSynchronizerInfo` | What a synchronization found: whether anything needs transmitting, what was fetched and pushed, and whether the definitions changed |
-| {js:class}`CommitSynchronizerInfoTransmit` | A class used to represent statistics of data exchanged during the synchronization of two databases |
-| {js:class}`CommitSyncData` | A class used to represent data exchanged during the synchronization of two databases |
+| {js:class}`CommitSynchronizer` | A class used to synchronize two concrete databases through the |
+| {js:class}`CommitSynchronizerInfo` | What a synchronization found |
+| {js:class}`CommitSynchronizerInfoTransmit` | A class used to represent statistics of data exchanged during the |
+| {js:class}`CommitSyncData` | A class used to represent data exchanged during the synchronization of two |
 
 ## Tracing
 
 | Class | Description |
 |-------|-------------|
 | {js:class}`CommitStateTracing` | An interface used to trace a value (aka document) |
-| {js:class}`CommitStateTrace` | The replay of one document: its attachment, key and resulting value, with the programs that produced it |
-| {js:class}`CommitStateTraceProgram` | One commit's contribution to a document: its header and the trace of what it executed |
+| {js:class}`CommitStateTrace` | The replay of one document |
+| {js:class}`CommitStateTraceProgram` | One commit's contribution to a document |
 
 ## Reference
 

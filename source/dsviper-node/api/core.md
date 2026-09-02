@@ -113,9 +113,9 @@ The mirror of this page for the Python binding is {doc}`../../dsviper-python/api
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`Error` | The structured error raised by Viper: component, domain, code and message |
-| {js:class}`Cancelation` | A cooperative cancellation flag, shared between a host signal handler and a server loop |
-| {js:class}`SharedMemory` | A named memory region, created or opened by name so that separate processes map the same bytes |
+| {js:class}`Error` | The structured error raised by Viper: component, domain, code and |
+| {js:class}`Cancelation` | A cooperative cancellation flag |
+| {js:class}`SharedMemory` | A named memory region shared between processes |
 | {js:class}`Socket` | A passive (listening) socket for a server |
 | {js:class}`Float16` | The 16-bit storage of a float value, converted to and from float |
 | {js:class}`KeyHelper` | A class used to collect keys, attachments and missing attachments for a key |

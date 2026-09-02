@@ -134,10 +134,10 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`StreamBinaryReader` | A class used to read data through the StreamRawReading interface (handle endianness) |
-| {js:class}`StreamBinaryWriter` | A class used to write data through the StreamRawWriting interface (handle endianness) |
-| {js:class}`StreamTokenBinaryReader` | A class used to read through the StreamRawReading interface (handle endianness) |
-| {js:class}`StreamTokenBinaryWriter` | A class used to write through the StreamRawWriting interface (handle endianness) |
+| {js:class}`StreamBinaryReader` | A class used to read data through the StreamRawReading interface |
+| {js:class}`StreamBinaryWriter` | A class used to write data through the StreamRawWriting interface |
+| {js:class}`StreamTokenBinaryReader` | A class used to read through the StreamRawReading interface |
+| {js:class}`StreamTokenBinaryWriter` | A class used to write through the StreamRawWriting interface |
 
 ## Stream I/O
 
@@ -154,8 +154,8 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`StreamReading` | The typed read interface: read_bool, read_string, read_uuid and the rest, over the bytes a StreamRawReading supplies |
-| {js:class}`StreamWriting` | The typed write interface: write_bool, write_string, write_uuid and the rest, onto the bytes a StreamRawWriting accepts |
+| {js:class}`StreamReading` | The typed read interface |
+| {js:class}`StreamWriting` | The typed write interface |
 | {js:class}`StreamEncoding` | An interface used to write data to a blob |
 | {js:class}`StreamDecoding` | An interface used to read data from a blob |
 | {js:class}`StreamSizing` | An interface used to get the size of data |
@@ -166,8 +166,8 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 |-------|-------------|
 | {js:class}`StreamRawReader` | An class used to read data through the StreamRawReading interface |
 | {js:class}`StreamRawWriter` | A class used to write data through the StreamRawWriting interface |
-| {js:class}`StreamRawReading` | The byte-level read interface: a stream of bytes and its size |
-| {js:class}`StreamRawWriting` | The byte-level write interface: bytes out, nothing typed |
+| {js:class}`StreamRawReading` | The byte-level read interface: a stream of bytes and its size. The typed |
+| {js:class}`StreamRawWriting` | The byte-level write interface: bytes out, nothing typed. The typed writes |
 
 ## Reference
 

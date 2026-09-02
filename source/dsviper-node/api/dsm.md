@@ -125,7 +125,7 @@ const [report, dsmDefs, defs] = DSMBuilder.assemble('model.dsm').parse(sourceMap
 | {js:class}`DSMBuilder` | A class used to assemble a collection of DSM Definitions from various |
 | {js:class}`DSMBuilderPart` | A class used to represent a part of the assembled definitions |
 | {js:class}`DSMDefinitions` | A parsed model, whole |
-| {js:class}`DSMDefinitionsInspector` | DSMDefinitionsInspector(definitions) |
+| {js:class}`DSMDefinitionsInspector` | A class used to retrieve registered concepts, clubs, enumerations, |
 | {js:class}`DSMParseReport` | A class used to collect the error occurred while parsing the assembled |
 | {js:class}`DSMParseError` | One parse failure |
 
@@ -153,8 +153,8 @@ const [report, dsmDefs, defs] = DSMBuilder.assemble('model.dsm').parse(sourceMap
 | {js:class}`DSMTypeXArray` | A class used to represent the type xarray<element_type> |
 | {js:class}`DSMTypeOptional` | A class used to represent the type optional<element_type> |
 | {js:class}`DSMTypeTuple` | A class used to represent the type tuple<T0, ...> |
-| {js:class}`DSMTypeVec` | A class used to represent the type vec<element_type, size> |
-| {js:class}`DSMTypeMat` | A class used to represent the type vec<element_type, columns, rows> |
+| {js:class}`DSMTypeVec` | A class used to represent the type vec<numeric_type, size> |
+| {js:class}`DSMTypeMat` | A class used to represent the type mat<numeric_type, columns, rows> |
 | {js:class}`DSMTypeVariant` | A class used to represent the type variant<T0, ...> |
 | {js:class}`DSMTypeReference` | A class used to represent a reference to a type |
 
@@ -183,7 +183,7 @@ const [report, dsmDefs, defs] = DSMBuilder.assemble('model.dsm').parse(sourceMap
 | {js:class}`Definitions` | A class used to register concept, club, enumeration, structure and |
 | {js:class}`DefinitionsConst` | A class used to retrieve registered concepts, clubs, enumerations, structures |
 | {js:class}`DefinitionsCollector` | A class used to collect referenced types |
-| {js:class}`DefinitionsInspector` | DefinitionsInspector(definitions) |
+| {js:class}`DefinitionsInspector` | A class used to retrieve registered concepts, clubs, enumerations, |
 | {js:class}`DefinitionsExtendInfo` | A class used to represent the types exchanged during the synchronization of two |
 
 ## Source Map

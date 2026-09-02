@@ -71,7 +71,7 @@ The mirror of this page for the Python binding is {doc}`../../dsviper-python/api
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`NameSpace` | A UUID and a name, under which DSM types are registered |
+| {js:class}`NameSpace` | A UUID and a name, under which types are registered |
 
 ## Paths
 

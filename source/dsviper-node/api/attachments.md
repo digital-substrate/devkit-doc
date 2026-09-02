@@ -71,7 +71,7 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`Attachment` | A class used to represent an attachment |
+| {js:class}`Attachment` | The declaration binding a concept to a value type: from it, keys are minted and documents created |
 
 ## Attachment Interfaces
 

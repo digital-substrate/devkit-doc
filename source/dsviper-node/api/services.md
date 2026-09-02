@@ -62,7 +62,7 @@ The mirror of this page for the Python binding is {doc}`../../dsviper-python/api
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`ServiceRemote` | The connection to a service, and the root of everything it exposes: the pools and functions are discovered from the DSM the service embeds, so no per-service code is needed |
+| {js:class}`ServiceRemote` | The connection to a service, and the root of everything it exposes: the pools and functions are discovered from the definitions the service carries, so no per-service code is needed |
 
 ## Stateless Pools
 

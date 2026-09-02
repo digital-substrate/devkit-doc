@@ -124,10 +124,10 @@ const [report, dsmDefs, defs] = DSMBuilder.assemble('model.dsm').parse(sourceMap
 |-------|-------------|
 | {js:class}`DSMBuilder` | A class used to assemble a collection of DSM Definitions from various sources |
 | {js:class}`DSMBuilderPart` | A class used to represent a part of the assembled definitions |
-| {js:class}`DSMDefinitions` | A class used to represent DSM definitions |
+| {js:class}`DSMDefinitions` | A parsed model, whole: the definitions it declares plus the function pools attached to them |
 | {js:class}`DSMDefinitionsInspector` | A class used to retrieve registered concepts, clubs, enumerations, structures from TypeName and attachments from identifier |
 | {js:class}`DSMParseReport` | A class used to collect the error occurred while parsing the assembled definitions |
-| {js:class}`DSMParseError` | A class used to represent a parse error |
+| {js:class}`DSMParseError` | One parse failure: the source it came from, the line and position, and the message |
 
 ## Model Elements
 

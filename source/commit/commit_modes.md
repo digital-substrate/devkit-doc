@@ -83,9 +83,9 @@ All structural guarantees apply.
 ### Multi-head exploration
 
 *Parallel heads.* Diverge the DAG and keep parallel heads alive,
-merging them back on your own schedule. Multi-head exploration where a
-single author reviews each merged result stays **single-stream** — the
-merge happens, but one person owns the resulting state.
+reducing them back on your own schedule. Multi-head exploration where a
+single author reviews each reduced result stays **single-stream** —
+`commitMerge` happens, but one person owns the resulting state.
 
 ```{important}
 In single-stream every read returns exactly what you wrote. In

@@ -52,7 +52,7 @@ Commit provides exactly one of them:
   (:doc:`Cooperative Discipline <commit_cooperation>`).
 - **Collaboration — what Commit is not.** Arbitrating overlapping
   intentions *before* reduction (manual-merge / review) needs a
-  supervisor *above* the engine; Commit provides none.
+  supervisor *above* the engine; the engine provides none.
 
 Commit is structured as three layers, from the disk upward:
 

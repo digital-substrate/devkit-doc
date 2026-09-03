@@ -187,7 +187,7 @@ not author- or time-meaningful. Two authors editing the same field
 have no way to predict which value will survive reduction.
 
 This is what the contract is telling you: do not rely on a specific
-arbitration outcome. Re-validate at read time.
+LWW outcome. Re-validate at read time.
 
 ## What Commit Does NOT Provide
 

@@ -19,7 +19,7 @@ nothing. A pairwise merge is target-wins and non-commutative; when several
 heads meet, `CommitDatabaseHelper.reduce_heads()` seeds the fold with the most
 recent head and
 folds the rest into it in ascending `CommitId` order (their SHA-1 content
-hashes). The resolved state is therefore deterministic, but the determinant is
+hashes). The reduced state is therefore deterministic, but the determinant is
 the opcode shape, which head is most recent, and the hash ordering of the rest,
 not the authors' intent — so to an observer, *which* intent the merge keeps is
 arbitrary. This is the index's own caveat: "which sequence is applied when

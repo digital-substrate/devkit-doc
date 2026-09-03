@@ -51,8 +51,11 @@ Commit provides exactly one of them:
   reaching it is a modelling task
   (:doc:`Cooperative Discipline <commit_cooperation>`).
 - **Collaboration — what Commit is not.** Arbitrating overlapping
-  intentions *before* reduction (manual-merge / review) needs a
-  supervisor *above* the engine; the engine provides none.
+  intentions (manual-merge / review) needs a supervisor *above* the
+  engine — a human or a rule that decides which intent survives. The
+  engine arbitrates nothing. What ships identifies the loci and applies
+  your decisions (:doc:`Supervised Reconciliation <commit_collaboration>`);
+  the deciding is yours.
 
 Commit is structured as three layers, from the disk upward:
 
@@ -80,8 +83,9 @@ Four transverse pages complete the chapter:
   envelope, the only region where no intent is silently lost.
 * :doc:`Supervised Reconciliation <commit_collaboration>` — the
   curative counterpart, for when writes could not be kept disjoint: it
-  surfaces post-merge the intent the engine dropped and lets you correct
-  it. It works around that reduction; it does not repair it.
+  surfaces the intent the engine dropped, before or after the merge is
+  written, and lets you correct it. It works around that reduction; it
+  does not repair it.
 * :doc:`Database synchronisation <commit_synchronization>` —
   how ``CommitSynchronizer`` replicates the mutation DAG between
   separate ``CommitDatabase`` instances, and what it implies for the

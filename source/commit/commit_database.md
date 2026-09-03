@@ -286,8 +286,9 @@ client that reduces heads on a shared database must use the same strategy.** Two
 processes folding the same heads in different orders — one in ascending
 `CommitId`, another in, say, hash-table iteration order — produce different
 states on contested paths, and both land in the same history as competing
-merge commits. Fix one reduction order for all writers of a shared database; the built-in
-`CommitDatabaseHelper.reduceHeads()` is the obvious choice, and it is
+merge commits. Fix one reduction order for all writers of a shared
+database; the built-in `CommitDatabaseHelper.reduceHeads()` is the obvious
+choice, and it is
 transactional, where a hand-rolled fold can
 leave a half-merged DAG if it is interrupted mid-merge.
 

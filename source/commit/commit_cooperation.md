@@ -50,14 +50,12 @@ never has anything semantically meaningful to pick between.
 
 ## Principle: scope ownership
 
-If two writers operate on disjoint attachments — or on disjoint paths
-within a shared attachment — convergence has nothing to pick between.
-The result is the union of disjoint mutations, and every submitted
-intent survives intact. But survival is not yet trust: disjointness earns it
-only when it **matches ownership** — when each writer's whole intent *is* the
-scope they touch. Then the union is every author's owned intent and nothing is
-invented. Let a scope be a *fragment* of a larger intent and disjointness still
-holds, yet the union answers to no one (see
+Disjointness is what makes the union safe — but survival is not yet
+trust. It earns trust only when disjointness **matches ownership** — when
+each writer's whole intent *is* the scope they touch. Then the union is
+every author's owned intent and nothing is invented. Let a scope be a
+*fragment* of a larger intent and disjointness still holds, yet the union
+answers to no one (see
 [Re-entering the graph](commit_contract.md#re-entering-the-graph)).
 
 The shape of that disjointness is application-specific. This page
@@ -127,15 +125,16 @@ the right answer is not a better reduction algorithm. It is an
 application-level supervisor: a review UI that surfaces clashes for
 human arbitration, a semantic gate that refuses commits, a merge UX
 that asks an operator to pick. That is the supervised regime — the
-*Collaboration* row in the chapter's {ref}`three-regimes` table.
+*Collaboration* row of the summary below.
 
-The supervisor is yours to build. The Commit Database does not
-provide it; what it provides — the
-[import outcomes](commit_contract.md#import-outcomes) — is the
+The arbitration is yours. The engine decides nothing, and the
+[import outcomes](commit_contract.md#import-outcomes) it provides are the
 back-stop at read time, beneath whatever discipline you choose.
-[Supervised Reconciliation](commit_collaboration.md) documents one such
-supervisor — post-merge, headless, additive over the public API — as a
-reference implementation.
+[Supervised Reconciliation](commit_collaboration.md) documents the
+supervisor `dsviper` ships — headless, additive over the public API: it
+identifies the loci where an intent was lost and applies the decisions you
+hand it, as `CommitMergeResolution` decrees. Which intent survives stays
+your call.
 
 ## Summary
 
@@ -143,7 +142,7 @@ reference implementation.
 |----------------------------|--------------------------------------------------------|----------------------------------------------------------|
 | **Deterministic reduction**| Structural linearisation — no notion of conflict       | The engine — the strongest guarantee without supervision |
 | **Cooperation**            | Disjointness by construction — nothing to pick between | This page — application discipline                       |
-| **Collaboration**          | Supervisor arbitrates (human / rule)                   | An application layer you build on top                    |
+| **Collaboration**          | Supervisor arbitrates (human / rule)                   | Identification and application ship; the deciding is yours |
 
 The dual-layer contract is described in all three regimes; the
 discipline you adopt determines whether it stays reference material

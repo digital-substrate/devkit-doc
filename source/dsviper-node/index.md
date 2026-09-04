@@ -68,8 +68,27 @@ through this table:
 
 `equals` and `compare` **seamlessly coerce a native argument**, so you rarely
 wrap by hand: `new ValueDouble(2).equals(2)` is `true` and
-`new ValueDouble(1).compare(2) < 0`. Comparing two values of incompatible types
-throws (`compare`) or returns `false` (`equals`) rather than guessing.
+`new ValueDouble(1).compare(2) < 0`.
+
+Relations are **total**: they answer for any pair, and never throw on a type
+mismatch. `equals` across types is `false`; `compare` across types returns a
+stable ordering — the runtime orders values of different types rather than
+refusing to, so `a.compare(b)` and `b.compare(a)` are consistent and a
+heterogeneous array sorts deterministically. That is the runtime's own
+behaviour, exposed rather than re-broken, so a comparison, a sort or a
+membership test written against the C++ engine means the same thing here.
+
+Strictness lives on the other side of the line: **ingestion** fails fast. A
+native argument that cannot decode to a value throws — `new ValueDouble(2).compare('foo')`
+raises a `TypeError` — because a wrong-typed datum entering the system is a bug
+to catch early, while comparing is not ingesting.
+
+Floating point follows the same reasoning. `NaN` is a single data-model value,
+not the IEEE 754 artefact: `NaN` equals `NaN`, hashes deterministically, and
+sits at one end of the total order, below `-Infinity`. Without that, a `NaN`
+could not be found in a set, deduplicated as a map key, or seen by a diff.
+Arithmetic is unaffected — read the number back with `encoded()` and IEEE 754
+resumes.
 
 ```{warning}
 JavaScript `==` does **not** call `equals`. Between two values it is reference

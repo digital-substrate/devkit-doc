@@ -11,26 +11,46 @@ navigate nested structures, and ``Logging`` for debug output.
 Quick Start
 -----------
 
-.. code-block:: python
+>>> from dsviper import (DSMBuilder, Value, Path, NameSpace, ValueUUId,
+...                      LoggerConsole, Logging)
 
-   from dsviper import Definitions, NameSpace, ValueUUId, Path, LoggerConsole, Logging
+A namespace pairs a UUID with a name:
 
-   # Create namespace for your types
-   ns = NameSpace(ValueUUId("f529bc42-0618-4f54-a3fb-d55f95c5ad03"), "MyApp")
+>>> ns = NameSpace(ValueUUId("f529bc42-0618-4f54-a3fb-d55f95c5ad03"), "MyApp")
+>>> ns.name()
+'MyApp'
 
-   # Create and register definitions
-   defs = Definitions()
+A ``Path`` navigates nested structures. Build it, freeze it with
+``const()``, then read and write through it:
 
-   # Paths navigate nested structures
-   path = Path.from_field("user").field("address").field("city").const()
-   city = path.at(document)  # Get value at path
-   path.set(document, "Paris")  # Set value at path
+>>> builder = DSMBuilder()
+>>> builder.append("model.dsm", """
+... namespace MyApp {8f14e45f-ceea-467a-9575-1c14b48f0b7e} {
+...     struct Address { string city; };
+...     struct Profile { Address address; uint16 age; };
+... };
+... """)
+>>> report, dsm_defs, defs = builder.parse()
+>>> defs.inject(globals())
+>>> document = Value.create(MY_APP_S_PROFILE, {"address": {"city": "Lyon"}, "age": 30})
 
-   # Logging for debugging
-   logger = LoggerConsole(Logging.LEVEL_DEBUG)
-   log = logger.logging()
-   log.info("Application started")
-   log.error("Something went wrong")
+>>> path = Path.from_field("address").field("city").const()
+>>> path.representation()
+'.address.city'
+>>> path.at(document)
+'Lyon'
+>>> path.set(document, "Paris")
+>>> Value.dumps(document)
+{'address': {'city': 'Paris'}, 'age': 30}
+
+``inject()`` also emits a constant per path, so the one above is already
+available as ``MY_APP_P_PROFILE_ADDRESS``.
+
+A logger writes to stderr through its ``Logging`` interface:
+
+>>> log = LoggerConsole(Logging.LEVEL_DEBUG).logging()
+>>> log.info("Application started")
+>>> log.error("Something went wrong")
 
 Key Classes
 -----------

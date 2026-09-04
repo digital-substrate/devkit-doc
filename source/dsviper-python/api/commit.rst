@@ -27,26 +27,51 @@ the database directly.
 Quick Start
 -----------
 
-.. code-block:: python
+>>> from dsviper import *
+>>> MODEL = """
+... namespace MyApp {8f14e45f-ceea-467a-9575-1c14b48f0b7e} {
+...     concept User;
+...     struct Profile { string city; uint16 age; };
+...     attachment<User, Profile> profile;
+... };
+... """
+>>> builder = DSMBuilder()
+>>> builder.append("model.dsm", MODEL)
+>>> report, dsm_defs, defs = builder.parse()
+>>> report.has_error()
+False
+>>> defs.inject(globals())             # MY_APP_T_USER, MY_APP_A_USER_PROFILE, …
+>>> key = ValueKey.create(MY_APP_T_USER, "0d2f0e1a-1111-4222-8333-444455556666")
+>>> document = Value.create(MY_APP_S_PROFILE, {"city": "Paris", "age": 30})
 
-   from dsviper import CommitDatabase, CommitStateBuilder, CommitMutableState
+A ``CommitDatabase`` keeps every commit. Mutations are applied to a
+``CommitMutableState`` built over the state you start from — a fresh
+database has no commit yet, so start from the initial state:
 
-   # Open commit database (created with dsm_util.py)
-   db = CommitDatabase.open("model.cdb")
-   db.definitions().inject()
+>>> db = CommitDatabase.create_in_memory()
+>>> db.extend_definitions(defs).count()
+3
+>>> last = db.last_commit_id()
+>>> state = CommitStateBuilder.state(db, last) if last else CommitStateBuilder.initial_state(db)
+>>> mutable = CommitMutableState(state)
+>>> mutable.attachment_mutating().set(MY_APP_A_USER_PROFILE, key, document)
+>>> commit_id = db.commit_mutations("Add user", mutable)
 
-   # Create mutable state from the latest commit — a fresh database has none,
-   # so build the initial state instead
-   last = db.last_commit_id()
-   state = CommitStateBuilder.state(db, last) if last else CommitStateBuilder.initial_state(db)
-   mutable = CommitMutableState(state)
+Reading goes through the state at a commit:
 
-   # Apply mutations via AttachmentMutating interface
-   mutating = mutable.attachment_mutating()
-   mutating.set(MYAPP_A_USER_PROFILE, key, document)
+>>> state = CommitStateBuilder.state(db, commit_id)
+>>> Value.dumps(state.attachment_getting().get(MY_APP_A_USER_PROFILE, key).unwrap())
+{'city': 'Paris', 'age': 30}
 
-   # Commit changes → returns new commit ID
-   commit_id = db.commit_mutations("Add user", mutable)
+A second commit records only what changed:
+
+>>> mutable = CommitMutableState(CommitStateBuilder.state(db, commit_id))
+>>> mutable.attachment_mutating().set(
+...     MY_APP_A_USER_PROFILE, key, Value.create(MY_APP_S_PROFILE, {"city": "Lyon", "age": 31}))
+>>> second = db.commit_mutations("Move to Lyon", mutable)
+>>> Value.dumps(CommitStateBuilder.state(db, second)
+...             .attachment_getting().get(MY_APP_A_USER_PROFILE, key).unwrap())
+{'city': 'Lyon', 'age': 31}
 
 .. seealso::
 
@@ -77,7 +102,7 @@ different fields converge automatically.
    mutating = mutable.attachment_mutating()
 
    # Update only the city field (not the whole document)
-   mutating.update(MYAPP_A_USER_PROFILE, user_key, path_city, "Paris")
+   mutating.update(MY_APP_A_USER_PROFILE, user_key, path_city, "Paris")
 
    # Commit
    db.commit_mutations("Update city", mutable)

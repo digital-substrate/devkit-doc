@@ -29,6 +29,12 @@ Quick Start
 The universal dynamic client — connect, then dispatch by pool and function
 name through a runtime dictionary. No service-specific import:
 
+.. note::
+
+   This block is not executed by the doc build: it needs a service listening on the
+   given port. Every API name in it is checked against the module, but the
+   flow is not.
+
 .. code-block:: python
 
    from dsviper import Definitions, ServiceRemote

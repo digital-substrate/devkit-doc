@@ -9,26 +9,25 @@ serialization. Use streams for low-level I/O and custom protocols.
 Quick Start
 -----------
 
-.. code-block:: python
+>>> from dsviper import Value, ValueString, Type, TypeVector, Definitions
 
-   from dsviper import Value, ValueString, Type, Definitions
+>>> defs = Definitions().const()
+>>> blob = Value.encode(ValueString("hello"))
+>>> blob
+blob(13)
 
-   # Create a value
-   value = ValueString("hello")
+Decoding a primitive hands back the Python object directly, not a Value:
 
-   # Encode to binary blob
-   blob = Value.encode(value)
+>>> Value.decode(blob, Type.STRING, defs)
+'hello'
 
-   # Decode from binary (requires type and definitions)
-   defs = Definitions()
-   decoded = Value.decode(blob, Type.STRING, defs.const())
+A container comes back as a Value. The type passed to ``decode`` is the one
+the blob was encoded from:
 
-   # Works with any type
-   from dsviper import TypeVector, ValueVector
-   t_vec = TypeVector(Type.INT64)
-   vec = Value.create(t_vec, [1, 2, 3])
-   blob = Value.encode(vec)
-   decoded = Value.decode(blob, t_vec, defs.const())
+>>> t_vec = TypeVector(Type.INT64)
+>>> blob = Value.encode(Value.create(t_vec, [1, 2, 3]))
+>>> Value.dumps(Value.decode(blob, t_vec, defs))
+[1, 2, 3]
 
 JSON Serialization
 ------------------
@@ -63,7 +62,7 @@ Real-world pattern for exposing Viper C++ data via REST:
    def material_api(instance_id):
        db = CommitDatabase.open("model.cdb")
        doc = CommitStateBuilder.state(db, db.last_commit_id()).attachment_getting().get(
-           MYAPP_A_MATERIAL_RENDER, ValueKey.create(MYAPP_T_MATERIAL, str(instance_id))
+           MY_APP_A_MATERIAL_RENDER, ValueKey.create(MY_APP_T_MATERIAL, str(instance_id))
        )
        db.close()
 

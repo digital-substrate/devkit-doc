@@ -11,23 +11,46 @@ while ``AttachmentMutating`` extends it with write operations.
 Quick Start
 -----------
 
-.. code-block:: python
+>>> from dsviper import *
+>>> MODEL = """
+... namespace MyApp {8f14e45f-ceea-467a-9575-1c14b48f0b7e} {
+...     concept User;
+...     struct Profile { string city; uint16 age; };
+...     attachment<User, Profile> profile;
+... };
+... """
+>>> builder = DSMBuilder()
+>>> builder.append("model.dsm", MODEL)
+>>> report, dsm_defs, defs = builder.parse()
+>>> report.has_error()
+False
+>>> defs.inject(globals())             # MY_APP_T_USER, MY_APP_A_USER_PROFILE, …
+>>> key = ValueKey.create(MY_APP_T_USER, "0d2f0e1a-1111-4222-8333-444455556666")
+>>> document = Value.create(MY_APP_S_PROFILE, {"city": "Paris", "age": 30})
 
-   from dsviper import CommitDatabase, CommitStateBuilder, CommitMutableState
+``AttachmentGetting`` reads and ``AttachmentMutating`` writes. Both are
+reached from a state, never constructed directly:
 
-   db = CommitDatabase.open("model.cdb")
-   db.definitions().inject()
+>>> db = CommitDatabase.create_in_memory()
+>>> db.extend_definitions(defs).count()
+3
+>>> mutable = CommitMutableState(CommitStateBuilder.initial_state(db))
+>>> mutating = mutable.attachment_mutating()
+>>> mutating.set(MY_APP_A_USER_PROFILE, key, document)
+>>> commit_id = db.commit_mutations("Add user", mutable)
 
-   # Read via AttachmentGetting
-   last = db.last_commit_id()
-   state = CommitStateBuilder.state(db, last) if last else CommitStateBuilder.initial_state(db)
-   getting = state.attachment_getting()
-   value = getting.get(MYAPP_A_USER_PROFILE, user_key)
+>>> getting = CommitStateBuilder.state(db, commit_id).attachment_getting()
+>>> value = getting.get(MY_APP_A_USER_PROFILE, key)
+>>> value.is_nil()
+False
+>>> Value.dumps(value.unwrap())
+{'city': 'Paris', 'age': 30}
 
-   # Write via AttachmentMutating
-   mutable = CommitMutableState(state)
-   mutating = mutable.attachment_mutating()
-   mutating.set(MYAPP_A_USER_PROFILE, user_key, document)
+A key that holds nothing is not an error — the optional is simply empty:
+
+>>> absent = ValueKey.create(MY_APP_T_USER, "ffffffff-0000-4000-8000-000000000000")
+>>> getting.get(MY_APP_A_USER_PROFILE, absent).is_nil()
+True
 
 Core Classes
 ------------

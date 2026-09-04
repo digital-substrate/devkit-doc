@@ -10,26 +10,38 @@ containers (Vector, Map, Set, XArray) are mutable.
 Quick Start
 -----------
 
-.. code-block:: python
+>>> from dsviper import Value, ValueString, ValueInt64, TypeVector, Type
 
-   from dsviper import Value, ValueString, ValueInt64, ValueVector, TypeVector, Type
+Primitives construct directly; containers go through ``Value.create``:
 
-   # Direct construction for primitives
-   name = ValueString("Alice")
-   count = ValueInt64(42)
+>>> name = ValueString("Alice")
+>>> count = ValueInt64(42)
+>>> numbers = Value.create(TypeVector(Type.INT64), [1, 2, 3])
 
-   # Factory method with type (for containers)
-   t_vec = TypeVector(Type.INT64)
-   numbers = Value.create(t_vec, [1, 2, 3])
+Coming back out to Python objects is ``Value.dumps`` for anything, and
+``encoded()`` for a primitive:
 
-   # Back out to Python objects
-   print(Value.dumps(name))     # 'Alice'
-   print(name.encoded())        # 'Alice' — primitives only
-   print(Value.dumps(numbers))  # [1, 2, 3]
-   print(list(numbers))         # [1, 2, 3] — elements come out native already
+>>> Value.dumps(name)
+'Alice'
+>>> name.encoded()
+'Alice'
+>>> Value.dumps(numbers)
+[1, 2, 3]
 
-   # Check type
-   print(name.type())        # string
+Reading an element of a container already gives a native:
+
+>>> numbers[0]
+1
+>>> name.type()
+string
+
+A Value is not the Python object it wraps — ``str()`` gives the DSM
+representation, quotes included:
+
+>>> isinstance(name, str)
+False
+>>> str(name)
+"'Alice'"
 
 Choosing the Right Pattern
 --------------------------

@@ -9,33 +9,58 @@ the resulting definitions (structures, enumerations, attachments, functions).
 Quick Start
 -----------
 
-.. code-block:: python
+>>> from dsviper import *
+>>> MODEL = """
+... namespace MyApp {8f14e45f-ceea-467a-9575-1c14b48f0b7e} {
+...     concept User;
+...     struct Profile { string city; uint16 age; };
+...     attachment<User, Profile> profile;
+... };
+... """
+>>> builder = DSMBuilder()
+>>> builder.append("model.dsm", MODEL)
+>>> report, dsm_defs, defs = builder.parse()
+>>> report.has_error()
+False
+>>> defs.inject(globals())             # MY_APP_T_USER, MY_APP_A_USER_PROFILE, …
 
-   from dsviper import DSMBuilder
+The declarations are reachable from ``dsm_defs``:
 
-   # Parse DSM file
-   builder = DSMBuilder.assemble("model.dsm")
-   report, dsm_defs, defs = builder.parse()
+>>> for struct in sorted(dsm_defs.structures(), key=str):
+...     print(struct.type_name())
+...     for field in struct.fields():
+...         print(" ", field.name(), ":", field.type())
+MyApp::Profile
+  city : string
+  age : uint16
 
-   # Check for parse errors
-   if report.has_error():
-       for err in report.errors():
-           print(f"Line {err.line()}: {err.message()}")
-       raise RuntimeError("DSM parse failed")
+>>> for att in dsm_defs.attachments():
+...     print(att.type_name(), "-- key:", att.key_type(), "doc:", att.document_type())
+MyApp::profile -- key: MyApp::User doc: MyApp::Profile
 
-   # Introspect structures
-   for struct in dsm_defs.structures():
-       print(f"Struct: {struct.type_name()}")
-       for field in struct.fields():
-           print(f"  {field.name()}: {field.type()}")
+``inject()`` fills the namespace with one constant per definition. The
+prefix is derived from the DSM namespace, split on camel case — ``MyApp``
+gives ``MY_APP_``, not ``MYAPP_``:
 
-   # Introspect attachments
-   for att in dsm_defs.attachments():
-       print(f"Attachment: {att.type_name()}")
-       print(f"  Key: {att.key_type()}, Doc: {att.document_type()}")
+>>> ns = {}
+>>> defs.inject(ns)
+>>> sorted(ns)
+['MY_APP_A_USER_PROFILE', 'MY_APP_K_USER', 'MY_APP_P_PROFILE_AGE',
+ 'MY_APP_P_PROFILE_CITY', 'MY_APP_S_PROFILE', 'MY_APP_T_USER']
 
-   # Inject constants for runtime use
-   defs.inject()  # Creates MYAPP_T_*, MYAPP_K_*, MYAPP_S_*, MYAPP_A_*, MYAPP_P_*
+A parse that failed reports why, and hands back ``None`` for both
+definitions:
+
+>>> bad = DSMBuilder()
+>>> bad.append("broken.dsm", "namespace Oops { struct S { string };")
+>>> bad_report, bad_dsm, bad_defs = bad.parse()
+>>> bad_report.has_error()
+True
+>>> (bad_dsm, bad_defs)
+(None, None)
+>>> for err in bad_report.errors()[:1]:
+...     print(err.line(), err.message())
+1 expected a UUID before `{`.
 
 Parsing
 -------

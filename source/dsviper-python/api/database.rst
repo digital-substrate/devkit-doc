@@ -10,32 +10,49 @@ history tracking. For the mutation DAG, see :doc:`commit`.
 Quick Start
 -----------
 
-.. code-block:: python
+>>> from dsviper import *
+>>> MODEL = """
+... namespace MyApp {8f14e45f-ceea-467a-9575-1c14b48f0b7e} {
+...     concept User;
+...     struct Profile { string city; uint16 age; };
+...     attachment<User, Profile> profile;
+... };
+... """
+>>> builder = DSMBuilder()
+>>> builder.append("model.dsm", MODEL)
+>>> report, dsm_defs, defs = builder.parse()
+>>> report.has_error()
+False
+>>> defs.inject(globals())             # MY_APP_T_USER, MY_APP_A_USER_PROFILE, …
+>>> key = ValueKey.create(MY_APP_T_USER, "0d2f0e1a-1111-4222-8333-444455556666")
+>>> document = Value.create(MY_APP_S_PROFILE, {"city": "Paris", "age": 30})
 
-   from dsviper import Database, DSMBuilder
+A ``Database`` holds one state, with no history. Writes go in a
+transaction:
 
-   # Create or open database
-   db = Database.create("data.vdb")
+>>> db = Database.create_in_memory()
+>>> db.extend_definitions(defs).count()
+3
+>>> db.begin_transaction()
+>>> db.set(MY_APP_A_USER_PROFILE, key, document)
+True
+>>> db.commit()
 
-   # Load definitions from DSM
-   builder = DSMBuilder.assemble("model.dsm")
-   report, dsm_defs, defs = builder.parse()
-   db.extend_definitions(defs)
+``get`` always returns a ``ValueOptional`` — never ``None``. Ask
+``is_nil()`` whether it holds anything, and ``unwrap()`` for the document:
 
-   # Write (requires transaction)
-   db.begin_transaction()
-   db.set(attachment, key, document)
-   db.commit()
+>>> result = db.get(MY_APP_A_USER_PROFILE, key)
+>>> result.is_nil()
+False
+>>> Value.dumps(result.unwrap())
+{'city': 'Paris', 'age': 30}
 
-   # Read
-   result = db.get(attachment, key)
-   if not result.is_nil():
-       doc = result.unwrap()
-
-   # Delete
-   db.begin_transaction()
-   db.delete(attachment, key)
-   db.commit()
+>>> db.begin_transaction()
+>>> db.delete(MY_APP_A_USER_PROFILE, key)
+True
+>>> db.commit()
+>>> db.get(MY_APP_A_USER_PROFILE, key).is_nil()
+True
 
 .. seealso::
 

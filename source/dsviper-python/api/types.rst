@@ -10,23 +10,25 @@ parameterized containers like vectors and maps.
 Quick Start
 -----------
 
-.. code-block:: python
+>>> from dsviper import Type, TypeVector, TypeMap, TypeOptional
 
-   from dsviper import Type, TypeVector, TypeMap, TypeOptional
+Primitive types are constants on ``Type``:
 
-   # Primitive type constants
-   t_int = Type.INT64
-   t_str = Type.STRING
+>>> Type.INT64
+int64
+>>> Type.STRING
+string
 
-   # Parameterized container types
-   t_vec = TypeVector(Type.STRING)           # list of strings
-   t_map = TypeMap(Type.STRING, Type.INT64)  # dict[str, int]
+Parameterized types are their own classes, and nest:
 
-   # Nested types
-   t_nested = TypeMap(Type.STRING, TypeVector(Type.FLOAT))
-
-   # Nullable type
-   t_opt = TypeOptional(Type.STRING)
+>>> TypeVector(Type.STRING)
+vector<string>
+>>> TypeMap(Type.STRING, Type.INT64)
+map<string, int64>
+>>> TypeMap(Type.STRING, TypeVector(Type.FLOAT))
+map<string, vector<float>>
+>>> TypeOptional(Type.STRING)
+optional<string>
 
 Choosing the Right Type
 -----------------------

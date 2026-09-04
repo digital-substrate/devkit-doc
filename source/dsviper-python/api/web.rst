@@ -10,6 +10,12 @@ or Qt desktop apps (via ``QTextEdit.setHtml()``).
 Quick Start
 -----------
 
+.. note::
+
+   This block is not executed by the doc build: it needs Flask and a running
+   application. Every API name in it is checked against the module, but the
+   flow is not.
+
 .. code-block:: python
 
    from flask import Flask, render_template
@@ -23,7 +29,7 @@ Quick Start
        db.definitions().inject()
 
        # Create key and get document accessor
-       key = ValueKey.create(MYAPP_T_ENTITY, str(instance_id))
+       key = ValueKey.create(MY_APP_T_ENTITY, str(instance_id))
        attachment_getting = CommitStateBuilder.state(db, db.last_commit_id()).attachment_getting()
 
        # Build document tree for all attachments

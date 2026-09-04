@@ -67,22 +67,57 @@ without failing.
 Quick Start
 -----------
 
-.. code-block:: python
+>>> from dsviper import *
+>>> MODEL = """
+... namespace MyApp {8f14e45f-ceea-467a-9575-1c14b48f0b7e} {
+...     concept User;
+...     struct Profile { string city; uint16 age; };
+...     attachment<User, Profile> profile;
+... };
+... """
+>>> builder = DSMBuilder()
+>>> builder.append("model.dsm", MODEL)
+>>> report, dsm_defs, defs = builder.parse()
+>>> report.has_error()
+False
+>>> defs.inject(globals())             # MY_APP_T_USER, MY_APP_A_USER_PROFILE, …
+>>> key = ValueKey.create(MY_APP_T_USER, "0d2f0e1a-1111-4222-8333-444455556666")
+>>> document = Value.create(MY_APP_S_PROFILE, {"city": "Paris", "age": 30})
 
-   from dsviper import (
-       CommitDatabaseFlattener,
-       CommitDatabaseToDatabaseConverter,
-   )
+Build a source with two commits:
 
-   # Collapse a chosen commit into a fresh single-commit CommitDatabase,
-   # discarding history and superseded blobs (the Flatten pattern).
-   info = CommitDatabaseFlattener().flatten(
-       source, head_commit_id, target, "flattened baseline"
-   )
-   print(info.documents, "documents,", info.blobs, "blobs")
+>>> source = CommitDatabase.create_in_memory()
+>>> source.extend_definitions(defs).count()
+3
+>>> mutable = CommitMutableState(CommitStateBuilder.initial_state(source))
+>>> mutable.attachment_mutating().set(MY_APP_A_USER_PROFILE, key, document)
+>>> first = source.commit_mutations("first", mutable)
+>>> mutable = CommitMutableState(CommitStateBuilder.state(source, first))
+>>> mutable.attachment_mutating().set(
+...     MY_APP_A_USER_PROFILE, key, Value.create(MY_APP_S_PROFILE, {"city": "Lyon", "age": 31}))
+>>> head_commit_id = source.commit_mutations("second", mutable)
 
-   # Materialize one commit's state into a plain, history-free Database.
-   CommitDatabaseToDatabaseConverter().convert(source, commit_id, flat_db)
+Flatten collapses a chosen commit into a fresh single-commit
+``CommitDatabase``, discarding history and superseded blobs:
+
+>>> target = CommitDatabase.create_in_memory()
+>>> target.extend_definitions(defs).count()
+3
+>>> info = CommitDatabaseFlattener().flatten(
+...     source, head_commit_id, target, "flattened baseline")
+>>> print(info.documents, "documents,", info.blobs, "blobs")
+1 documents, 0 blobs
+
+Converting materializes one commit's state into a plain, history-free
+``Database``:
+
+>>> flat_db = Database.create_in_memory()
+>>> flat_db.extend_definitions(defs).count()
+3
+>>> CommitDatabaseToDatabaseConverter().convert(source, head_commit_id, flat_db).documents
+1
+>>> Value.dumps(flat_db.get(MY_APP_A_USER_PROFILE, key).unwrap())
+{'city': 'Lyon', 'age': 31}
 
 ``source``, ``target`` and ``flat_db`` are already-open database handles; see
 :doc:`database` and :doc:`commit` for opening and creating each kind.

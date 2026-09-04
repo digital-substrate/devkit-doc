@@ -61,9 +61,9 @@ through this table:
 | `hash(a)`           (`__hash__`)          | `a.hash()` |
 | `str(a)` / `repr(a)` (`__str__` / `__repr__`) | `a.toString()` / `a.representation()` |
 | `for x in v`        (`__iter__`)          | iterable — `[...v]`, or the iterator class |
-| `v[i]`              (`__getitem__`)       | `v.at(i)` / `v.get(k)` |
+| `v[i]`              (`__getitem__`)       | `v.at(i)` / `m.get(k)` |
 | `v[i] = x`          (`__setitem__`)       | `v.set(i, x)` |
-| `k in m`            (`__contains__`)      | `m.has(k)` / `m.contains(x)` |
+| `k in m`            (`__contains__`)      | `m.contains(k)` |
 | `len(v)`            (`__len__`)           | `v.size()` |
 
 `equals` and `compare` **seamlessly coerce a native argument**, so you rarely

@@ -8,6 +8,15 @@ separate route, planned for a later release.
 
 This is the Node twin of the Python {doc}`../dsviper-python/dsm` page.
 
+```{note}
+This page is about *processing* a model from Node.js. The DSM language
+itself — its syntax, its types, its doc comments — is
+{doc}`its own chapter <../dsm/introduction>`, and two complete models are
+published in full: the {doc}`Graph Editor <../dsm/samples/graph_editor>`
+and the {doc}`Raptor Editor <../dsm/samples/raptor_editor>`. Neither page
+assumes you have read this one.
+```
+
 ```js
 const {
   Definitions, NameSpace, ValueUUId, Type,

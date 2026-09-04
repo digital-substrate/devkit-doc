@@ -2,6 +2,15 @@
 
 This chapter covers loading and processing DSM (Digital Substrate Model) files in Python.
 
+```{note}
+This page is about *processing* a model from Python. The DSM language
+itself — its syntax, its types, its doc comments — is
+{doc}`its own chapter <../dsm/introduction>`, and two complete models are
+published in full: the {doc}`Graph Editor <../dsm/samples/graph_editor>`
+and the {doc}`Raptor Editor <../dsm/samples/raptor_editor>`. Neither page
+assumes you have read this one.
+```
+
 ## The DSM Workflow
 
 Processing DSM files follows three steps:

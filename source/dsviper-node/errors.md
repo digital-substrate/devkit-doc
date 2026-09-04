@@ -200,16 +200,27 @@ const content = v.isNil() ? 'default value' : v.unwrap();
 Reading a missing key from a database does **not** throw. `get()` returns a
 `ValueOptional` that is nil:
 
+A plain `Database` reads directly:
+
 ```js
 const result = db.get(attachment, key);   // always a ValueOptional
-const value = result.isNil() ? null : result.unwrap();
+const value = result.isNil() ? undefined : result.unwrap();
 ```
 
-Use `has()` to check existence before unwrapping:
+A `CommitDatabase` has no `get()` of its own — a read is always taken at a
+commit, through the state's `AttachmentGetting`:
 
 ```js
-if (db.has(attachment, key)) {
-  const value = db.get(attachment, key).unwrap();
+const getting = CommitStateBuilder.state(db, db.lastCommitId()).attachmentGetting();
+const result = getting.get(attachment, key);
+```
+
+Either way, `has()` checks existence before unwrapping — on the `Database`, or
+on the `AttachmentGetting`:
+
+```js
+if (getting.has(attachment, key)) {
+  const value = getting.get(attachment, key).unwrap();
 }
 ```
 

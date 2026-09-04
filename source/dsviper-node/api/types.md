@@ -70,23 +70,23 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`TypeVoid` | A class used to represent the void type |
-| {js:class}`TypeBool` | A class used to represent the bool type |
-| {js:class}`TypeUInt8` | A class used to represent the uint8 type |
-| {js:class}`TypeUInt16` | A class used to represent the uint16 type |
-| {js:class}`TypeUInt32` | A class used to represent the uint32 type |
-| {js:class}`TypeUInt64` | A class used to represent the uint64 type |
-| {js:class}`TypeInt8` | A class used to represent the int8 type |
-| {js:class}`TypeInt16` | A class used to represent the int16 type |
-| {js:class}`TypeInt32` | A class used to represent the int32 type |
-| {js:class}`TypeInt64` | A class used to represent the int64 type |
-| {js:class}`TypeFloat` | A class used to represent the float type |
-| {js:class}`TypeDouble` | A class used to represent the double type |
-| {js:class}`TypeString` | A class used to represent the string type |
-| {js:class}`TypeBlob` | A class used to represent the blob type |
-| {js:class}`TypeBlobId` | A class used to represent the blob_id type |
-| {js:class}`TypeCommitId` | A class used to represent the commit_id type |
-| {js:class}`TypeUUId` | A class used to represent the uuid type |
+| {js:class}`TypeVoid` | The void type |
+| {js:class}`TypeBool` | The bool type |
+| {js:class}`TypeUInt8` | The uint8 type |
+| {js:class}`TypeUInt16` | The uint16 type |
+| {js:class}`TypeUInt32` | The uint32 type |
+| {js:class}`TypeUInt64` | The uint64 type |
+| {js:class}`TypeInt8` | The int8 type |
+| {js:class}`TypeInt16` | The int16 type |
+| {js:class}`TypeInt32` | The int32 type |
+| {js:class}`TypeInt64` | The int64 type |
+| {js:class}`TypeFloat` | The float type |
+| {js:class}`TypeDouble` | The double type |
+| {js:class}`TypeString` | The string type |
+| {js:class}`TypeBlob` | The blob type |
+| {js:class}`TypeBlobId` | The blob_id type |
+| {js:class}`TypeCommitId` | The commit_id type |
+| {js:class}`TypeUUId` | The uuid type |
 
 ## Container Types
 
@@ -106,16 +106,16 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 | {js:class}`TypeVec` | A class used to represent a vec<numeric_type, size> type |
 | {js:class}`TypeMat` | A class used to represent a mat<numeric_type, columns, rows> type |
 | {js:class}`TypeVariant` | A class used to represent a variant<T0, ...> type |
-| {js:class}`TypeAny` | A class used to represent the any type |
+| {js:class}`TypeAny` | The any type |
 
 ## User-Defined Types
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`TypeStructure` | A class used to represent a struct type |
+| {js:class}`TypeStructure` | A struct type |
 | {js:class}`TypeStructureDescriptor` | Describes the fields a struct will be created with |
 | {js:class}`TypeStructureField` | A class used to represent a field for a struct |
-| {js:class}`TypeEnumeration` | A class used to represent an enum type |
+| {js:class}`TypeEnumeration` | An enum type |
 | {js:class}`TypeEnumerationCase` | A class used to represent a case for an enum type |
 | {js:class}`TypeEnumerationDescriptor` | Describes the cases an enum will be created with |
 
@@ -123,10 +123,10 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`TypeConcept` | A class used to represent a concept type |
-| {js:class}`TypeClub` | A class used to represent a club type |
+| {js:class}`TypeConcept` | A concept type |
+| {js:class}`TypeClub` | A club type |
 | {js:class}`TypeKey` | A class used to represent a key<element_type> type where element_type is a concept, club or any_concept |
-| {js:class}`TypeAnyConcept` | A class used to represent the any_concept type |
+| {js:class}`TypeAnyConcept` | The any_concept type |
 
 ## Reference
 

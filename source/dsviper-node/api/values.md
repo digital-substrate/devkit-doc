@@ -73,53 +73,53 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 | Class | Description |
 |-------|-------------|
 | {js:class}`ValueVoid` | A value of type void |
-| {js:class}`ValueBool` | A class used to represent a value of type bool |
-| {js:class}`ValueUInt8` | A class used to represent a value of type uint8 |
-| {js:class}`ValueUInt16` | A class used to represent a value of type uint16 |
-| {js:class}`ValueUInt32` | A class used to represent a value of type uint32 |
-| {js:class}`ValueUInt64` | A class used to represent a value of type uint64 |
-| {js:class}`ValueInt8` | A class used to represent a value of type int8 |
-| {js:class}`ValueInt16` | A class used to represent a value of type int16 |
-| {js:class}`ValueInt32` | A class used to represent a value of type int32 |
-| {js:class}`ValueInt64` | A class used to represent a value of type int64 |
-| {js:class}`ValueFloat` | A class used to represent a value of type float |
-| {js:class}`ValueDouble` | A class used to represent a value of type double |
-| {js:class}`ValueString` | A class used to represent a value of type string |
-| {js:class}`ValueBlob` | A class used to represent a value of type blob |
-| {js:class}`ValueBlobId` | A class used to represent a value of type blob_id |
-| {js:class}`ValueCommitId` | A class used to represent a value of type commit_id |
-| {js:class}`ValueUUId` | A class used to represent a value of type uuid |
+| {js:class}`ValueBool` | A value of type bool |
+| {js:class}`ValueUInt8` | A value of type uint8 |
+| {js:class}`ValueUInt16` | A value of type uint16 |
+| {js:class}`ValueUInt32` | A value of type uint32 |
+| {js:class}`ValueUInt64` | A value of type uint64 |
+| {js:class}`ValueInt8` | A value of type int8 |
+| {js:class}`ValueInt16` | A value of type int16 |
+| {js:class}`ValueInt32` | A value of type int32 |
+| {js:class}`ValueInt64` | A value of type int64 |
+| {js:class}`ValueFloat` | A value of type float |
+| {js:class}`ValueDouble` | A value of type double |
+| {js:class}`ValueString` | A value of type string |
+| {js:class}`ValueBlob` | A value of type blob |
+| {js:class}`ValueBlobId` | A value of type blob_id |
+| {js:class}`ValueCommitId` | A value of type commit_id |
+| {js:class}`ValueUUId` | A value of type uuid |
 
 ## Container Values
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`ValueVector` | A class used to represent a value of type vector<element_type> |
+| {js:class}`ValueVector` | A value of type vector<element_type> |
 | {js:class}`ValueVectorIter` | Iterator for ValueVector elements |
-| {js:class}`ValueSet` | A class used to represent a value of type set<element_type> |
+| {js:class}`ValueSet` | A value of type set<element_type> |
 | {js:class}`ValueSetIter` | Iterator for ValueSet elements |
-| {js:class}`ValueMap` | A class used to represent a value of type map<key_type, element_type> |
-| {js:class}`ValueXArray` | A class used to represent a value of type xarray<element_type> |
-| {js:class}`ValueOptional` | A class used to represent a value of type optional<element_type> |
+| {js:class}`ValueMap` | A value of type map<key_type, element_type> |
+| {js:class}`ValueXArray` | A value of type xarray<element_type> |
+| {js:class}`ValueOptional` | A value of type optional<element_type> |
 
 ## Algebraic Values
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`ValueTuple` | A class used to represent a value of type tuple<T0, ...> |
+| {js:class}`ValueTuple` | A value of type tuple<T0, ...> |
 | {js:class}`ValueTupleIter` | Iterator for ValueTuple elements |
-| {js:class}`ValueVec` | A class used to represent a value of type vec<numeric_type, size> |
-| {js:class}`ValueMat` | A class used to represent a value of type mat<numeric_type, columns, rows> |
-| {js:class}`ValueVariant` | A class used to represent a value of type variant<T0, ...> |
-| {js:class}`ValueAny` | A class used to represent a value of any type |
+| {js:class}`ValueVec` | A value of type vec<numeric_type, size> |
+| {js:class}`ValueMat` | A value of type mat<numeric_type, columns, rows> |
+| {js:class}`ValueVariant` | A value of type variant<T0, ...> |
+| {js:class}`ValueAny` | A value of any type |
 
 ## User-Defined Values
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`ValueStructure` | A class used to represent a value of type struct |
-| {js:class}`ValueEnumeration` | A class used to represent a value of type enum |
-| {js:class}`ValueKey` | A class used to represent a value of type key<element_type> |
+| {js:class}`ValueStructure` | A value of type struct |
+| {js:class}`ValueEnumeration` | A value of type enum |
+| {js:class}`ValueKey` | A value of type key<element_type> |
 
 ## Value Program
 

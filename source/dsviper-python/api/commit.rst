@@ -35,13 +35,15 @@ Quick Start
    db = CommitDatabase.open("model.cdb")
    db.definitions().inject()
 
-   # Create mutable state from latest commit
-   state = CommitStateBuilder.state(db, db.last_commit_id())
+   # Create mutable state from the latest commit — a fresh database has none,
+   # so build the initial state instead
+   last = db.last_commit_id()
+   state = CommitStateBuilder.state(db, last) if last else CommitStateBuilder.initial_state(db)
    mutable = CommitMutableState(state)
 
    # Apply mutations via AttachmentMutating interface
    mutating = mutable.attachment_mutating()
-   mutating.set(MYAPP_A_USER, key, document)
+   mutating.set(MYAPP_A_USER_PROFILE, key, document)
 
    # Commit changes → returns new commit ID
    commit_id = db.commit_mutations("Add user", mutable)
@@ -69,12 +71,13 @@ different fields converge automatically.
    path_city = Path.from_field("address").field("city").const()
 
    # Create mutable state
-   state = CommitStateBuilder.state(db, db.last_commit_id())
+   last = db.last_commit_id()
+   state = CommitStateBuilder.state(db, last) if last else CommitStateBuilder.initial_state(db)
    mutable = CommitMutableState(state)
    mutating = mutable.attachment_mutating()
 
    # Update only the city field (not the whole document)
-   mutating.update(MYAPP_A_USER, user_key, path_city, "Paris")
+   mutating.update(MYAPP_A_USER_PROFILE, user_key, path_city, "Paris")
 
    # Commit
    db.commit_mutations("Update city", mutable)

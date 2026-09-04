@@ -19,14 +19,15 @@ Quick Start
    db.definitions().inject()
 
    # Read via AttachmentGetting
-   state = CommitStateBuilder.state(db, db.last_commit_id())
+   last = db.last_commit_id()
+   state = CommitStateBuilder.state(db, last) if last else CommitStateBuilder.initial_state(db)
    getting = state.attachment_getting()
-   value = getting.get(MYAPP_A_USER, user_key)
+   value = getting.get(MYAPP_A_USER_PROFILE, user_key)
 
    # Write via AttachmentMutating
    mutable = CommitMutableState(state)
    mutating = mutable.attachment_mutating()
-   mutating.set(MYAPP_A_USER, user_key, document)
+   mutating.set(MYAPP_A_USER_PROFILE, user_key, document)
 
 Core Classes
 ------------

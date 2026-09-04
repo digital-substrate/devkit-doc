@@ -78,7 +78,7 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 | Class | Description |
 |-------|-------------|
 | {js:class}`AttachmentGetting` | Read access to the documents attached to a set of keys |
-| {js:class}`AttachmentMutating` | An interface used to express fine-grained mutations of a value |
+| {js:class}`AttachmentMutating` | Expresses fine-grained mutations of a value |
 
 ## Reference
 

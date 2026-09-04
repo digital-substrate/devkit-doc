@@ -63,7 +63,7 @@ Real-world pattern for exposing Viper C++ data via REST:
    def material_api(instance_id):
        db = CommitDatabase.open("model.cdb")
        doc = CommitStateBuilder.state(db, db.last_commit_id()).attachment_getting().get(
-           MYAPP_A_Material, ValueKey.create(MYAPP_C_Material, str(instance_id))
+           MYAPP_A_MATERIAL_RENDER, ValueKey.create(MYAPP_T_MATERIAL, str(instance_id))
        )
        db.close()
 

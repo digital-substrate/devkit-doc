@@ -64,7 +64,7 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 | Class | Description |
 |-------|-------------|
 | {js:class}`Type` | The primitive types, and the utilities that act on any type |
-| {js:class}`TypeName` | A class used to describe the name of a type |
+| {js:class}`TypeName` | Describes the name of a type: its namespace and its identifier |
 
 ## Primitive Types
 
@@ -113,11 +113,11 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 | Class | Description |
 |-------|-------------|
 | {js:class}`TypeStructure` | A class used to represent a struct type |
-| {js:class}`TypeStructureDescriptor` | A class used to describe the fields of a struct |
+| {js:class}`TypeStructureDescriptor` | Describes the fields a struct will be created with |
 | {js:class}`TypeStructureField` | A class used to represent a field for a struct |
 | {js:class}`TypeEnumeration` | A class used to represent an enum type |
 | {js:class}`TypeEnumerationCase` | A class used to represent a case for an enum type |
-| {js:class}`TypeEnumerationDescriptor` | A class used to describe the cases of an enum |
+| {js:class}`TypeEnumerationDescriptor` | Describes the cases an enum will be created with |
 
 ## Concept Types
 

@@ -72,7 +72,7 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`ValueVoid` | A class used to represent a value of type void |
+| {js:class}`ValueVoid` | A value of type void |
 | {js:class}`ValueBool` | A class used to represent a value of type bool |
 | {js:class}`ValueUInt8` | A class used to represent a value of type uint8 |
 | {js:class}`ValueUInt16` | A class used to represent a value of type uint16 |

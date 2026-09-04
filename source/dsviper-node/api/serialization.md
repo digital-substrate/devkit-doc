@@ -127,7 +127,7 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 | Class | Description |
 |-------|-------------|
 | {js:class}`Codec` | The registry of named codecs: ask for one by name with query() or check() |
-| {js:class}`StreamCodecInstancing` | An interface used to create encoder, decoder and sizer |
+| {js:class}`StreamCodecInstancing` | Creates the encoder, the decoder and the sizer of one codec |
 | {js:class}`Fuzzer` | Generates random values against a set of definitions |
 
 ## Binary Streams
@@ -143,11 +143,11 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`StreamReaderBlob` | A class used to read data from a blob |
-| {js:class}`StreamReaderFile` | A class used to read data from a file |
-| {js:class}`StreamReaderSharedMemory` | A class used to read data from a shared memory region |
-| {js:class}`StreamWriterBlob` | A class used to write data to a blob |
-| {js:class}`StreamWriterFile` | A class used to write data to a file |
+| {js:class}`StreamReaderBlob` | Reads data from a blob |
+| {js:class}`StreamReaderFile` | Reads data from a file |
+| {js:class}`StreamReaderSharedMemory` | Reads data from a shared memory region |
+| {js:class}`StreamWriterBlob` | Writes data to a blob |
+| {js:class}`StreamWriterFile` | Writes data to a file |
 | {js:class}`StreamWriterSharedMemory` | A class used to write data to a shared memory region |
 
 ## Protocols

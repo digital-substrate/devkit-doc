@@ -161,14 +161,14 @@ Available from the Node binding 1.2.9 (runtime 1.2.24) — see {doc}`../../chang
 | {js:class}`CommitDatabaseSQLite` | A low-level class used to represent the database based on SQLite3 through the CommitDatabasing interface |
 | {js:class}`CommitDatabaseRemote` | A low-level class used to represent a remote Commit database through the CommitDatabasing interface |
 | {js:class}`CommitDatabaseServer` | Serve a CommitDatabase over a socket, one C++ thread per client |
-| {js:class}`CommitDatabasing` | An interface used to abstract the implementation of the persistence layer for a Commit database |
+| {js:class}`CommitDatabasing` | Abstracts the persistence layer behind a Commit database |
 
 ## State Access
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`CommitState` | A class used to represent data at a specific commit |
-| {js:class}`CommitMutableState` | A class used to register the mutations of a value executed through the AttachmentMutating interface |
+| {js:class}`CommitState` | The data as it stands at one commit |
+| {js:class}`CommitMutableState` | Registers the mutations of a value executed through the AttachmentMutating interface |
 | {js:class}`CommitStateBuilder` | Reconstructs a CommitState from a chosen commit |
 
 ## History & DAG
@@ -177,7 +177,7 @@ Available from the Node binding 1.2.9 (runtime 1.2.24) — see {doc}`../../chang
 |-------|-------------|
 | {js:class}`CommitNode` | A class used to represent a node in the commit DAG |
 | {js:class}`CommitNodeGrid` | A class used to represent the location of a commit node in the grid |
-| {js:class}`CommitNodeGridBuilder` | A class used to build the grid layout of the commit DAG |
+| {js:class}`CommitNodeGridBuilder` | Builds the grid layout of the commit DAG |
 | {js:class}`CommitHeader` | What identifies a commit, without its content |
 | {js:class}`CommitData` | A class used to represent data associated with a commit during the synchronization of two databases |
 | {js:class}`CommitEvalAction` | A class used by the evaluator to reconstruct a value by executing mutation opcodes |
@@ -189,7 +189,7 @@ Available from the Node binding 1.2.9 (runtime 1.2.24) — see {doc}`../../chang
 |-------|-------------|
 | {js:class}`CommitStore` | A high-level application class used to implement the store, dispatch, undo/redo and notification concepts inspired by the redux approach |
 | {js:class}`CommitStoreNotifying` | An interface used to represent the notification emitted by a store |
-| {js:class}`CommitSynchronizer` | A class used to synchronize two concrete databases through the CommitDatabasing interface (low-level driver interface) |
+| {js:class}`CommitSynchronizer` | Synchronizes two concrete databases through the CommitDatabasing interface (low-level driver interface) |
 | {js:class}`CommitSynchronizerInfo` | What a synchronization found |
 | {js:class}`CommitSynchronizerInfoTransmit` | A class used to represent statistics of data exchanged during the synchronization of two databases |
 | {js:class}`CommitSyncData` | A class used to represent data exchanged during the synchronization of two databases |

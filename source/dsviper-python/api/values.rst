@@ -45,9 +45,9 @@ Choosing the Right Pattern
    * - ``Value.create(type, data)``
      - Generic factory with type
      - ``Value.create(t_vec, [1,2,3])``
-   * - ``Value.decode(type, bytes)``
+   * - ``Value.decode(blob, type, definitions)``
      - Deserialize from binary
-     - ``Value.decode(Type.STRING, data)``
+     - ``Value.decode(blob, Type.STRING, defs.const())``
    * - ``ValueXxx.cast(value)``
      - Type casting
      - ``ValueInt64.cast(v)``

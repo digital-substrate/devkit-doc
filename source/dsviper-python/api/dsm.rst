@@ -35,7 +35,7 @@ Quick Start
        print(f"  Key: {att.key_type()}, Doc: {att.document_type()}")
 
    # Inject constants for runtime use
-   defs.inject()  # Creates MYAPP_A_*, MYAPP_S_*, etc.
+   defs.inject()  # Creates MYAPP_T_*, MYAPP_K_*, MYAPP_S_*, MYAPP_A_*, MYAPP_P_*
 
 Parsing
 -------

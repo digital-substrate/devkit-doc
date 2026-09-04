@@ -57,13 +57,13 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 
 | Class | Purpose | Example |
 |-------|---------|---------|
-| {js:class}`Path` | A class used to construct the location of a portion of a value |
+| {js:class}`Path` | Constructs the location of a portion of a value |
 | {js:class}`Error` | The structured error raised by Viper: component, domain, code and message |
 | {js:class}`Logging` | An interface to emit a message |
-| {js:class}`LoggerReport` | A class used to collect messages |
-| {js:class}`HashSHA1` | A class used to hash data with SHA1 |
+| {js:class}`LoggerReport` | Collects messages instead of emitting them |
+| {js:class}`HashSHA1` | Hashes data with SHA1 |
 | {js:class}`NameSpace` | A UUID and a name, under which types are registered |
-| {js:class}`Definitions` | A class used to register concept, club, enumeration, structure and attachment |
+| {js:class}`Definitions` | Registers concepts, clubs, enums, structs and attachments |
 
 The mirror of this page for the Python binding is {doc}`../../dsviper-python/api/core`.
 
@@ -77,7 +77,7 @@ The mirror of this page for the Python binding is {doc}`../../dsviper-python/api
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`Path` | A class used to construct the location of a portion of a value |
+| {js:class}`Path` | Constructs the location of a portion of a value |
 | {js:class}`PathConst` | A finished Path: read or write the value it points at |
 | {js:class}`PathComponent` | One step of a Path: what kind of step, and the value it carries |
 | {js:class}`PathElementInfo` | Where an element sits inside a set |
@@ -94,20 +94,20 @@ The mirror of this page for the Python binding is {doc}`../../dsviper-python/api
 | Class | Description |
 |-------|-------------|
 | {js:class}`Hashing` | An interface to abstract a hasher |
-| {js:class}`HashCRC32` | A class used to hash data with CRC32 |
-| {js:class}`HashMD5` | A class used to hash data with MD5 |
-| {js:class}`HashSHA1` | A class used to hash data with SHA1 |
-| {js:class}`HashSHA256` | A class used to hash data with SHA256 |
-| {js:class}`HashSHA3` | A class used to hash a data with SHA3 |
+| {js:class}`HashCRC32` | Hashes data with CRC32 |
+| {js:class}`HashMD5` | Hashes data with MD5 |
+| {js:class}`HashSHA1` | Hashes data with SHA1 |
+| {js:class}`HashSHA256` | Hashes data with SHA256 |
+| {js:class}`HashSHA3` | Hashes data with SHA3 |
 
 ## Logging
 
 | Class | Description |
 |-------|-------------|
 | {js:class}`Logging` | An interface to emit a message |
-| {js:class}`LoggerConsole` | A class used to display a message on the console |
-| {js:class}`LoggerReport` | A class used to collect messages |
-| {js:class}`LoggerNull` | A class used to discard messages |
+| {js:class}`LoggerConsole` | Prints a message on the console |
+| {js:class}`LoggerReport` | Collects messages instead of emitting them |
+| {js:class}`LoggerNull` | Discards every message |
 
 ## Utilities
 
@@ -118,8 +118,8 @@ The mirror of this page for the Python binding is {doc}`../../dsviper-python/api
 | {js:class}`SharedMemory` | A named memory region shared between processes |
 | {js:class}`Socket` | A passive (listening) socket for a server |
 | {js:class}`Float16` | The 16-bit storage of a float value, converted to and from float |
-| {js:class}`KeyHelper` | A class used to collect keys, attachments and missing attachments for a key |
-| {js:class}`KeyNamer` | A class used to get a name for a key from available attachments |
+| {js:class}`KeyHelper` | Collects the keys, attachments and missing attachments of a key |
+| {js:class}`KeyNamer` | Finds a display name for a key among the attachments that carry one |
 
 ## Reference
 

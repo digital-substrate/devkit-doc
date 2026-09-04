@@ -122,11 +122,11 @@ const [report, dsmDefs, defs] = DSMBuilder.assemble('model.dsm').parse(sourceMap
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`DSMBuilder` | A class used to assemble a collection of DSM Definitions from various sources |
+| {js:class}`DSMBuilder` | Assembles DSM definitions from several sources |
 | {js:class}`DSMBuilderPart` | A class used to represent a part of the assembled definitions |
 | {js:class}`DSMDefinitions` | A parsed model, whole |
-| {js:class}`DSMDefinitionsInspector` | A class used to retrieve registered concepts, clubs, enumerations, structures from TypeName and attachments from identifier |
-| {js:class}`DSMParseReport` | A class used to collect the error occurred while parsing the assembled definitions |
+| {js:class}`DSMDefinitionsInspector` | Retrieves parsed declarations by TypeName, and attachments by identifier |
+| {js:class}`DSMParseReport` | Collects the errors found while parsing the assembled definitions |
 | {js:class}`DSMParseError` | One parse failure |
 
 ## Model Elements
@@ -180,10 +180,10 @@ const [report, dsmDefs, defs] = DSMBuilder.assemble('model.dsm').parse(sourceMap
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`Definitions` | A class used to register concept, club, enumeration, structure and attachment |
-| {js:class}`DefinitionsConst` | A class used to retrieve registered concepts, clubs, enumerations, structures and attachments |
-| {js:class}`DefinitionsCollector` | A class used to collect referenced types |
-| {js:class}`DefinitionsInspector` | A class used to retrieve registered concepts, clubs, enumerations, structures and attachments from TypeName |
+| {js:class}`Definitions` | Registers concepts, clubs, enums, structs and attachments |
+| {js:class}`DefinitionsConst` | Retrieves registered types and attachments by runtime id |
+| {js:class}`DefinitionsCollector` | Collects the types a subset of definitions references |
+| {js:class}`DefinitionsInspector` | Retrieves registered types by TypeName, and attachments by identifier |
 | {js:class}`DefinitionsExtendInfo` | A class used to represent the types exchanged during the synchronization of two databases |
 
 ## Source Map

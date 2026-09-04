@@ -14,6 +14,47 @@ pip install -r requirements.txt
 This installs Sphinx, the Furo theme, MyST parser, and `dsviper` (required by the
 `pyi_signatures` extension to extract API type hints from the installed package).
 
+The Node API reference needs the TypeScript declarations as well:
+
+```bash
+npm install
+```
+
+### Building against the bindings under development
+
+Both API references are generated from the **installed** binding, not from this
+repository: `autosummary` reads the `dsviper` package, and `sphinx-js` runs
+TypeDoc over `node_modules/@digitalsubstrate/dsviper`. On a tag build that is
+what you want — the published documentation describes the published packages.
+
+While improving documentation it is the opposite of what you want. Docstrings
+you have just written live in the binding repositories, and a build against the
+last release cannot see them. Point both at the working copies:
+
+```bash
+# Python — editable install of the wheel
+pip install -e ../com.digitalsubstrate.viper/dsviper_wheel
+
+# Node — the npm equivalent, a symlink into node_modules
+(cd ../com.digitalsubstrate.viper/dsviper_node && npm link)
+npm link @digitalsubstrate/dsviper
+```
+
+Neither touches `requirements.txt`, `package.json` or `package-lock.json`, so
+CI still installs the published packages with `pip install -r` and `npm ci`.
+
+Check which one you are building against before trusting a page:
+
+```bash
+python -c "import dsviper; print(dsviper.version())"
+node -e "console.log(require('@digitalsubstrate/dsviper/package.json').version)"
+```
+
+A Node reference built against a stale package is not obviously wrong — it
+renders, and every link resolves. The summary tables under `source/dsviper-node/`
+are written by hand and the prototypes below them come from TypeDoc, so a stale
+package makes the two halves of a page disagree while both look plausible.
+
 ## Build
 
 ```bash

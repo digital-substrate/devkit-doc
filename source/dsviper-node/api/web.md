@@ -82,10 +82,10 @@ The mirror of this page for the Python binding is {doc}`../../dsviper-python/api
 
 ## Classes
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`DocumentNode` | One node of a document seen as a tree |
-| {js:class}`Html` | Renders Viper data as HTML |
+```{js-summary}
+DocumentNode
+Html
+```
 
 ## Reference
 

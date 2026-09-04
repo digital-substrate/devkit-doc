@@ -64,82 +64,82 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 
 ## Base Class
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`Value` | Creates values, and converts between them and native JS values |
+```{js-summary}
+Value
+```
 
 ## Primitive Values
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`ValueVoid` | A value of type void |
-| {js:class}`ValueBool` | A value of type bool |
-| {js:class}`ValueUInt8` | A value of type uint8 |
-| {js:class}`ValueUInt16` | A value of type uint16 |
-| {js:class}`ValueUInt32` | A value of type uint32 |
-| {js:class}`ValueUInt64` | A value of type uint64 |
-| {js:class}`ValueInt8` | A value of type int8 |
-| {js:class}`ValueInt16` | A value of type int16 |
-| {js:class}`ValueInt32` | A value of type int32 |
-| {js:class}`ValueInt64` | A value of type int64 |
-| {js:class}`ValueFloat` | A value of type float |
-| {js:class}`ValueDouble` | A value of type double |
-| {js:class}`ValueString` | A value of type string |
-| {js:class}`ValueBlob` | A value of type blob |
-| {js:class}`ValueBlobId` | A value of type blob_id |
-| {js:class}`ValueCommitId` | A value of type commit_id |
-| {js:class}`ValueUUId` | A value of type uuid |
+```{js-summary}
+ValueVoid
+ValueBool
+ValueUInt8
+ValueUInt16
+ValueUInt32
+ValueUInt64
+ValueInt8
+ValueInt16
+ValueInt32
+ValueInt64
+ValueFloat
+ValueDouble
+ValueString
+ValueBlob
+ValueBlobId
+ValueCommitId
+ValueUUId
+```
 
 ## Container Values
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`ValueVector` | A value of type vector<element_type> |
-| {js:class}`ValueVectorIter` | Iterator for ValueVector elements |
-| {js:class}`ValueSet` | A value of type set<element_type> |
-| {js:class}`ValueSetIter` | Iterator for ValueSet elements |
-| {js:class}`ValueMap` | A value of type map<key_type, element_type> |
-| {js:class}`ValueXArray` | A value of type xarray<element_type> |
-| {js:class}`ValueOptional` | A value of type optional<element_type> |
+```{js-summary}
+ValueVector
+ValueVectorIter
+ValueSet
+ValueSetIter
+ValueMap
+ValueXArray
+ValueOptional
+```
 
 ## Algebraic Values
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`ValueTuple` | A value of type tuple<T0, ...> |
-| {js:class}`ValueTupleIter` | Iterator for ValueTuple elements |
-| {js:class}`ValueVec` | A value of type vec<numeric_type, size> |
-| {js:class}`ValueMat` | A value of type mat<numeric_type, columns, rows> |
-| {js:class}`ValueVariant` | A value of type variant<T0, ...> |
-| {js:class}`ValueAny` | A value of any type |
+```{js-summary}
+ValueTuple
+ValueTupleIter
+ValueVec
+ValueMat
+ValueVariant
+ValueAny
+```
 
 ## User-Defined Values
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`ValueStructure` | A value of type struct |
-| {js:class}`ValueEnumeration` | A value of type enum |
-| {js:class}`ValueKey` | A value of type key<element_type> |
+```{js-summary}
+ValueStructure
+ValueEnumeration
+ValueKey
+```
 
 ## Value Program
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`ValueProgram` | The sequence of opcodes a commit carries |
-| {js:class}`ValueOpcodeKey` | What an opcode applies to: an attachment, an instance, and that instance's concept |
-| {js:class}`ValueOpcode` | The base of the opcode hierarchy |
-| {js:class}`ValueOpcodeDocumentSet` | Writes a whole document at a key — the only opcode without a path |
-| {js:class}`ValueOpcodeDocumentUpdate` | Writes a value at a path inside a document |
-| {js:class}`ValueOpcodeMapUnion` | Adds entries to the map at a path, replacing the keys already there |
-| {js:class}`ValueOpcodeMapSubtract` | Removes from the map at a path the entries whose key it carries |
-| {js:class}`ValueOpcodeMapUpdate` | Writes entries over the keys the map at a path already holds, inserting none |
-| {js:class}`ValueOpcodeSetUnion` | Adds elements to the set at a path |
-| {js:class}`ValueOpcodeSetSubtract` | Removes elements from the set at a path |
-| {js:class}`ValueOpcodeXArrayInsert` | Inserts a position into the xarray at a path, before another one |
-| {js:class}`ValueOpcodeXArrayRemove` | Removes a position from the xarray at a path |
-| {js:class}`ValueOpcodeXArrayUpdate` | Writes a value at a position of the xarray at a path |
-| {js:class}`ValueProcessorTrace` | The execution of one program: whether it ran, and the opcodes it applied |
-| {js:class}`ValueProcessorTraceOpcode` | One step of a traced execution: the opcode, and the exception it raised if it did |
+```{js-summary}
+ValueProgram
+ValueOpcodeKey
+ValueOpcode
+ValueOpcodeDocumentSet
+ValueOpcodeDocumentUpdate
+ValueOpcodeMapUnion
+ValueOpcodeMapSubtract
+ValueOpcodeMapUpdate
+ValueOpcodeSetUnion
+ValueOpcodeSetSubtract
+ValueOpcodeXArrayInsert
+ValueOpcodeXArrayRemove
+ValueOpcodeXArrayUpdate
+ValueProcessorTrace
+ValueProcessorTraceOpcode
+```
 
 ## Reference
 

@@ -69,57 +69,57 @@ The mirror of this page for the Python binding is {doc}`../../dsviper-python/api
 
 ## Namespace
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`NameSpace` | A UUID and a name, under which types are registered |
+```{js-summary}
+NameSpace
+```
 
 ## Paths
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`Path` | Constructs the location of a portion of a value |
-| {js:class}`PathConst` | A finished Path: read or write the value it points at |
-| {js:class}`PathComponent` | One step of a Path: what kind of step, and the value it carries |
-| {js:class}`PathElementInfo` | Where an element sits inside a set |
-| {js:class}`PathEntryKeyInfo` | Where an entry sits inside a map |
+```{js-summary}
+Path
+PathConst
+PathComponent
+PathElementInfo
+PathEntryKeyInfo
+```
 
 ## Function Pools
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`FunctionPrototype` | The signature of a function: its return type and its parameters |
+```{js-summary}
+FunctionPrototype
+```
 
 ## Hashing
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`Hashing` | An interface to abstract a hasher |
-| {js:class}`HashCRC32` | Hashes data with CRC32 |
-| {js:class}`HashMD5` | Hashes data with MD5 |
-| {js:class}`HashSHA1` | Hashes data with SHA1 |
-| {js:class}`HashSHA256` | Hashes data with SHA256 |
-| {js:class}`HashSHA3` | Hashes data with SHA3 |
+```{js-summary}
+Hashing
+HashCRC32
+HashMD5
+HashSHA1
+HashSHA256
+HashSHA3
+```
 
 ## Logging
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`Logging` | An interface to emit a message |
-| {js:class}`LoggerConsole` | Prints a message on the console |
-| {js:class}`LoggerReport` | Collects messages instead of emitting them |
-| {js:class}`LoggerNull` | Discards every message |
+```{js-summary}
+Logging
+LoggerConsole
+LoggerReport
+LoggerNull
+```
 
 ## Utilities
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`Error` | The structured error raised by Viper: component, domain, code and message |
-| {js:class}`Cancelation` | A cooperative cancellation flag |
-| {js:class}`SharedMemory` | A named memory region shared between processes |
-| {js:class}`Socket` | A passive (listening) socket for a server |
-| {js:class}`Float16` | The 16-bit storage of a float value, converted to and from float |
-| {js:class}`KeyHelper` | Collects the keys, attachments and missing attachments of a key |
-| {js:class}`KeyNamer` | Finds a display name for a key among the attachments that carry one |
+```{js-summary}
+Error
+Cancelation
+SharedMemory
+Socket
+Float16
+KeyHelper
+KeyNamer
+```
 
 ## Reference
 

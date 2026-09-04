@@ -37,6 +37,7 @@ extensions = [
 	'sphinxext.opengraph',
 	'dsm_lexer',
 	'pyi_signatures',
+	'js_summary',
 	'sphinx_js',
 ]
 

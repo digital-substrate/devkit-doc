@@ -69,16 +69,16 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 
 ## Core Classes
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`Attachment` | The declaration binding a concept to a value type |
+```{js-summary}
+Attachment
+```
 
 ## Attachment Interfaces
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`AttachmentGetting` | Read access to the documents attached to a set of keys |
-| {js:class}`AttachmentMutating` | Expresses fine-grained mutations of a value |
+```{js-summary}
+AttachmentGetting
+AttachmentMutating
+```
 
 ## Reference
 

@@ -60,27 +60,27 @@ The mirror of this page for the Python binding is {doc}`../../dsviper-python/api
 
 ## Connection
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`ServiceRemote` | The connection to a service, and the root of what it exposes |
+```{js-summary}
+ServiceRemote
+```
 
 ## Stateless Pools
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`ServiceRemoteFunctionPool` | One stateless pool on a connected service |
-| {js:class}`ServiceRemoteFunctionPoolFunctions` | The functions of one pool, reached by attribute: service.pools.Tools.add |
-| {js:class}`ServiceRemoteFunctionPoolFunction` | The declaration of one function in a pool: its prototype and documentation |
-| {js:class}`ServiceRemoteFunction` | A resolved callable, obtained from a pool and a function name |
+```{js-summary}
+ServiceRemoteFunctionPool
+ServiceRemoteFunctionPoolFunctions
+ServiceRemoteFunctionPoolFunction
+ServiceRemoteFunction
+```
 
 ## Stateful Pools
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`ServiceRemoteAttachmentFunctionPool` | One stateful pool on a connected service |
-| {js:class}`ServiceRemoteAttachmentFunctionPoolFunctions` | The functions of one attachment pool a service serves, reached by attribute |
-| {js:class}`ServiceRemoteAttachmentFunctionPoolFunction` | The declaration of one attachment function |
-| {js:class}`ServiceRemoteAttachmentFunction` | A resolved attachment callable, obtained from a pool and a function name |
+```{js-summary}
+ServiceRemoteAttachmentFunctionPool
+ServiceRemoteAttachmentFunctionPoolFunctions
+ServiceRemoteAttachmentFunctionPoolFunction
+ServiceRemoteAttachmentFunction
+```
 
 ## Reference
 

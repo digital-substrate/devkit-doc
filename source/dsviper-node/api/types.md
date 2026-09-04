@@ -61,72 +61,72 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 
 ## Base Class
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`Type` | The primitive types, and the utilities that act on any type |
-| {js:class}`TypeName` | Describes the name of a type: its namespace and its identifier |
+```{js-summary}
+Type
+TypeName
+```
 
 ## Primitive Types
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`TypeVoid` | The void type |
-| {js:class}`TypeBool` | The bool type |
-| {js:class}`TypeUInt8` | The uint8 type |
-| {js:class}`TypeUInt16` | The uint16 type |
-| {js:class}`TypeUInt32` | The uint32 type |
-| {js:class}`TypeUInt64` | The uint64 type |
-| {js:class}`TypeInt8` | The int8 type |
-| {js:class}`TypeInt16` | The int16 type |
-| {js:class}`TypeInt32` | The int32 type |
-| {js:class}`TypeInt64` | The int64 type |
-| {js:class}`TypeFloat` | The float type |
-| {js:class}`TypeDouble` | The double type |
-| {js:class}`TypeString` | The string type |
-| {js:class}`TypeBlob` | The blob type |
-| {js:class}`TypeBlobId` | The blob_id type |
-| {js:class}`TypeCommitId` | The commit_id type |
-| {js:class}`TypeUUId` | The uuid type |
+```{js-summary}
+TypeVoid
+TypeBool
+TypeUInt8
+TypeUInt16
+TypeUInt32
+TypeUInt64
+TypeInt8
+TypeInt16
+TypeInt32
+TypeInt64
+TypeFloat
+TypeDouble
+TypeString
+TypeBlob
+TypeBlobId
+TypeCommitId
+TypeUUId
+```
 
 ## Container Types
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`TypeVector` | The vector<element_type> type |
-| {js:class}`TypeSet` | The set<element_type> type |
-| {js:class}`TypeMap` | The map<key_type, element_type> type |
-| {js:class}`TypeXArray` | The xarray<element_type> type |
-| {js:class}`TypeOptional` | The optional<element_type> type |
+```{js-summary}
+TypeVector
+TypeSet
+TypeMap
+TypeXArray
+TypeOptional
+```
 
 ## Algebraic Types
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`TypeTuple` | The tuple<T0, ...> type |
-| {js:class}`TypeVec` | The vec<numeric_type, size> type |
-| {js:class}`TypeMat` | The mat<numeric_type, columns, rows> type |
-| {js:class}`TypeVariant` | The variant<T0, ...> type |
-| {js:class}`TypeAny` | The any type |
+```{js-summary}
+TypeTuple
+TypeVec
+TypeMat
+TypeVariant
+TypeAny
+```
 
 ## User-Defined Types
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`TypeStructure` | A struct type |
-| {js:class}`TypeStructureDescriptor` | Describes the fields a struct will be created with |
-| {js:class}`TypeStructureField` | One field of a struct type |
-| {js:class}`TypeEnumeration` | An enum type |
-| {js:class}`TypeEnumerationCase` | One case of an enum type |
-| {js:class}`TypeEnumerationDescriptor` | Describes the cases an enum will be created with |
+```{js-summary}
+TypeStructure
+TypeStructureDescriptor
+TypeStructureField
+TypeEnumeration
+TypeEnumerationCase
+TypeEnumerationDescriptor
+```
 
 ## Concept Types
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`TypeConcept` | A concept type |
-| {js:class}`TypeClub` | A club type |
-| {js:class}`TypeKey` | The key<element_type> type |
-| {js:class}`TypeAnyConcept` | The any_concept type |
+```{js-summary}
+TypeConcept
+TypeClub
+TypeKey
+TypeAnyConcept
+```
 
 ## Reference
 

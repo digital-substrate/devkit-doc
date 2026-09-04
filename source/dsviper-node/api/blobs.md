@@ -88,31 +88,31 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 
 ## Core Classes
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`BlobLayout` | Describes the layout of one element in a blob |
-| {js:class}`BlobArray` | Reinterprets the blob of the internal BlobView as an array<blob_layout.data_type> |
-| {js:class}`BlobPack` | Several memory regions packed into one blob, described by a BlobPackDescriptor |
-| {js:class}`BlobPackDescriptor` | Describes the binary regions a BlobPack will hold |
-| {js:class}`BlobPackRegion` | One region of a BlobPack, filled from a Buffer, a TypedArray or an ArrayBuffer |
+```{js-summary}
+BlobLayout
+BlobArray
+BlobPack
+BlobPackDescriptor
+BlobPackRegion
+```
 
 ## Blob I/O
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`BlobStream` | Copies a huge blob (> 2GB) to a database |
-| {js:class}`BlobEncoder` | Builds a blob element by element: write(value) appends, end_encoding() returns the finished blob |
-| {js:class}`BlobEncoderLayout` | The layout of one element in a blob |
-| {js:class}`BlobView` | Interprets the bytes of a blob through its layout |
-| {js:class}`BlobData` | The bytes of one blob, with the blob_id and layout that go with them |
+```{js-summary}
+BlobStream
+BlobEncoder
+BlobEncoderLayout
+BlobView
+BlobData
+```
 
 ## Database Integration
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`BlobGetting` | Retrieves blobs from a persistence layer |
-| {js:class}`BlobInfo` | What a store knows about one blob without reading it: its id, layout, size, SQLite rowid, and whether it is chunked (over 2 GB) |
-| {js:class}`BlobStatistics` | How many blobs a store holds and how big they are: count, total, smallest, largest, in bytes |
+```{js-summary}
+BlobGetting
+BlobInfo
+BlobStatistics
+```
 
 ## Reference
 

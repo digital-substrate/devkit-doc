@@ -154,53 +154,53 @@ Available from the Node binding 1.2.9 (runtime 1.2.24) — see {doc}`../../chang
 
 ## Core Classes
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`Commit` | One commit as it is stored |
-| {js:class}`CommitDatabase` | A Commit database keeps the history of mutations in a DAG of commits |
-| {js:class}`CommitDatabaseSQLite` | A low-level class used to represent the database based on SQLite3 through the CommitDatabasing interface |
-| {js:class}`CommitDatabaseRemote` | A low-level class used to represent a remote Commit database through the CommitDatabasing interface |
-| {js:class}`CommitDatabaseServer` | Serve a CommitDatabase over a socket, one C++ thread per client |
-| {js:class}`CommitDatabasing` | Abstracts the persistence layer behind a Commit database |
+```{js-summary}
+Commit
+CommitDatabase
+CommitDatabaseSQLite
+CommitDatabaseRemote
+CommitDatabaseServer
+CommitDatabasing
+```
 
 ## State Access
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`CommitState` | The data as it stands at one commit |
-| {js:class}`CommitMutableState` | Registers the mutations of a value executed through the AttachmentMutating interface |
-| {js:class}`CommitStateBuilder` | Reconstructs a CommitState from a chosen commit |
+```{js-summary}
+CommitState
+CommitMutableState
+CommitStateBuilder
+```
 
 ## History & DAG
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`CommitNode` | One commit in the DAG, linked to the commits that follow it |
-| {js:class}`CommitNodeGrid` | One commit's place in the DAG once it is laid out on a grid |
-| {js:class}`CommitNodeGridBuilder` | Builds the grid layout of the commit DAG |
-| {js:class}`CommitHeader` | What identifies a commit, without its content |
-| {js:class}`CommitData` | One commit's encoded opcodes, with the header that places it |
-| {js:class}`CommitEvalAction` | A class used by the evaluator to reconstruct a value by executing mutation opcodes |
-| {js:class}`CommitDatabaseHelper` | Navigates the commit DAG |
+```{js-summary}
+CommitNode
+CommitNodeGrid
+CommitNodeGridBuilder
+CommitHeader
+CommitData
+CommitEvalAction
+CommitDatabaseHelper
+```
 
 ## Synchronization
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`CommitStore` | A high-level application class used to implement the store, dispatch, undo/redo and notification concepts inspired by the redux approach |
-| {js:class}`CommitStoreNotifying` | An interface used to represent the notification emitted by a store |
-| {js:class}`CommitSynchronizer` | Synchronizes two concrete databases through the CommitDatabasing interface (low-level driver interface) |
-| {js:class}`CommitSynchronizerInfo` | What a synchronization found |
-| {js:class}`CommitSynchronizerInfoTransmit` | What one synchronization actually transferred |
-| {js:class}`CommitSyncData` | The commits one database hands another when they synchronize |
+```{js-summary}
+CommitStore
+CommitStoreNotifying
+CommitSynchronizer
+CommitSynchronizerInfo
+CommitSynchronizerInfoTransmit
+CommitSyncData
+```
 
 ## Tracing
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`CommitStateTracing` | Asks a state for the trace of one document |
-| {js:class}`CommitStateTrace` | The replay of one document |
-| {js:class}`CommitStateTraceProgram` | One commit's contribution to a document |
+```{js-summary}
+CommitStateTracing
+CommitStateTrace
+CommitStateTraceProgram
+```
 
 ## Reference
 

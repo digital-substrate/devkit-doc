@@ -75,18 +75,18 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 
 ## Core Classes
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`Database` | A Database is a CRUD like transactional database |
-| {js:class}`DatabaseSQLite` | A low-level class used to represent a CRUD like database based on SQLite3 through the Databasing interface |
-| {js:class}`DatabaseRemote` | Accesses a CRUD like database on a remote repository, through the Databasing interface |
-| {js:class}`Databasing` | Abstracts the persistence layer behind a CRUD like database |
+```{js-summary}
+Database
+DatabaseSQLite
+DatabaseRemote
+Databasing
+```
 
 ## Low-Level
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`SQLite` | The settings and limits of one database file |
+```{js-summary}
+SQLite
+```
 
 ## Reference
 

@@ -97,13 +97,13 @@ The mirror of this page for the Python binding is {doc}`../../dsviper-python/api
 
 ## Classes
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`CommitDatabaseFlattener` | Collapses one chosen commit into a fresh single-commit CommitDatabase |
-| {js:class}`CommitDatabaseToDatabaseConverter` | Materializes one chosen commit as a flat, history-free Database |
-| {js:class}`DatabaseCopier` | Copies a Database into another Database, faithfully |
-| {js:class}`DatabaseToCommitDatabaseConverter` | Brings a flat Database under version control |
-| {js:class}`DatabaseTransferInfo` | Result of a database conversion: counts of copied documents and blobs |
+```{js-summary}
+CommitDatabaseFlattener
+CommitDatabaseToDatabaseConverter
+DatabaseCopier
+DatabaseToCommitDatabaseConverter
+DatabaseTransferInfo
+```
 
 ## Reference
 

@@ -120,84 +120,84 @@ const [report, dsmDefs, defs] = DSMBuilder.assemble('model.dsm').parse(sourceMap
 
 ## Parsing
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`DSMBuilder` | Assembles DSM definitions from several sources |
-| {js:class}`DSMBuilderPart` | One source appended to a DSMBuilder |
-| {js:class}`DSMDefinitions` | A parsed model, whole |
-| {js:class}`DSMDefinitionsInspector` | Retrieves parsed declarations by TypeName, and attachments by identifier |
-| {js:class}`DSMParseReport` | Collects the errors found while parsing the assembled definitions |
-| {js:class}`DSMParseError` | One parse failure |
+```{js-summary}
+DSMBuilder
+DSMBuilderPart
+DSMDefinitions
+DSMDefinitionsInspector
+DSMParseReport
+DSMParseError
+```
 
 ## Model Elements
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`DSMConcept` | A concept as declared: its qualified name and the concept it specialises, if any |
-| {js:class}`DSMClub` | A club as declared: its qualified name and the concepts it gathers |
-| {js:class}`DSMStructure` | A struct as declared: its qualified name and its fields, in order |
-| {js:class}`DSMStructureField` | One field of a struct, as declared: its name, its type, and the value it defaults to |
-| {js:class}`DSMEnumeration` | An enum as declared: its qualified name and its cases, in order |
-| {js:class}`DSMEnumerationCase` | One case of an enum, as declared: its name |
-| {js:class}`DSMAttachment` | An attachment as declared: its qualified name, the concept it keys on, and the type of the document it holds |
+```{js-summary}
+DSMConcept
+DSMClub
+DSMStructure
+DSMStructureField
+DSMEnumeration
+DSMEnumerationCase
+DSMAttachment
+```
 
 ## DSM Types
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`DSMType` |  |
-| {js:class}`DSMTypeKey` | The key<element_type> as a parsed model declares it |
-| {js:class}`DSMTypeVector` | The vector<element_type> as a parsed model declares it |
-| {js:class}`DSMTypeSet` | The set<element_type> as a parsed model declares it |
-| {js:class}`DSMTypeMap` | The map<key_type, element_type> as a parsed model declares it |
-| {js:class}`DSMTypeXArray` | The xarray<element_type> as a parsed model declares it |
-| {js:class}`DSMTypeOptional` | The optional<element_type> as a parsed model declares it |
-| {js:class}`DSMTypeTuple` | The tuple<T0, ...> as a parsed model declares it |
-| {js:class}`DSMTypeVec` | The vec<numeric_type, size> as a parsed model declares it |
-| {js:class}`DSMTypeMat` | The mat<numeric_type, columns, rows> as a parsed model declares it |
-| {js:class}`DSMTypeVariant` | The variant<T0, ...> as a parsed model declares it |
-| {js:class}`DSMTypeReference` | A type a parsed model names rather than spells out |
+```{js-summary}
+DSMType
+DSMTypeKey
+DSMTypeVector
+DSMTypeSet
+DSMTypeMap
+DSMTypeXArray
+DSMTypeOptional
+DSMTypeTuple
+DSMTypeVec
+DSMTypeMat
+DSMTypeVariant
+DSMTypeReference
+```
 
 ## Functions
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`DSMFunction` | A function as declared: its prototype |
-| {js:class}`DSMFunctionPool` | A function pool as declared: the uuid it is registered under and its name |
-| {js:class}`DSMFunctionPrototype` | A function signature as declared: its name, its parameters and their types, and what it returns |
-| {js:class}`DSMAttachmentFunction` | An attachment function as declared: its prototype, and whether it mutates the document or only reads it |
-| {js:class}`DSMAttachmentFunctionPool` | An attachment function pool as declared: the uuid it is registered under, its name, and its functions |
+```{js-summary}
+DSMFunction
+DSMFunctionPool
+DSMFunctionPrototype
+DSMAttachmentFunction
+DSMAttachmentFunctionPool
+```
 
 ## Literals
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`DSMLiteral` |  |
-| {js:class}`DSMLiteralValue` | A single literal written in a declaration: which kind it is, and its text |
-| {js:class}`DSMLiteralList` | A list literal written in a declaration: the literals it holds |
+```{js-summary}
+DSMLiteral
+DSMLiteralValue
+DSMLiteralList
+```
 
 ## Definitions
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`Definitions` | Registers concepts, clubs, enums, structs and attachments |
-| {js:class}`DefinitionsConst` | Retrieves registered types and attachments by runtime id |
-| {js:class}`DefinitionsCollector` | Collects the types a subset of definitions references |
-| {js:class}`DefinitionsInspector` | Retrieves registered types by TypeName, and attachments by identifier |
-| {js:class}`DefinitionsExtendInfo` | The definitions one database added to another's when they synchronized |
+```{js-summary}
+Definitions
+DefinitionsConst
+DefinitionsCollector
+DefinitionsInspector
+DefinitionsExtendInfo
+```
 
 ## Source Map
 
-| Class | Description |
-|-------|-------------|
-| {js:class}`DSMSourceMap` | A source-map collected while parsing DSM: the exact source spans of every declaration, field, case, namespace, resolved type-reference and type sub-expression |
-| {js:class}`DSMSourceSpan` | A source span: a 1-based line, and the [start, stop] character offsets into the content the builder assembled |
-| {js:class}`DSMSourceDeclaration` | A definition — struct, enum, concept, club or attachment — with its identifier and its source spans (name, block, documentation) |
-| {js:class}`DSMSourceField` | A struct field and its source spans (name, type, whole declaration, doc) |
-| {js:class}`DSMSourceCase` | An enumeration case and its source spans (name, doc) |
-| {js:class}`DSMSourceNameSpace` | A namespace declaration and its source spans (name, uuid) |
-| {js:class}`DSMSourceReference` | A resolved type-reference site: its source span and its referent TypeName |
-| {js:class}`DSMSourceType` | A type sub-expression occurrence: its source span and its fully-qualified DSM representation — the name-based identity of a type, such as `vector<Shop::Order>` |
+```{js-summary}
+DSMSourceMap
+DSMSourceSpan
+DSMSourceDeclaration
+DSMSourceField
+DSMSourceCase
+DSMSourceNameSpace
+DSMSourceReference
+DSMSourceType
+```
 
 ## Reference
 

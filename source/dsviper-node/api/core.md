@@ -57,13 +57,13 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 
 | Class | Purpose | Example |
 |-------|---------|---------|
-| {js:class}`Path` | Address and edit a portion of a nested value | `new Path().field('x').key('k')` |
-| {js:class}`Error` | Parse a thrown `ViperError` into fields | `Error.parse(e.message)` |
-| {js:class}`Logging` | Leveled diagnostics interface | `logger.logging().info(msg)` |
-| {js:class}`LoggerReport` | Capture messages into an array | `new LoggerReport(20).messages()` |
-| {js:class}`HashSHA1` | Hash a `ValueBlob` (also MD5, SHA256, SHA3, CRC32) | `HashSHA1.hash(blob)` |
-| {js:class}`NameSpace` | Group registered types under a UUID | `new NameSpace(uuid, 'App')` |
-| {js:class}`Definitions` | Register custom DSM types | `new Definitions()` |
+| {js:class}`Path` | A class used to construct the location of a portion of a value |
+| {js:class}`Error` | The structured error raised by Viper: component, domain, code and message |
+| {js:class}`Logging` | An interface to emit a message |
+| {js:class}`LoggerReport` | A class used to collect messages |
+| {js:class}`HashSHA1` | A class used to hash data with SHA1 |
+| {js:class}`NameSpace` | A UUID and a name, under which types are registered |
+| {js:class}`Definitions` | A class used to register concept, club, enumeration, structure and attachment |
 
 The mirror of this page for the Python binding is {doc}`../../dsviper-python/api/core`.
 
@@ -78,8 +78,8 @@ The mirror of this page for the Python binding is {doc}`../../dsviper-python/api
 | Class | Description |
 |-------|-------------|
 | {js:class}`Path` | A class used to construct the location of a portion of a value |
-| {js:class}`PathConst` | A finished Path: read a value through it, or write one |
-| {js:class}`PathComponent` | One step of a Path: a field name, a key, or an index |
+| {js:class}`PathConst` | A finished Path: read or write the value it points at |
+| {js:class}`PathComponent` | One step of a Path: what kind of step, and the value it carries |
 | {js:class}`PathElementInfo` | Where an element sits inside a set |
 | {js:class}`PathEntryKeyInfo` | Where an entry sits inside a map |
 
@@ -113,7 +113,7 @@ The mirror of this page for the Python binding is {doc}`../../dsviper-python/api
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`Error` | The structured error raised by Viper: component, domain, code and |
+| {js:class}`Error` | The structured error raised by Viper: component, domain, code and message |
 | {js:class}`Cancelation` | A cooperative cancellation flag |
 | {js:class}`SharedMemory` | A named memory region shared between processes |
 | {js:class}`Socket` | A passive (listening) socket for a server |

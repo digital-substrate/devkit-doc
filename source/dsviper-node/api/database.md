@@ -77,10 +77,10 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`Database` | A Database is a CRUD like transactional database. Use the static factory method |
-| {js:class}`DatabaseSQLite` | A low-level class used to represent a CRUD like database based on SQLite3 |
-| {js:class}`DatabaseRemote` | A low-level class used to access a CRUD like database from a remote repository |
-| {js:class}`Databasing` | An interface used to abstract the implementation of the persistence layer for a |
+| {js:class}`Database` | A Database is a CRUD like transactional database |
+| {js:class}`DatabaseSQLite` | A low-level class used to represent a CRUD like database based on SQLite3 through the Databasing interface |
+| {js:class}`DatabaseRemote` | A low-level class used to access a CRUD like database from a remote repository through the Databasing interface |
+| {js:class}`Databasing` | An interface used to abstract the implementation of the persistence layer for a CRUD like database |
 
 ## Low-Level
 

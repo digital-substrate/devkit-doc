@@ -88,10 +88,10 @@ no `StepperDelegate` class to expose.
 
 | Class | Purpose | Example |
 |-------|---------|---------|
-| {js:class}`DatabaseCopier` | Faithful `Database` → `Database` replica | `.copy(source, target)` |
-| {js:class}`CommitDatabaseFlattener` | Collapse a commit into a fresh single-commit store | `.flatten(source, id, target, label)` |
-| {js:class}`DatabaseToCommitDatabaseConverter` | Bring a flat store under version control | `.convert(source, target, label)` |
-| {js:class}`CommitDatabaseToDatabaseConverter` | Materialize one commit as a flat store | `.convert(source, id, target)` |
+| {js:class}`DatabaseCopier` | Copies a Database into another Database, faithfully |
+| {js:class}`CommitDatabaseFlattener` | Collapses one chosen commit into a fresh single-commit CommitDatabase |
+| {js:class}`DatabaseToCommitDatabaseConverter` | Brings a flat Database under version control |
+| {js:class}`CommitDatabaseToDatabaseConverter` | Materializes one chosen commit as a flat, history-free Database |
 
 The mirror of this page for the Python binding is {doc}`../../dsviper-python/api/transfer`.
 
@@ -100,7 +100,7 @@ The mirror of this page for the Python binding is {doc}`../../dsviper-python/api
 | Class | Description |
 |-------|-------------|
 | {js:class}`CommitDatabaseFlattener` | Collapses one chosen commit into a fresh single-commit CommitDatabase |
-| {js:class}`CommitDatabaseToDatabaseConverter` | Materializes one chosen commit as a flat, history-free Database. The commit |
+| {js:class}`CommitDatabaseToDatabaseConverter` | Materializes one chosen commit as a flat, history-free Database |
 | {js:class}`DatabaseCopier` | Copies a Database into another Database, faithfully |
 | {js:class}`DatabaseToCommitDatabaseConverter` | Brings a flat Database under version control |
 | {js:class}`DatabaseTransferInfo` | Result of a database conversion: counts of copied documents and blobs |

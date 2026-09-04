@@ -49,10 +49,10 @@ comes from `CommitStateBuilder.mergeState(db, ours, theirs)`.
 
 | Class | Purpose | Example |
 |-------|---------|---------|
-| {js:class}`CommitMergeAnalyzer` | The entry point: analyze, reconcile, materialize | `CommitMergeAnalyzer.analyzeMerge(db, merge)` |
-| {js:class}`CommitMergeAnalysis` | What the analysis found: documents, conflicts, base | `analysis.conflicts()` |
-| {js:class}`CommitMergeConflict` | One locus, with its base / ours / theirs / merged values | `c.oursValue()` |
-| {js:class}`CommitMergeResolution` | A conflict paired with the value to make survive | `new CommitMergeResolution(c, chosen)` |
+| {js:class}`CommitMergeAnalyzer` | Additive, post-merge 3-way reconciliation over a CommitDatabase |
+| {js:class}`CommitMergeAnalysis` | The result of a 3-way merge analysis |
+| {js:class}`CommitMergeConflict` | A single locus where one head's intent did not survive the merge |
+| {js:class}`CommitMergeResolution` | A supervisor's decree for one reconstructed conflict: the chosen value should survive at the conflict's locus |
 
 The mirror of this page for the Python binding is {doc}`../../dsviper-python/api/reconciliation`.
 
@@ -61,10 +61,10 @@ The mirror of this page for the Python binding is {doc}`../../dsviper-python/api
 | Class | Description |
 |-------|-------------|
 | {js:class}`CommitMergeAnalysis` | The result of a 3-way merge analysis |
-| {js:class}`CommitMergeAnalyzer` | Additive, post-merge 3-way reconciliation over a CommitDatabase. Static |
+| {js:class}`CommitMergeAnalyzer` | Additive, post-merge 3-way reconciliation over a CommitDatabase |
 | {js:class}`CommitMergeConflict` | A single locus where one head's intent did not survive the merge |
-| {js:class}`CommitMergeDocument` | All conflicts of one document (attachment, key) — the unit reconcile |
-| {js:class}`CommitMergeResolution` | A supervisor's decree for one conflict: the chosen value should survive |
+| {js:class}`CommitMergeDocument` | All reconstructed loci of one document (attachment, key) — the unit reconcile operates on |
+| {js:class}`CommitMergeResolution` | A supervisor's decree for one reconstructed conflict: the chosen value should survive at the conflict's locus |
 
 ## Reference
 

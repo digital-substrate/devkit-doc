@@ -119,27 +119,27 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 |-------|-------------|
 | {js:class}`ValueStructure` | A class used to represent a value of type struct |
 | {js:class}`ValueEnumeration` | A class used to represent a value of type enum |
-| {js:class}`ValueKey` | A class used to represent a value of type key<element_type>. Use the static |
+| {js:class}`ValueKey` | A class used to represent a value of type key<element_type> |
 
 ## Value Program
 
 | Class | Description |
 |-------|-------------|
 | {js:class}`ValueProgram` | The sequence of opcodes a commit carries |
-| {js:class}`ValueOpcodeKey` | A class used to retrieve the mutation opcodes for an instance of a concept for |
+| {js:class}`ValueOpcodeKey` | What an opcode applies to: an attachment, an instance, and that instance's concept |
 | {js:class}`ValueOpcode` | The base of the opcode hierarchy |
-| {js:class}`ValueOpcodeDocumentSet` | A class used to represent the type and the arguments of an opcode |
-| {js:class}`ValueOpcodeDocumentUpdate` | A class used to represent the type and the arguments of an opcode |
-| {js:class}`ValueOpcodeMapUnion` | A class used to represent the type and the arguments of an opcode |
-| {js:class}`ValueOpcodeMapSubtract` | A class used to represent the type and the arguments of an opcode |
-| {js:class}`ValueOpcodeMapUpdate` | A class used to represent the type and the arguments of an opcode |
-| {js:class}`ValueOpcodeSetUnion` | A class used to represent the type and the arguments of an opcode |
-| {js:class}`ValueOpcodeSetSubtract` | A class used to represent the type and the arguments of an opcode |
-| {js:class}`ValueOpcodeXArrayInsert` | A class used to represent the type and the arguments of an opcode |
-| {js:class}`ValueOpcodeXArrayRemove` | A class used to represent the type and the arguments of an opcode |
-| {js:class}`ValueOpcodeXArrayUpdate` | A class used to represent the type and the arguments of an opcode |
-| {js:class}`ValueProcessorTrace` | The execution of one program: whether it ran, and the opcodes it |
-| {js:class}`ValueProcessorTraceOpcode` | A class used to represent a traced opcode |
+| {js:class}`ValueOpcodeDocumentSet` | Writes a whole document at a key — the only opcode without a path |
+| {js:class}`ValueOpcodeDocumentUpdate` | Writes a value at a path inside a document |
+| {js:class}`ValueOpcodeMapUnion` | Adds entries to the map at a path, replacing the keys already there |
+| {js:class}`ValueOpcodeMapSubtract` | Removes from the map at a path the entries whose key it carries |
+| {js:class}`ValueOpcodeMapUpdate` | Writes entries over the keys the map at a path already holds, inserting none |
+| {js:class}`ValueOpcodeSetUnion` | Adds elements to the set at a path |
+| {js:class}`ValueOpcodeSetSubtract` | Removes elements from the set at a path |
+| {js:class}`ValueOpcodeXArrayInsert` | Inserts a position into the xarray at a path, before another one |
+| {js:class}`ValueOpcodeXArrayRemove` | Removes a position from the xarray at a path |
+| {js:class}`ValueOpcodeXArrayUpdate` | Writes a value at a position of the xarray at a path |
+| {js:class}`ValueProcessorTrace` | The execution of one program: whether it ran, and the opcodes it applied |
+| {js:class}`ValueProcessorTraceOpcode` | One step of a traced execution: the opcode, and the exception it raised if it did |
 
 ## Reference
 

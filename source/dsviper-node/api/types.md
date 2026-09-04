@@ -125,7 +125,7 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 |-------|-------------|
 | {js:class}`TypeConcept` | A class used to represent a concept type |
 | {js:class}`TypeClub` | A class used to represent a club type |
-| {js:class}`TypeKey` | A class used to represent a key<element_type> type where element_type |
+| {js:class}`TypeKey` | A class used to represent a key<element_type> type where element_type is a concept, club or any_concept |
 | {js:class}`TypeAnyConcept` | A class used to represent the any_concept type |
 
 ## Reference

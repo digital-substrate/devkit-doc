@@ -75,8 +75,8 @@ Its Python twin `dsviper-web-cdbe` renders the same tree through Flask.
 
 | Class | Purpose | Example |
 |-------|---------|---------|
-| {js:class}`DocumentNode` | A document as a typed, walkable tree | `DocumentNode.createDocuments(key, getting)` |
-| {js:class}`Html` | Render values, types, documents, or a whole page | `Html.documentsDetails(nodes, true)` |
+| {js:class}`DocumentNode` | One node of a document seen as a tree |
+| {js:class}`Html` | Renders Viper data as HTML |
 
 The mirror of this page for the Python binding is {doc}`../../dsviper-python/api/web`.
 

@@ -51,10 +51,10 @@ comfort layer over exactly these calls — the same shape the Python REPL client
 
 | Class | Purpose | Example |
 |-------|---------|---------|
-| {js:class}`ServiceRemote` | The connection, and the root of all introspection | `ServiceRemote.connect(host, port, defs)` |
-| {js:class}`ServiceRemoteFunctionPool` | One stateless pool: name, documentation, functions | `pool.functions()` |
-| {js:class}`ServiceRemoteFunction` | A resolved callable | `fn.call(32, 10)` |
-| {js:class}`ServiceRemoteAttachmentFunctionPool` | One stateful pool, operating on attachments | `pool.check('rename')` |
+| {js:class}`ServiceRemote` | The connection to a service, and the root of what it exposes |
+| {js:class}`ServiceRemoteFunctionPool` | One stateless pool on a connected service |
+| {js:class}`ServiceRemoteFunction` | A resolved callable, obtained from a pool and a function name |
+| {js:class}`ServiceRemoteAttachmentFunctionPool` | One stateful pool on a connected service |
 
 The mirror of this page for the Python binding is {doc}`../../dsviper-python/api/services`.
 
@@ -69,18 +69,18 @@ The mirror of this page for the Python binding is {doc}`../../dsviper-python/api
 | Class | Description |
 |-------|-------------|
 | {js:class}`ServiceRemoteFunctionPool` | One stateless pool on a connected service |
-| {js:class}`ServiceRemoteFunctionPoolFunctions` | The functions of one pool, reached by attribute: service.pools.Tools.add. A |
+| {js:class}`ServiceRemoteFunctionPoolFunctions` | The functions of one pool, reached by attribute: service.pools.Tools.add |
 | {js:class}`ServiceRemoteFunctionPoolFunction` | The declaration of one function in a pool: its prototype and documentation |
-| {js:class}`ServiceRemoteFunction` | A resolved callable, obtained from a pool and a function name. Call it like a |
+| {js:class}`ServiceRemoteFunction` | A resolved callable, obtained from a pool and a function name |
 
 ## Stateful Pools
 
 | Class | Description |
 |-------|-------------|
 | {js:class}`ServiceRemoteAttachmentFunctionPool` | One stateful pool on a connected service |
-| {js:class}`ServiceRemoteAttachmentFunctionPoolFunctions` | The functions of one attachment pool, reached by attribute. A lookup |
+| {js:class}`ServiceRemoteAttachmentFunctionPoolFunctions` | The functions of one attachment pool a service serves, reached by attribute |
 | {js:class}`ServiceRemoteAttachmentFunctionPoolFunction` | The declaration of one attachment function |
-| {js:class}`ServiceRemoteAttachmentFunction` | A resolved attachment callable, obtained from a pool and a function name. Call |
+| {js:class}`ServiceRemoteAttachmentFunction` | A resolved attachment callable, obtained from a pool and a function name |
 
 ## Reference
 

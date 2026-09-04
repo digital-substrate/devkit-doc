@@ -122,24 +122,24 @@ const [report, dsmDefs, defs] = DSMBuilder.assemble('model.dsm').parse(sourceMap
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`DSMBuilder` | A class used to assemble a collection of DSM Definitions from various |
+| {js:class}`DSMBuilder` | A class used to assemble a collection of DSM Definitions from various sources |
 | {js:class}`DSMBuilderPart` | A class used to represent a part of the assembled definitions |
 | {js:class}`DSMDefinitions` | A parsed model, whole |
-| {js:class}`DSMDefinitionsInspector` | A class used to retrieve registered concepts, clubs, enumerations, |
-| {js:class}`DSMParseReport` | A class used to collect the error occurred while parsing the assembled |
+| {js:class}`DSMDefinitionsInspector` | A class used to retrieve registered concepts, clubs, enumerations, structures from TypeName and attachments from identifier |
+| {js:class}`DSMParseReport` | A class used to collect the error occurred while parsing the assembled definitions |
 | {js:class}`DSMParseError` | One parse failure |
 
 ## Model Elements
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`DSMConcept` | A class used to represent the definition of a concept |
-| {js:class}`DSMClub` | A class used to represent the definition of a club |
-| {js:class}`DSMStructure` | A class used to represent the definition of a struct |
-| {js:class}`DSMStructureField` | A class used to represent the definition of a field for a struct |
-| {js:class}`DSMEnumeration` | A class used to represent the definition of an enum |
-| {js:class}`DSMEnumerationCase` | A class used to represent the definition of a case for an enum |
-| {js:class}`DSMAttachment` | A class used to represent the definition of an attachment |
+| {js:class}`DSMConcept` | A concept as declared: its qualified name and the concept it specialises, if any |
+| {js:class}`DSMClub` | A club as declared: its qualified name and the concepts it gathers |
+| {js:class}`DSMStructure` | A struct as declared: its qualified name and its fields, in order |
+| {js:class}`DSMStructureField` | One field of a struct, as declared: its name, its type, and the value it defaults to |
+| {js:class}`DSMEnumeration` | An enum as declared: its qualified name and its cases, in order |
+| {js:class}`DSMEnumerationCase` | One case of an enum, as declared: its name |
+| {js:class}`DSMAttachment` | An attachment as declared: its qualified name, the concept it keys on, and the type of the document it holds |
 
 ## DSM Types
 
@@ -162,42 +162,42 @@ const [report, dsmDefs, defs] = DSMBuilder.assemble('model.dsm').parse(sourceMap
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`DSMFunction` | A class used to represent the definition of a function |
-| {js:class}`DSMFunctionPool` | A class used to represent the definition of a function pool |
-| {js:class}`DSMFunctionPrototype` | A class used to represent the definition of a function prototype |
-| {js:class}`DSMAttachmentFunction` | A class used to represent the definition of an attachment function |
-| {js:class}`DSMAttachmentFunctionPool` | A class used to represent the definition of an attachment function pool |
+| {js:class}`DSMFunction` | A function as declared: its prototype |
+| {js:class}`DSMFunctionPool` | A function pool as declared: the uuid it is registered under and its name |
+| {js:class}`DSMFunctionPrototype` | A function signature as declared: its name, its parameters and their types, and what it returns |
+| {js:class}`DSMAttachmentFunction` | An attachment function as declared: its prototype, and whether it mutates the document or only reads it |
+| {js:class}`DSMAttachmentFunctionPool` | An attachment function pool as declared: the uuid it is registered under, its name, and its functions |
 
 ## Literals
 
 | Class | Description |
 |-------|-------------|
 | {js:class}`DSMLiteral` |  |
-| {js:class}`DSMLiteralValue` | A class used to represent the definition of a literal value |
-| {js:class}`DSMLiteralList` | A class used to represent the definition of a literal list |
+| {js:class}`DSMLiteralValue` | A single literal written in a declaration: which kind it is, and its text |
+| {js:class}`DSMLiteralList` | A list literal written in a declaration: the literals it holds |
 
 ## Definitions
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`Definitions` | A class used to register concept, club, enumeration, structure and |
-| {js:class}`DefinitionsConst` | A class used to retrieve registered concepts, clubs, enumerations, structures |
+| {js:class}`Definitions` | A class used to register concept, club, enumeration, structure and attachment |
+| {js:class}`DefinitionsConst` | A class used to retrieve registered concepts, clubs, enumerations, structures and attachments |
 | {js:class}`DefinitionsCollector` | A class used to collect referenced types |
-| {js:class}`DefinitionsInspector` | A class used to retrieve registered concepts, clubs, enumerations, |
-| {js:class}`DefinitionsExtendInfo` | A class used to represent the types exchanged during the synchronization of two |
+| {js:class}`DefinitionsInspector` | A class used to retrieve registered concepts, clubs, enumerations, structures and attachments from TypeName |
+| {js:class}`DefinitionsExtendInfo` | A class used to represent the types exchanged during the synchronization of two databases |
 
 ## Source Map
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`DSMSourceMap` | A source-map collected while parsing DSM: the exact source spans of every |
-| {js:class}`DSMSourceSpan` | A source text span (line, start, stop) of a definition token |
-| {js:class}`DSMSourceDeclaration` | A definition declaration, its identifier and its source spans (name, block, |
+| {js:class}`DSMSourceMap` | A source-map collected while parsing DSM: the exact source spans of every declaration, field, case, namespace, resolved type-reference and type sub-expression |
+| {js:class}`DSMSourceSpan` | A source span: a 1-based line, and the [start, stop] character offsets into the content the builder assembled |
+| {js:class}`DSMSourceDeclaration` | A definition — struct, enum, concept, club or attachment — with its identifier and its source spans (name, block, documentation) |
 | {js:class}`DSMSourceField` | A struct field and its source spans (name, type, whole declaration, doc) |
 | {js:class}`DSMSourceCase` | An enumeration case and its source spans (name, doc) |
-| {js:class}`DSMSourceNameSpace` | A namespace header and the source spans of its name and UUID |
+| {js:class}`DSMSourceNameSpace` | A namespace declaration and its source spans (name, uuid) |
 | {js:class}`DSMSourceReference` | A resolved type-reference site: its source span and its referent TypeName |
-| {js:class}`DSMSourceType` | A type sub-expression occurrence: its source span and its fully-qualified |
+| {js:class}`DSMSourceType` | A type sub-expression occurrence: its source span and its fully-qualified DSM representation — the name-based identity of a type, such as `vector<Shop::Order>` |
 
 ## Reference
 

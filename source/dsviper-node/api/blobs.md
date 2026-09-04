@@ -91,7 +91,7 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 | Class | Description |
 |-------|-------------|
 | {js:class}`BlobLayout` | A class used to describe the layout of the element in a blob |
-| {js:class}`BlobArray` | A class used to reinterpret the blob of the internal BlobView as |
+| {js:class}`BlobArray` | A class used to reinterpret the blob of the internal BlobView as an array<blob_layout.data_type> |
 | {js:class}`BlobPack` | Several memory regions packed into one blob, described by a BlobPackDescriptor |
 | {js:class}`BlobPackDescriptor` | A class used to describe binary regions |
 | {js:class}`BlobPackRegion` | One region of a BlobPack, filled from a Buffer, a TypedArray or an ArrayBuffer |
@@ -100,19 +100,19 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`BlobStream` | A class used to copy a huge blob (> 2GB) to a database. Use the method |
-| {js:class}`BlobEncoder` | Builds a blob element by element: write(value) appends, end_encoding() |
-| {js:class}`BlobEncoderLayout` | A class used to represent the layout of one element. The blob is interpreted as |
+| {js:class}`BlobStream` | A class used to copy a huge blob (> 2GB) to a database |
+| {js:class}`BlobEncoder` | Builds a blob element by element: write(value) appends, end_encoding() returns the finished blob |
+| {js:class}`BlobEncoderLayout` | A class used to represent the layout of one element |
 | {js:class}`BlobView` | A class used to interpret the bytes of a blob from the layout |
-| {js:class}`BlobData` | A class used to represent the data associated with a blob during the |
+| {js:class}`BlobData` | A class used to represent the data associated with a blob during the synchronization of two databases |
 
 ## Database Integration
 
 | Class | Description |
 |-------|-------------|
 | {js:class}`BlobGetting` | An interface used to retrieve blobs from a persistence layer |
-| {js:class}`BlobInfo` | What a store knows about one blob without reading it: its id, layout, size, |
-| {js:class}`BlobStatistics` | How many blobs a store holds and how big they are: count, total, smallest, |
+| {js:class}`BlobInfo` | What a store knows about one blob without reading it: its id, layout, size, SQLite rowid, and whether it is chunked (over 2 GB) |
+| {js:class}`BlobStatistics` | How many blobs a store holds and how big they are: count, total, smallest, largest, in bytes |
 
 ## Reference
 

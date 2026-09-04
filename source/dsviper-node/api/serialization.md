@@ -166,8 +166,8 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 |-------|-------------|
 | {js:class}`StreamRawReader` | Reads values in the machine's own byte order |
 | {js:class}`StreamRawWriter` | Writes values in the machine's own byte order |
-| {js:class}`StreamRawReading` | The byte-level read interface: a stream of bytes and its size. The typed |
-| {js:class}`StreamRawWriting` | The byte-level write interface: bytes out, nothing typed. The typed writes |
+| {js:class}`StreamRawReading` | The byte-level read interface: a stream of bytes and its size |
+| {js:class}`StreamRawWriting` | The byte-level write interface: bytes out, nothing typed |
 
 ## Reference
 

@@ -1,11 +1,21 @@
 # Error Handling
 
-Viper C++ uses a single exception type for all errors: `ViperError`. This chapter explains how
-to catch, interpret, and recover from errors in your Python code.
+Most Viper C++ failures raise one exception type, `ViperError`, carrying a structured message.
+This chapter explains how to catch, interpret, and recover from errors in your Python code.
+
+`ViperError` is not the only exception you will see. The binding raises the standard Python
+exceptions where they are the right answer, and those are not `ViperError` subclasses:
+
+| Call | Raises |
+|------|--------|
+| `DSMBuilder.assemble("/missing.dsm")` | `OSError` |
+| `TypeVector("notatype")` | `RuntimeError` |
+| `db.set(None, None, None)` | `TypeError` |
+
+A file that is not there is the most likely failure of `assemble`, so a handler that names
+`ViperError` alone will not see it. See {ref}`best-practices` below.
 
 ## The ViperError Exception
-
-All Viper C++ operations that fail raise a `ViperError` exception:
 
 ```python
 from dsviper import ViperError, ValueInt8
@@ -19,10 +29,11 @@ except ViperError as e:
 Output:
 
 ```
-[macbook@myapp]:Viper:Value:1:value is not in the range of 'int8'
+[pid(20423)@mac.home]:P_Viper:P_ViperDecoderErrors:11:value is not in the range of 'int8' while decoding 'P_Viper_ValueInt8.tp_new.int8'.
 ```
 
-The message follows the format: `[host@process]:Component:Domain:Code:Message`
+The message follows the format: `[process@host]:Component:Domain:Code:Message` — the process
+first, then the host.
 
 ### Parsing Error Details
 
@@ -36,21 +47,33 @@ try:
 except ViperError as e:
     error = Error.parse(str(e))
     if error:
-        print(error.component())  # "Viper"
-        print(error.domain())  # "Value"
-        print(error.code())  # 1
-        print(error.message())  # "value is not in the range of 'int8'"
-        print(error.hostname())  # "macbook"
-        print(error.process_name())  # "myapp"
+        print(error.component())     # 'P_Viper'
+        print(error.domain())        # 'P_ViperDecoderErrors'
+        print(error.code())          # 11
+        print(error.message())       # "value is not in the range of 'int8' while decoding ..."
+        print(error.hostname())      # 'mac.home'
+        print(error.process_name())  # 'pid(20423)'
 ```
+
+`component()` is not a fixed subsystem name. It is `P_Viper` for a failure the binding itself
+raises while decoding an argument, and the failing runtime class for one the C++ side raises:
+
+| Call | `component()` | `domain()` |
+|------|---------------|------------|
+| `ValueInt8(200)` | `P_Viper` | `P_ViperDecoderErrors` |
+| `ValueOptional(...).unwrap()` on an empty one | `Viper.ValueOptional` | `ContainerErrors` |
+| `ValueInt64.cast(ValueString("x"))` | `Viper.ValueInt64` | `TypeErrors` |
+| `Database.open("/missing.db")` | `Viper.DatabaseSQLite` | `DatabaseErrors` |
+
+Match on `code()` within a known `domain()`, not on `component()` as a stable label.
 
 ### Error Class Methods
 
 | Method                 | Return            | Description                                   |
 |------------------------|-------------------|-----------------------------------------------|
 | `Error.parse(str)`     | `Error` or `None` | Parse an error string into an Error object    |
-| `error.component()`    | `str`             | The subsystem (e.g., "Viper", "Database")     |
-| `error.domain()`       | `str`             | The functional domain (e.g., "Value", "Type") |
+| `error.component()`    | `str`             | Where it was raised (e.g. `P_Viper`, `Viper.ValueInt64`) |
+| `error.domain()`       | `str`             | The error family (e.g. `TypeErrors`, `DatabaseErrors`) |
 | `error.code()`         | `int`             | Numeric error code within the domain          |
 | `error.message()`      | `str`             | Human-readable description                    |
 | `error.hostname()`     | `str`             | Host where error originated                   |
@@ -204,9 +227,12 @@ to collect multiple errors at once.
 
 ---
 
+(best-practices)=
 ## Best Practices
 
-- Catch `ViperError` specifically rather than bare `Exception`.
+- Catch `ViperError` for a Viper failure, but do not assume it is the only one a call can
+  raise. `DSMBuilder.assemble` raises `OSError` on a missing file, and the binding raises
+  `TypeError` and `RuntimeError` on arguments it rejects before the C++ side sees them.
 - Check `is_nil()` before calling `unwrap()` on an optional.
 - Check `report.has_error()` after `DSMBuilder.parse()` before using the
   returned definitions.

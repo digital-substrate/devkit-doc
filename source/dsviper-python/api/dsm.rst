@@ -27,7 +27,7 @@ Quick Start
    for struct in dsm_defs.structures():
        print(f"Struct: {struct.type_name()}")
        for field in struct.fields():
-           print(f"  {field.name()}: {field.type_reference()}")
+           print(f"  {field.name()}: {field.type()}")
 
    # Introspect attachments
    for att in dsm_defs.attachments():

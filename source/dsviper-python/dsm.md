@@ -205,13 +205,14 @@ attachment<User, Login> Tuto::login
 
 **Naming convention**: Constants follow the pattern `{NAMESPACE}_{KIND}_{NAME}`:
 
-| Kind        | Prefix | Example                 | Description      |
-|-------------|--------|-------------------------|------------------|
-| Attachment  | `_A_`  | `TUTO_A_USER_LOGIN`     | Attachment type  |
-| Structure   | `_S_`  | `TUTO_S_LOGIN`          | Structure type   |
-| Enumeration | `_E_`  | `TUTO_E_STATUS`         | Enumeration type |
-| Concept     | `_C_`  | `TUTO_C_USER`           | Concept type     |
-| Path        | `_P_`  | `TUTO_P_LOGIN_NICKNAME` | Path to field    |
+| Kind             | Prefix | Example                 | Description               |
+|------------------|--------|-------------------------|---------------------------|
+| Attachment       | `_A_`  | `TUTO_A_USER_LOGIN`     | Attachment type           |
+| Structure        | `_S_`  | `TUTO_S_LOGIN`          | Structure type            |
+| Enumeration      | `_E_`  | `TUTO_E_STATUS`         | Enumeration type          |
+| Concept or club  | `_T_`  | `TUTO_T_USER`           | Concept or club type      |
+| Key              | `_K_`  | `TUTO_K_USER`           | Key of a concept or club  |
+| Path             | `_P_`  | `TUTO_P_LOGIN_NICKNAME` | Path to field             |
 
 ### Query Types
 

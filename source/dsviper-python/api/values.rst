@@ -22,9 +22,11 @@ Quick Start
    t_vec = TypeVector(Type.INT64)
    numbers = Value.create(t_vec, [1, 2, 3])
 
-   # Access underlying Python value
-   print(name.get())         # "Alice"
-   print(list(numbers))      # [1, 2, 3]
+   # Back out to Python objects
+   print(Value.dumps(name))     # 'Alice'
+   print(name.encoded())        # 'Alice' — primitives only
+   print(Value.dumps(numbers))  # [1, 2, 3]
+   print(list(numbers))         # [1, 2, 3] — elements come out native already
 
    # Check type
    print(name.type())        # string
@@ -51,6 +53,12 @@ Choosing the Right Pattern
    * - ``ValueXxx.cast(value)``
      - Type casting
      - ``ValueInt64.cast(v)``
+   * - ``Value.dumps(value)``
+     - Back out to Python objects
+     - ``Value.dumps(name)`` → ``'Alice'``
+   * - ``value.encoded()``
+     - Back out a primitive
+     - ``name.encoded()`` → ``'Alice'``
 
 Base Class
 ----------

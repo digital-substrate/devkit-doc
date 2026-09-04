@@ -19,7 +19,7 @@ DOC_VERSION ?= 1.2
 
 # Run all quality gates in sequence. Exit non-zero on the first failure
 # so this target is suitable for a git pre-commit hook.
-check: llmstxt-check
+check: bindings-check llmstxt-check
 	@$(SPHINXBUILD) -M doctest "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 	@$(SPHINXBUILD) -M linkcheck "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 	@$(SPHINXBUILD) -M coverage "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
@@ -35,6 +35,12 @@ llmstxt:
 # or first paragraph) without re-running `make llmstxt`.
 llmstxt-check:
 	@python tools/build_llms_txt.py --check
+
+# Which binding do the two API references come from? A working copy beside
+# this repository means a documentation session, and a build against anything
+# else silently describes the previous release.
+bindings-check:
+	@python tools/check_bindings.py
 
 # Standalone target to regenerate build/html/llms-full.txt without
 # rerunning sphinx-build. `make html` already produces it via the

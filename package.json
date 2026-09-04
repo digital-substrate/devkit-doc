@@ -6,8 +6,5 @@
     "@types/node": "^26.0.0",
     "typedoc": "0.28.19",
     "typescript": "6.0.3"
-  },
-  "dependencies": {
-    "@digitalsubstrate/dsviper": "^1.2.10"
   }
 }

@@ -123,6 +123,24 @@ def _determine_py_coverage_modules(coverage_modules, seen_modules,
 
 _sphinx_coverage._determine_py_coverage_modules = _determine_py_coverage_modules
 
+# Say which binding this build is reading, on every build, not only under
+# `make check`. A documentation session runs `make html` in a loop, and a build
+# against a stale binding produces pages that look finished and describe the
+# previous release — it happened twice in one session, once per binding, and
+# neither failed nor warned. `tools/check_bindings.py` is the gate; this is the
+# banner that makes the same fact impossible to miss.
+def _announce_bindings(app):
+    import json
+    import dsviper
+    version = '.'.join(str(n) for n in dsviper.version())
+    print(f'[bindings] Python {version} from {os.path.dirname(dsviper.__file__)}')
+    pkg = os.path.join(_REPO_ROOT, 'node_modules', '@digitalsubstrate', 'dsviper')
+    if os.path.exists(pkg):
+        with open(os.path.join(pkg, 'package.json')) as f:
+            meta = json.load(f)
+        print(f"[bindings] Node   {meta.get('version', '?')} from {os.path.realpath(pkg)}")
+
+
 doctest_global_setup = f'''
 from dsviper import *
 _builder = DSMBuilder.assemble({_FIXTURE_TUTO!r})
@@ -227,6 +245,7 @@ _LaTeXTranslator._depart_sig_parameter = _guarded_depart_sig_parameter
 # -- Build hooks -------------------------------------------------------------
 
 def setup(app):
+    app.connect('builder-inited', _announce_bindings)
     """Emit build/html/llms-full.txt at the end of every successful html build.
 
     Keeping the emission inside the Sphinx pipeline means anyone running

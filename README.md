@@ -43,17 +43,24 @@ npm link @digitalsubstrate/dsviper
 Neither touches `requirements.txt`, `package.json` or `package-lock.json`, so
 CI still installs the published packages with `pip install -r` and `npm ci`.
 
-Check which one you are building against before trusting a page:
+You do not have to remember. Every build prints which binding it read:
 
-```bash
-python -c "import dsviper; print(dsviper.version())"
-node -e "console.log(require('@digitalsubstrate/dsviper/package.json').version)"
+```
+[bindings] Python 1.2.26       from …/com.digitalsubstrate.viper/dsviper_wheel/dsviper
+[bindings] Node   1.2.11-dev.0 from …/com.digitalsubstrate.viper/dsviper_node
 ```
 
-A Node reference built against a stale package is not obviously wrong — it
-renders, and every link resolves. The summary tables under `source/dsviper-node/`
-are written by hand and the prototypes below them come from TypeDoc, so a stale
-package makes the two halves of a page disagree while both look plausible.
+and `make check` refuses to pass when the binding repository is sitting beside
+this one and the build is reading something else:
+
+```bash
+make bindings-check     # on its own
+```
+
+That gate exists because a build against a stale binding is not obviously
+wrong — it renders, every link resolves, and the pages look finished while
+describing the previous release. It happened twice in one session, once per
+binding, and nothing warned either time.
 
 ## Build
 

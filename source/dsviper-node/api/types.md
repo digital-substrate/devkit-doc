@@ -92,20 +92,20 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`TypeVector` | A class used to represent a vector<element_type> type |
-| {js:class}`TypeSet` | A class used to represent a set<element_type> type |
-| {js:class}`TypeMap` | A class used to represent a map<key_type, element_type> type |
-| {js:class}`TypeXArray` | A class used to represent a xarray<element_type> type |
-| {js:class}`TypeOptional` | A class used to represent an optional<element_type> type |
+| {js:class}`TypeVector` | The vector<element_type> type |
+| {js:class}`TypeSet` | The set<element_type> type |
+| {js:class}`TypeMap` | The map<key_type, element_type> type |
+| {js:class}`TypeXArray` | The xarray<element_type> type |
+| {js:class}`TypeOptional` | The optional<element_type> type |
 
 ## Algebraic Types
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`TypeTuple` | A class used to represent a tuple<T0, ...> type |
-| {js:class}`TypeVec` | A class used to represent a vec<numeric_type, size> type |
-| {js:class}`TypeMat` | A class used to represent a mat<numeric_type, columns, rows> type |
-| {js:class}`TypeVariant` | A class used to represent a variant<T0, ...> type |
+| {js:class}`TypeTuple` | The tuple<T0, ...> type |
+| {js:class}`TypeVec` | The vec<numeric_type, size> type |
+| {js:class}`TypeMat` | The mat<numeric_type, columns, rows> type |
+| {js:class}`TypeVariant` | The variant<T0, ...> type |
 | {js:class}`TypeAny` | The any type |
 
 ## User-Defined Types
@@ -114,9 +114,9 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 |-------|-------------|
 | {js:class}`TypeStructure` | A struct type |
 | {js:class}`TypeStructureDescriptor` | Describes the fields a struct will be created with |
-| {js:class}`TypeStructureField` | A class used to represent a field for a struct |
+| {js:class}`TypeStructureField` | One field of a struct type |
 | {js:class}`TypeEnumeration` | An enum type |
-| {js:class}`TypeEnumerationCase` | A class used to represent a case for an enum type |
+| {js:class}`TypeEnumerationCase` | One case of an enum type |
 | {js:class}`TypeEnumerationDescriptor` | Describes the cases an enum will be created with |
 
 ## Concept Types
@@ -125,7 +125,7 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 |-------|-------------|
 | {js:class}`TypeConcept` | A concept type |
 | {js:class}`TypeClub` | A club type |
-| {js:class}`TypeKey` | A class used to represent a key<element_type> type where element_type is a concept, club or any_concept |
+| {js:class}`TypeKey` | The key<element_type> type |
 | {js:class}`TypeAnyConcept` | The any_concept type |
 
 ## Reference

@@ -102,9 +102,9 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 |-------|-------------|
 | {js:class}`BlobStream` | Copies a huge blob (> 2GB) to a database |
 | {js:class}`BlobEncoder` | Builds a blob element by element: write(value) appends, end_encoding() returns the finished blob |
-| {js:class}`BlobEncoderLayout` | A class used to represent the layout of one element |
+| {js:class}`BlobEncoderLayout` | The layout of one element in a blob |
 | {js:class}`BlobView` | Interprets the bytes of a blob through its layout |
-| {js:class}`BlobData` | A class used to represent the data associated with a blob during the synchronization of two databases |
+| {js:class}`BlobData` | The bytes of one blob, with the blob_id and layout that go with them |
 
 ## Database Integration
 

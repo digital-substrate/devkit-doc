@@ -175,11 +175,11 @@ Available from the Node binding 1.2.9 (runtime 1.2.24) — see {doc}`../../chang
 
 | Class | Description |
 |-------|-------------|
-| {js:class}`CommitNode` | A class used to represent a node in the commit DAG |
-| {js:class}`CommitNodeGrid` | A class used to represent the location of a commit node in the grid |
+| {js:class}`CommitNode` | One commit in the DAG, linked to the commits that follow it |
+| {js:class}`CommitNodeGrid` | One commit's place in the DAG once it is laid out on a grid |
 | {js:class}`CommitNodeGridBuilder` | Builds the grid layout of the commit DAG |
 | {js:class}`CommitHeader` | What identifies a commit, without its content |
-| {js:class}`CommitData` | A class used to represent data associated with a commit during the synchronization of two databases |
+| {js:class}`CommitData` | One commit's encoded opcodes, with the header that places it |
 | {js:class}`CommitEvalAction` | A class used by the evaluator to reconstruct a value by executing mutation opcodes |
 | {js:class}`CommitDatabaseHelper` | Navigates the commit DAG |
 
@@ -191,8 +191,8 @@ Available from the Node binding 1.2.9 (runtime 1.2.24) — see {doc}`../../chang
 | {js:class}`CommitStoreNotifying` | An interface used to represent the notification emitted by a store |
 | {js:class}`CommitSynchronizer` | Synchronizes two concrete databases through the CommitDatabasing interface (low-level driver interface) |
 | {js:class}`CommitSynchronizerInfo` | What a synchronization found |
-| {js:class}`CommitSynchronizerInfoTransmit` | A class used to represent statistics of data exchanged during the synchronization of two databases |
-| {js:class}`CommitSyncData` | A class used to represent data exchanged during the synchronization of two databases |
+| {js:class}`CommitSynchronizerInfoTransmit` | What one synchronization actually transferred |
+| {js:class}`CommitSyncData` | The commits one database hands another when they synchronize |
 
 ## Tracing
 

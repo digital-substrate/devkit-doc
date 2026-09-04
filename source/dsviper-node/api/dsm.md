@@ -123,7 +123,7 @@ const [report, dsmDefs, defs] = DSMBuilder.assemble('model.dsm').parse(sourceMap
 | Class | Description |
 |-------|-------------|
 | {js:class}`DSMBuilder` | Assembles DSM definitions from several sources |
-| {js:class}`DSMBuilderPart` | A class used to represent a part of the assembled definitions |
+| {js:class}`DSMBuilderPart` | One source appended to a DSMBuilder |
 | {js:class}`DSMDefinitions` | A parsed model, whole |
 | {js:class}`DSMDefinitionsInspector` | Retrieves parsed declarations by TypeName, and attachments by identifier |
 | {js:class}`DSMParseReport` | Collects the errors found while parsing the assembled definitions |
@@ -146,17 +146,17 @@ const [report, dsmDefs, defs] = DSMBuilder.assemble('model.dsm').parse(sourceMap
 | Class | Description |
 |-------|-------------|
 | {js:class}`DSMType` |  |
-| {js:class}`DSMTypeKey` | A class used to represent the type key<element_type> |
-| {js:class}`DSMTypeVector` | A class used to represent the type vector<element_type> |
-| {js:class}`DSMTypeSet` | A class used to represent the type set<element_type> |
-| {js:class}`DSMTypeMap` | A class used to represent the type map<key_type, element_type> |
-| {js:class}`DSMTypeXArray` | A class used to represent the type xarray<element_type> |
-| {js:class}`DSMTypeOptional` | A class used to represent the type optional<element_type> |
-| {js:class}`DSMTypeTuple` | A class used to represent the type tuple<T0, ...> |
-| {js:class}`DSMTypeVec` | A class used to represent the type vec<numeric_type, size> |
-| {js:class}`DSMTypeMat` | A class used to represent the type mat<numeric_type, columns, rows> |
-| {js:class}`DSMTypeVariant` | A class used to represent the type variant<T0, ...> |
-| {js:class}`DSMTypeReference` | A class used to represent a reference to a type |
+| {js:class}`DSMTypeKey` | The key<element_type> as a parsed model declares it |
+| {js:class}`DSMTypeVector` | The vector<element_type> as a parsed model declares it |
+| {js:class}`DSMTypeSet` | The set<element_type> as a parsed model declares it |
+| {js:class}`DSMTypeMap` | The map<key_type, element_type> as a parsed model declares it |
+| {js:class}`DSMTypeXArray` | The xarray<element_type> as a parsed model declares it |
+| {js:class}`DSMTypeOptional` | The optional<element_type> as a parsed model declares it |
+| {js:class}`DSMTypeTuple` | The tuple<T0, ...> as a parsed model declares it |
+| {js:class}`DSMTypeVec` | The vec<numeric_type, size> as a parsed model declares it |
+| {js:class}`DSMTypeMat` | The mat<numeric_type, columns, rows> as a parsed model declares it |
+| {js:class}`DSMTypeVariant` | The variant<T0, ...> as a parsed model declares it |
+| {js:class}`DSMTypeReference` | A type a parsed model names rather than spells out |
 
 ## Functions
 
@@ -184,7 +184,7 @@ const [report, dsmDefs, defs] = DSMBuilder.assemble('model.dsm').parse(sourceMap
 | {js:class}`DefinitionsConst` | Retrieves registered types and attachments by runtime id |
 | {js:class}`DefinitionsCollector` | Collects the types a subset of definitions references |
 | {js:class}`DefinitionsInspector` | Retrieves registered types by TypeName, and attachments by identifier |
-| {js:class}`DefinitionsExtendInfo` | A class used to represent the types exchanged during the synchronization of two databases |
+| {js:class}`DefinitionsExtendInfo` | The definitions one database added to another's when they synchronized |
 
 ## Source Map
 

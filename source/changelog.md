@@ -227,6 +227,48 @@ Initial release.
 The PyPI wheel (`pip install dsviper`). Its `PATCH` stream is independent of the
 runtime; each release notes the runtime version it ships.
 
+### 1.2.26 — 2026-09-05
+- **Changed (breaking)** — seven constructor keywords now carry the name their parameter
+  actually has: `database` → `database_path` on `CommitDatabaseServer`, `value` →
+  `initial_value` on `ValueString`, `ValueUInt16` and `ValueBool`, `element_type` →
+  `numeric_type` on `TypeVec` and `TypeMat`, and the `src_` / `dst_` prefixes → `source_` /
+  `target_` on `DefinitionsMapper`. Renaming an entry in a `kws[]` array changes what CPython
+  matches a call against, so **a caller passing any of these by keyword breaks**; a positional
+  call is unaffected, as is the `element_type()` accessor, whose name is right for what it
+  returns.
+- **Changed** — the class and method docstrings say what each class and method does. They are
+  published surface — CPython renders them as the class summary in the API reference, and
+  `help()` shows them in any session — and a large share said nothing beyond restating the
+  class name. Rewritten domain by domain against the C++ they wrap, class by class rather than
+  by family average. The serialization domain is the clearest gain: one formula had been hiding
+  four distinct behaviours — integer writers refuse a float and range-check, `write_double`
+  accepts an int and converts, `write_float` converts then checks the value fits 32 bits,
+  `write_bool` refuses an int (which surprises in Python, where `bool` derives from `int`), and
+  the three id writers accept a `str` and parse it.
+- **Changed** — four decided behaviours are now stated on the public surface: `ValueSet` and
+  `ValueMap` iterate in **sorted** order, not insertion order (a Python `set` has no order at
+  all, so nothing in the host language sets that expectation); `NaN` is a single data-model
+  value rather than the IEEE 754 artefact — it equals itself, hashes deterministically, and
+  sits below `-inf` in the total order, which is what lets a NaN be found in a set,
+  deduplicated as a dict key and seen by a diff (arithmetic is untouched; read the float back
+  with `encoded()`); the `NAN`, `INF` and `NEG_INF` singletons existed undocumented; and
+  `Value.dumps`' `json` flag changes two things, not the one its own text claimed.
+- **Fixed** — eight `__init__.pyi` returns promised a value where the C++ returns `None`:
+  `DSMConcept.parent`, `DSMStructureField.default_value`, and `blob` / `blob_info` on
+  `CommitDatabase`, `Database` and `BlobGetting`. The interfaces already declared `| None`; the
+  classes now match, so a type checker stops certifying an `Optional` unpacking as unnecessary.
+- **Fixed** — `get()` was documented as returning `None` when the attachment holds nothing. On
+  `AttachmentGetting`, `AttachmentMutating`, `Database` and `Databasing` it always returns a
+  `ValueOptional`, so `if db.get(a, k) is not None:` is true whatever the attachment holds; the
+  text now sends the reader to `is_nil()` / `unwrap()`.
+- **Fixed** — four docstrings rendered their signature as prose (CPython reads `Name(args)` as a
+  signature only when it is followed by `\n--\n\n`), and `StreamWriterFile`, `StreamReaderFile`
+  and `StreamReaderSharedMemory` advertised a no-argument constructor that requires one. Two
+  class docstrings described a different class: `Socket` carried `SharedMemory`'s text verbatim,
+  and `StreamWriting` called itself "an interface used to read data".
+- *Ships runtime 1.2.25, unchanged — nothing has landed in the runtime since it, and
+  `viper_version()` reports the same triple over the same sources.*
+
 ### 1.2.25 — 2026-08-27
 - **Fixed** — `Type.representation()` no longer depends on call order: on a tuple or a variant, the
   no-argument form answers the fully qualified name and `representation(namespace=ns)` the form
@@ -417,6 +459,48 @@ Initial release.
 ## dsviper for Node.js
 
 The npm package `@digitalsubstrate/dsviper`. See {doc}`dsviper-node/index`.
+
+### 1.2.11 — 2026-09-05
+- **Changed** — Node 24 is the floor (`engines: ">=24"`, was `>=18`). Node 18 reached
+  end-of-life on 2025-04-30 and Node 20 on 2026-04-30. Holding a floor nobody runs was not free:
+  `[Symbol.dispose]` had to sit behind a `typeof Symbol.dispose === 'symbol'` guard and the
+  binding carried three capability tiers for one product (18: `close()` only; 20.4:
+  `Symbol.dispose`; 24: `using`). `[Symbol.dispose]` is now installed unconditionally on the
+  thirteen resource handles. Formally a restriction for consumers, shipped on the patch stream
+  because this binding's `MAJOR.MINOR` track the runtime contract rather than its own
+  compatibility.
+- **Fixed** — ten members the C++ registers were absent from `index.d.ts`, so a TypeScript
+  consumer could not call them and TypeDoc did not document them. `DatabaseTransferInfo` was
+  missing its whole surface — it is the only exposed type wrapping a plain data struct, which
+  makes the Python side declare attributes rather than methods, so the `.pyi` → `.d.ts`
+  bootstrap had nothing to translate. The other eight are `equals` and `compare` on the five
+  classes outside the Value and Type hierarchies: `NameSpace`, `TypeName` and `BlobLayout` carry
+  both, `Path` and `PathConst` only `equals` — the runtime registers no comparison for a path.
+  Declarations only, and no consumer can break, since nothing compiles today.
+- **Fixed** — 69 JSDoc comments promised `null` where the method answers `undefined`, sending a
+  reader to write `x === null`, false exactly when the query found nothing. The binding returns
+  `undefined` on 442 sites against 19 returning `null`, and the declarations always said so; the
+  descriptions had inherited Python's "or None". All realigned on the declared type.
+- **Changed** — the JSDoc describes JavaScript, not Python. Class and method descriptions had
+  been copied from their Python twins without translating the vocabulary, so every editor
+  tooltip and the published reference told a Node developer that a uint64 value is "seamless
+  with a Python int", where it is a `bigint` and the declaration on the next line says so. 24
+  such clauses translated, 116 `True`/`False` lowered, 79 identifiers camelised (a reader
+  following `Path.from_field` looks for a method that does not exist — it is `fromField`), and
+  74 class summaries realigned. DSM type names — `blob_id`, `element_type`, `commit_id` — keep
+  their spelling, being the model's words rather than the binding's. Each container's shape is
+  now read off a run rather than a family average: a map projects as an array of key/value
+  pairs, a set and a vector as plain arrays, a structure as a plain object.
+- **Changed** — four decided behaviours are now stated on the public surface: `ValueSet` and
+  `ValueMap` iterate in **sorted** order, not insertion order (a JS `Set` and `Map` promise the
+  opposite); `NaN` is a single data-model value rather than the IEEE 754 artefact — it equals
+  itself, hashes deterministically, and sits below `-Infinity` in the total order, which is what
+  lets a NaN be found in a set, deduplicated as a map key and seen by a diff (arithmetic is
+  untouched; read the float back with `encoded()`); the `NAN`, `INF` and `NEG_INF` singletons
+  existed undocumented; and `Value.dumps`' `json` flag changes two things, not the one its own
+  text claimed.
+- *Ships runtime 1.2.25, unchanged from 1.2.10 — `viperVersion()` reports the same triple over
+  the same sources.*
 
 ### 1.2.10 — 2026-08-27
 - **Fixed** — `type.representation()` no longer depends on call order: on a tuple or a variant, the

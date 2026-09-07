@@ -355,8 +355,11 @@ concurrent processes. The figures below are the largest points we have
 
 State reconstruction is linear in document count, so cost extrapolates
 predictably past these points: a full warm-up via
-`CommitState.cache_preload()` runs at ~1.5–2 µs per document — 0.4 ms at
-230 documents, 14 ms at 6 600, and proportionally beyond.
+`CommitState.cache_preload()` runs at ~2.8–3.8 µs per document — 0.6 ms at
+230 documents, 24 ms at 6 600, and proportionally beyond. Reading a key for
+the first time builds an isolated copy of its document, so that the caller
+can mutate what it receives without disturbing the state it came from; the
+figures include that copy, being what the call actually costs.
 
 Larger workloads are expected to work; they simply have not been
 benchmarked yet, so we quote no numbers for them.

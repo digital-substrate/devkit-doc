@@ -2,7 +2,9 @@
 
 When scope cannot be decomposed and a supervisor becomes necessary —
 [Cooperative Discipline](commit_cooperation.md#when-a-supervisor-is-required)
-sets out when — that supervisor is yours to build; the engine provides none.
+sets out when — that supervisor is yours to design; the *engine* provides
+none. What `dsviper` ships, and what this page documents, is one
+implementation of the identify-and-apply half; the deciding stays yours.
 This page documents one implementation: an API that **identifies, surfaces,
 and reconciles a reconstructed conflict** over a merge the engine has already
 performed.
@@ -196,12 +198,23 @@ Two bounds keep the gate honest:
 - **It inherits the engine's reduction; it does not repair it.** The merge
   stays hash-ordered and target-wins — this layer only makes the lost intent
   observable and correctable.
+- **It sees dropped opcodes, not invented combinations.** Detection asks
+  whether an opcode's effect is present in the merge state. When two streams
+  write *disjoint* paths every effect is present, so nothing is reported —
+  which is exactly the case the contract calls
+  [invented](commit_contract.md#reading-the-state-is-an-import-not-a-load):
+  fragments recombined into a value no author wrote. The deepest failure the
+  contract names is the one this layer is structurally unable to surface.
 - **It is *a* supervisor, not *the* supervisor.** Other supervised regimes
   (a semantic gate that refuses commits, a service mediating strong
   invariants) are not provided here — see
   [Cooperative Discipline](commit_cooperation.md#when-a-supervisor-is-required).
-- **Intent beyond commit headers is not recoverable.** The layer surfaces
-  *that* values collided and *what* each was, never *why* an author wanted it.
+- **Intent beyond commit headers is not recoverable — and headers are thin.**
+  A header carries a label, a timestamp and its parents, not an author. The
+  layer surfaces *that* values collided and *what* each was; it names them
+  `ours` and `theirs` by stream position, never by person, and never says
+  *why* an author wanted one. A supervisor who needs identity must carry it
+  in the commit label, or alongside the DAG.
 
 The full class surface — signatures, accessors, and a runnable example —
 is the API reference: {doc}`Merge Reconciliation </dsviper-python/api/reconciliation>`.

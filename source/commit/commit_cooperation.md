@@ -15,8 +15,9 @@ signals nothing — the dropped write is gone, with no error and no
 notification.
 
 That envelope is **disjoint writes**: concurrent authors operating on
-structurally disjoint targets, where convergence has nothing to pick
-between and every submitted intent survives. Reaching it is a modelling
+structurally disjoint targets, where the fold has nothing to pick
+between and every submitted intent survives — for as long as the
+targets stay disjoint, which is on you. Reaching it is a modelling
 task, not a runtime one — shape the DSM model so the engine never has
 anything semantically meaningful to choose. That shaping is **scope
 decomposition**.
@@ -35,6 +36,37 @@ strong invariants at all, whatever the decomposition (see
 [What scope decomposition does not solve](#what-scope-decomposition-does-not-solve)).
 ```
 
+## Where the discipline pays off
+
+Before the levers, the diagnostic — because the envelope is not equally
+reachable in every domain, and both extremes argue against bothering.
+
+Where the domain already carries a real ownership structure — each user
+owns a subgraph, each workstation an asset, each site an attachment —
+decomposition costs nothing: it is the modelling you would have done
+without Commit. But notice what follows. If writes can be routed so they
+never meet, you did not need the fold in the first place; you were
+running one stream per scope, and the merge you avoided was never
+load-bearing.
+
+Where two people genuinely have to edit the same thing, decomposition is
+not hard but impossible: the shared granule *is* the work. No `.dsm`
+makes two authors of one value disjoint, and a supervisor is required
+(see [When a supervisor is required](#when-a-supervisor-is-required)).
+
+So the discipline is free exactly where it is unnecessary, and
+unavailable exactly where it is needed. What remains between the two is
+the band it was made for: work that is **mostly** disjoint with
+**occasional** overlap — several authors on one model, each with a scope
+they own in practice, colliding rarely and at identifiable places.
+There, decomposition does the bulk of the work by making collisions
+rare, and [Supervised Reconciliation](commit_collaboration.md) handles
+the residue at a cost that stays proportional to how rare they are.
+
+That band is real, and it is narrow. If your application does not sit in
+it, the discipline on this page will not put it there — the model is
+where that is decided, and the decision is made once.
+
 ## Not a Commit quirk
 
 The limit is structural, not a peculiarity of this engine. Any system
@@ -52,10 +84,15 @@ contract.
   merge, broken build" pattern on textually-disjoint-but-incompatible
   edits.
 
-Mechanical reduction is the strongest guarantee any unsupervised
-system can deliver. Richer guarantees require a supervisor. The
-discipline below lets you stay unsupervised by ensuring the engine
-never has anything semantically meaningful to pick between.
+No unsupervised system delivers semantic validity — that is the
+limit the two bullets illustrate, and it is not specific to this
+engine. Structurally, however, unsupervised systems are not equal: a
+CRDT **converges** — the same updates yield the same state whatever
+order they arrive in — and mechanical reduction does not, since
+`commitMerge` is non-commutative. The discipline below buys something
+narrower than convergence: it keeps the engine from ever having
+anything semantically meaningful to pick between, so the order it
+picks in stops mattering to you.
 
 ## Principle: scope ownership
 
@@ -149,8 +186,8 @@ your call.
 
 | Regime                     | How divergence resolves                                | Where it lives                                           |
 |----------------------------|--------------------------------------------------------|----------------------------------------------------------|
-| **Deterministic reduction**| Structural linearisation — no notion of conflict       | The engine — the strongest guarantee without supervision |
-| **Cooperation**            | Disjointness by construction — nothing to pick between | This page — application discipline                       |
+| **Deterministic reduction**| Structural linearisation — no notion of conflict       | The engine — all it can do unsupervised, and less than convergence |
+| **Cooperation**            | Disjointness you engineer and must keep — nothing to pick between | This page — application discipline                       |
 | **Collaboration**          | Supervisor arbitrates (human / rule)                   | Identification and application ship; the deciding is yours |
 
 The dual-layer contract is described in all three regimes; the

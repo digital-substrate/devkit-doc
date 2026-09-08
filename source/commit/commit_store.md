@@ -76,7 +76,10 @@ action against the store, never a sideways write to the database.
 
 The store maintains an in-memory undo stack on top of the underlying
 mutation DAG. Calls do not rewrite history — they move the current
-state along existing commits.
+state along existing commits. The stack is per-session: it does not
+survive closing the store or restarting the application. The commits it
+moved through stay in the DAG and remain reachable by id — what is lost
+is the sequence, not the history.
 
 ```pycon
 >>> store.can_undo()

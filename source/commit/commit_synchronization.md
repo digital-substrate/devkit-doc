@@ -68,7 +68,12 @@ The operation in one pass:
    on both sides — if they differ, `extendDefinitions` adds the
    sender's missing types to the receiver. `extendDefinitions` is
    strictly additive by construction (DSM types are sealed by
-   definition), so independent schema evolution never blocks sync.
+   definition), so independent schema evolution never blocks sync. Additive here means
+   *new types*: `extendDefinitions` never rewrites data that already
+   exists, which is also why it is not a migration path: reshaping data that
+   already exists happens outside the runtime, with
+   [`dsviper-database-tools`](https://github.com/digital-substrate/dsviper-database-tools)
+   (beta) — see [Modes of Use](commit_modes.md).
 3. **Copy missing commits and the blobs they reference.** Walk the
    missing commits — `source.commitIds() \ target.commitIds()` for
    Fetch, `target.commitIds() \ source.commitIds()` for Push — in
@@ -162,6 +167,33 @@ and possibly in
 depending on what your invariants look like. The diagnostic of
 [Modes of Use](commit_modes.md) applies *before* you reach for sync.
 
+### Who reduces, and when
+
+Sync never reduces. It copies commits; the heads it brings in stay divergent
+until something folds them, and
+[`commit_admin reduce_heads`](../dsviper-tools/server.md#reduce-heads) is a
+separate operation on purpose. A replicated deployment therefore has to
+answer three questions the engine does not: **which node reduces, on what
+trigger, and from which anchor.**
+
+Nothing enforces an answer. The exclusive transaction that
+[`reduce_heads`](commit_database.md#how-reduction-picks-a-winner) takes stops
+two nodes from folding at the same moment, not from folding differently —
+and two policies produce different states on contested paths, both landing
+in the history as competing merge commits.
+
+The workable default is a **single designated reducer**: one node —
+typically the site hosting the shared database, or one scheduled job — folds
+after sync using the built-in `reduce_heads`, and every other site reads and
+writes without folding. That is what makes the order the same for everyone,
+since it is the only order anyone applies.
+
+Treat that designation as a decision, not a detail. Launching a reduction is
+an act of arbitration ([Import Outcomes](commit_contract.md#import-outcomes)):
+the fold picks winners on every contested path, and whoever calls it chooses
+them without being able to predict them. Decide who is allowed to perform
+it, rather than leaving it to whoever happens to call first.
+
 ### On the Dual-Layer Contract
 
 Every sync extends the local DAG with commits authored elsewhere.
@@ -177,10 +209,14 @@ contract; it expands the surface where the contract applies.
 [Cooperative Discipline](commit_cooperation.md) remains the
 modelling exit. If the contributions of each site are routed
 through structurally disjoint paths — by attachment partitioning,
-commutative containers, or scope decomposition — convergence
-post-sync is semantically trivial. The discipline does not change
-across the sync boundary; the boundary is just another place where
-it pays off.
+accretive containers, or scope decomposition — the fold has nothing
+meaningful to pick between, and reducing the heads costs you nothing
+semantically. That is a property of the routing, which the
+application maintains and nothing verifies, not of sync. The
+discipline does not change across the sync boundary; the boundary is
+just another place where it pays off — and another place where it can
+quietly stop holding, since a second site is a second source of
+writes on the same paths.
 
 ---
 
@@ -202,8 +238,9 @@ it pays off.
   whether sync is even an option for your application.
 - [The Dual-Layer Contract](commit_contract.md) — what becomes
   load-bearing once sync is in play.
-- [Cooperative Discipline](commit_cooperation.md) — how to make
-  convergence post-sync trivial by design.
+- [Cooperative Discipline](commit_cooperation.md) — routing each
+  site's writes so the post-sync fold has nothing meaningful to pick
+  between.
 - [Database Server](../dsviper-tools/server.md) — the network
   surface and CLI tools.
 - [cdbe.py](../commit-apps/cdbe.md) — a worked example wiring sync

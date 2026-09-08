@@ -5,13 +5,21 @@ chapter means for you — whether you are building a Commit Application,
 a service over the Commit Database, a CLI tool, or a batch script.
 The architectural choice between single-stream and multi-stream usage
 — and within multi-stream, between local and strong invariants — is
-effectively irreversible once a DSM model is sealed: Commit carries
-no migration tooling, so switching regimes after the fact is a schema
-rewrite that invalidates existing data.
+expensive to reverse once a DSM model is sealed. The engine itself
+carries no migration: switching regimes after the fact means rewriting
+existing documents into the new shape, outside the runtime.
+[`dsviper-database-tools`](https://github.com/digital-substrate/dsviper-database-tools)
+does definitions-directed document rewriting and database migration for
+exactly that, in pure Python over the binding — it is in beta, and it is
+a whole-database pass, not a schema patch. Decide as if you decide once;
+do not assume you cannot unmake it.
 
 The asymmetry runs one way: a multi-stream-friendly model is harmless
 in single-stream usage; a single-stream model has no safe path to
-multi-stream. **In doubt, model for multi-stream.**
+multi-stream. **In doubt, model for multi-stream** — advice about the
+*shape of the model*, not about operating multi-stream: a
+multi-stream-friendly model costs nothing if you never write
+concurrently, and buys an option you cannot obtain later.
 
 ---
 
@@ -140,12 +148,16 @@ Multiple authors' writes are reduced automatically, but the structural drops
 cost you nothing in practice. Two routes lead here:
 
 - **Naturally local invariants** — the entire mutable state lives
-  in containers whose convergence is commutative by construction
-  (`set` / `map` union / subtract), or in an `xarray` read only as a
-  *set* of elements. An `xarray` converges on membership — no insert
-  is lost — but the relative order of concurrently-inserted elements
-  is not commutative, so an order-dependent invariant is *not*
-  naturally local. Where the invariant is membership-only, there is
+  in containers the application only ever *grows*: `set` and `map`
+  unions, or an `xarray` read only as a *set* of elements.
+  Commutativity is not a property of these containers —
+  `union_in_set` commutes with another union and not with a
+  `subtract_in_set`, and the API offers both. It is a property of the
+  operations your application can emit on that path, for the whole
+  life of the model. An `xarray` loses no insert, but the relative
+  order of concurrently-inserted elements is fixed by linearisation,
+  so an order-dependent invariant is *not* naturally local. Where the
+  invariant is membership-only and nothing ever subtracts, there is
   nothing for the engine to silently break.
 - **Defensive-by-design** — cross-attachment references exist and
   may break under reduction, but the application is built from

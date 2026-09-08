@@ -116,6 +116,11 @@ re-validation cannot tell the owned union from the invented one, because each
 field, alone, is valid. What ownership certifies is not the fields but the
 *combination*.
 
+Ownership is a discipline, not a record. Nothing in the DAG says who wrote a
+value — a header carries a label, a timestamp and its parents, no author — so
+ownership cannot be audited after the fact. It is established when the model
+is decomposed, or it is not established at all.
+
 So name the escalation. *Valid or invalid* is the wrong first question: it
 presumes a true state to measure against. *Untrusted* is the working frame —
 re-validate on read. And where the paths were fragments, the state is
@@ -155,9 +160,9 @@ read the state, not when you build the mutations**.
 | Guarantee                     | Description                                                                                                                                                                                                             |
 |-------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **DAG Consistency**           | Commits form a valid directed acyclic graph                                                                                                                                                                             |
-| **Immutability**              | Once committed, data cannot be modified                                                                                                                                                                                 |
+| **Immutability**              | Once committed, data cannot be modified. (`delete_commit` / `reset_commits` exist and break this — [live-demo tricks, not features](commit_database.md#storage-growth).)                                                                                                                                                                                 |
 | **Deterministic Reduction**   | `commitMerge` is a pure function of its ordered inputs — same `(parent, target)` produces the same commit. *Which* order ends up applied across multi-head topologies is an application choice, not an engine property. |
-| **Content-Addressable**       | `CommitId = SHA-1(content)`, tamper-evident                                                                                                                                                                             |
+| **Content-Addressable**       | `CommitId = SHA-1(parents, type, opcodes)`, re-checked on every read: a commit whose bytes no longer match its id is rejected (`CorruptedCommitData`). Label and timestamp sit outside the hash.                                                                                                                                                                             |
 
 ```{note}
 **Why *reduction* — not *merge*, not *convergence*.** A *merge* in
@@ -170,10 +175,17 @@ they are applied; the engine does not provide that either, because
 commitMerge(B, A)`). What the engine actually does is **reduce**
 divergent heads to one by deterministic structural rules: reproducible
 given a fixed order, order-dependent, with no semantic arbitration. We
-reserve *convergence* for the commutative subset — disjoint paths,
-accretive containers (see
-[Cooperative Discipline](commit_cooperation.md)) — where reduction
-genuinely is order-independent. Everywhere else, it is *reduction*.
+reserve *convergence* for the cases where reduction genuinely is
+order-independent: concurrent writes that land on disjoint paths, and
+containers an application only ever grows. That is a property of **how
+the operations are used, never of an operation itself** —
+`union_in_set` commutes with another union and not with a
+`subtract_in_set`, and nothing in the API or the model prevents the
+second. Unlike a CRDT, where the type carries the guarantee and the
+illegal state is unrepresentable, here it rests on a discipline the
+engine cannot check — a claim about every write the application will
+ever make (see [Cooperative Discipline](commit_cooperation.md)).
+Everywhere else, it is *reduction*.
 ```
 
 ## How Reduction Picks a Winner
@@ -215,8 +227,33 @@ silently, and reading becomes an *import*.
 
 That state answers to no single human intent. Where streams overlap,
 reduction picks by structural rule and can preserve a combination no
-contributor would have written — **its author is the mechanism, not a
-person.** So none of the outcomes below *recovers* a true state; there
+contributor would have written.
+
+It is tempting to say the mechanism authored it. The mechanism decided
+nothing: `commitMerge` is a pure function, and the outcome on a contested
+path follows from the order the heads were folded in — [an application's
+choice, not the engine's](commit_database.md#how-reduction-picks-a-winner).
+Whoever launched the reduction chose that order, and with it the result.
+That is an act of arbitration, performed blind: the caller cannot predict
+which value survives, is not told that a choice is being made, and leaves no
+trace of having made one — a merge commit records its parents and a
+timestamp, not who folded them, nor under which strategy. The agency is
+real, individual, and unrecorded. Automate the fold and it has no actor at
+all.
+
+Two things follow. Put the reducer's identity and strategy in the merge
+commit's label — the only field that will carry them, though it sits
+[outside the commit's hash](commit_database.md#commit-history) and is not
+protected the way the mutations are. Note that `reduce_heads` writes its own
+label: carrying anything there means issuing the merge sequence yourself. And
+if that record has to be as trustworthy as the history, the label is not
+enough — it belongs in the model, where the hash covers it. And where
+the decision matters, make it one: [reconcile before the merge is
+written](commit_collaboration.md#reconciling-before-the-merge-exists), so
+that someone sees what the fold produces and decides, rather than
+discovering it afterwards.
+
+So none of the outcomes below *recovers* a true state; there
 is none to recover. Read them as structural consequences, not degrees
 of developer fault — the failure is a mechanical reduction applied
 where intent had to survive, not the code left coping with the result.

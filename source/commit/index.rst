@@ -3,11 +3,65 @@ Commit
 
 **Commit** is a deterministic, best-effort reduction engine over an
 immutable, content-addressed mutation DAG on a
-:doc:`DSM <../dsm/index>` model. For a **single author it is
-lossless** — every read returns exactly what you wrote. For
+:doc:`DSM <../dsm/index>` model. For a **single author on a linear
+history it is lossless** — every read returns exactly what you wrote;
+fold two of your own heads and the structural rules apply as anywhere
+else, so you own both sides and can review the outcome, but you do not
+get both values. For
 **concurrent authors it has no notion of conflict**: overlapping intent
 is silently collapsed by structural rules — structurally sound,
 semantically untrusted.
+
+What it solves
+--------------
+
+Commit is what you would otherwise assemble by hand from an event store,
+a content-addressed blob store, a schema, and a replication protocol —
+for one kind of application: a **typed, long-lived document, heavy in
+binary assets, that needs history, undo, a change trail, and replicas
+across sites.**
+
+Five properties follow from the mutation DAG itself. They are yours in
+full in single-author use, where nothing is ever collapsed:
+
+* **Undo / redo, exact and free.** Every mutation is already an opcode,
+  so undo is a commit that masks another — not a per-action inverse you
+  write and maintain for every command in the application. The stack
+  itself is per-session and does not outlive the store, though the
+  commits it walked stay in the DAG
+  (:doc:`CommitStore <commit_store>`).
+* **History you never had to model.** Any past state is reconstructed
+  from its ``commitId``, and every change is a commit carrying a label
+  and a timestamp. There is no separate history schema to design, and
+  none to keep in step with the domain model as it evolves. A commit
+  carries no author, though: identity, where you need it, is something
+  the application writes into the label or into the model.
+* **Binary assets deduplicated by construction.** Blobs live in a
+  content-addressed pool referenced from inside commits, so an identical
+  payload is stored once however many commits point at it, and a flatten
+  keeps only what the retained commit still references
+  (:doc:`Commit Database <commit_database>`).
+* **Replication with no transport protocol to invent.** Because every commit and
+  every blob is immutable and named by its hash, synchronising two sites
+  is two set differences — one on commit ids, one on blob hashes.
+  Offline work and local-first reads follow from the shape of the data,
+  not from a reconciliation algorithm. Deciding which node folds the
+  divergent heads, and when, is still yours
+  (:doc:`Database synchronisation <commit_synchronization>`).
+* **One chokepoint for every state change.** In an application built on
+  the store, mutations reach the database only through ``dispatch``, as
+  labelled commits — the API underneath allows a direct
+  ``commit_mutations``, which tools and scripts use, so the chokepoint is
+  the application's discipline, not an engine rule. That single seam is
+  what makes an application observable, scriptable and replayable
+  without instrumenting it
+  (:doc:`Commit Application Model <commit_application_model>`).
+
+Deterministic reduction is not a sixth item on that list. It is the
+price of letting the DAG fork at all: once two heads exist, closing them
+without a human requires a structural rule. A single author never pays
+it — every read returns exactly what was written. Concurrent authors pay
+it in full, and that is what the rest of this chapter is about.
 
 Start here
 ----------
@@ -45,10 +99,12 @@ Commit provides exactly one of them:
   engine guarantee. It is not *convergence* in the CRDT sense: the
   reduction is non-commutative, so the same heads in a different order
   can yield a different state.
-- **Cooperation — the safe envelope you engineer.** Disjoint or
-  accretive contributions converge with every intent surviving. This is
-  the *only* concurrent writing the engine folds without loss, and
-  reaching it is a modelling task
+- **Cooperation — an envelope you engineer, and must keep.** Where
+  contributions land on disjoint paths, or on containers the
+  application only ever grows, every intent survives the fold. That is
+  the *only* concurrent writing the engine folds without loss. It is
+  not a property of the engine, nor of any container: nothing checks
+  it, and one overlapping or subtracting write is enough to end it
   (:doc:`Cooperative Discipline <commit_cooperation>`).
 - **Collaboration — what Commit is not.** Arbitrating overlapping
   intentions (manual-merge / review) needs a supervisor *above* the
@@ -80,7 +136,8 @@ Four transverse pages complete the chapter:
   application's semantic responsibility.
 * :doc:`Cooperative Discipline <commit_cooperation>` — scope
   decomposition: how to keep concurrent writes inside the disjoint
-  envelope, the only region where no intent is silently lost.
+  envelope — the only region where no intent is silently lost, and one
+  the application holds on its own.
 * :doc:`Supervised Reconciliation <commit_collaboration>` — the
   curative counterpart, for when writes could not be kept disjoint: it
   surfaces the intent the engine dropped, before or after the merge is

@@ -224,6 +224,21 @@ True
 
 The first commit's parent is the zero `ValueCommitId` (no ancestor).
 
+A header carries a label, a timestamp, its parent and — for a merge — its
+target. **It carries no author.** Nothing in the DAG records who wrote a
+commit; if your application needs that, it goes in the label or in the
+model.
+
+The commit id is computed over the parents, the commit type and the opcode
+payload — the mutations themselves. It is recomputed every time a commit is
+read, and a commit whose bytes no longer match it is rejected, so disk or
+transport corruption of the history is detected rather than replayed;
+because each id covers its parents', the check chains back through the
+ancestry. **The label and the timestamp sit outside that hash** — they are
+metadata, not content, and nothing detects a change to them. Anything that
+has to be as trustworthy as the history itself belongs in the model, not in
+the label.
+
 Navigate history by passing the explicit ids you captured:
 
 ```pycon
@@ -266,7 +281,9 @@ non-commutative: `commitMerge(A, B) ≠ commitMerge(B, A)`.
 
 **Reducing multiple heads is a strategy, not a guarantee.** The
 built-in `CommitDatabaseHelper.reduceHeads` seeds the running result with the
-most recent head (`lastCommitId()`, by authoring timestamp) and folds the remaining
+most recent head (`lastCommitId()`, by authoring timestamp — a wall-clock value,
+unhashed, set by whichever site authored the commit, so across replicated sites it is
+only as consistent as their clocks) and folds the remaining
 heads into it in ascending `CommitId` order, calling `commitMerge` once
 per head with the running result as parent and the head as target. Applications are free to use a
 different order — or to skip `reduceHeads` entirely and issue their
@@ -290,7 +307,11 @@ merge commits. Fix one reduction order for all writers of a shared
 database; the built-in `CommitDatabaseHelper.reduceHeads()` is the obvious
 choice, and it is
 transactional, where a hand-rolled fold can
-leave a half-merged DAG if it is interrupted mid-merge.
+leave a half-merged DAG if it is interrupted mid-merge. The same algorithm
+is not the same order, though: two nodes folding different head sets, at
+different moments, still reach different results. In a replicated topology
+the answer is a single designated reducer — see
+[Who reduces, and when](commit_synchronization.md#who-reduces-and-when).
 
 **On an overlapping path, the surviving value is structural, not
 intentional.** Whichever strategy is used, the value that survives is
@@ -298,6 +319,20 @@ a function of how merges were sequenced — not of authorship, recency,
 or semantic priority. Two authors editing the same field have no way
 to predict which value will survive reduction, even within a fixed
 strategy.
+
+**What `reduce_heads` does operationally.** It is a no-op below two heads,
+so it is safe to call on a database that has not diverged, and safe to call
+again. It runs in an **exclusive** transaction and refuses to start inside
+one, so two processes cannot fold the same database at the same time — the
+second waits for the lock, ten seconds by default, and raises if it is
+still held — and any failure rolls the whole fold
+back rather than leaving a half-merged DAG. An overload takes an explicit
+anchor, `reduce_heads(db, anchor)`, which raises if the id is not a head;
+that is the lever if you need a seed other than the most recent commit. The
+merge commits it writes carry an engine-generated label, `merge of <id>` —
+if the label has to say who reduced and under which policy, issue your own
+`merge_commit(label, parent, merged)` sequence instead of calling
+`reduce_heads`.
 
 The implication for the application is treated in the
 [Dual-Layer Contract](commit_contract.md#reading-the-state-is-an-import-not-a-load):
@@ -388,6 +423,15 @@ converter automates the pattern, it does not trim history in place. See
 {doc}`Database Transfer <../dsviper-python/api/transfer>` for the full transfer
 toolkit.
 
+The flattener writes into a target **the caller creates**: a fresh database
+whose history is a single commit rooted at the zero parent, sharing no
+`CommitId` with the source — only the blobs carry over unchanged, being
+addressed by content. The switch is therefore fleet-wide: readers and writers
+move to the new database and the old ones are retired, not kept as sync peers.
+Synchronisation pairs databases by content and never checks that two are the
+same lineage, so pairing a flattened database with one that still holds the
+old history yields a database with two unrelated roots.
+
 ```{warning}
 `CommitDatabase.delete_commit()` and `CommitDatabase.reset_commits()`
 (plus the CLI wrapper `commit_admin reset`) are **not features** —
@@ -429,8 +473,8 @@ engine — it's on the application.
   the database it points into.
 - **Prefer path-based mutators over `set()`** for fields edited
   concurrently. `set()` replaces the whole document, so disjoint edits
-  collide. `update`, `union_in_set`, `update_in_map`, etc. converge
-  cleanly on disjoint paths — see [Why Paths Matter](#why-paths-matter).
+  collide. `update`, `union_in_set`, `update_in_map`, etc. recombine
+  cleanly on paths that stay disjoint — see [Why Paths Matter](#why-paths-matter).
   But match the path to the semantic unit: letting `diff` split a bound
   value into sub-paths is its own failure mode — see
   [Re-entering the graph](commit_contract.md#re-entering-the-graph).

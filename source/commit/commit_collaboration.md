@@ -11,6 +11,16 @@ It is **additive**: a set of free functions over `CommitDatabase`'s public
 API, with no change to the engine, the storage format, or the runtime. It
 ships inside Viper and reaches Python through `dsviper`.
 
+```{important}
+This layer does not make Commit collaborative. It surfaces the intent the
+engine dropped and applies the decisions you hand back — one locus at a
+time, each one a judgement someone has to make, so the cost scales with how
+often the streams overlap. It is a repair surface for writes that could not
+be kept disjoint, never an alternative to keeping them disjoint: the
+engineering exit remains [Cooperative Discipline](commit_cooperation.md).
+What it cannot do is listed under [Honest bounds](#honest-bounds).
+```
+
 ## A conflict is reconstructed, not reported
 
 The engine has no notion of conflict. Mechanical reduction linearises

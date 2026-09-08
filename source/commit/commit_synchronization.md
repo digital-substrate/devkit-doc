@@ -12,6 +12,17 @@ one on commit ids, one on blob hashes. Each side copies what the
 other has and it lacks. The resulting DAG and blob pool on each
 side are the union of both — divergent heads included, unchanged.
 
+```{important}
+That union is where the exposure begins. Sync loses nothing itself — it
+is a verbatim, append-only copy — but a replicated topology is
+**multi-head by construction**: each site holds its own write head, and
+reducing those heads is where overlapping intent is silently collapsed,
+with nothing signalled. Whether that puts you in multi-stream usage is a
+modelling question, and it is effectively irreversible once the DSM model
+is sealed. Run the [Modes of Use](commit_modes.md) diagnostic *before*
+reaching for sync, not after.
+```
+
 ---
 
 ## Two deployment patterns

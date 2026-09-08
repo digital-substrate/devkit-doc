@@ -26,6 +26,15 @@ This is the path for multi-stream usage, not a back-stop when the
 [import outcomes](commit_contract.md#import-outcomes) are what remains
 *if* the discipline fails on a specific path.
 
+```{important}
+This is a discipline you engineer, not a feature you enable. There is no
+general recipe: the shape of the disjointness is specific to your domain,
+and no pattern here has been validated at scale as a general solution. It is
+decided in the `.dsm` before any code is written — and it does not cover
+strong invariants at all, whatever the decomposition (see
+[What scope decomposition does not solve](#what-scope-decomposition-does-not-solve)).
+```
+
 ## Not a Commit quirk
 
 The limit is structural, not a peculiarity of this engine. Any system

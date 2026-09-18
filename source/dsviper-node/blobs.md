@@ -224,6 +224,59 @@ db.commitMutations('Add doc', mutableState);
 Store the blob first, and the same commit succeeds — the `blob_id` then resolves
 to real bytes through the blob API shown above.
 
+## Writing typed bytes: fill, seal, read
+
+A `ValueBlob` is a value: its bytes do not change once it is made — the hash is
+computed from them and kept, and the `blob_id` names that content. So writing
+happens **before** there is a value, on a builder that owns the bytes; `build()`
+hands them over, once.
+
+```js
+const layout = new BlobLayout('float', 3);
+
+const builder = new BlobArrayBuilder(layout, 100);
+builder.copy(new Float32Array(300).fill(1.5));   // exact size, or it throws
+const blob = builder.build();                    // seals: the bytes become a value
+
+const array = BlobArray.fromBlob(layout, blob);  // flat, binary reading
+array.at(0);                                     // ValueVec((1.5, 1.5, 1.5))
+
+new BlobView(layout, blob).at(0);                // element by element, as values
+```
+
+A spent builder refuses everything — another content takes another builder:
+
+```js
+builder.build();   // ViperError: the builder handed its bytes over to a blob
+```
+
+`BlobEncoder` is the same shape for values rather than bytes: `write(value)` as
+many times as needed, then `endEncoding()`.
+
+## BlobPackBuilder — several regions in one blob
+
+`BlobPackDescriptor` describes the regions, the builder fills them by name, and
+the sealed blob carries their table: a reader finds the names, layouts and counts
+without being told.
+
+```js
+const descriptor = new BlobPackDescriptor();
+descriptor.addRegion('positions', new BlobLayout('float', 3), 4);
+descriptor.addRegion('indices', new BlobLayout('uint', 3), 2);
+
+const builder = new BlobPackBuilder(descriptor);
+builder.copy('positions', new Float32Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]));
+builder.byteCount('positions');        // 48
+
+const mesh = BlobPack.fromBlob(builder.build());
+[...mesh];                             // ['positions', 'indices']
+mesh.check('positions').count();       // 4
+```
+
+It suits data written once and read whole — a payload bound for the GPU, a cache.
+Data edited attribute by attribute is better kept as one blob per attribute,
+where content-addressing dedups them and an edit rewrites only what changed.
+
 ## When to use each type
 
 | Scenario             | Recommendation                        |
@@ -233,8 +286,8 @@ to real bytes through the blob API shown above.
 | Mesh geometry        | `blob_id` (database blob API)         |
 | Audio / video        | `blob_id` (database blob API)         |
 
-For typed numeric arrays backed by a blob — meshes, vertex buffers — see
-`BlobArray` and `BlobEncoder`, which encode flat JS arrays into a laid-out blob
-you can then store with `createBlob`. Error handling across the blob API follows
+For typed numeric arrays backed by a blob — meshes, vertex buffers — fill a
+`BlobArrayBuilder` or a `BlobPackBuilder` and store what it seals with
+`createBlob`; `BlobArray` and `BlobView` read one back. Error handling across the blob API follows
 the model in {doc}`errors`; for the surrounding commit and transaction flow see
 {doc}`database`.

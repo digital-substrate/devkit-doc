@@ -109,17 +109,64 @@ The layout enables:
 - Cross-platform compatibility (endianness handled)
 - Validation at decode time
 
-## BlobView (Read-Only)
+## Writing and reading: two sides, never the same object
 
-A `BlobView` interprets an existing blob with a given layout (read-only). When
-the layout has more than one component per element, indexing returns a tuple:
+A `ValueBlob` is a value. Its bytes do not change once it is made: its hash is
+computed from them and kept, its `BlobId` names that content, and a server shares
+it across the threads serving its clients. So writing happens **before** there is a
+value, on a builder that owns the bytes; sealing hands them over.
+
+| | by value, element by element | binary, flat |
+|---|---|---|
+| **write** | `BlobEncoder` → `end_encoding()` | `BlobArrayBuilder` → `build()` |
+| **read** | `BlobView` | `BlobArray` |
+
+The two readings answer the same bytes differently: `BlobView` gives one element
+at a time, typed; `BlobArray` gives components and the raw bytes, without a copy.
+
+## BlobArrayBuilder — filling one typed array
+
+Layout and count are fixed at construction, as `std::array<T, n>` fixes them:
+there is no append and no resize. Write by index, in bulk with `copy()`, or
+straight through the buffer protocol.
 
 ```{doctest}
->>> import struct
->>> _buf = bytearray()
+>>> builder = BlobArrayBuilder(BlobLayout('float', 3), 100)
+>>> len(builder)          # components: 100 elements x 3
+300
+>>> builder.byte_count()
+1200
+
+>>> builder[0] = 1.5
+>>> builder.copy(bytes(1200))       # a whole array at the exact size
+
+>>> blob = builder.build()          # seals: the bytes become a value
+>>> blob.size()
+1200
+```
+
+`build()` **moves** the bytes rather than copying them, so no writer keeps a way
+in. A spent builder refuses everything:
+
+```{doctest}
+>>> builder.is_built()
+True
+>>> builder[0] = 2.0
+Traceback (most recent call last):
+    ...
+dsviper.ViperError: ...the builder handed its bytes over to a blob...
+```
+
+## BlobView — reading a blob element by element
+
+A `BlobView` interprets an existing blob with a given layout. When the layout has
+more than one component per element, indexing answers a tuple:
+
+```{doctest}
+>>> builder = BlobArrayBuilder(BlobLayout('float', 3), 100)
 >>> for i in range(100):
-...     _ = _buf.extend(struct.pack('<fff', float(i), float(i*2), float(i*3)))
->>> raw = ValueBlob(bytes(_buf))
+...     builder[i * 3], builder[i * 3 + 1], builder[i * 3 + 2] = float(i), float(i * 2), float(i * 3)
+>>> raw = builder.build()
 
 >>> view = BlobView(BlobLayout('float', 3), raw)
 >>> view.count()
@@ -130,39 +177,33 @@ the layout has more than one component per element, indexing returns a tuple:
 (99.0, 198.0, 297.0)
 ```
 
-Use `BlobView` when you need to read blob data without copying.
+## BlobArray — reading a blob as flat binary
 
-## BlobArray (Read-Write)
-
-A `BlobArray` is a typed array backed by a blob. Writes and reads use the
-NumPy buffer protocol — the array exposes a *flat* `(N*components,)` view, so
-reshape it to `(N, components)` to assign per-element tuples:
+`BlobArray.from_blob` reads the same bytes flat, one component per index, and
+hands them out through the buffer protocol — read-only, and without a copy:
 
 ```{doctest}
->>> import numpy as np
->>> layout = BlobLayout('float', 3)
->>> array = BlobArray(layout, 100)
-
->>> np_view = np.array(array, copy=False).reshape(100, 3)
->>> np_view[0] = [1.0, 2.0, 3.0]
->>> np_view[1] = [4.0, 5.0, 6.0]
-
->>> view = BlobView(layout, array.blob())
->>> view[0]
-(1.0, 2.0, 3.0)
->>> view[1]
-(4.0, 5.0, 6.0)
+>>> array = BlobArray.from_blob(BlobLayout('float', 3), raw)
+>>> len(array)
+300
+>>> array[3]
+1.0
+>>> memoryview(array).readonly
+True
 ```
 
-## BlobPack - Structured Binary Data
+## BlobPack — several regions in one blob
 
-A `BlobPack` groups multiple named regions with different layouts into a single blob. This
-is ideal for complex structures like 3D meshes.
+A `BlobPack` groups named regions of different layouts into a single blob, and
+the blob carries their table: a reader finds the names, layouts and counts
+without being told. It suits data written once and read whole — a buffer bound
+for the GPU, a payload that travels together. Data edited attribute by attribute
+is better kept as one blob per attribute, where content-addressing dedups them
+and an edit rewrites only what changed.
 
 ### Example: 3D Mesh Storage
 
-A mesh has positions, normals, UVs, and triangle indices — each with a different layout.
-Define the structure with a descriptor, then create the pack:
+Describe the regions, fill them, seal:
 
 ```{doctest}
 >>> descriptor = BlobPackDescriptor()
@@ -171,40 +212,60 @@ Define the structure with a descriptor, then create the pack:
 >>> descriptor.add_region('uvs', BlobLayout('float', 2), 4)
 >>> descriptor.add_region('indices', BlobLayout('uint', 3), 2)
 
->>> mesh = BlobPack(descriptor)
->>> len(mesh)
-4
+>>> builder = BlobPackBuilder(descriptor)
+>>> list(builder)
+['positions', 'normals', 'uvs', 'indices']
+>>> builder.byte_count('positions')
+48
 ```
 
-### Fill the Mesh Data
-
-Each region exposes a flat NumPy view; reshape to write per-vertex tuples:
+`builder[name]` answers a writable `memoryview` bounded to that region and typed
+by its layout. NumPy writes straight into it — reshape the flat view to assign
+per-element tuples:
 
 ```{doctest}
 >>> import numpy as np
->>> pos = np.array(mesh['positions'], copy=False).reshape(4, 3)
->>> pos[:] = [[-1.0, -1.0, 0.0], [1.0, -1.0, 0.0],
-...           [ 1.0,  1.0, 0.0], [-1.0,  1.0, 0.0]]
+>>> with builder['positions'] as region:
+...     np.asarray(region).reshape(4, 3)[:] = [[-1.0, -1.0, 0.0], [1.0, -1.0, 0.0],
+...                                            [1.0, 1.0, 0.0], [-1.0, 1.0, 0.0]]
+>>> with builder['normals'] as region:
+...     np.asarray(region).reshape(4, 3)[:] = [[0.0, 0.0, 1.0]] * 4
+>>> with builder['uvs'] as region:
+...     np.asarray(region).reshape(4, 2)[:] = [[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]]
+>>> builder.copy('indices', np.array([[0, 1, 2], [0, 2, 3]], dtype=np.uint32).tobytes())
 
->>> normals = np.array(mesh['normals'], copy=False).reshape(4, 3)
->>> normals[:] = [[0.0, 0.0, 1.0]] * 4
-
->>> uvs = np.array(mesh['uvs'], copy=False).reshape(4, 2)
->>> uvs[:] = [[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]]
-
->>> indices = np.array(mesh['indices'], copy=False).reshape(2, 3)
->>> indices[:] = [[0, 1, 2], [0, 2, 3]]
+>>> blob = builder.build()
 ```
 
-### Serialize and Restore
+The `with` block matters: a region view keeps the builder's bytes exported, and
+sealing under an open view would leave that view pointing into a value. The
+builder refuses, exactly as a `bytearray` refuses to resize under a `memoryview`:
 
 ```{doctest}
->>> blob = mesh.blob()
->>> restored = BlobPack.from_blob(blob)
+>>> other = BlobPackBuilder(descriptor)
+>>> region = other['positions']
+>>> other.build()
+Traceback (most recent call last):
+    ...
+BufferError: cannot build while 1 region buffer(s) of this builder are live
+>>> region.release()
+>>> _ = other.build()
+```
 
->>> np.array(restored['positions'], copy=False).reshape(4, 3)[0].tolist()
+### Read it back
+
+```{doctest}
+>>> mesh = BlobPack.from_blob(blob)
+>>> list(mesh)
+['positions', 'normals', 'uvs', 'indices']
+>>> mesh['positions'].count()
+4
+>>> mesh['positions'].blob_layout()
+'float-3'
+
+>>> np.frombuffer(mesh['positions'], dtype=np.float32).reshape(4, 3)[0].tolist()
 [-1.0, -1.0, 0.0]
->>> np.array(restored['indices'], copy=False).reshape(2, 3)[1].tolist()
+>>> np.frombuffer(mesh['indices'], dtype=np.uint32).reshape(2, 3)[1].tolist()
 [0, 2, 3]
 ```
 
@@ -218,81 +279,34 @@ False
 
 >>> mesh['positions'].name()
 'positions'
->>> mesh['positions'].count()
-4
->>> mesh['positions'].blob_layout()
-'float-3'
->>> mesh['positions'].data_count()
-12
 >>> mesh['positions'].byte_count()
 48
+>>> mesh['missing']
+Traceback (most recent call last):
+    ...
+dsviper.ViperError: ...no such region missing...
 ```
 
 ## NumPy Integration
 
-`BlobArray` implements the Python Buffer Protocol, enabling zero-copy interoperability
-with NumPy and other array libraries.
-
-### Zero-Copy View
-
-The buffer is exposed as a flat 1D array of components — reshape to give it
-the geometric shape you want:
+Both sides work without a copy, and the direction is the type: a builder's buffer
+is writable, a blob's is not.
 
 ```{doctest}
 >>> import numpy as np
->>> layout = BlobLayout('float', 3)
->>> positions = BlobArray(layout, 100)
+>>> builder = BlobArrayBuilder(BlobLayout('float', 3), 100)
+>>> np.asarray(builder).reshape(100, 3)[0] = [1.0, 2.0, 3.0]
+>>> blob = builder.build()
 
->>> np_view = np.array(positions, copy=False)
->>> np_view.shape
-(300,)
->>> np_view.dtype
-dtype('float32')
-
->>> np_view.reshape(100, 3).shape
-(100, 3)
+>>> read = np.frombuffer(blob, dtype=np.float32)
+>>> read.flags.writeable
+False
+>>> read[:3].tolist()
+[1.0, 2.0, 3.0]
 ```
 
-### Bidirectional Modifications
-
-Changes through NumPy affect the original BlobArray:
-
-```{doctest}
->>> reshaped = np.array(positions, copy=False).reshape(100, 3)
->>> reshaped[0] = [10.0, 20.0, 30.0]
-
->>> view = BlobView(layout, positions.blob())
->>> view[0]
-(10.0, 20.0, 30.0)
-```
-
-### Direct Memory Access
-
-```{doctest}
->>> mv = memoryview(positions)
->>> mv.nbytes
-1200
-```
-
-### BlobPack Regions
-
-`BlobPackRegion` also supports the Buffer Protocol — same flat-then-reshape
-idiom:
-
-```{doctest}
->>> positions_np = np.array(mesh['positions'], copy=False).reshape(4, 3)
->>> normals_np = np.array(mesh['normals'], copy=False).reshape(4, 3)
->>> uvs_np = np.array(mesh['uvs'], copy=False).reshape(4, 2)
-
->>> positions_np.shape
-(4, 3)
->>> uvs_np.shape
-(4, 2)
-
->>> positions_np *= 2.0
->>> positions_np[0].tolist()
-[-2.0, -2.0, 0.0]
-```
+Prefer `np.frombuffer(blob, ...)` over `bytes(blob)`: the first hands out the
+blob's own bytes, the second copies them.
 
 ## Blob in Attachments
 

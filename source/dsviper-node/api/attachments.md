@@ -18,8 +18,10 @@ filed: `att.createKey().toParentKey()` for the parent concept,
 
 **When to use**: reach for an attachment whenever you need to store and
 retrieve values keyed by document. {js:class}`AttachmentGetting` provides
-read access (`keys`, `get`, `has`); {js:class}`AttachmentMutating` extends it
-with write operations (`set`, `update`, and the collection-field ops
+read access (`keys`, `get`, `has`); {js:class}`AttachmentMutating` **is** one —
+it extends it, as in C++, so it is accepted wherever read access is required and
+`attachmentGetting()` hands out the read-only view of the same attachments —
+and adds the write operations (`set`, `update`, and the collection-field ops
 `unionInSet` / `subtractInSet`, `unionInMap` / `subtractInMap`,
 `insertInXarray` / `updateInXarray` / `removeInXarray`).
 

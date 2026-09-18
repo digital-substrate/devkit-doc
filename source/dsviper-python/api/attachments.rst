@@ -29,7 +29,10 @@ False
 >>> document = Value.create(MY_APP_S_PROFILE, {"city": "Paris", "age": 30})
 
 ``AttachmentGetting`` reads and ``AttachmentMutating`` writes. Both are
-reached from a state, never constructed directly:
+reached from a state, never constructed directly. The second **is** the first —
+``AttachmentMutating`` derives from ``AttachmentGetting``, as it does in C++ — so
+it is accepted wherever read access is required, and ``attachment_getting()``
+hands out the read-only view of the same attachments when you want to say so:
 
 >>> db = CommitDatabase.create_in_memory()
 >>> db.extend_definitions(defs).count()
@@ -42,6 +45,11 @@ reached from a state, never constructed directly:
 >>> getting = CommitStateBuilder.state(db, commit_id).attachment_getting()
 >>> value = getting.get(MY_APP_A_USER_PROFILE, key)
 >>> value.is_nil()
+False
+
+>>> isinstance(mutating, AttachmentGetting)
+True
+>>> mutating.attachment_getting().get(MY_APP_A_USER_PROFILE, key).is_nil()
 False
 >>> Value.dumps(value.unwrap())
 {'city': 'Paris', 'age': 30}

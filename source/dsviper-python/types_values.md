@@ -173,15 +173,25 @@ Fixed-size numeric arrays:
 
 ### Mat
 
-Matrices with columns and rows:
+Matrices with columns and rows, stored column-major: the outer sequence lists the
+columns, so `mat<float, 2, 3>` is two columns of three. `m[column]` is a column and
+`m[column, row]` an element — read row-major, as numpy does by default, the matrix
+comes out transposed.
 
 ```{doctest}
 >>> t = TypeMat(Type.FLOAT, 2, 3)
 >>> Value.create(t)
 [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0)]
 
->>> Value.create(t, ((1, 2, 3), (4, 5, 6)))
+>>> m = Value.create(t, ((1, 2, 3), (4, 5, 6)))
+>>> m
 [(1.0, 2.0, 3.0), (4.0, 5.0, 6.0)]
+
+>>> m[1]
+(4.0, 5.0, 6.0)
+
+>>> m[1, 2]
+6.0
 ```
 
 ## Type Deduction

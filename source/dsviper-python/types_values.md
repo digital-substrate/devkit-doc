@@ -251,3 +251,53 @@ Python natives are automatically converted:
 
 The bridge uses type metadata to validate and convert Python objects.
 
+## Reading Back: Natives or Values
+
+The bridge works the other way too: reading a primitive hands back a Python native.
+
+```{doctest}
+>>> v = Value.create(TypeVector(Type.INT8), [5, 6])
+>>> v[0]
+5
+>>> type(v[0])
+<class 'int'>
+```
+
+That projection keeps the number and drops the Viper type: `int8`, `uint64` and every other
+integer width read as `int`, `float` and `double` as `float`, and nothing recovers which one it
+was. When the code needs the value itself — its type, to describe it, to copy it into another
+value — the reads that project take `encoded=False`:
+
+```{doctest}
+>>> x = v.at(0, encoded=False)
+>>> type(x)
+<class 'dsviper.ValueInt8'>
+>>> x.type()
+int8
+```
+
+A value that is not a primitive — a vector, an optional, a structure — comes back as a Value
+either way.
+
+## With a Type Checker
+
+`dsviper` ships its type hints, so mypy and Pyright check your calls against the binding. A read
+that projects is declared as the union of what it can answer: a native, or one of the Value
+classes the projection leaves alone. Calling a method that only one of them has asks the code to
+say which — and one line does:
+
+```{doctest}
+>>> o = Value.create(TypeVector(TypeOptional(Type.STRING)), [None])
+>>> ValueOptional.cast(o[0]).is_nil()
+True
+```
+
+- **The class is known from context** — the type you decoded with, the field you read: wrap the
+  read in `ValueX.cast(...)`. It also checks at runtime, so a wrong class raises instead of
+  travelling on.
+- **The code branches on the class**: `isinstance(read, ValueX)`.
+- **The read may be absent** — `CommitStore.state()`, `Codec.query(name)`, the declarations
+  typed `X | None`: guard it, or state it with `assert x is not None`.
+
+`encoded=False` answers a `Value`: enough for `type()`, `representation()` or `Value.copy()`,
+not for a method of one Value class — that still takes a `cast`.

@@ -3,14 +3,14 @@ Commit
 
 **Commit** is a deterministic, best-effort reduction engine over an
 immutable, content-addressed mutation DAG on a
-:doc:`DSM <../dsm/index>` model. For a **single author on a linear
-history it is lossless** — every read returns exactly what you wrote;
-fold two of your own heads and the structural rules apply as anywhere
-else, so you own both sides and can review the outcome, but you do not
-get both values. For
-**concurrent authors it has no notion of conflict**: overlapping intent
-is silently collapsed by structural rules — structurally sound,
-semantically untrusted.
+:doc:`DSM <../dsm/index>` model. Every commit names its parent, so work
+that did not see the current head never overwrites it — it **diverges**,
+and the database carries two heads until something folds them. On a
+**single stream it is lossless**: every read returns exactly what was
+written. **Folding two heads has no notion of conflict**: overlapping
+intent is silently collapsed by structural rules — structurally sound,
+semantically untrusted. That holds whoever wrote the two heads,
+including you on two machines.
 
 What it solves
 --------------
@@ -22,7 +22,7 @@ binary assets, that needs history, undo, a change trail, and replicas
 across sites.**
 
 Five properties follow from the mutation DAG itself. They are yours in
-full in single-author use, where nothing is ever collapsed:
+full on a single stream, where nothing is ever collapsed:
 
 * **Undo / redo, exact and free.** Every mutation is already an opcode,
   so undo is a commit that masks another — not a per-action inverse you
@@ -58,31 +58,40 @@ full in single-author use, where nothing is ever collapsed:
   (:doc:`Commit Application Model <commit_application_model>`).
 
 Deterministic reduction is not a sixth item on that list. It is the
-price of letting the DAG fork at all: once two heads exist, closing them
-without a human requires a structural rule. A single author never pays
-it — every read returns exactly what was written. Concurrent authors pay
-it in full, and that is what the rest of this chapter is about.
+price of letting the DAG diverge at all: once two heads exist, closing
+them without a human requires a structural rule. A stream that never
+diverges never pays it — every read returns exactly what was written. A
+fold nobody reviews pays it in full, and that is what the rest of this
+chapter is about.
 
 Start here
 ----------
 
 Most of this chapter is reference you can skip. It turns on **one
-question: can more than one author write to the database?**
+question: can the database ever carry two heads that are folded without
+a human reviewing the result?**
 
-- **No — a single author (the common case).** Read
+- **No — one stream (the common case).** One writer at a time, each
+  extending the head it read. Several writers qualify too, as long as
+  the application serialises them onto that head — what ends the regime
+  is a write prepared against an older head, not a second person. Read
   :doc:`Commit Database <commit_database>`,
   :doc:`CommitStore <commit_store>` and
   :doc:`Commit Application Model <commit_application_model>`; skip the
-  rest, since every read returns exactly what you wrote.
-- **Yes, or maybe later.** Start with the
+  rest, since every read returns exactly what was written. The condition
+  is checkable rather than declared: ``head_commit_ids()`` answers one
+  id.
+- **Yes, or maybe later.** Two sites syncing, an offline replica, a
+  second writer committing in parallel, or heads you diverge yourself
+  and fold unreviewed. Start with the
   :doc:`Modes of Use <commit_modes>` diagnostic — it tells you which
   remaining pages apply, and how much. The choice is hard to reverse
   once a model is sealed, so read it before settling on single-stream.
 
 .. _three-regimes:
 
-Three regimes of multi-author work
-----------------------------------
+Three regimes when two heads meet
+---------------------------------
 
 Commit provides exactly one of them:
 

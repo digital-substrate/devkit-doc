@@ -154,12 +154,12 @@ has its own write head, and divergent heads meet at sync time, not at
 write time. Whether that makes you *multi-stream* is a question of how
 those heads are reduced, not of topology — the same line
 [Modes of Use](commit_modes.md#multi-head-exploration) draws for
-multi-head exploration. A single author who reviews each head
-reduction stays single-stream; a **second author committing in
-parallel**, or head reduction left unreviewed, does not.
+multi-head exploration. Reviewing each head reduction keeps you
+single-stream; **writes landing on two sites in parallel**, or a head
+reduction left unreviewed, do not.
 
 Once you are past that line, a single-stream model — one that assumes
-a single author with a linear history — has no safe path here. You are
+a linear history it alone extends — has no safe path here. You are
 then at least in
 [Multi-stream with local invariants](commit_modes.md#multi-stream-with-local-invariants),
 and possibly in

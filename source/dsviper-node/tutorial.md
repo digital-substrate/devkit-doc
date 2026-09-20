@@ -129,11 +129,11 @@ db.lastCommitId().equals(commitId); // true
 ```{note}
 **Scope of this tutorial**
 
-The single-author flow shown here does not exercise the reduction behaviour
-described in {doc}`../commit/index`: with one author committing in sequence,
-mutations are never silently dropped and no last-writer-wins arbitration takes
-place. The contract becomes load-bearing once **several authors' writes are
-reduced automatically** — see {doc}`../commit/commit_modes` for the diagnostic
+The single-stream flow shown here does not exercise the reduction behaviour
+described in {doc}`../commit/index`: everything commits in sequence onto one
+head, so mutations are never silently dropped and no last-writer-wins
+arbitration takes place. The contract becomes load-bearing once **two heads are
+folded automatically** — see {doc}`../commit/commit_modes` for the diagnostic
 and which mode applies to your application.
 ```
 

@@ -105,11 +105,11 @@ True
 ```{note}
 **Scope of this tutorial**
 
-The single-author flow shown here does not exercise the reduction
+The single-stream flow shown here does not exercise the reduction
 behavior described in [The Dual-Layer Contract](../commit/commit_contract.md):
-with one author committing in sequence, mutations are never silently dropped
-and no LWW arbitration takes place. The contract becomes load-bearing once
-**several authors' writes are reduced automatically** — see
+everything commits in sequence onto one head, so mutations are never silently
+dropped and no LWW arbitration takes place. The contract becomes load-bearing
+once **two heads are folded automatically** — see
 [Modes of Use](../commit/commit_modes.md) for the
 diagnostic and which mode applies to your application.
 ```

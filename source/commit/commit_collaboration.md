@@ -221,7 +221,7 @@ is the API reference: {doc}`Merge Reconciliation </dsviper-python/api/reconcilia
 
 ## See Also
 
-- {ref}`Three regimes of multi-author work <three-regimes>` — where this layer
+- {ref}`Three regimes when two heads meet <three-regimes>` — where this layer
   sits.
 - [Modes of Use](commit_modes.md) — the diagnostic that determines whether the
   contract, and this layer, are load-bearing.

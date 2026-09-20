@@ -91,9 +91,9 @@ All structural guarantees apply.
 ### Multi-head exploration
 
 *Parallel heads.* Diverge the DAG and keep parallel heads alive,
-reducing them back on your own schedule. Multi-head exploration where a
-single author reviews each reduced result stays **single-stream** —
-`commitMerge` happens, but one person owns the resulting state.
+reducing them back on your own schedule. Multi-head exploration whose
+every reduced result is reviewed stays **single-stream** —
+`commitMerge` happens, but a person owns the resulting state.
 
 ```{important}
 In single-stream every read returns exactly what you wrote. In
@@ -110,16 +110,19 @@ two contexts; what changes is the contract around the state they read.
 
 ### Single-stream
 
-One author writing at a time. No `commitMerge` is reconstructed at
-read time, so the [Dual-Layer Contract](commit_contract.md) is
-reference material, not load-bearing. Time travel, undo / redo and
-multi-head exploration all apply with only the read-side structural
-guarantees — there is nothing for the engine to pick between.
+One head at all times — every commit extends the one before it. No
+`commitMerge` is reconstructed at read time, so the [Dual-Layer
+Contract](commit_contract.md) is reference material, not load-bearing.
+What defines the regime is where writes land, not how many people are
+behind them: several writers serialised onto the head stay here, and one
+writer committing against a head that has moved does not. Time travel,
+undo / redo and multi-head exploration all apply with only the read-side
+structural guarantees — there is nothing for the engine to pick between.
 
 ### Multi-stream
 
-Multiple authors' writes are reduced automatically by mechanical reduction.
-Two flavours, split by what your invariants look like.
+Two heads meet, and their writes are reduced automatically by mechanical
+reduction. Two flavours, split by what your invariants look like.
 
 (local-vs-strong-invariants)=
 
@@ -127,10 +130,10 @@ Two flavours, split by what your invariants look like.
   disjoint subset of the data (one attachment, one path, one
   document, or a container used only where it is commutative — a
   `set` / `map`, or an `xarray` read as a *set* of elements). Two
-  authors writing on disjoint paths cannot break it: the disjointness
+  streams writing on disjoint paths cannot break it: the disjointness
   shields the invariant from reduction.
 - **Strong invariant** (also called *global*) — its truth couples
-  data that multiple authors can write in parallel: uniqueness
+  data that several streams can write in parallel: uniqueness
   across the whole model (no two assets share an SKU), referential
   integrity between attachments (an edge must point to an existing
   vertex), cross-document consistency, or any domain that does not
@@ -144,7 +147,7 @@ dropped. The lost information is not recoverable downstream.
 
 ### Multi-stream with local invariants
 
-Multiple authors' writes are reduced automatically, but the structural drops
+Divergent writes are reduced automatically, but the structural drops
 cost you nothing in practice. Two routes lead here:
 
 - **Naturally local invariants** — the entire mutable state lives
@@ -177,7 +180,7 @@ reference material, not load-bearing.
 
 ### Multi-stream with strong invariants
 
-Multiple authors' writes are reduced automatically; your invariants are global
+Divergent writes are reduced automatically; your invariants are global
 (uniqueness, referential integrity the engine must uphold), or your
 domain does not tolerate silent loss (financial, safety, regulatory).
 This is where the [Dual-Layer Contract](commit_contract.md) becomes

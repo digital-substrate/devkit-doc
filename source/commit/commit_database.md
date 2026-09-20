@@ -37,6 +37,22 @@ downstream re-examines the result. The state you get back is therefore *input
 to re-validate*, not a stored fact — a read is "an import, not a load", the
 [Dual-Layer Contract](commit_contract.md#reading-the-state-is-an-import-not-a-load).
 
+**Why it cannot do otherwise.** The analogy a reader reaches for here is
+applying a patch, and it breaks on one point. A patch carries its precondition
+— in a `diff` hunk, the context lines around each change — and the evaluator
+checks them before applying, so a hunk whose context no longer matches is
+rejected instead of applied. An opcode carries none.
+`Document_Update(key, path, value)` says *write this value at this path*, and
+nothing about the state it was written against; there is nothing for the
+evaluator to check, and so no reject path for it to take. An opcode can still
+*fail* — a path that does not resolve raises, and the trace above records it —
+but that is the write being impossible, never the write being out of date.
+Every opcode whose target resolves applies, and one authored against a state
+that is no longer there applies exactly as cleanly as one that finds the state
+it expected. The absence of a conflict notion is that, restated: not a gap in
+the implementation, but the consequence of a trace that never carried the
+condition under which it was recorded.
+
 ```{important}
 Before reading the API, identify your **mode of use**. The
 [Modes of Use](commit_modes.md) diagnostic decides whether the

@@ -1,5 +1,8 @@
 # CommitStore
 
+This page applies in every mode; nothing on it depends on the
+[Dual-Layer Contract](commit_contract.md).
+
 A `CommitDatabase` is the persistence layer — an immutable DAG of
 commits on disk. It exposes mutations, but every read and write goes
 through explicit commit ids: there is no "current commit", no undo

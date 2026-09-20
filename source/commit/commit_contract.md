@@ -218,7 +218,7 @@ defensive-by-design route from day one. They are commonly framed
 as "strategies"; under strong invariants they are better described
 as **modes of loss**: none re-enters the DAG, none recovers intent.
 
-The trigger for import is the merge itself, not concurrency or
+The trigger for import is the `commitMerge` itself, not concurrency or
 automation. A strictly linear history is a *load*: every mutation
 you submitted is exactly the one that contributed to the state. The
 moment the history contains a `commitMerge` — unsupervised reducer

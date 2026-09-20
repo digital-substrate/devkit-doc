@@ -323,18 +323,18 @@ merge commits. Fix one reduction order for all writers of a shared
 database; the built-in `CommitDatabaseHelper.reduceHeads()` is the obvious
 choice, and it is
 transactional, where a hand-rolled fold can
-leave a half-merged DAG if it is interrupted mid-merge. The same algorithm
+leave a half-reduced DAG if it is interrupted mid-fold. The same algorithm
 is not the same order, though: two nodes folding different head sets, at
 different moments, still reach different results. In a replicated topology
 the answer is a single designated reducer — see
 [Who reduces, and when](commit_synchronization.md#who-reduces-and-when).
 
 **On an overlapping path, the surviving value is structural, not
-intentional.** Whichever strategy is used, the value that survives is
-a function of how merges were sequenced — not of authorship, recency,
-or semantic priority. Two authors editing the same field have no way
-to predict which value will survive reduction, even within a fixed
-strategy.
+intentional.** Whichever strategy is used, the value that survives is a
+function of how the `commitMerge` calls were sequenced — not of
+authorship, recency, or semantic priority. Two authors editing the same
+field have no way to predict which value will survive reduction, even
+within a fixed strategy.
 
 **What `reduce_heads` does operationally.** It is a no-op below two heads,
 so it is safe to call on a database that has not diverged, and safe to call
@@ -342,7 +342,7 @@ again. It runs in an **exclusive** transaction and refuses to start inside
 one, so two processes cannot fold the same database at the same time — the
 second waits for the lock, ten seconds by default, and raises if it is
 still held — and any failure rolls the whole fold
-back rather than leaving a half-merged DAG. An overload takes an explicit
+back rather than leaving a half-reduced DAG. An overload takes an explicit
 anchor, `reduce_heads(db, anchor)`, which raises if the id is not a head;
 that is the lever if you need a seed other than the most recent commit. The
 merge commits it writes carry an engine-generated label, `merge of <id>` —

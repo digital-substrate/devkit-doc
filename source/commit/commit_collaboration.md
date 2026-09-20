@@ -27,7 +27,7 @@ What it cannot do is listed under [Honest bounds](#honest-bounds).
 
 The engine has no notion of conflict. Mechanical reduction linearises
 streams and collapses overlapping intent by structural rule, signalling
-nothing. A pairwise merge is target-wins and non-commutative, and
+nothing. A pairwise `commitMerge` is target-wins and non-commutative, and
 `CommitDatabaseHelper.reduce_heads()` folds several heads in an order the
 authors do not control
 ([the mechanism](commit_database.md#how-reduction-picks-a-winner)).
@@ -115,13 +115,14 @@ The decree's reach mirrors the merge's own nature, container by container:
 | Structure       | per field (`Document_Update`, sibling fields preserved) |
 | XArray / Vector | field-scoped `Document_Update` (whole field)            |
 
-A decree is anchored on the conflict's own `path` — the finest locus the merge
-localised the lost intent to — and the supervisor dictates only the *value*
-that should survive there (`CommitMergeResolution(conflict, chosen)`). `reconcile`
-applies a recursive deep `Document_Update` at that path, so the merge's sibling
-fields and leaves are preserved untouched; the blast radius is bounded to the
-locus, not the whole document. Sequence reordering and element-level XArray
-merge are out of scope.
+A decree is anchored on the conflict's own `path` — the finest locus the
+analysis could anchor the lost intent to — and the supervisor dictates only
+the *value* that should survive there
+(`CommitMergeResolution(conflict, chosen)`). `reconcile` applies a recursive
+deep `Document_Update` at that path, so the reduced document's sibling fields
+and leaves are preserved untouched; the blast radius is bounded to the locus,
+not the whole document. Sequence reordering and element-level XArray merge are
+out of scope.
 
 ## When there is no base
 

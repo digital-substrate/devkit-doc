@@ -46,7 +46,7 @@ owns a subgraph, each workstation an asset, each site an attachment —
 decomposition costs nothing: it is the modelling you would have done
 without Commit. But notice what follows. If writes can be routed so they
 never meet, you did not need the fold in the first place; you were
-running one stream per scope, and the merge you avoided was never
+running one stream per scope, and the fold you avoided was never
 load-bearing.
 
 Where two people genuinely have to edit the same thing, decomposition is

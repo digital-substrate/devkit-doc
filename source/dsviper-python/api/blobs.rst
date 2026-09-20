@@ -68,10 +68,13 @@ Choosing the Right Class
      - ``ValueBlob(bytes_data)``
    * - Typed array
      - :class:`BlobArray`
-     - ``BlobArray(layout, count)``
+     - ``BlobArray.from_blob(blob)``
    * - Multiple regions
      - :class:`BlobPack`
      - Mesh with pos/normals/indices
+   * - Bytes, before they are a value
+     - :class:`BlobArrayBuilder`, :class:`BlobPackBuilder`
+     - ``BlobArrayBuilder(layout, count)`` → ``build()``
    * - Database reference
      - :class:`ValueBlobId`
      - SHA-1 hash reference
@@ -88,7 +91,9 @@ Core Classes
 
    dsviper.BlobLayout
    dsviper.BlobArray
+   dsviper.BlobArrayBuilder
    dsviper.BlobPack
+   dsviper.BlobPackBuilder
    dsviper.BlobPackDescriptor
    dsviper.BlobPackRegion
 

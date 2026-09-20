@@ -98,6 +98,7 @@ DSM Types
    :toctree: generated/
    :nosignatures:
 
+   dsviper.DSMType
    dsviper.DSMTypeKey
    dsviper.DSMTypeVector
    dsviper.DSMTypeSet
@@ -130,6 +131,7 @@ Literals
    :toctree: generated/
    :nosignatures:
 
+   dsviper.DSMLiteral
    dsviper.DSMLiteralValue
    dsviper.DSMLiteralList
 
@@ -149,6 +151,7 @@ describes the model; these classes hold it at runtime.
    dsviper.DefinitionsCollector
    dsviper.DefinitionsInspector
    dsviper.DefinitionsExtendInfo
+   dsviper.DefinitionsMapper
 
 Source Map
 ----------

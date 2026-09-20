@@ -18,7 +18,8 @@ API (`createBlob`, `blob`, `blobInfo`) persists and retrieves them by id.
 
 ```js
 const {
-  BlobLayout, BlobEncoder, BlobArray, ValueBlob, ValueBlobId, Database,
+  BlobLayout, BlobEncoder, BlobArray, BlobArrayBuilder, ValueBlob, ValueBlobId,
+  Database,
 } = require('@digitalsubstrate/dsviper');
 
 // A layout: 3-component float elements (e.g. vec3 positions).
@@ -30,8 +31,8 @@ layout.byteCount();        // 12  (3 * 4 bytes)
 // Layouts also parse from their string form.
 BlobLayout.parse('uchar-1').representation();   // 'uchar-1'
 
-// Pack typed elements into a blob with an encoder. The Node BlobArray is a
-// read-only view, so build data through BlobEncoder, then reinterpret it.
+// Pack typed elements into a blob with an encoder, element by element. The Node
+// BlobArray is a read-only view, so the bytes are built first, then reinterpreted.
 const enc = new BlobEncoder(layout);
 enc.write([1.0, 2.0, 3.0]);   // one 3-component element
 enc.write([4.0, 5.0, 6.0]);
@@ -41,6 +42,13 @@ const blob = enc.endEncoding();   // -> ValueBlob
 const array = BlobArray.fromBlob(layout, blob);
 const elems = [...array];     // ValueVec rows of 3 components
 elems[0].at(0);               // 1.0
+
+// Or write the bytes whole, on a builder that owns them until build() seals
+// them: layout and count are fixed at construction, so there is no resize.
+const builder = new BlobArrayBuilder(layout, 2);            // 2 * 3 floats = 24 bytes
+builder.copy(Buffer.from(new Float32Array([1, 2, 3, 4, 5, 6]).buffer));
+const sealed = builder.build();   // -> ValueBlob; the builder is spent
+builder.isBuilt();                // true
 
 // Raw bytes round-trip through ValueBlob directly.
 const raw = new ValueBlob(Buffer.from([1, 2, 3, 4]));
@@ -71,6 +79,7 @@ stored once. A different layout over the same bytes is a different id.
 | Raw byte payload | {js:class}`ValueBlob` | `new ValueBlob(Buffer.from([...]))` |
 | Element shape (data type + components) | {js:class}`BlobLayout` | `new BlobLayout('float', 3)` |
 | Pack typed elements into bytes | {js:class}`BlobEncoder` | `enc.write(...)`, `enc.endEncoding()` |
+| Fill the bytes of a blob, before it is a value | {js:class}`BlobArrayBuilder` / {js:class}`BlobPackBuilder` | `new BlobArrayBuilder(layout, count)`, `build()` |
 | Read bytes back as typed elements | {js:class}`BlobArray` / {js:class}`BlobView` | `BlobArray.fromBlob(layout, blob)` |
 | Database reference (content-addressed) | {js:class}`ValueBlobId` | `new ValueBlobId(layout, blob)` |
 | Stored-blob metadata and stats | {js:class}`BlobInfo` / {js:class}`BlobStatistics` | `db.blobInfo(id)` |
@@ -91,7 +100,9 @@ Generated from the `@digitalsubstrate/dsviper` TypeScript declarations (`index.d
 ```{js-summary}
 BlobLayout
 BlobArray
+BlobArrayBuilder
 BlobPack
+BlobPackBuilder
 BlobPackDescriptor
 BlobPackRegion
 ```
@@ -124,7 +135,15 @@ BlobStatistics
 :members:
 ```
 
+```{js:autoclass} BlobArrayBuilder
+:members:
+```
+
 ```{js:autoclass} BlobPack
+:members:
+```
+
+```{js:autoclass} BlobPackBuilder
 :members:
 ```
 

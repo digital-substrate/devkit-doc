@@ -12,14 +12,14 @@ BUILDDIR      = build
 help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-.PHONY: help Makefile notebooklm notebooklmzip distzip pdf check llmstxt llmstxt-check llmsfulltxt
+.PHONY: help Makefile notebooklm notebooklmzip distzip pdf check llmstxt llmstxt-check llmsfulltxt notices-check
 
 # Documentation version (from conf.py `release` — keep in sync).
 DOC_VERSION ?= 1.2
 
 # Run all quality gates in sequence. Exit non-zero on the first failure
 # so this target is suitable for a git pre-commit hook.
-check: bindings-check llmstxt-check
+check: bindings-check llmstxt-check notices-check
 	@$(SPHINXBUILD) -M doctest "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 	@$(SPHINXBUILD) -M linkcheck "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 	@$(SPHINXBUILD) -M coverage "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
@@ -35,6 +35,12 @@ llmstxt:
 # or first paragraph) without re-running `make llmstxt`.
 llmstxt-check:
 	@python tools/build_llms_txt.py --check
+
+# Are the published third-party notices the ones that actually ship? The page
+# is a copy of the wheel's file, and a copy drifts: it lost pugixml when the XML
+# wire format landed and nothing said so for two months.
+notices-check:
+	@python tools/check_notices.py
 
 # Which binding do the two API references come from? A working copy beside
 # this repository means a documentation session, and a build against anything

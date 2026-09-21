@@ -5,8 +5,9 @@ on:
     # Pushing a `v*` tag is the canonical deploy trigger — posed
     # manually once dsviper / kibo / doc / website are co-validated.
     # Branch pushes are NOT built in CI: local `make check` is the
-    # pre-commit gate, and the tag build itself catches any regression
-    # before publishing.
+    # pre-commit gate. The tag build runs `make check-publish` before it
+    # builds, so the same gates are applied a second time — against the
+    # published packages rather than a working copy.
     tags: ["v*"]
   pull_request:
     branches: [main, "LTS-*"]
@@ -51,6 +52,12 @@ jobs:
           else
             echo "doc_version=1.2-dev+${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
           fi
+      # The gate runs here, in publishing mode: no binding working copy on the
+      # runner, so every check reads the packages pip and npm just installed —
+      # the ones this build is about to describe. Without it a tag deploys on a
+      # green that only ever validated a developer's working copy.
+      - name: Run quality gates
+        run: make check-publish
       - name: Build HTML
         run: make html
         env:

@@ -12,17 +12,29 @@ BUILDDIR      = build
 help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-.PHONY: help Makefile notebooklm notebooklmzip distzip pdf check llmstxt llmstxt-check llmsfulltxt notices-check
+.PHONY: help Makefile notebooklm notebooklmzip distzip pdf check llmstxt llmstxt-check llmsfulltxt notices-check node-api-check check-publish
 
 # Documentation version (from conf.py `release` — keep in sync).
 DOC_VERSION ?= 1.2
 
-# Run all quality gates in sequence. Exit non-zero on the first failure
-# so this target is suitable for a git pre-commit hook.
-check: bindings-check llmstxt-check notices-check
+# Every gate a tag build can afford to run, and the one the CI runs before it
+# deploys. A build is in one of two modes and each validates a different thing:
+# authoring reads the binding working copy beside this repository, publishing
+# reads the packages that shipped. The gates do not need to know which — they
+# read what is installed — but a green in one certifies nothing about the other,
+# so check_bindings.py prints the mode it is in.
+#
+# linkcheck is deliberately out: it reaches the network, and a dead external
+# link must not hold a release hostage for a reason foreign to the content.
+check-publish: bindings-check llmstxt-check notices-check node-api-check
 	@$(SPHINXBUILD) -M doctest "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
-	@$(SPHINXBUILD) -M linkcheck "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 	@$(SPHINXBUILD) -M coverage "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+	@echo "all publish checks passed"
+
+# The full gate, for a human before committing: everything above plus linkcheck.
+# Exit non-zero on the first failure, so this target suits a git pre-commit hook.
+check: check-publish
+	@$(SPHINXBUILD) -M linkcheck "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 	@echo "all checks passed"
 
 # Regenerate the canonical $(SOURCEDIR)/_static/llms.txt from template +
@@ -35,6 +47,13 @@ llmstxt:
 # or first paragraph) without re-running `make llmstxt`.
 llmstxt-check:
 	@python tools/build_llms_txt.py --check
+
+# Does the Node reference document every class the package exports? The Python
+# side gets this from sphinx's coverage builder; this is its counterpart, and it
+# also catches a js:autoclass naming a class that is not there — which renders
+# nothing, warns about nothing, and leaves the build green.
+node-api-check:
+	@python tools/check_node_api.py
 
 # Are the published third-party notices the ones that actually ship? The page
 # is a copy of the wheel's file, and a copy drifts: it lost pugixml when the XML

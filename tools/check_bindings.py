@@ -13,10 +13,18 @@ read from a frozen copy in a scratch virtualenv while the docstrings it was
 supposed to render were a patch newer. Neither failed. Neither warned. Both
 produced pages that looked finished and described the previous release.
 
-The signal that you are one of those sessions is that the binding repository is
-sitting next to this one. When it is, this refuses to build against anything
-else; when it is not — a CI runner, a reader with a checkout of the docs alone —
-it says which published versions it used and passes.
+There are exactly two modes, and every build is in one of them:
+
+  authoring  — the binding working copy sits beside this repository, so the
+               references describe it. Anything else is refused: a docstring
+               written next door must be the one that renders.
+  publishing — it does not — a CI runner, a reader with a checkout of the docs
+               alone — so the references describe the published packages. That
+               is what a tag build does, and it is right.
+
+The mode is inferred rather than declared, and it is printed on every run: a
+green in one mode certifies nothing about the other, which is the mistake this
+line exists to prevent.
 
     python3 tools/check_bindings.py            # gate
     python3 tools/check_bindings.py --report   # say what is installed, never fail
@@ -76,14 +84,18 @@ def main() -> int:
     py_path, py_version = python_binding()
     node_path, node_version = node_binding()
 
+    if repo is None:
+        print("  MODE    publishing — these references describe the PUBLISHED "
+              "packages below")
+    else:
+        print("  MODE    authoring — these references describe the WORKING COPY "
+              "below,\n                      not the published packages")
     print(f"  Python  {py_version:<12} {py_path or '(' + 'not importable' + ')'}")
     print(f"  Node    {node_version:<12} {node_path or '(not installed)'}")
 
     if args.report:
         return 0
     if repo is None:
-        print("  the binding repository is not beside this one — documenting the "
-              "published packages, which is what a release build does")
         return 0
 
     wheel, node_src = str(repo / "dsviper_wheel"), str(repo / "dsviper_node")

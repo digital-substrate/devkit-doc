@@ -39,7 +39,7 @@ enc.write([4.0, 5.0, 6.0]);
 const blob = enc.endEncoding();   // -> ValueBlob
 
 // Reinterpret the bytes as a typed array; iterate to read elements back.
-const array = BlobArray.fromBlob(layout, blob);
+const array = new BlobArray(layout, blob);
 const elems = [...array];     // ValueVec rows of 3 components
 elems[0].at(0);               // 1.0
 
@@ -80,7 +80,7 @@ stored once. A different layout over the same bytes is a different id.
 | Element shape (data type + components) | {js:class}`BlobLayout` | `new BlobLayout('float', 3)` |
 | Pack typed elements into bytes | {js:class}`BlobEncoder` | `enc.write(...)`, `enc.endEncoding()` |
 | Fill the bytes of a blob, before it is a value | {js:class}`BlobArrayBuilder` / {js:class}`BlobPackBuilder` | `new BlobArrayBuilder(layout, count)`, `build()` |
-| Read bytes back as typed elements | {js:class}`BlobArray` / {js:class}`BlobView` | `BlobArray.fromBlob(layout, blob)` |
+| Read bytes back as typed elements | {js:class}`BlobArray` / {js:class}`BlobView` | `new BlobArray(layout, blob)` |
 | Database reference (content-addressed) | {js:class}`ValueBlobId` | `new ValueBlobId(layout, blob)` |
 | Stored-blob metadata and stats | {js:class}`BlobInfo` / {js:class}`BlobStatistics` | `db.blobInfo(id)` |
 | Stream a large blob in chunks | {js:class}`BlobStream` | `db.blobStreamCreate(layout, size)` |

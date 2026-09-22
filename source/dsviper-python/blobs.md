@@ -179,11 +179,11 @@ more than one component per element, indexing answers a tuple:
 
 ## BlobArray — reading a blob as flat binary
 
-`BlobArray.from_blob` reads the same bytes flat, one component per index, and
+`BlobArray` reads the same bytes flat, one component per index, and
 hands them out through the buffer protocol — read-only, and without a copy:
 
 ```{doctest}
->>> array = BlobArray.from_blob(BlobLayout('float', 3), raw)
+>>> array = BlobArray(BlobLayout('float', 3), raw)
 >>> len(array)
 300
 >>> array[3]

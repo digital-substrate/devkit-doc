@@ -68,7 +68,7 @@ Choosing the Right Class
      - ``ValueBlob(bytes_data)``
    * - Typed array
      - :class:`BlobArray`
-     - ``BlobArray.from_blob(blob)``
+     - ``BlobArray(blob_layout, blob)``
    * - Multiple regions
      - :class:`BlobPack`
      - Mesh with pos/normals/indices

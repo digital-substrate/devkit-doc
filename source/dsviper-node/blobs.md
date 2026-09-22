@@ -238,7 +238,7 @@ const builder = new BlobArrayBuilder(layout, 100);
 builder.copy(new Float32Array(300).fill(1.5));   // exact size, or it throws
 const blob = builder.build();                    // seals: the bytes become a value
 
-const array = BlobArray.fromBlob(layout, blob);  // flat, binary reading
+const array = new BlobArray(layout, blob);  // flat, binary reading
 array.at(0);                                     // ValueVec((1.5, 1.5, 1.5))
 
 new BlobView(layout, blob).at(0);                // element by element, as values

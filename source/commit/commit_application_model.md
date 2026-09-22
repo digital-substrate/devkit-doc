@@ -341,8 +341,8 @@ established application patterns:
 | **Observer (Adapter)** | Notifier bridge to the platform UI              |
 
 What's specific is the integration with the Commit Database: persistence,
-history, divergence, and deterministic reduction of divergent heads are
-intrinsic rather than bolted on.
+history and divergence are intrinsic rather than bolted on — and so is the
+deterministic reduction that closing a divergence costs you.
 
 ## Implementing your own
 

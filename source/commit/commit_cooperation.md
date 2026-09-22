@@ -70,8 +70,8 @@ where that is decided, and the decision is made once.
 ## Not a Commit quirk
 
 The limit is structural, not a peculiarity of this engine. Any system
-that merges automatically without supervision — no human at the
-merge, no semantic rule allowed to refuse — faces the same dual-layer
+that closes a divergence without supervision — no human at the fold,
+no semantic rule allowed to refuse — faces the same dual-layer
 contract.
 
 - CRDTs converge with semantic validity *only* where semantic equals

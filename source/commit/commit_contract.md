@@ -56,7 +56,7 @@ encode every application's rules (breaking generality).
 
 | Layer           | Guarantees                                               |
 |-----------------|----------------------------------------------------------|
-| **Commit**      | Deterministic reduction, DAG consistency, immutability   |
+| **Commit**      | DAG consistency, immutability, and a reduction that is deterministic — never one that keeps intent |
 | **Application** | Re-validates engine output before acting on it           |
 
 When concurrent streams are reduced, mutations are applied using a **best-effort**

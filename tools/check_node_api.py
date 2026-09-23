@@ -11,9 +11,17 @@ The reverse failure is quieter still. A `js:autoclass` naming a class the
 package does not export renders nothing: no page, no warning, no error, and a
 green build. Nothing else in this repository can see it.
 
-A class whose summary says INTERNAL DEVELOPMENT is exempt from needing a page.
-That marker is the binding's own convention, written where the reader meets it;
-this reads it rather than keeping a second list here that would drift from it.
+Exemptions are declared below, not read out of the prose. The first version of
+this gate exempted any class whose summary contained INTERNAL DEVELOPMENT, which
+looked like deriving the exception from the artefact rather than declaring it —
+the cheaper of the two, since a derived exception cannot rot. It was not a
+derivation: whether a class is product is a decision, and no sentence in the
+binding states it as a fact. A better docstring dropped the phrase two days
+later and the gate went red on prose that had improved.
+
+A declared exemption needs a stale guard, so each entry is checked both ways: a
+name that is no longer exported fails, and so does one that has since been given
+a page. The list cannot quietly outlive its reasons.
 
     python3 tools/check_node_api.py            # gate
     python3 tools/check_node_api.py --report   # say what it sees, never fail
@@ -29,9 +37,15 @@ HERE = Path(__file__).resolve().parent.parent
 DTS = HERE / "node_modules/@digitalsubstrate/dsviper/index.d.ts"
 PAGES = HERE / "source/dsviper-node"
 
-INTERNAL = "INTERNAL DEVELOPMENT"
-# a class, with the JSDoc block immediately above it when there is one
-DECL = re.compile(r"(?:/\*\*(?P<doc>.*?)\*/\s*)?^export class (?P<name>\w+)", re.M | re.S)
+# Declared exemptions: a class that is exported but deliberately kept out of the
+# reference, with the reason. Both directions are guarded below.
+EXEMPT = {
+    "DefinitionsMapper":
+        "remaps one Definitions registry onto another and is not part of the "
+        "supported surface — the caller has to guarantee the two agree",
+}
+
+DECL = re.compile(r"^export class (?P<name>\w+)", re.M)
 AUTOCLASS = re.compile(r"\{js:autoclass\}\s+(\w+)")
 
 
@@ -44,23 +58,21 @@ def main() -> int:
         print(f"  node-api  {DTS.relative_to(HERE)} is not installed; nothing to check")
         return 0
 
-    exported: dict[str, bool] = {}          # name -> marked internal
-    for m in DECL.finditer(DTS.read_text(encoding="utf-8")):
-        exported[m.group("name")] = INTERNAL in (m.group("doc") or "")
+    exported = {m.group("name") for m in DECL.finditer(DTS.read_text(encoding="utf-8"))}
 
     documented: set[str] = set()
     for f in PAGES.rglob("*.md"):
         documented |= set(AUTOCLASS.findall(f.read_text(encoding="utf-8")))
 
-    internal = {n for n, flag in exported.items() if flag}
-    missing = sorted(set(exported) - documented - internal)
-    ghost = sorted(documented - set(exported))
-    exempt = sorted(internal & (set(exported) - documented))
+    missing = sorted(exported - documented - set(EXEMPT))
+    ghost = sorted(documented - exported)
+    stale_gone = sorted(set(EXEMPT) - exported)
+    stale_documented = sorted(set(EXEMPT) & documented)
 
     print(f"  node-api  {len(exported)} exported, {len(documented)} documented, "
-          f"{len(exempt)} exempt")
-    for n in exempt:
-        print(f"              exempt: {n} — its summary says {INTERNAL}")
+          f"{len(EXEMPT)} exempt by declaration")
+    for n, why in sorted(EXEMPT.items()):
+        print(f"              exempt: {n} — {why}")
 
     failures: list[str] = []
     if ghost:

@@ -121,8 +121,9 @@ structural guarantees — there is nothing for the engine to pick between.
 
 ### Multi-stream
 
-Two heads meet, and their writes are reduced automatically by mechanical
-reduction. Two flavours, split by what your invariants look like.
+Two heads meet, and whatever folds them — `reduce_heads`, or a
+`commitMerge` sequence you issue — reduces their writes mechanically.
+Two flavours, split by what your invariants look like.
 
 (local-vs-strong-invariants)=
 
@@ -147,8 +148,8 @@ dropped. The lost information is not recoverable downstream.
 
 ### Multi-stream with local invariants
 
-Divergent writes are reduced automatically, but the structural drops
-cost you nothing in practice. Two routes lead here:
+Divergent writes are reduced by whatever folds the heads, but the structural
+drops cost you nothing in practice. Two routes lead here:
 
 - **Naturally local invariants** — the entire mutable state lives
   in containers the application only ever *grows*: `set` and `map`
@@ -180,14 +181,15 @@ reference material, not load-bearing.
 
 ### Multi-stream with strong invariants
 
-Divergent writes are reduced automatically; your invariants are global
-(uniqueness, referential integrity the engine must uphold), or your
-domain does not tolerate silent loss (financial, safety, regulatory).
-This is where the [Dual-Layer Contract](commit_contract.md) becomes
-load-bearing — and where reading it is a diagnostic, not a cookbook:
-the four post-reduction outcomes (*Ignore / Extract a subset /
-Correct / Reject*) collapse to *Reject*, which is equivalent to
-saying mechanical reduction was the wrong primitive.
+Divergent writes are reduced by whatever folds the heads; your
+invariants are global (uniqueness, referential integrity the engine must
+uphold), or your domain does not tolerate silent loss (financial,
+safety, regulatory). This is where the [Dual-Layer
+Contract](commit_contract.md) becomes load-bearing — and where reading
+it is a diagnostic, not a cookbook: the four post-reduction outcomes
+(*Ignore / Extract a subset / Correct / Reject*) collapse to *Reject*,
+which is equivalent to saying mechanical reduction was the wrong
+primitive.
 
 The exit is not better post-reduction handling. It is
 re-architecting toward **multi-stream with local invariants** via

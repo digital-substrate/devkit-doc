@@ -80,13 +80,13 @@ a human reviewing the result?**
   :doc:`Commit Application Model <commit_application_model>`; skip the
   rest, since every read returns exactly what was written. The condition
   is checkable rather than declared: ``head_commit_ids()`` answers one
-  id.
+  id. Read :doc:`Modes of Use <commit_modes>` anyway if the model is not
+  sealed yet — the choice is hard to reverse once it is.
 - **Yes, or maybe later.** Two sites syncing, an offline replica, a
   second writer committing in parallel, or heads you diverge yourself
   and fold unreviewed. Start with the
   :doc:`Modes of Use <commit_modes>` diagnostic — it tells you which
-  remaining pages apply, and how much. The choice is hard to reverse
-  once a model is sealed, so read it before settling on single-stream.
+  remaining pages apply, and how much.
 
 .. _three-regimes:
 

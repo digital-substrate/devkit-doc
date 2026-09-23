@@ -49,9 +49,7 @@ evaluator to check, and so no reject path for it to take. An opcode can still
 but that is the write being impossible, never the write being out of date.
 Every opcode whose target resolves applies, and one authored against a state
 that is no longer there applies exactly as cleanly as one that finds the state
-it expected. The absence of a conflict notion is that, restated: not a gap in
-the implementation, but the consequence of a trace that never carried the
-condition under which it was recorded.
+it expected. That is what *no notion of conflict* means here.
 
 ```{important}
 Before reading the API, identify your **mode of use**. The

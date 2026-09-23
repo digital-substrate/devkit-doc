@@ -5,9 +5,8 @@ When scope cannot be decomposed and a supervisor becomes necessary —
 sets out when — that supervisor is yours to design; the *engine* provides
 none. What `dsviper` ships, and what this page documents, is one
 implementation of the identify-and-apply half; the deciding stays yours.
-This page documents one implementation: an API that **identifies, surfaces,
-and reconciles a reconstructed conflict** over a `commitMerge` already written
-into the DAG.
+It is an API that **identifies, surfaces, and applies your decision at** a
+reconstructed conflict, over a `commitMerge` already written into the DAG.
 
 It is **additive**: a set of free functions over `CommitDatabase`'s public
 API, with no change to the engine, the storage format, or the runtime. It

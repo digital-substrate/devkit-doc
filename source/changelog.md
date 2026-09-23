@@ -21,70 +21,29 @@ Binding- or packaging-only releases are omitted — except a *phantom* version (
 number minted with no runtime change, from a lockstep bump), listed to explain the gap.
 
 ### 1.2.26 — 2026-09-20
-- **Added** — blob builders: `BlobArrayBuilder` and `BlobPackBuilder` hold the bytes of a blob
-  *before* it is a value, which is what makes a blob's immutability structural rather than guarded
-  — once sealed, no writer keeps a way in. Layout and count are fixed at construction, as
-  `std::array<T, n>` fixes them: `data()` while the builder owns the bytes, `copy()` at the exact
-  size, `build()` moving them into a `ValueBlob`, once — afterwards `data()` answers `nullptr` and
-  every write is refused (`BlobBuilderErrors:AlreadyBuilt`, `:SizeMismatch`). The pack's memory
-  layout moved out of `BlobPack::make(descriptor)`, which now delegates to the builder, so the
-  last `const_cast` on a value's bytes in `src/Viper` is gone. The pack's own format is unchanged
-  — the builder writes the header the reader already knew.
-- **Removed (breaking)** — `ValueBlob::make(size)` and `BlobView::make(layout, size)`. **A
-  `ValueBlob` is immutable** — a primitive whose bytes are fixed at construction, unlike a
-  document or a container — and both existed to mint one full of zeros for the caller to write
-  into afterwards, so every use broke that contract. The rest follows from the breach: the hash
-  and the `BlobId`, computed at construction over bytes that were then overwritten, went on naming
-  content the blob no longer held, equality rested on them, and the write landed in a blob shared
-  with the store that returned it or with the threads of a server. Removed rather than deprecated:
-  code calling them was already producing corrupted values. Use a builder — the bytes are filled
-  first, then sealed. The type/value system and the on-disk format are unchanged.
-- **Fixed** — a document is written with the type its attachment declares.
-  `CommitMutableState::set` and `diff` checked the key and never the document, so an `int64`
-  written into an `int32` attachment went in self-consistent — the opcode carries the value with
-  its own type — and nothing downstream objected. Three entries reached it:
-  `CommitMergeResolution`, which guessed a native's type instead of checking it against the locus,
-  `set` and `diff` received over RPC, and the Node binding passing a wrapped value through
-  unchecked. Both writes now check against the attachment's document type and refuse a null one.
-  Documents already written mistyped are not repaired: they stay readable and contradict their
-  attachment.
-- **Fixed** — the namespace dependency graph missed attachments and key references. The graph
-  decides whether definitions are DSM-expressible — a cycle means no order in which the namespaces
-  can be written. An attachment's document type is a by-value reference like any structure field,
-  yet neither collector counted it and `Definitions::createAttachment` ran no acyclicity check at
-  all, so a cycle closed through an attachment passed on all three routes: the create path,
-  `extend()` and the parser. Naming a concept of another namespace through a key is a dependency
-  too — `key<NS::C>` anywhere inside a type, and the key type of an attachment declared elsewhere.
-  `optional<key<C>>` still links documents within a namespace, and across namespaces as long as the
-  reference does not come back; the global namespace is no longer counted, so `key<any_concept>`
-  binds nothing to it.
-- **Fixed** — a database repository server confines `setDatabase` to its own folder.
-  `DatabaseRemoteClientContext` joined the client-supplied name to the served folder with
-  `operator/`, so an absolute name replaced the folder outright and a leading `..` climbed out of
-  it: a client could open any Viper database on the server's filesystem. The name must now be one
-  `databases()` could have returned — one path component, no root, no parent, the configured
-  extension — and anything else raises `DatabaseRemoteErrors:InvalidDatabaseName`.
-- **Fixed** — an RPC peer can no longer make the reader reserve what it never sends.
-  `RPCMessageReader` sized its buffer to the length a message header announced, so 8 bytes
-  announcing 2 GiB made a server — or a client — commit that memory and wait for data that never
-  came; a few such connections exhausted a server. The buffer now grows as the body arrives, capped
-  at the announced length, so what is held tracks what was received. Framing is unchanged.
-- **Fixed** — `CommitDatabaseRemote::uploadSpeed` and `downloadSpeed` divided the elapsed time by
-  the wrong power of ten and reported a tenth of the transfer achieved. `downloadSpeed` also sent
-  the size it asked for as that many zero bytes, so a download of N bytes first uploaded N;
-  `RPCPacketCallDownloadData` now carries the size as a `uint64`. **That packet's bytes change** —
-  `downloadSpeed` between a peer with this fix and one without fails. No other packet is affected.
-- **Fixed** — `XArray::operator!=` compiles: it read `!(this == other)`, comparing the `this`
-  pointer to an `XArray`. A template member is type-checked only where it is instantiated, and
-  nothing in the tree compared two arrays for inequality, so it stayed broken without a build ever
-  noticing.
-- **Changed** — an RPC message holds its payload twice at most, not three times: a packet was
-  encoded on its own, copied into the message carrying it, and the received message stayed alive
-  while the packet inside it was decoded. The envelope prefix and the encoded packet now go out as
-  two writes under one length, and a received message is released once the packet is out of it. A
-  remote `blob()` or `createBlob()` of N bytes peaked at about 3N on each side and now peaks at
-  about 2N, measured over 300 and 500 MB, running 3 to 10 % faster. The bytes on the wire are
-  unchanged; the service protocol keeps its single-buffer path.
+- **Removed (breaking)** — `ValueBlob::make(size)` and `BlobView::make(layout, size)`.
+  A `ValueBlob` is immutable — a primitive whose bytes are fixed at construction, unlike
+  a document or a container — and both minted one full of zeros for the caller to fill
+  afterwards, so its hash and its `BlobId` named bytes that were then overwritten, in a
+  blob the store or another thread may hold. Removed rather than deprecated: calling
+  them already produced corrupted values. Fill the bytes first, on the **Added**
+  `BlobArrayBuilder` or `BlobPackBuilder`, which own them until `build()` seals them.
+- **Fixed** — `CommitMutableState::set` and `diff` check a document against the type its
+  attachment declares, and refuse a null one. A mistyped document used to enter the
+  commit self-consistent, with nothing downstream to object. Documents already written
+  mistyped stay readable and contradict their attachment.
+- **Fixed** — a namespace cycle closed through an attachment, or through a key naming a
+  concept of another namespace, is rejected; neither counted as a dependency before. A
+  database repository server confines `setDatabase` to its own folder, where an absolute
+  name or a leading `..` could open any Viper database on its filesystem. And an RPC peer
+  can no longer make the reader reserve a length it never sends.
+- **Fixed** — `CommitDatabaseRemote::uploadSpeed` and `downloadSpeed` reported a tenth of
+  the transfer achieved, and `downloadSpeed` uploaded N bytes before downloading N.
+  **Its packet changes**: `downloadSpeed` between a peer with this fix and one without
+  fails. No other packet is affected.
+- **Changed** — a remote `blob()` or `createBlob()` of N bytes peaks at about 2N a side
+  instead of 3N, and runs 3 to 10 % faster. The bytes on the wire are unchanged, and so
+  are the type/value system and the on-disk format.
 
 ### 1.2.25 — 2026-08-27
 - **Fixed** — `TypeTuple` and `TypeVariant` answered a representation from whichever namespace
@@ -295,91 +254,29 @@ runtime; each release notes the runtime version it ships.
 
 ### 1.2.27 — 2026-09-20
 - **Removed (breaking)** — `BlobArray(blob_layout, size)`, `BlobArray.__setitem__`,
-  `BlobPackRegion.__setitem__` and `BlobPackRegion.copy()`. **A `ValueBlob` is immutable** — a
-  primitive whose bytes are fixed at construction, unlike a document or a container — and each of
-  these wrote into a `ValueBlob` that already existed, so every use broke that contract.
-  `from_blob` shares the caller's blob rather than copying it, so the write landed in a value held
-  elsewhere — the one a database returned, the one another thread was reading — and the hash kept
-  from construction, along with the `BlobId` naming it, went on describing content the blob no
-  longer held: a set lookup answered wrong, a stored blob stopped matching its id. Removed rather
-  than deprecated — code calling them was already producing corrupted values.
-  `BlobPack(descriptor)` stays, and still describes a pack.
-- **Changed (breaking)** — `BlobArray` and `BlobPackRegion` lose their writable buffer, for the
-  same reason: a buffer handed out writable is a way into a sealed blob. What the readers are
-  *for* is untouched — `BlobView` reads a blob element by element as values, `BlobArray` flat and
-  binary, both without a copy.
-- **Added** — `BlobArrayBuilder(blob_layout, count)` and `BlobPackBuilder(descriptor)`: the bytes
-  of a blob, before it is a value, which is what makes a blob's immutability structural rather
-  than guarded — once sealed, no writer keeps a way in. Layout and count are fixed at
-  construction, so there is no append and no resize; write by index, in bulk with `copy()`, or
-  through the buffer protocol (`builder[name]` answers a writable `memoryview` bounded to one
-  region), and `build()` moves the bytes into a `ValueBlob` without a copy. A spent builder
-  refuses everything, and sealing is refused while a buffer of it is still exported, as a
-  `bytearray` refuses to resize under a `memoryview`.
-- **Fixed** — a read-only buffer refuses a writable request instead of merely declaring itself
-  read-only. `ValueBlob`, `BlobArray` and `BlobPackRegion` filled `readonly = 1` but served a
-  `PyBUF_WRITABLE` request all the same, and a consumer whose request succeeds concludes it may
-  write: `numpy.frombuffer(database.blob(blob_id))` answered a **writeable** array, and writing
-  through it changed the stored value. The request is refused now, so numpy answers
-  `flags.writeable = False` and still reads without a copy.
-- **Fixed** — the class hierarchy the type hints declare is the one the binding builds.
-  `__init__.pyi` said `class ValueString(Value)` and 102 relations like it, and the C-API created
-  every type with no base at all, so `isinstance(value, Value)` was False for every value while
-  mypy and Pyright took it as true — pruning the branch that runs, and accepting
-  `ValueString.dumps`, which raised `AttributeError`. The 33 `Type*`, 30 `Value*` and 10
-  `ValueOpcode*` classes now carry their base. What a caller can do is unchanged — the system
-  stays closed, and deriving a Python class from any of these raises as before; what changes is
-  that a relation which answered False answers True, and that a base's statics and constants
-  resolve through a concrete class.
-- **Added** — `py.typed`: the wheel declares its type hints (PEP 561), so mypy reads
-  `__init__.pyi` instead of treating `dsviper` as untyped; Pyright read it already. It adds
-  nothing to the binding — it exposes what the binding already answers, and exposes it correct,
-  which is why it ships now rather than earlier: a wrong stub makes a checker accept wrong code
-  and reject right code in every project that runs one. A default read is declared as the union of
-  what it can answer, so calling a method on the result asks for a narrowing — `X.cast(read)`
-  where the class is known, `isinstance` where the code branches.
-- **Fixed** — the type hints accept what the binding accepts and declare what it returns. Ten
-  reads declared a `Value` where the call answers a native; the 41 methods whose return depends on
-  `encoded` are overloaded on it; the 67 classes answering `<`, `<=`, `>` and `>=` — the total
-  relations shipped in 1.2.18 — declared none, so `sorted(values)` and `a < b` were rejected;
-  `ValueSet`'s sixteen set operations take any iterable and were declared `Sequence`, so `s | {3}`
-  was refused; `ValueBlob(value)` takes any buffer, not `bytes` and a base64 `str` alone;
-  `Codec.query` and `PathConst.check_type` answer `None` and did not say so, while
-  `PathConst.last_component_value` declared a `None` it never answers; and `copy` is typed by its
-  receiver, so the unbound `Value.copy(value)` no longer loses the value's own class. `BlobPack`
-  is no longer declared a `Mapping`: it has none of `keys`, `items`, `values`, `get`, and a pack
-  is the layout of one blob rather than a key-to-value association.
-- **Added** — `encoded=True` on the fourteen reads that projected with no way back:
-  `Value.decode`, `Value.json_decode`, `Value.from_xml_string`,
-  `TypeStructureField.default_value`, `CommitMergeResolution.chosen`, `ValueMap.get` /
-  `setdefault`, and `arguments()` on the eight value opcodes. Reading a primitive projects it —
-  eight integer widths on one `int`, `FLOAT` and `DOUBLE` on one `float` — and only the Value
-  carries its `type()`, which is what an editor describing mutations or a migration needs.
-  Keyword-only, the default unchanged. Also `AttachmentMutating.attachment_getting()`, the
-  read-only view of the same attachments, and `DSMType` / `DSMLiteral`, which the stub declared
-  and the package never exported.
-- **Fixed** — `CommitMergeResolution(conflict, chosen)` keeps the type of its locus, where it
-  guessed a native's: `2` at an `int32` locus became an `int64`, and resolving wrote it. `chosen`
-  is now checked against the type the locus declares, as `AttachmentMutating.update` checks its
-  value. And `AttachmentMutating` is an `AttachmentGetting`, which the C++ has always declared and
-  the binding did not build, so passing a mutating interface where read access is required no
-  longer raises `TypeError`.
-- **Fixed** — `ValueMap.setdefault` returns the value it finds or inserts, as the C++ does, where
-  it returned `None`; `CommitSynchronizer.sync()` takes `None` for its logging, as its docstring
-  said; `pack['absent']` raises the `BlobPackErrors:0` error naming the region instead of a
-  hand-written `ValueError` carrying no domain or code; and `ValueMat` states that it is
-  column-major — `m[column]` is a column, `m[column, row]` an element — which nothing published
-  said, so a reader assuming numpy's row-major order got a transposed matrix.
-- **Changed** — a blob read from a store is copied once less: `blob()` on every database and
-  `BlobGetting`, `read_blob()`, `ValueBlob.base64_decode()` and the `encode` of a type or a path
-  move the bytes they already own into the `ValueBlob` they return, where they copied them. A
-  remote blob is held twice at most while it crosses the wire rather than three times — about 2N
-  instead of 3N on each side for N bytes, the bytes on the wire unchanged.
-- *Ships runtime 1.2.26, the first runtime move since 1.2.25: the RPC reader no longer reserves
-  what a peer announces but never sends, `upload_speed` / `download_speed` report the speed they
-  measure, `set` and `diff` refuse a document of another type than its attachment declares, and a
-  namespace cycle closed through an attachment or a key is rejected — see the runtime section. The
-  runtime's two remaining fixes live in C++ this binding does not expose.*
+  `BlobPackRegion.__setitem__` and `BlobPackRegion.copy()`; `BlobArray` and
+  `BlobPackRegion` also lose their writable buffer. A `ValueBlob` is immutable, and each
+  of these wrote into one that already existed — reaching, through `from_blob`, a value
+  the store or another thread held. Fill the bytes first, on the **Added**
+  `BlobArrayBuilder` or `BlobPackBuilder`, and seal them with `build()`.
+- **Fixed** — a read-only buffer refuses a writable request instead of merely declaring
+  itself read-only: `numpy.frombuffer(database.blob(blob_id))` answered a **writeable**
+  array, and writing through it changed the stored value.
+- **Added** — `py.typed`, so mypy reads the type hints instead of treating `dsviper` as
+  untyped. It ships now that the stub says what the binding does: the class hierarchy is
+  real — `isinstance(value, Value)` was False for every value while a checker took it as
+  true — the protocols the binding answers are declared, and a projecting read no longer
+  claims to return a `Value`.
+- **Added** — `encoded=True` on fourteen reads that projected with no way back,
+  keyword-only and the default unchanged; `AttachmentMutating.attachment_getting()`; and
+  `DSMType` / `DSMLiteral`, which the stub declared and the package never exported.
+- **Fixed** — `ValueMap.setdefault` returns the value it finds or inserts;
+  `CommitMergeResolution` checks `chosen` against the type its locus declares;
+  `CommitSynchronizer.sync()` accepts `None`; and `ValueMat` states that it is
+  column-major, which nothing published had said.
+- **Changed** — a blob read from a store is copied once less, and a remote one is held
+  twice at most while it crosses the wire rather than three times.
+- *Ships runtime 1.2.26 — see the runtime section.*
 
 ### 1.2.26 — 2026-09-05
 - **Changed (breaking)** — seven constructor keywords now carry the name their parameter
@@ -615,77 +512,31 @@ Initial release.
 The npm package `@digitalsubstrate/dsviper`. See {doc}`dsviper-node/index`.
 
 ### 1.2.12 — 2026-09-20
-- **Removed (breaking)** — `BlobPackRegion.copy(buffer)` and `new BlobArray(blobLayout, size)`.
-  **A `ValueBlob` is immutable** — a primitive whose bytes are fixed at construction, unlike a
-  document or a container — and `copy()` wrote into one that already existed, so every use broke
-  that contract. `BlobPack.fromBlob` shares the caller's blob rather than copying it, so the write
-  landed in a value held elsewhere — the one a database returned, the one another thread was
-  reading — and the hash kept from construction, along with the `blobId` naming it, went on
-  describing content the blob no longer held: a lookup answered wrong, a stored blob stopped
-  matching its id. Removed rather than deprecated — code calling it was already producing
-  corrupted values. `new BlobArray(blobLayout, size)` handed out a blob of zeros no method on this
-  side could reach; it goes with its Python twin, which could write and did, so the two bindings
-  keep one API. `new BlobPack(descriptor)` stays, and still describes a pack.
-- **Added** — `BlobArrayBuilder(blobLayout, count)` and `BlobPackBuilder(descriptor)`: the bytes of
-  a blob, before it is a value. Layout and count are fixed at construction, so there is no append
-  and no resize — `copy(buffer)` writes an array whole, `copy(name, buffer)` one region of a pack,
-  each at the exact size, and `build()` moves the bytes into a `ValueBlob` without a copy. A spent
-  builder refuses everything. The readers keep what they are for: `BlobView` reads a blob element by
-  element as values, `BlobArray` flat and binary.
-- **Fixed** — a `Value` passed where a type is in scope is checked against it. The binding checked a
-  native against the metadata and took a wrapped value as it came, so
-  `attachmentMutating().set(attachment, key, new ValueInt64(2n))` on an `int32` attachment wrote the
-  `int64` and read it back; `new CommitMergeResolution(conflict, chosen)` likewise guessed a
-  native's type instead of checking it against the locus. Both now use the core's own type check,
-  and a value passed to an `any` or `variant` position is boxed, as the Python binding does — a
-  container set into an `any` attachment used to be stored unboxed. Code that was writing mistyped
-  documents now raises.
-- **Fixed (breaking)** — a 64-bit integer never takes a rounded value in silence. A `number` holds
-  an integer exactly only up to `Number.MAX_SAFE_INTEGER`, so `new ValueInt64(2 ** 53 + 1)` stored
-  `2 ** 53` — JavaScript had rounded it before the call. Every 64-bit input now takes a `number`
-  only when it is a safe integer and refuses a larger one with a `RangeError` pointing to `bigint`,
-  the line `toJSON()` already drew on the way out. `Value.deduce(2n ** 63n)` is refused too, where
-  it used to wrap to `-2 ** 63`.
-- **Fixed (breaking)** — a host class can no longer derive from a bound one. The runtime creates
-  every instance it hands back, so a subclass would only ever hold objects the caller built and
-  never one returned by a call. Each wrapped constructor now refuses a derived call, naming which of
-  the two motives applies: the type system is closed by its type codes, or the runtime owns what it
-  returns. The Python binding answers this already, the C-API creating no subclassable type.
-- **Added** — `encoded` on thirteen reads that projected with no way back:
-  `CommitMergeResolution.chosen`, `TypeStructureField.defaultValue`, `ValueMap.get` / `setdefault` /
-  `popitem`, and `arguments(definitions, encoded)` on the eight value opcodes. Reading a primitive
-  projects it — eight widths on one `number`, 64-bit on one `bigint` — and only the Value carries
-  its type, which is what an editor describing mutations or a migration needs. Positional and last,
-  as elsewhere in this binding, the default unchanged. Also `AttachmentMutating.attachmentGetting()`,
-  the read-only view of the same attachments.
-- **Added** — a set-typed input takes a JS `Set` wherever it takes an array: the constructor,
-  `Value.create`, a structure field, `union`, `update` and the other set operations — as a map-typed
-  input already took a JS `Map`. The output is unchanged; a set still reads as an array, compared by
-  value.
-- **Fixed** — `index.d.ts` is what TypeScript believes, and several of its claims were not
-  what the binding does.
-  `class ValueString extends Value` was only half built — the prototypes were linked and the
-  constructors were not, so 19 statics on `Value` and 28 on `Type` resolved to `undefined` on
-  every subclass while the compiler accepted the call. `OutputValue` now says what a projection
-  hands back (`null` for `void`, never a `Buffer`, and the seventeen value classes it leaves
-  alone rather than `Value`), and a read taking `encoded` declares `OutputValue | Value`; the
-  map and xarray shapes are corrected with it. Nine declarations omitted the `undefined` the
-  call answers and two declared one it never answers. And `AttachmentMutating` is an
-  `AttachmentGetting`, as the C++ declares, so it is accepted wherever read access is required
-  instead of being refused at a call the compiler had approved.
-- **Fixed** — `new ValueSet` and `new ValueMap` parsed their initial value more narrowly than the
-  decoder and now take what `Value.create` takes; `new ValueBlob(value)` declares the buffers every
-  caller passes, not a string only; `value.compare(other)` declares the native it accepts; and
-  `CommitSynchronizer.sync(logging)` passes the logging on instead of running every sync silent.
-- **Changed** — a blob read from a store is copied once less: `blob()` on every database and
-  `BlobGetting` move the bytes they already own into the `ValueBlob` they return, where they copied
-  them. A remote blob is held twice at most while it crosses the wire rather than three times —
-  about 2N instead of 3N on each side for N bytes, the bytes on the wire unchanged.
-- *Ships runtime 1.2.26, carried whole: the RPC reader no longer reserves what a peer announces but
-  never sends, `uploadSpeed` / `downloadSpeed` report the speed they measure, `set` and `diff`
-  refuse a document of another type than its attachment declares, and a namespace cycle closed
-  through an attachment or a key is rejected — see the runtime section. The runtime's two remaining
-  fixes live in C++ this binding does not expose.*
+- **Removed (breaking)** — `BlobPackRegion.copy(buffer)` and
+  `new BlobArray(blobLayout, size)`. A `ValueBlob` is immutable, and `copy()` wrote into
+  one that already existed; `BlobPack.fromBlob` shares the caller's blob, so the write
+  landed in a value held elsewhere. Fill the bytes first, on the **Added**
+  `BlobArrayBuilder` or `BlobPackBuilder`, and seal them with `build()`.
+- **Fixed (breaking)** — a 64-bit integer never takes a rounded value in silence:
+  `new ValueInt64(2 ** 53 + 1)` stored `2 ** 53`, JavaScript having rounded it before the
+  call. A `number` is accepted only when it is a safe integer, with a `RangeError`
+  pointing to `bigint`.
+- **Fixed (breaking)** — a host class can no longer derive from a bound one. The runtime
+  creates every instance it hands back, so a subclass only ever held objects the caller
+  built, never one a call returned.
+- **Fixed** — a `Value` passed where a type is in scope is checked against it, and one
+  passed to an `any` or `variant` position is boxed, as the Python binding does. Code
+  that was writing mistyped documents now raises.
+- **Fixed** — `index.d.ts` says what Node answers: a subclass inherits its base's statics
+  (19 on `Value` and 28 on `Type` resolved to `undefined`), `OutputValue` describes what
+  a projection hands back, nine declarations omitted the `undefined` the call answers,
+  and `AttachmentMutating` is an `AttachmentGetting`.
+- **Added** — `encoded` on thirteen reads that projected with no way back, positional and
+  last; a set-typed input takes a JS `Set` wherever it takes an array; and
+  `AttachmentMutating.attachmentGetting()`.
+- **Changed** — a blob read from a store is copied once less, and a remote one is held
+  twice at most while it crosses the wire rather than three times.
+- *Ships runtime 1.2.26 — see the runtime section.*
 
 ### 1.2.11 — 2026-09-05
 - **Changed** — Node 24 is the floor (`engines: ">=24"`, was `>=18`). Node 18 reached

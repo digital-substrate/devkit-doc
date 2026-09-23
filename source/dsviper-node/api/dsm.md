@@ -184,6 +184,7 @@ DefinitionsConst
 DefinitionsCollector
 DefinitionsInspector
 DefinitionsExtendInfo
+DefinitionsMapper
 ```
 
 ## Source Map
@@ -350,6 +351,10 @@ DSMSourceType
 ```
 
 ```{js:autoclass} DefinitionsExtendInfo
+:members:
+```
+
+```{js:autoclass} DefinitionsMapper
 :members:
 ```
 

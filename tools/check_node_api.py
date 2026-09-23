@@ -39,10 +39,12 @@ PAGES = HERE / "source/dsviper-node"
 
 # Declared exemptions: a class that is exported but deliberately kept out of the
 # reference, with the reason. Both directions are guarded below.
-EXEMPT = {
-    "DefinitionsMapper":
-        "remaps one Definitions registry onto another and is not part of the "
-        "supported surface — the caller has to guarantee the two agree",
+EXEMPT: dict[str, str] = {
+    # Empty on purpose. DefinitionsMapper sat here while its summary was a
+    # verdict — "a class used for INTERNAL DEVELOPMENT" — with nothing a reader
+    # could act on. It now states what it rewrites and why the caller carries
+    # the risk, which is describable, so it has a page on both bindings like
+    # every other exported class.
 }
 
 DECL = re.compile(r"^export class (?P<name>\w+)", re.M)

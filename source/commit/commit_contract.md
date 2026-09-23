@@ -195,8 +195,7 @@ that pick a value on each overlapping path — are described in
 [Commit Database — How Reduction Picks a Winner](commit_database.md#how-reduction-picks-a-winner).
 The summary the contract leans on: the outcome is **deterministic
 given a fixed merge sequence**, but its mechanics are *structural*,
-not author- or time-meaningful. Two authors editing the same field
-have no way to predict which value will survive reduction.
+not author- or time-meaningful.
 
 This is what the contract is telling you: do not rely on a specific
 LWW outcome. Re-validate at read time.
@@ -236,8 +235,8 @@ choice, not the engine's](commit_database.md#how-reduction-picks-a-winner).
 Whoever launched the reduction chose that order, and with it the result.
 That is an act of arbitration, performed blind: the caller cannot predict
 which value survives, is not told that a choice is being made, and leaves no
-trace of having made one — a merge commit records its parents and a
-timestamp, not who folded them, nor under which strategy. The agency is
+trace of having made one: the header records no strategy any more than it
+records an author. The agency is
 real, individual, and unrecorded. Automate the fold and it has no actor at
 all.
 
@@ -279,7 +278,7 @@ invariants:
   of deleting the violating record it overwrites it with a fabricated
   value that has no `CommitId`. Once a write builds on it, the
   fabrication enters the DAG as if authored.
-- **Reject** — the only honest answer under strong invariants: it
+- **Reject** — the only one of the four that invents nothing: it
   concedes mechanical reduction was the wrong primitive, and pushes
   resolution outside the import — human intervention, rollback, or a
   coordination protocol.
@@ -308,11 +307,9 @@ concurrency.
 per-path behaviour: concurrent authors who touch different paths have their
 edits recombined rather than overwritten. Whether that recombination is a cure
 or an invention turns on **ownership** — does each writer own the scope they
-touch? When the path *is* the unit of intent, every contribution is a whole
-owned intent and the union is trustworthy (the cooperative case). When `diff`
-splits one author's whole-value intent into sub-scopes instead, those fragments
-recombine into a value no one owns alone — and the same minimality carries it
-across the cycle: at input it records a path-scoped operation from a
+touch? The distinction is the one drawn above — an owned union, or a
+recombination of fragments no one meant to stand alone — and the same
+minimality carries it across the cycle: at input it records a path-scoped operation from a
 whole-value edit, attributing a scope the author need not have meant; at
 reduction it lets the fragments recombine into a structure no author wrote; and
 when a corrected read is written back, it diffs against that reconstructed

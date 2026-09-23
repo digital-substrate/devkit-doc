@@ -84,9 +84,8 @@ contract.
   merge, broken build" pattern on textually-disjoint-but-incompatible
   edits.
 
-No unsupervised system delivers semantic validity — that is the
-limit the two bullets illustrate, and it is not specific to this
-engine. Structurally, however, unsupervised systems are not equal: a
+Neither delivers semantic validity without a supervisor. Structurally,
+however, unsupervised systems are not equal: a
 CRDT **converges** — the same updates yield the same state whatever
 order they arrive in — and mechanical reduction does not, since
 `commitMerge` is non-commutative. The discipline below buys something

@@ -1,16 +1,12 @@
 # Database synchronisation
 
 `CommitSynchronizer` replicates a `CommitDatabase` between two
-sites. A `CommitDatabase` is made of **two content-addressed
-spaces**: the **DAG of commits**, and the **pool of blobs** —
-immutable binary payloads identified by their hash and referenced
-from inside commits (see
-[Binary Data (Blobs)](../dsviper-python/blobs.md)). Both are append-only
-and content-addressed
-independently. Sync replicates both, by **two set differences**:
-one on commit ids, one on blob hashes. Each side copies what the
-other has and it lacks. The resulting DAG and blob pool on each
-side are the union of both — divergent heads included, unchanged.
+sites. A database holds two content-addressed spaces — the DAG of
+commits and the pool of blobs — and sync replicates both, by **two
+set differences**: one on commit ids, one on blob hashes. Each side
+copies what the other has and it lacks. The resulting DAG and blob
+pool on each side are the union of both — divergent heads included,
+unchanged.
 
 ```{important}
 That union is where the exposure begins. Sync loses nothing itself — it
@@ -179,8 +175,7 @@ trigger, and from which anchor.**
 Nothing enforces an answer. The exclusive transaction that
 [`reduce_heads`](commit_database.md#how-reduction-picks-a-winner) takes stops
 two nodes from folding at the same moment, not from folding differently —
-and two policies produce different states on contested paths, both landing
-in the history as competing merge commits.
+and differing policies carry the consequence that section describes.
 
 The workable default is a **single designated reducer**: one node —
 typically the site hosting the shared database, or one scheduled job — folds

@@ -14,6 +14,46 @@ See {doc}`ecosystem/naming` for how these names relate. The Viper C++ runtime is
 notes the runtime version it carries. Only released versions are listed, and
 **breaking** changes are flagged inline.
 
+## What LTS-1.2 guarantees
+
+The label was applied early — the line was promoted to LTS while its surface was
+still settling, and two breaking changes landed the day before the lock. What
+follows is what the commitment covers. It is narrower than the name suggests, and
+worth reading before relying on it.
+
+**Three things are frozen for the life of the line.** The **type and value
+system** — `Definitions`, `Type`, `Value` and the relations between them: a model
+that types correctly on one `1.2.x` types correctly on every later one. **DSM
+governance** — what a `.dsm` may declare, and the rules deciding whether a set of
+definitions is expressible. And the **on-disk format**: a database written by any
+`1.2.x` is readable by any other. No migration is needed inside the line, and none
+is offered.
+
+**Patches are a quality programme, not a feature stream.** No feature is added on
+`1.2`; the additive work happens elsewhere. What a patch carries is a defect
+closed — a docstring describing what the code does not do, a guard that never
+fired, a value that could be corrupted. A patch may still break something, and
+each time that is a severity judgement: leaving a data-corrupting API in place
+under a deprecation was judged the worse trade every time. Breaks are flagged
+inline below, so the count is checkable rather than claimed.
+
+**The freeze is what opened the ecosystem.** Viper was one private repository
+holding the runtime and every tool built on it. On a single day in May 2026, seven
+repositories were created out of it — `kibo`, `kibo-template-viper`, and the
+`dsviper-*` tools and sample applications — each with its own changelog, its own
+version, and a surface someone outside can read. The per-artifact changelogs did
+not precede that split; they were written during it. What came next is the part
+that counts: `dsviper-jsonrpc`, `dsviper-query` and `dsviper-database-tools` were
+written *after* the lock, in pure Python over the published binding and nothing
+else — one of them on top of another. A contract you can build new work on is the
+only evidence that freezing it was worth doing.
+
+**Semantic versioning is operational everywhere except the runtime.** Every
+satellite versions itself strictly and independently: `dsviper-query` is at 0.1.0,
+`dsviper-database-tools` at 0.2.4, and neither number tracks `1.2`. Viper does not
+yet — it is the runtime, it is still stabilising, and the breaking changes listed
+below are what that looks like.
+
 ## Viper C++ runtime
 
 The engine shipped inside both bindings; `viperVersion()` reports this version.

@@ -16,10 +16,10 @@ notes the runtime version it carries. Only released versions are listed, and
 
 ## What LTS-1.2 guarantees
 
-The label was applied early — the line was promoted to LTS while its surface was
-still settling, and two breaking changes landed the day before the lock. What
-follows is what the commitment covers. It is narrower than the name suggests, and
-worth reading before relying on it.
+The label was applied early. The line was still in late alpha when it went on:
+two breaking changes landed the day before the lock, and additions were still
+arriving four months after it. What follows is what the commitment covers —
+narrower than the name suggests, and the part that has held.
 
 **Three things are frozen for the life of the line.** The **type and value
 system** — `Definitions`, `Type`, `Value` and the relations between them: a model
@@ -29,13 +29,15 @@ definitions is expressible. And the **on-disk format**: a database written by an
 `1.2.x` is readable by any other. No migration is needed inside the line, and none
 is offered.
 
-**Patches are a quality programme, not a feature stream.** No feature is added on
-`1.2`; the additive work happens elsewhere. What a patch carries is a defect
-closed — a docstring describing what the code does not do, a guard that never
-fired, a value that could be corrupted. A patch may still break something, and
-each time that is a severity judgement: leaving a data-corrupting API in place
-under a deprecation was judged the worse trade every time. Breaks are flagged
-inline below, so the count is checkable rather than claimed.
+**Patches are a quality programme, not a feature stream.** What a patch carries
+is a defect closed — a docstring describing what the code does not do, a guard
+that never fired, a value that could be corrupted. The rule has not been
+absolute: a third serialization dialect arrived in July, two months past the
+lock, and that is a feature by any reading. A patch may also break something,
+and each time that is a severity judgement — leaving a data-corrupting API in
+place under a deprecation was judged the worse trade every time. Both kinds are
+listed below and breaks are flagged inline, so neither claim rests on being
+believed.
 
 **The freeze is what opened the ecosystem.** Viper was one private repository
 holding the runtime and every tool built on it. On a single day in May 2026, seven

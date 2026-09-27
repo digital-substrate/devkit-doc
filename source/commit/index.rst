@@ -1,16 +1,18 @@
 Commit
 ======
 
-**Commit** is a deterministic, best-effort reduction engine over an
-immutable, content-addressed mutation DAG on a
-:doc:`DSM <../dsm/index>` model. Every commit names its parent, so work
-that did not see the current head never overwrites it — it **diverges**,
-and the database carries two heads until something folds them. On a
-**single stream it is lossless**: every read returns exactly what was
-written. **Folding two heads has no notion of conflict**: overlapping
-intent is silently collapsed by structural rules — structurally sound,
-semantically untrusted. That holds whoever wrote the two heads,
-including you on two machines.
+**Commit** is an immutable, content-addressed mutation DAG over a
+:doc:`DSM <../dsm/index>` model — a typed history you can read at any
+point, undo exactly, and replicate by set difference. **On a single
+stream it is lossless**: every read returns exactly what was written.
+That is what it is for, and it is the whole of what it guarantees.
+
+Every commit names its parent, so work that did not see the current head
+never overwrites it — it **diverges**, and the database carries two heads
+until something folds them. The guarantee stops at the fold. **Folding
+has no notion of conflict**: overlapping intent is silently collapsed by
+structural rules — structurally sound, semantically untrusted. That holds
+whoever wrote the two heads, including you on two machines.
 
 What it solves
 --------------
@@ -21,8 +23,8 @@ for one kind of application: a **typed, long-lived document, heavy in
 binary assets, that needs history, undo, a change trail, and replicas
 across sites.**
 
-Five properties follow from the mutation DAG itself. They are yours in
-full on a single stream, where nothing is ever collapsed:
+Five properties follow from the mutation DAG itself. On a single stream
+they are the product, whole, and nothing is ever collapsed:
 
 * **Undo / redo, exact and free.** Every mutation is already an opcode,
   so undo is a commit that masks another — not a per-action inverse you
@@ -61,17 +63,21 @@ Deterministic reduction is not a sixth item on that list. It is the
 price of letting the DAG diverge at all: once two heads exist, closing
 them without a human requires a structural rule. A stream that never
 diverges never pays it — every read returns exactly what was written. A
-fold nobody reviews pays it in full, and that is what the rest of this
-chapter is about.
+fold nobody reviews pays it in full.
+
+Which is why most of what follows documents a regime to leave rather than
+one to settle into. The engine permits divergence and cannot arbitrate
+it, so everything downstream of an unreviewed fold is containment, not
+capability.
 
 Start here
 ----------
 
-Most of this chapter is reference you can skip. It turns on **one
-question: can the database ever carry two heads that are folded without
-a human reviewing the result?**
+Most of this chapter is reference you can skip, and skipping it is the
+intended outcome. It turns on **one question: can the database ever carry
+two heads that are folded without a human reviewing the result?**
 
-- **No — one stream (the common case).** One writer at a time, each
+- **No — one stream. This is the product.** One writer at a time, each
   extending the head it read. Several writers qualify too, as long as
   the application serialises them onto that head — what ends the regime
   is a write prepared against an older head, not a second person. Read
@@ -86,7 +92,7 @@ a human reviewing the result?**
   second writer committing in parallel, or heads you diverge yourself
   and fold unreviewed. Start with the
   :doc:`Modes of Use <commit_modes>` diagnostic — it tells you which
-  remaining pages apply, and how much.
+  remaining pages apply, and how much. Read it as a bill, not a menu.
 
 .. _three-regimes:
 

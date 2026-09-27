@@ -92,9 +92,9 @@ container operations) instead accrete, each on its own path. **The result is
 assembled from these mutations, not from the intents behind them.**
 
 For the path-based mutators that carry most concurrent work, that assembly
-resolves each shared structure in one of two regimes:
+reduces each shared structure in one of two regimes:
 
-- **Shared path — resolution with loss.** When two heads write the *same*
+- **Shared path — reduction with loss.** When two heads write the *same*
   path, the last in linearisation order wins and the rest are discarded. No
   value is invented: a value you really submitted wins, verbatim; the others
   are gone, and nothing signals it.

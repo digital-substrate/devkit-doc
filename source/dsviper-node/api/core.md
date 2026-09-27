@@ -112,8 +112,10 @@ LoggerNull
 ## Utilities
 
 ```{js-summary}
+ViperError
 Error
 Cancelation
+Semaphore
 SharedMemory
 Socket
 Float16
@@ -191,11 +193,19 @@ KeyNamer
 :members:
 ```
 
+```{js:autoclass} ViperError
+:members:
+```
+
 ```{js:autoclass} Error
 :members:
 ```
 
 ```{js:autoclass} Cancelation
+:members:
+```
+
+```{js:autoclass} Semaphore
 :members:
 ```
 

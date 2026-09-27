@@ -183,7 +183,7 @@ your call.
 
 ## Summary
 
-| Regime                     | How divergence resolves                                | Where it lives                                           |
+| Regime                     | What happens to divergence                             | Where it lives                                           |
 |----------------------------|--------------------------------------------------------|----------------------------------------------------------|
 | **Deterministic reduction**| Structural linearisation — no notion of conflict       | The engine — all it can do unsupervised, and less than convergence |
 | **Cooperation**            | Disjointness you engineer and must keep — nothing to pick between | This page — application discipline                       |

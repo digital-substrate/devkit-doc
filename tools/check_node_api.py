@@ -85,8 +85,17 @@ def main() -> int:
     if missing:
         failures.append(
             "these exported classes reach no page:\n      " + "\n      ".join(missing)
-            + "\n    Add a {js:autoclass} under source/dsviper-node/, or mark the class "
-              f"{INTERNAL} in the binding if it is not product.")
+            + "\n    Add a {js:autoclass} under source/dsviper-node/, or add the class to "
+              "EXEMPT in this file with the reason it is not product.")
+    if stale_gone:
+        failures.append(
+            "these are declared exempt but the package no longer exports them:\n      "
+            + "\n      ".join(stale_gone) + "\n    Drop them from EXEMPT.")
+    if stale_documented:
+        failures.append(
+            "these are declared exempt and also documented:\n      "
+            + "\n      ".join(stale_documented)
+            + "\n    Drop them from EXEMPT; the exemption no longer buys anything.")
 
     if failures and not args.report:
         for f in failures:

@@ -62,6 +62,25 @@ The engine shipped inside both bindings; `viperVersion()` reports this version.
 Binding- or packaging-only releases are omitted — except a *phantom* version (a runtime
 number minted with no runtime change, from a lockstep bump), listed to explain the gap.
 
+### 1.2.27 — 2026-09-27
+- **Fixed** — `Html.document` escapes its title: markup in a title closed `<title>` early and
+  could put a script in the head.
+- **Fixed** — `CommitStore::extendDefinitions` left the store unable to write: every later
+  dispatch failed through the notifier and wrote no commit. And
+  `CommitDatabaseSQLite::createBlobs` opened its own transaction inside the caller's, so its
+  rollback discarded the caller's earlier writes.
+- **Fixed** — `reconcile` refuses a commit that is not a merge, and it and `materializeMerge`
+  refuse a resolution analysed against another pair of heads, before writing anything.
+- **Fixed** — blob streams: deleting one drops it, a failed write abandons the stream and
+  keeps its error, and `append` refuses a chunk past the end instead of wrapping its counter.
+- **Changed** — input that used to produce a wrong result is now refused: `json_encode`
+  rejects infinity and NaN (it wrote `null`), `bson_encode` an integer past its signed 64-bit
+  range, a decode a blob holding bytes past its value, and `TypeVec` / `TypeMat` a dimension
+  of zero. A file may no longer take the path `InMemory`.
+- **Added** — the two transfers answer the commit they made (`commitId()`) and refuse to run
+  twice. Closed remote clients are refused as closed, and several error codes now tell apart
+  cases they used to merge.
+
 ### 1.2.26 — 2026-09-20
 - **Removed (breaking)** — `ValueBlob::make(size)` and `BlobView::make(layout, size)`.
   A `ValueBlob` is immutable — a primitive whose bytes are fixed at construction, unlike
@@ -293,6 +312,22 @@ Initial release.
 
 The PyPI wheel (`pip install dsviper`). Its `PATCH` stream is independent of the
 runtime; each release notes the runtime version it ships.
+
+### 1.2.28 — 2026-09-27
+- **Changed (breaking)** — `BlobArray(blob_layout, blob)` replaces `BlobArray.from_blob`;
+  `len()` of a `ValueMat` counts its columns, the indices `m[i]` accepts (`size()` still
+  counts elements); `from dsviper import *` no longer re-exports the compiled submodule; and
+  a non-Value where one is required raises `TypeError` rather than `RuntimeError`.
+- **Fixed** — three classes could crash the interpreter from pure Python; a negative index or
+  size was read modulo 2⁶⁴ instead of raising; a notifier that raised failed the store call
+  with `SystemError`; and 25 constructors documented a keyword the binding does not accept.
+- **Added** — `BlobGetting.read_blob(blob_id, size, offset)` reads a blob in pieces, past
+  2 GB included; the two transfers answer the commit they made and refuse to run twice;
+  `TypeName` is constructible; `Codec.query` names the stream codecs and what each keeps.
+- **Changed** — the type stub carries the binding's own prose, so an editor shows what
+  `help()` shows; most of this release is that prose, rewritten to say what the binding
+  does — which reads are snapshots, what raises, what a dispatch notifies.
+- *Ships runtime 1.2.27 — see the runtime section.*
 
 ### 1.2.27 — 2026-09-20
 - **Removed (breaking)** — `BlobArray(blob_layout, size)`, `BlobArray.__setitem__`,
@@ -552,6 +587,25 @@ Initial release.
 ## dsviper for Node.js
 
 The npm package `@digitalsubstrate/dsviper`. See {doc}`dsviper-node/index`.
+
+### 1.2.13 — 2026-09-27
+- **Changed (breaking)** — a stream array read answers a `ValueVec`, as in Python
+  (`toArray()` gives the native array); `BlobArray.at()` answers one datum, the element
+  reading moving to `blobView()`; `new BlobArray(blobLayout, blob)` replaces
+  `BlobArray.fromBlob`; and a native that does not fit its type throws `ViperError`, not
+  `TypeError` or `RangeError`.
+- **Added** — `Semaphore`, which the wheel already had; `ViperError` as an exported class
+  carrying `code`, `component` and `domain`; a `ValueSet` wherever a list of ids is taken;
+  `readBlob(blobId, size, offset)` past 2 GB; `TypeName` constructible; the transfers'
+  `commitId()`.
+- **Fixed** — a boolean flag of another type was coerced (`open(path, 'yes')` opened
+  read-only); a NaN, negative or fractional blob size or offset was accepted; a `bigint`
+  beyond int64 decoded to 0; `SharedMemory.fd()` returned the region's size; and
+  `PathConst.equals` answered differently in each direction.
+- **Changed** — every optional parameter declares `| null`, which the binding always
+  accepted and JSON needs; the third-party notices list what the package embeds, and
+  nothing else.
+- *Ships runtime 1.2.27 — see the runtime section.*
 
 ### 1.2.12 — 2026-09-20
 - **Removed (breaking)** — `BlobPackRegion.copy(buffer)` and

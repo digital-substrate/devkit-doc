@@ -16,10 +16,9 @@ notes the runtime version it carries. Only released versions are listed, and
 
 ## What LTS-1.2 guarantees
 
-The label was applied early. The line was still in late alpha when it went on:
-two breaking changes landed the day before the lock, and additions were still
-arriving four months after it. What follows is what the commitment covers —
-narrower than the name suggests, and the part that has held.
+The label was applied early. The line was still in late alpha when it went on,
+and additions were still arriving four months after it. What follows is what the
+commitment covers — narrower than the name suggests, and the part that has held.
 
 **Three things are frozen for the life of the line.** The **type and value
 system** — `Definitions`, `Type`, `Value` and the relations between them: a model
@@ -63,171 +62,170 @@ Binding- or packaging-only releases are omitted — except a *phantom* version (
 number minted with no runtime change, from a lockstep bump), listed to explain the gap.
 
 ### 1.2.27 — 2026-09-27
-- **Fixed** — `Html.document` escapes its title: markup in a title closed `<title>` early and
-  could put a script in the head.
-- **Fixed** — `CommitStore::extendDefinitions` left the store unable to write: every later
-  dispatch failed through the notifier and wrote no commit. And
-  `CommitDatabaseSQLite::createBlobs` opened its own transaction inside the caller's, so its
-  rollback discarded the caller's earlier writes.
-- **Fixed** — `reconcile` refuses a commit that is not a merge, and it and `materializeMerge`
-  refuse a resolution analysed against another pair of heads, before writing anything.
-- **Fixed** — blob streams: deleting one drops it, a failed write abandons the stream and
-  keeps its error, and `append` refuses a chunk past the end instead of wrapping its counter.
-- **Changed** — input that used to produce a wrong result is now refused: `json_encode`
-  rejects infinity and NaN (it wrote `null`), `bson_encode` an integer past its signed 64-bit
-  range, a decode a blob holding bytes past its value, and `TypeVec` / `TypeMat` a dimension
-  of zero. A file may no longer take the path `InMemory`.
-- **Added** — the two transfers answer the commit they made (`commitId()`) and refuse to run
-  twice. Closed remote clients are refused as closed, and several error codes now tell apart
-  cases they used to merge.
+
+**Added**
+
+- `DatabaseToCommitDatabaseConverter::commitId()` and `CommitDatabaseFlattener::commitId()` answer the commit the transfer made. Both refuse a second run, so the answer is never ambiguous.
+- `DatabaseTransferErrors`, raised when a transfer is asked to run twice.
+
+**Fixed**
+
+- A blob pack writes the same bytes for the same descriptor: each region record carried the three padding bytes of its `BlobLayout`, which nothing wrote, so two equal packs could differ, and so could their `BlobId`.
+- `Html.document` escapes its title: a title carrying markup closed `<title>` early and could put a script in the head. `body()` still passes its fragment through raw.
+- Decoding a value refuses a blob holding bytes past it (`StreamErrors::BytesPastTheValue`, 3): what remained meant the value read was wrong too, another type or another codec.
+- A locked file answers `SQLiteErrors::Busy` (31) wherever the wait runs out: `prepare` answered it with `Function` (30), so a reader opening a file held exclusively saw "prepare failed".
+- A blob read or write tells a missing blob (`UnknownBlob`, 33) from an offset out of range; not-frozen and frozen carry their own codes, 30 and 32, not the 2 GB one.
+- A merge decree applies only to its own merge: `reconcile` refuses a commit that is not a merge, and `reconcile` / `materializeMerge` refuse a resolution analysed against another (ours, theirs), the reversed pair included, before writing anything.
+- A call on a closed `ServiceRemote` or `DatabaseRemote` is refused as closed (`ServiceErrors::IsClosed`, `DatabaseRemoteErrors::IsClosed`), as `CommitDatabaseRemote` already was. `DatabaseRemote` sent on the released descriptor and reported "Bad file descriptor".
+- `DatabaseRemote::extendDefinitions` refreshes the definitions the client holds: an attachment it added was refused as unregistered until a reconnection.
+- `ServiceRemote::peername` over a unix socket is the path connected to; it was the client's descriptor number.
+- A value unwrapped from an optional has the optional as its `DocumentNode` parent; it named itself, so nothing walked up from it. An `any` displays `value is <type>.` (it showed a stray `%1`), a `variant` a space before its type.
+- `SharedMemory::fd()` answers the descriptor the region is mapped from (-1 on Windows). A descriptor of 0 is now closed, and a failed `create` releases its descriptor and name. On Windows, `create` refuses a name already published, as on POSIX.
+- `Semaphore::tryWait` answers false on a zero count, as documented; it threw on POSIX and answered true on Windows. On Windows, `create` refuses a name already published, an opened semaphore can post, and the count is no longer capped at one.
+- A DSM source map cuts the text it names: a documented field's type span started at its docstring, a `key<>`, `vec<>` or `mat<>` occurrence at its element name, so a rewrite deleted a docstring or truncated a type.
+- `Definitions::createMembership` records the membership in its own registry, not on the club object it is handed, which may belong to another.
+- A file cannot take the path `InMemory`, the one a database in memory answers: `SQLite` refuses to create or open it (`SQLiteErrors::ReservedPath`), and `isCompatible` answers false. `inMemory()` answered true for such a file.
+- `CommitDatabaseServer::step` answers false once the server stopped or was cancelled; it kept answering true, so a loop on it never ended.
+- `Socket::acceptNonBlock` refuses a closed socket, as `waitReadable` does, instead of selecting on a released descriptor.
+- Deleting a blob stream drops it. `blobStreamDelete`, and a close onto a blob already held, matched the wrong key: the stream stayed writable, and one a `CommitDatabase` abandoned stayed in the file.
+- `DatabaseSQLite::blobStreamDelete` requires a transaction, like every other blob write.
+- `freezeBlob` answers false for a blob already frozen, as documented; it answered true.
+- `CommitDatabaseSQLite::createBlobs` joins a transaction the caller opened. It opened its own, failed, and its rollback discarded the caller's earlier writes.
+- An encoder refusal says where the value sits, as `while encoding '.deep[1]'`. It said what was wrong and never which value, so a wide document named no culprit. The decoder side already carried its path.
+- A runtime message names a mechanism, not a call. A blob past 2 GB named `readBlob(blobId, size, offset)` and a repeated transfer named `commitId` — spellings a Python caller does not have.
+- A failed blob-stream write abandons the stream and keeps its error. The cleanup closed the stream, which refuses an incomplete one, so it threw: the original error was lost, the delete skipped, and the stream stayed usable.
+- `BlobStream::append` refuses a chunk past the end (`BlobStreamErrors::ExceedingBytes`) instead of wrapping its `size_t` counter.
+- `json_encode` refuses infinity and not-a-number (`TypeErrors::InvalidJsonNumber`) instead of writing `null`, which left the document complete and failed on whoever read it next. The stream codecs and XML carry them, unchanged.
+- `bson_encode` refuses what BSON cannot hold: those same numbers, and an integer above its signed 64-bit range (`TypeErrors::InvalidBsonInteger`), which escaped as the writing library's own exception rather than a Viper error.
+- `DatabaseSQLite::isCompatible` answers instead of throwing for a file that is not SQLite3. It opened whatever it was handed; `CommitDatabaseSQLite::isCompatible` already guarded with `SQLite::isSQLite3`.
+- `CommitStore::extendDefinitions` leaves the store able to write. It kept the state built at `use()` on the old definitions, so every later dispatch failed silently through the notifier, writing no commit.
+- `to_dsm()` names its second block `// Mapping for Core::User.profile`, where it said only `// Definition` with a trailing space.
+- The default HTML stylesheet defines `details_indent`, the class its nesting renderer emits, so nested documents no longer render flat.
+- `SQLiteTableBlobErrors` names `BlobStream` and `readBlob` instead of a `BlobIO` API that exists nowhere, and its component lost a trailing space; `DSMErrors` says `DSMTypeReference`.
+- `Path::patch` refuses a path that addresses no key, naming the shape it is not. An entry with nothing after it answered "invalid index 2", and one whose index addressed the entry's value had its key replaced instead.
+- `TypeVec::make` and `TypeMat::make` refuse a dimension of zero, which holds no data, as the empty enumeration, structure and variant already do. The DSM checker reports it against the model's own line.
 
 ### 1.2.26 — 2026-09-20
-- **Removed (breaking)** — `ValueBlob::make(size)` and `BlobView::make(layout, size)`.
-  A `ValueBlob` is immutable — a primitive whose bytes are fixed at construction, unlike
-  a document or a container — and both minted one full of zeros for the caller to fill
-  afterwards, so its hash and its `BlobId` named bytes that were then overwritten, in a
-  blob the store or another thread may hold. Removed rather than deprecated: calling
-  them already produced corrupted values. Fill the bytes first, on the **Added**
-  `BlobArrayBuilder` or `BlobPackBuilder`, which own them until `build()` seals them.
-- **Fixed** — `CommitMutableState::set` and `diff` check a document against the type its
-  attachment declares, and refuse a null one. A mistyped document used to enter the
-  commit self-consistent, with nothing downstream to object. Documents already written
-  mistyped stay readable and contradict their attachment.
-- **Fixed** — a namespace cycle closed through an attachment, or through a key naming a
-  concept of another namespace, is rejected; neither counted as a dependency before. A
-  database repository server confines `setDatabase` to its own folder, where an absolute
-  name or a leading `..` could open any Viper database on its filesystem. And an RPC peer
-  can no longer make the reader reserve a length it never sends.
-- **Fixed** — `CommitDatabaseRemote::uploadSpeed` and `downloadSpeed` reported a tenth of
-  the transfer achieved, and `downloadSpeed` uploaded N bytes before downloading N.
-  **Its packet changes**: `downloadSpeed` between a peer with this fix and one without
-  fails. No other packet is affected.
-- **Changed** — a remote `blob()` or `createBlob()` of N bytes peaks at about 2N a side
-  instead of 3N, and runs 3 to 10 % faster. The bytes on the wire are unchanged, and so
-  are the type/value system and the on-disk format.
+
+**Changed**
+
+- An RPC message holds its payload twice at most while it crosses the wire, not three times.
+
+**Removed (breaking)**
+
+- `ValueBlob::make(std::size_t)` and `BlobView::make(BlobLayout const &, std::size_t)` — both made a blob of zeros whose hash and `BlobId` were computed on those zeros, before the caller overwrote them. Use a builder.
+
+**Added**
+
+- `BlobArrayBuilder` and `BlobPackBuilder` fill the bytes of a blob, then seal them, with `BlobBuilderErrors` for a builder asked to write after `build()`.
+
+**Fixed**
+
+- A document is written with the type its attachment declares, and a namespace cycle closed through an attachment or a key reference is now seen: the dependency graph missed both.
+- An RPC peer can no longer make the reader reserve what it never sends, and `CommitDatabaseRemote::uploadSpeed` / `downloadSpeed` report the direction they measure.
+- A database repository server confines `setDatabase` to its own folder, and `XArray::operator!=` compiles.
 
 ### 1.2.25 — 2026-08-27
-- **Fixed** — `TypeTuple` and `TypeVariant` answered a representation from whichever namespace
-  asked first: `representationIn(nameSpace)` memoized its first answer in a member that was not
-  keyed on the namespace, so every later caller got the first caller's namespace back.
-  `representation()` must answer the fully qualified name and `representation(nameSpace)` the
-  namespace-relative one; instead the result depended on call order and was wrong in both
-  directions — a global caller could receive an unqualified, ambiguous name. It was also a data
-  race: one `Definitions` is shared across a server's client threads, so filling either memo from
-  two of them at once was an unsynchronized write under a `const` method, reachable remotely
-  through any type-mismatch message. The memos are dropped and recomputed, as `TypeMap`,
-  `TypeKey`, `TypeMat`, `TypeOptional` and `TypeVec` already do — a few tens of nanoseconds on a
-  path only descriptions and error messages take.
-- **Changed** — `FunctionLambda` is now `FunctionCallable` and takes its name at construction. The
-  old class named itself after the syntax of the body it wraps and took only that body, so
-  `FunctionPrototype::makeFromTypes` named every instance `"lambda"`; a `FunctionPool` indexes by
-  name, so it could hold exactly one before the second silently replaced the first. Exposed to
-  neither binding, and with no caller anywhere.
-- **Removed** — two dead RPC surfaces: `RPCPacketReturnBlobId`, the return half of the id-less
-  `createBlob` whose call half 1.2.24 dropped, and `RPCSideClientCall::returnVectorOfUUId`,
-  declared since 2024 and never defined. The type/value system and on-disk format are unchanged.
+
+**Changed**
+
+- `FunctionLambda` is renamed `FunctionCallable` and takes its name at construction: every instance was named `"lambda"`, so a `FunctionPool`, which indexes by name, kept only the last one.
+
+**Removed (breaking)**
+
+- `RPCPacketReturnBlobId`, the answer of the id-less `createBlob` that 1.2.24 removed.
+- `RPCSideClientCall::returnVectorOfUUId`, declared and never defined.
+
+**Fixed**
+
+- `TypeTuple` and `TypeVariant` answer the representation of the namespace asked for: they cached the first answer whatever the namespace, and filled that cache unsynchronised from server threads.
 
 ### 1.2.24 — 2026-08-04
-- **Added** — cooperative server termination: `CommitDatabaseServer`, `ServiceServer` and the
-  repository server now stop on a `Cancelation` directive rather than on a socket shutdown.
-  `step(timeoutInSec)` is a *bounded* wait, so the host keeps its own event loop, timers and signal
-  handlers alive between calls; `finishBefore(sec)` bounds the teardown and **returns how many client
-  threads it could not join**, so a host driving a user interface can act on the answer instead of
-  blocking on a Stop button. Supporting primitives: `RPCConnection::stepFor` (a third outcome beside
-  "read a packet" and "connection closed" — nothing arrived within the timeout, honoured as an Idle
-  read) and `Socket::waitReadable`, the read counterpart of `acceptNonBlock`.
-- **Fixed** — `createZeroBlob` over RPC had never worked: the side server answered with
-  `ReturnOptionalInt64` while the client waited for `ReturnBool`, so every remote call died on
-  `RPCProtocolErrors:10` and the streaming write path was unreachable over RPC for eighteen months.
-  The interface's return type had changed from `optional<int64_t>` to `bool` with only the client
-  migrated; the implicit conversion kept the compiler silent. Found by a new round-trip test that
-  calls every `CommitDatabasing` method against a live server.
-- **Fixed** — network transport: a partial `send()` no longer truncates the payload on POSIX (the
-  write loops until everything is out), and the accept `fd_set` is rebuilt on each pass instead of
-  being reused after `select()` has modified it; a length header announcing an empty payload is
-  rejected; an exception escaping a client thread no longer takes the process with it, and a client
-  that cannot open the database is reported rather than left to wedge the accept loop.
-- **Fixed** — Windows builds outside ATL-bearing Visual Studio editions (`<rpc.h>` for `UuidCreate`);
-  three declared XML decoder guards are now wired; a scalar default on a vec or mat field raises the
-  guard meant for it; `dsm_check` and `DSMHelper::assemble` reject a path that does not exist; the
-  repository server exits non-zero when it cannot start.
-- **Changed** — every error domain string now matches its namespace (`DatabaseErrors::Domain` is
-  `"DatabaseErrors"`, and so on). The domain is informative; the code stays the contract.
-- **Removed** — five runtime surfaces with no caller anywhere (measured across the runtime, both
-  bindings, the Kibo templates and every sibling application, with the git history checked for a
-  caller that once existed), five guards no call site could reach, and two RPC packets left over
-  from superseded signatures (`UnsetDatabase`, `ReturnOptionalInt64`). The type/value system and
-  on-disk format are unchanged.
+
+**Changed**
+
+- Every error domain string names its namespace: `DatabaseErrors::Domain` is `"DatabaseErrors"`, and so on.
+
+**Removed (breaking)**
+
+- Five surfaces nothing called, five guards nothing reached, the `UnsetDatabase` packet and `RPCPacketReturnOptionalInt64`.
+- The id-less `createBlob` packet.
+
+**Added**
+
+- Servers stop when asked: `CommitDatabaseServer`, `ServiceServer` and the repository server run `step(timeoutInSec)` under a `Cancelation`, and `finishBefore(sec)` answers how many client threads it could not join.
+- `RPCConnection::stepFor` tells a read that timed out from a closed connection, and `Socket::waitReadable` waits for a peer without blocking the accept loop.
+
+**Fixed**
+
+- `createZeroBlob` works over RPC: the server answered an `int64` where the client waited for a `bool`, so every remote call failed (`RPCProtocolErrors`, 10) and blobs could not be streamed to a remote database.
+- A partial `send()` no longer truncates a message on POSIX, and the accept loop rebuilds the descriptor set `select()` modified.
+- A client thread that throws, or cannot open its database, no longer aborts or hangs the server.
+- A length header announcing an empty payload is refused.
+- Windows builds without ATL: `UuidCreate` comes from `<rpc.h>`.
+- A vec or mat field given a scalar default raises `notALiteralList`, not `notALiteralValue`; three XML decoder guards that were declared are now applied.
+- `dsm_check` and `DSMHelper::assemble` refuse a path that does not exist, and the repository server exits non-zero when it cannot start.
 
 ### 1.2.23 — 2026-07-23
-- **Fixed** — commit-read cache isolation: `CommitState::get` memoizes each `(attachment, key)`
-  lookup, but the cache-miss path returned the very `ValueOptional` it had just cached. A
-  document value is mutable, so mutating a first (cache-miss) result — `wrap`/`clear`, or
-  mutating the unwrapped container — poisoned the cache, and every later read of that key
-  then returned the corrupted value. The miss path now copies too (matching the hit path), so
-  the memoized snapshot stays immutable from the caller's side. Reachable from both bindings
-  via `AttachmentGetting.get`. The type/value system and on-disk format are unchanged.
+
+**Fixed**
+
+- `CommitState::get` returns a value its cache does not share: a first read handed out the cached value itself, so mutating it changed what every later read of that key returned.
 
 ### 1.2.22 — 2026-07-22
-- **Added** — DSM parser source map: passing a `DSMSourceMap` to `DSMBuilder::parse` records the
-  exact source span of every declaration, field, case, namespace, type sub-expression and
-  *resolved* type-reference. This is the primitive behind a span-precise `.dsm` codemod — patch a
-  hand-authored schema source in place under a transformation (file split, comments and ordering
-  preserved) instead of regenerating it. Opt-in: `parse` without a source map is unchanged.
-- **Fixed** — a merge decree is frozen at arbitration: `CommitMergeResolution` now copies its
-  `chosen` value instead of storing the caller's handle, so the resolution owns an immutable
-  snapshot; mutating the passed value after building the resolution can no longer alter the
-  decree. The reconciled state is unchanged (reconcile already copied at consumption). The
-  ambiguous-reference type-resolution diagnostic is also spelled correctly. The type/value system
-  and on-disk format are unchanged.
+
+**Added**
+
+- `DSMSourceMap`: passed to `DSMBuilder::parse`, it records the source span of every declaration, field, case, namespace, type expression and resolved reference, so a `.dsm` can be edited in place.
+
+**Fixed**
+
+- A `CommitMergeResolution` copies its chosen value: changing that value after building the resolution changed the decree.
+- The ambiguous-reference diagnostic spells "ambiguous".
 
 ### 1.2.21 — 2026-07-19
-- **Fixed** — HTML-output escaping (XSS / attribute injection): the HTML renderer emitted
-  names, strings, docstrings, keys and type references verbatim, so content carrying
-  `& < > " '` (reachable through unvalidated JSON/XML import) could inject markup or
-  attributes. Every content leaf is now escaped at the sink.
-- **Fixed** — byte-exact XML value codec: no longer truncates on `U+0000`, normalises
-  CR/CRLF, or drops whitespace-only text; XML-forbidden C0 controls are rejected, a carriage
-  return survives as `&#13;`, and whitespace-only text survives. Containers round-trip
-  unchanged.
-- **Fixed** — symmetric string escaping across DSM string literals, `repr`, and docstrings
-  (a value carrying `"`, `'` or `\` no longer produces unparseable text); imported
-  identifiers are validated against the identifier policy; DSM parse errors at end-of-input
-  carry their source file and a 1-based column; variant arms are de-duplicated by
-  `runtimeId`, not description.
-- **Added** — DSM-vocabulary parse diagnostics: the offending token is quoted and the
-  expected concept is named (`a value` / `a type` / `a definition`).
-- **Changed** — a `ValueString` must now be valid UTF-8, and a documentation string must be
-  DSM-expressible (no `"""`); both reject input previously accepted. The type/value system
-  and on-disk format are unchanged.
+
+**Changed**
+
+- A `ValueString` holds UTF-8: `ValueString::make` refuses anything else (`TypeErrors::InvalidUtf8`). A blob holds bytes.
+- Documentation cannot contain `"""`, which the DSM cannot escape; it is refused at construction and at JSON or XML import (`TypeErrors::InvalidDocumentation`).
+
+**Added**
+
+- DSM syntax errors speak DSM: the offending token is quoted and what was expected is named (`unexpected \`strcut\`; expected a definition or \`}\``). Error recovery is unchanged.
+
+**Fixed**
+
+- The HTML renderer escapes what it prints: a name, string or docstring carrying `<`, `&` or a quote injected markup.
+- The XML value codec round-trips any string: it cut at `U+0000`, turned CR into LF and dropped whitespace-only text. XML-forbidden controls are refused (`TypeErrors::InvalidXmlText`).
+- Strings are escaped wherever they enter DSM, `repr` or a docstring: a quote or a backslash produced text that did not parse back.
+- A name arriving through JSON or XML import is checked as an identifier (`InvalidName`).
+- A DSM error at end of input names its file and a 1-based column.
+- A variant's arms are de-duplicated by `runtimeId`, not by description.
 
 ### 1.2.20 — 2026-07-12
-- **Added** — CommitId collection: `CommitIdCollector`, the commit-id twin of `BlobIdCollector`
-  — `useCommitId(type)` prunes any subtree whose type cannot hold a `CommitId`, then a typed
-  value walk gathers every `CommitId` a value references. A `CommitId` content-addresses a DAG
-  commit, so a schema-change rebuild can discover intra-DAG references. Additive — no change to
-  the type/value system or on-disk format.
-- **Fixed** — a conflicting schema upgrade no longer corrupts a database: `extendDefinitions`
-  against a store whose schema redefined an existing type under a **new** `runtimeId` (e.g. a
-  regenerated `.dsm`) used to commit a second, same-named definition, leaving the base unopenable
-  (`AlreadyDefinedName` on every `open()`). The type-name governance check now runs first and
-  raises before any write, so the transaction rolls back and the base stays openable. Preventive
-  only — a database already poisoned by an older runtime must still be restored from backup.
-- **Fixed** — DSM governance: a `Definitions` built through the construction API can no longer
-  escape DSM-expressibility. DSM grammar keywords, forked/cyclic namespaces, non-literal field
-  defaults, and duplicate parameter names are now rejected at construction. Safe against existing
-  DSM — any `.dsm` that parses already cleared these gates.
+
+**Added**
+
+- `CommitIdCollector` gathers every `CommitId` a value references, as `BlobIdCollector` does for blobs; `useCommitId(type)` says whether a type can hold one.
+
+**Fixed**
+
+- Extending the definitions of a database with a type redefined under a new `runtimeId` is refused before any write (`conflictInTypeNameGovernance`); it stored a second definition of the name, and the database no longer opened.
+- The construction API refuses what the DSM cannot write: a DSM keyword as identifier, a forked or cyclic namespace, a non-literal default (`inf`, `nan`), a duplicate parameter name, a non-identifier field or case name.
+- A default equal to the type's own default is stored as no default.
 
 ### 1.2.19 — 2026-07-06
-- **Added** — XML wire format: a third dialect (after JSON and BSON) of the type-driven
-  serializer, round-tripping both values and DSM definitions on the vendored pugixml parser.
-  Purely additive — the existing JSON/BSON surface is unchanged.
+
+**Added**
+
+- An XML wire format for values and DSM definitions: `XmlValueEncoder`, `XmlValueDecoder`, `XmlDSMDefinitionsEncoder` and `XmlDSMDefinitionsDecoder`, beside JSON and BSON, on a vendored pugixml.
 
 ### 1.2.18 — 2026-07-03
-- **Fixed** — JSON codec: the value decoder accepts a bare integer literal for a
-  `float`/`double` field (`5` is read as `5.0`; JSON has a single number type), instead of
-  rejecting it. Encoder output is unchanged. Fixes interop with third-party JSON producers
-  that drop the decimal point of a whole-number double.
+
+**Fixed**
+
+- The JSON value decoder reads an integer literal into a `float` or `double` field: `5` is `5.0`, JSON having one number type. The encoder still writes `5.0`.
 
 ### 1.2.17 — 2026-06-28 (phantom)
 - *No runtime change. The runtime number was bumped in lockstep with the dsviper Python
@@ -236,68 +234,140 @@ number minted with no runtime change, from a lockstep bump), listed to explain t
   and 1.2.2.*
 
 ### 1.2.16 — 2026-06-13
-- **Added** — Commit engine: pre-merge (virtual) reconciliation on
-  `CommitStateBuilder` (`mergeState`, `analyzeVirtualMerge`, `reconcileState`,
-  `materializeMerge`, `mergeEnabledByCommitId`) — additive analysis over the
-  public commit API.
-- **Fixed** — Path serialization: non-regular paths (`Entry` / `Element` steps)
-  round-trip losslessly.
+
+**Added**
+
+- A merge can be analysed and reconciled before it is written: `CommitStateBuilder::mergeState` and `mergeEnabledByCommitId` compute what `mergeCommit(ours, theirs)` would give, without writing it.
+- `CommitMergeAnalyzer::analyzeVirtualMerge`, `reconcileState` and `materializeMerge`: analyse that state, compose the chosen values in memory, then write the merge and its reconciliation together. `CommitMergeAnalysis::mergeCommit` becomes optional, empty for a virtual analysis.
+
+**Fixed**
+
+- A document holding a set or a map builds its `DocumentNode` tree: the node identity encoded paths through set elements and map entries, which the path writer refused.
+- A path through a set element or a map entry is written and read back whole; the path codec handled regular paths only.
 
 ### 1.2.15 — 2026-06-11
-- **Changed (breaking)** — head navigation and commit-state construction move out
-  of `CommitDatabase` into `CommitDatabaseHelper` (`reduceHeads` / `forward` /
-  `fastForward`) and `CommitStateBuilder` (`initialState` / `state` /
-  `enabledByCommitId`); callers now pass the database explicitly.
-- **Added** — `reduceHeads` selectable merge anchor; a non-head anchor raises a
-  structured "not a head" error.
-- **Removed (breaking)** — the global `CommitStore` singleton; construct and own a
-  store explicitly.
-- **Fixed** — `XArray` `contains` / `positionOf` over key element types.
+
+**Changed**
+
+- Head navigation and state construction leave `CommitDatabase`: `reduceHeads`, `forward` and `fastForward` move to `CommitDatabaseHelper`, `initialState`, `state` and `enabledByCommitId` to `CommitStateBuilder`, each taking the database.
+- `CommitDatabaseHelper::reduceHeads(db, anchor)` merges the other heads into the head you name, refusing one that is not a head (`CommitErrors::notAHead`); without an anchor it starts from `lastCommitId`.
+
+**Removed (breaking)**
+
+- `CommitStore::Instance()`, the process-wide store. Build one with `CommitStore::make()` and own it.
+
+**Fixed**
+
+- `XArray::contains` and `positionOf` compile for keys and structures, which define `==` only; they called an `isEqual` those types lack.
+- The runtime builds with MSVC again.
 
 ### 1.2.14 — 2026-06-10
-- **Added** — `Fuzzer` is now deterministic and seedable: a seed reproduces the
-  generated keys and blob ids.
+
+**Changed**
+
+- A `Fuzzer` is reproducible: one seeded generator drives every draw, the UUID family included, and `seed()` answers the seed, so a run can be replayed. A seed can be passed at construction.
 
 ### 1.2.13 — 2026-06-04
-- **Fixed** — malformed JSON/BSON now yields a structured error (previously
-  undefined behavior) on both the generic and DSM-typed decode paths; value and
-  id hashing made thread-safe.
-- **Added** — stream-read interface: `remaining()` / `size()`.
+
+**Added**
+
+- `StreamReading::remaining()` and `StreamRawReading::size()`: how many bytes are left to decode, and how many the source holds.
+
+**Fixed**
+
+- A malformed JSON or BSON document raises a `Viper::Error`, value or DSM definitions; the parser's own exception escaped the runtime.
+- Hashing a shared value or id from two threads is safe: the hash was cached lazily under a `const` method. Ids now hash at construction, strings and blobs once.
+- `CommitStore::Instance()` initialises safely under concurrent first use.
+- `UUId::hash()` no longer reads a misaligned integer, undefined behaviour on some platforms; the hash is unchanged.
+
+### 1.2.12 — 2026-05-31
+
+**Changed**
+
+- The Database ↔ CommitDatabase converters take open databases, local or remote, instead of file paths. The commit to read, or the label to write, is explicit; the result is a `DatabaseTransferInfo` (documents, blobs) instead of text on standard output.
+- A transfer copies only the blobs the copied state references, streamed in 64 MiB chunks, so a blob past 2 GB is carried.
+- `Databasing::createBlob(blobId, layout, blob)` takes the id and answers whether it created the blob, as `CommitDatabasing` does; it computed the id and returned it.
+
+**Added**
+
+- `DatabaseCopier` copies a `Database` into another one whole, orphan blobs included.
+- `CommitDatabaseFlattener` collapses one commit of a `CommitDatabase` into a new `CommitDatabase` holding that state as its only commit, with the blobs it references.
 
 ### 1.2.11 — 2026-05-29
-- **Added** — post-merge supervised reconciliation (`CommitMergeAnalyzer`):
-  `analyzeMerge` reconstructs, per document, the points where a branch's intent
-  did not survive a target-wins merge; `reconcile` composes per-locus decisions
-  into a single child of the merge. New `CommitMergeAnalysis` /
-  `CommitMergeDocument` / `CommitMergeConflict` / `CommitMergeResolution`.
-- **Fixed** — unified key-decode conformance (null / concept / club keys); JSON
-  decoder path-tracking diagnostics; restored the `runtimeId` mismatch guard in
-  the binary Definitions decoder.
+
+**Added**
+
+- `CommitMergeAnalyzer` reconstructs what a merge dropped: `analyzeMerge` lists, per document, the paths where a branch's change did not survive, and `reconcile` writes the chosen values as one commit on top of the merge (`CommitMergeAnalysis`, `CommitMergeDocument`, `CommitMergeConflict`, `CommitMergeResolution`).
+
+**Fixed**
+
+- Every decoder checks a key against its field's type: the binary one accepted any concept. A key must name the field's concept or a descendant, or a descendant of a club member (`notAConceptDescendant`, `notAClubMemberDescendant`).
+- The JSON decoder refuses a club key whose concept is not a member; the check was inverted and never raised.
+- The JSON value decoder names the failing node by its path, checks the shape of an xarray, and refuses a negative number for an unsigned type.
+- The binary Definitions decoder refuses a stored `runtimeId` that does not match its type; four of its five checks built the error without raising it.
 
 ### 1.2.10 — 2026-05-11
-- **Changed (breaking)** — `CommitId` is now derived only from
-  `(parentCommitId, type, targetCommitId, opcodesBlob)`; `timestamp` / `label`
-  are no longer hashed, giving intrinsic idempotence. **All prior `CommitId`
-  values change.**
-- **Fixed** — `reduceHeads` wrapped in an exclusive transaction (atomic against a
-  concurrent writer); deterministic `lastCommitId` tie-break.
+
+**Changed**
+
+- `CommitId` hashes the parent, the type, the target and the opcodes only — no longer the timestamp or the label, so replaying the same opcodes from the same parent gives the same commit. Every `CommitId` computed before changes.
+
+**Fixed (breaking)**
+
+- `lastCommitId` breaks a timestamp tie by insertion order; SQLite answered either of two commits sharing a timestamp.
+
+**Fixed**
+
+- `reduceHeads` runs in an exclusive transaction: a head added between its read and its merges was left unreduced.
 
 ### 1.2.9 — 2026-05-08
-- **Fixed** — JSON `DSMDefinitions` decoder preserves `isMutable`; corrected
-  decode error context.
-- **Changed** — JSON decoder errors carry a runtime JSON path instead of a static
-  label.
+
+**Changed**
+
+- A JSON DSM definitions decoding error names the failing node by its path, where it gave the kind of node only.
+
+**Fixed**
+
+- The JSON DSM definitions decoder keeps `isMutable`: it set every attachment function mutable, so a pure one turned mutable after a JSON round trip.
 
 ### 1.2.7 — 2026-04-16
-- **Fixed** — defined behavior for ±Inf / NaN in floats and doubles (total order
-  over NaN; `INF` / `NEG_INF` / `NAN` constants; codec round-trip), plus a broad
-  pass of value-semantics, blob, stream I/O, definitions/DSM, SQLite, and
-  path/`XArray` correctness fixes and cross-platform cleanups (Windows shared
-  memory, environment lookups).
+
+**Changed**
+
+- NaN has a place in the total order: it equals itself, sorts before every other value, and every NaN hashes alike, so a set or a map key can hold one.
+- A map diff emits `MapUpdate` for a modified key, where it folded it into `MapUnion`: the program reads Subtract, Update, Union, one opcode per kind of change.
+
+**Added**
+
+- `ValueDouble` and `ValueFloat` carry `INF`, `NEG_INF` and `NAN`, beside `ZERO` and `ONE`. `make()` answers these singletons for the special values.
+
+**Fixed**
+
+- `ValueFloat` accepts ±inf and NaN: the range check that guards the narrowing from double refused them as overflow.
+- An empty set is disjoint from itself: the shortcut for a set compared with itself answered false whether it was empty or not.
+- `ValueMap::pop(key, default)` answers the default on an empty map; it raised.
+- `CommitDatabase::isAncestor` stays linear on a DAG with many merges: it walked shared ancestors once per path, exponential in the number of merges.
+- `DatabaseSQLite::delBlob` outside a transaction is refused, as every other mutation is; it deleted.
+- `Service::make` refuses two pools with the same name or UUID: the duplicate check searched maps it never filled, so any duplicate passed.
+- `Definitions::createStructure` refuses a structure without fields (`TypeErrors::EmptyStructure`, 44), as the DSM checker does; one broke the `to_dsm` round trip.
+- An enumeration or a variant may hold 256 cases, what a `uint8` index addresses; the checker stopped at 255.
+- `BlobPackDescriptor::addRegion` refuses an empty name (`NameEmpty`, 2) and a count of zero (`CountZero`, 3).
+- A blob pack whose region count is corrupt is refused before the size computed from it overflows.
+- A string holding a NUL byte is written whole by the binary, raw and hashing streams, which cut it at the first NUL.
+- `StreamWriterFile::write` reports a failed write (a full disk, a closed stream); the bytes were lost without a word.
+- `ValueXArray::disablePosition` refuses a position it does not hold; it recorded a tombstone for it.
+- A path into an xarray reads the position it names: `isApplicable` used the component's rank as an index, reading another element or past the end.
+- `CommitStore::reset` on an empty database, or without a notifier, does nothing; it dereferenced what was not there.
+- `SharedMemory` works on Windows: `create` and `open` swapped the handle and the address, so the first access crashed.
+- An unset `HOME` no longer crashes the path helpers, which built a string from a null pointer.
+- The runtime builds with GCC and links `librt` on manylinux, where `shm_open` lives; the wheel failed to import there.
 
 ### 1.2.5 — 2026-03-24
-- **Fixed** — SQLite extend-definitions argument; nested `Entry` / `Element` path
-  decomposition.
+
+**Fixed**
+
+- Extending the definitions of a `Database` keeps what it held: `DatabaseSQLite` stored the new definitions alone instead of the merged ones.
+- A path through nested collections pivots on its last entry or element: `isEntryKeyPath`, `isElementPath`, `entryKeyInfo` and `elementInfo` took the first, and misread a set inside a map value.
 
 ### 1.2.0 — 2026-03-20
 Initial release.
@@ -314,267 +384,411 @@ The PyPI wheel (`pip install dsviper`). Its `PATCH` stream is independent of the
 runtime; each release notes the runtime version it ships.
 
 ### 1.2.28 — 2026-09-27
-- **Changed (breaking)** — `BlobArray(blob_layout, blob)` replaces `BlobArray.from_blob`;
-  `len()` of a `ValueMat` counts its columns, the indices `m[i]` accepts (`size()` still
-  counts elements); `from dsviper import *` no longer re-exports the compiled submodule; and
-  a non-Value where one is required raises `TypeError` rather than `RuntimeError`.
-- **Fixed** — three classes could crash the interpreter from pure Python; a negative index or
-  size was read modulo 2⁶⁴ instead of raising; a notifier that raised failed the store call
-  with `SystemError`; and 25 constructors documented a keyword the binding does not accept.
-- **Added** — `BlobGetting.read_blob(blob_id, size, offset)` reads a blob in pieces, past
-  2 GB included; the two transfers answer the commit they made and refuse to run twice;
-  `TypeName` is constructible; `Codec.query` names the stream codecs and what each keeps.
-- **Changed** — the type stub carries the binding's own prose, so an editor shows what
-  `help()` shows; most of this release is that prose, rewritten to say what the binding
-  does — which reads are snapshots, what raises, what a dispatch notifies.
-- *Ships runtime 1.2.27 — see the runtime section.*
+
+*Ships runtime 1.2.27.*
+
+**Changed (breaking)**
+
+- `BlobArray(blob_layout, blob)` replaces `BlobArray.from_blob`, and `BlobArrayBuilder(blob_layout, count)` replaces the removed allocating constructor.
+
+**Changed**
+
+- A transfer runs once. `convert()` and `flatten()` raise on a second call, so `commit_id()` is never ambiguous.
+- `from dsviper import *` no longer re-exports the compiled submodule.
+- Passing a non-Value where one is required raises `TypeError` rather than `RuntimeError`.
+
+**Added**
+
+- `ValueXArray.size()` and `BlobArray.data_count()`, answering what `len()` answers, as every other container and blob array already did.
+- `TypeName(name_space, name)` builds one, and `representation()` / `representation_in()` render it qualified or short.
+- `DefinitionsInspector.is_ambiguous(attachment)` says whether a short name still names one thing.
+- `BlobGetting.read_blob(blob_id, size, offset)` reads a blob in pieces, including past 2 GB where `blob()` refuses.
+- `FunctionPrototype.name()` answers the name of the function it describes.
+- `DatabaseToCommitDatabaseConverter.commit_id()` and `CommitDatabaseFlattener.commit_id()` answer the commit the transfer made, or None before it ran.
+- `BlobArrayBuilder.data_count()` answers the range an index walks: `count()` times `blob_layout.components()`.
+- `Codec.query` and `Codec.check` name the three stream codecs, say what each keeps, and which transport each belongs to. Mixing `STREAM_RAW` and `STREAM_BINARY` cannot be reported: on a little-endian host they write the same bytes.
+- The integer types state their range, and `help(dsviper)` answers with what the package is.
+- The type stub carries the binding's prose, so an editor shows the same text as `help()`.
+- The READMEs show undo and redo, a database on disk, the NumPy path, a commit pattern that no longer forks the history, `Database` and the converters, `parse()` to an `Attachment`, `ServiceRemote`, and a pinned namespace uuid.
+
+**Fixed (breaking)**
+
+- `ValueMat` is the sequence of columns it says it is. `len(m)` counts the columns, the indices `m[i]` accepts; `size()` still counts the elements. A negative index counts from the end, and `list(m)` gives the columns.
+
+**Fixed**
+
+- Four stub declarations were wrong: `add_field(type=...)` type-checked and raised, the keyword being `type_or_value`; `memberships()` returns `dict[ValueUUId, set[ValueUUId]]`; `CommitData.data()` returns a `ValueBlob`; `inject` is on `DefinitionsConst`.
+- `Value.create` is declared to return the class the type names, not `Value`: a type checker refused `Value.create(TypeVector(Type.STRING)).append(...)`, which runs.
+- The stub no longer declares what the binding lacks: `BlobPackRegion.copy` and `ServiceRemoteAttachmentFunctionPool.definitions` raised `AttributeError`; `TypeVector.cast` declared a `TypeOptional`.
+- `Value` states the runtime's total order: across types by kind, then type; a vector, a set or a map by size first, so `[3, 1, 2]` sorts after `[4]`.
+- A read that is a snapshot says so: `keys()`, `CommitStore.state()`, `attachment_getting()`. A `ValueBlob` copies its bytes and `encoded()` returns a copy; a `ValueSet` copies its elements, a `ValueMap` its keys.
+- The container texts say what an index does: `at()` raises on a negative index where `v[-1]` counts from the end; a set element is addressed by position; a field is written as an attribute.
+- The `CommitStore` texts say what `close()` releases, that an undo after `use_commit` opens a second head, that `timestamp` orders nothing, and that a merge drops one side unsignalled, `CommitMergeAnalyzer` reconstructing it.
+- A dispatch says what it raises and what it notifies: it raises before running; a failure once running goes to the notifier and `dispatch` returns None. Nothing removes a key: set nil over an optional document.
+- A name is an identifier and not a C++, Python or TypeScript keyword; `inject()` spells names in upper snake case; `KeyNamer` says which attachment carries a display name; a `DefinitionsInspector` goes stale after a later create.
+- The DSM texts say what they count: `DSMParseError.line()` and `pos()` are 1-based, `pos()` in characters; a function pool is declared beside the namespace; `from_function_pool` takes the runtime pool.
+- The database texts say what they answer: `path()` of a database in memory, that transactions do not nest, that `'Deferred'` is the default, and that an exclusively locked file waits 10 s, then raises.
+- A transfer states its target and its failure: it writes into a freshly created database, a run that raises part-way keeps what it wrote, and an exception raised by the stepper is ignored.
+- The blob texts say what runs: `BlobEncoderLayout.type()` and `element_type()` were swapped, `BlobLayout.data_type()` returns a code, and a failed stream append or close deletes the stream.
+- The codecs and services say what they do: XML keeps every value, JSON writes a uint64 bare; `set` takes a regular path, `patch` the others; `ServiceRemote.connect` extends the definitions it is given.
+- `ValueStructure.set` with an undeclared field raises the runtime's `ViperError`, as `at` does; it raised an `IndexError` of its own.
+- An any or a variant compares with a native decoded to the type of the value it holds: `ValueAny(ValueInt32(5)) == 5` and a variant holding `"txt"` equal to `"txt"` answered False. None against an any is the empty any.
+- None as an input is read by the type it is decoded to: empty in an optional or an any, void in a void slot, no default where the type cannot hold it.
+- `ValueMap.get(key, None)` no longer raises, `pop` honours a None default, and None decoded into an any is empty, not `Any(void)`.
+- `ValueTuple.at`, `ValueMat.at` and `ValueMat.set` raise IndexError on a negative index, as their texts and every other container read do; they raised OverflowError.
+- `ValueVoid.encoded()` returns None, as `Value.dumps` does; it returned a `ValueVoid`, the one primitive whose `encoded()` disagreed with `dumps`.
+- A call on a closed `ServiceRemote` raises `ViperError`; it raised a bare `Exception` naming the client's own, empty, address.
+- The stub declares `ServiceRemote.pools` and `attachment_pools` as properties, which they are: a type checker refused `service.pools.Tools`, the route their own text teaches.
+- A `Path` and a `PathConst` with the same components compare equal, both ways. They carry the same path; `==` answered False across the two.
+- `SharedMemory.fd()` returns the file descriptor; it returned the region's size.
+- `StepperDelegate.step(action, percent)` checks its arguments, as its signature says; the default accepted anything.
+- `DocumentNode` states the fifteen kinds `type()` answers, what `string_value()`, `string_component()` and `string_value_tooltip()` show for each, and that a uuid or a blob id is primitive. `ValueKey.detail_type_representation()`, `BlobPack(descriptor)`, `Attachment.description()` and the passive `Socket` factories say what they do.
+- `Semaphore.wait()` says that it holds the interpreter lock, so only another process can end it.
+- The stub lets `collect_blob_ids` / `collect_commit_ids` take the Path, CommitState, CommitMutableState or ValueProgram they document; it declared only `Value`.
+- `is_compact`, `is_sized` and `pack_sized` say what they are: compact is bool-or-number fields, sized is fixed and readable alone (not a key), a pack-sized vector hands out copies.
+- `concept_members` says what it answers: the concept and its descendants, not its clubs; the source-map span docs say where each span starts and stops.
+- A parameter the stub declares `X | None` takes None, as the signature says: every `documentation`, `stream_codec_instancing` and `hashing` argument, `create_key`, `representation`, `description`, `byte_count`, `ValueXArray.insert`. They raised `TypeError`.
+- `Fuzzer.set_blob_id(None)` gives each blob its own id again, as documented; `None` was refused.
+- An error raised by the caller's own object reaches the caller. A sequence whose `__getitem__` raised crashed the interpreter; one whose `__len__` raised, or a string that cannot be encoded (a lone surrogate), ended in `SystemError` or a misleading error.
+- A `str`, `bytes` or `bytearray` is not a sequence of elements: a vector, set, tuple or xarray built from one is refused, as in Node; `"abc"` became `['a', 'b', 'c']`. A set from a non-iterable raises `ViperError` instead of `SystemError`.
+- `NameSpace` refuses an invalid name or uuid with `ValueError`; it raised `RuntimeError`.
+- An enumeration case is read one way everywhere: `case`, `.case` or `Enum.case`, the enumeration named; the constructor accepted `Enum.case.extra` and refused `.case`, `loads` took any name. A string that is not base64 names its path.
+- A deduce that cannot read its object has a code of its own (27); it shared an unrelated one. The empty-case message is well formed.
+- `ViperError` names the three layers a call crosses and what each raises; it said a wrong type raises `TypeError`, which a native that does not fit its type does not.
+- The `CommitStore` operations say what they do to the undo stack; `dispatch_diff` says what `recursive` walks; `is_closed` and the `*_speed` measures say what they measure.
+- `CommitData.blob_ids` answers the empty set for a commit without mutations; it raised.
+- `need_transmit` and `sync` say they read `data_version()`, which a write through the synchronized connection does not move.
+- A notifier that raises no longer fails the store call with `SystemError`. Its exception is dropped, as for a logger or a stepper: the store has already acted.
+- `sync_data` no longer promises the blobs its commits reference; they travel through `blob_datas`.
+- `blob()` and `create_zero_blob` say that a reserved blob raises until `freeze_blob` seals it; `blob()` promised None.
+- `begin_transaction(None)` is accepted on `Databasing` and `CommitDatabasing`, as the stub declares; it raised `TypeError`.
+- `help()` no longer shows a phantom first parameter on a static method. All 202 read `from_index(module, /, index)` or `cast(self, /, value)`; they now read `from_index(index)`.
+- A negative index or size raises instead of wrapping. It was read modulo 264, so `position(-264)` answered the first position and `Path.from_index(-1)` built a path to index 18446744073709551615. `Float16.to_float` refuses bits past 16.
+- `SQLite.get_pragma` declares its key a `str`, and `runtime_id` on an attachment and on an opcode key no longer calls it a type. Three function classes said nothing in the package hands one back; their pool does.
+- `ValueXArray[i]` follows Python's own indexing: `IndexError` past the end, a negative index counting from the end, and `KeyError` for a position the array does not hold. It answered `None` to all three.
+- `PathConst.encode` named the wrong codec. It documented `STREAM_TOKEN_BINARY` where it and `Path.decode` both use `STREAM_BINARY`, so the round trip it describes would not have worked as written.
+- `StreamCodecInstancing.name()` said the name travels in the stream. It does not: a stream carries no record of which codec wrote it.
+- `chunked()` said a chunked blob reads like any other. Past 2 GB it is written with `blob_stream_create` / `_append` / `_close` and read with `read_blob`; `blob()` refuses it.
+- `DSMSourceSpan` offsets are characters, start 0-based and stop inclusive, as `DSMParseError.pos()` counts them; and `DSMAttachment.identifier` cited two calls that class does not have.
+- Seventeen static methods were documented `$self` - `Error.parse`, `Path.from_unwrap`, `diff_keys` and the fourteen `cast` - and `front`, `back`, `pop_max` and `documents_details` named the wrong default.
+- `get()` and `enumerate()` hand back a copy, which only the write side stated; `StepperDelegate.step` takes `percent` as a fraction from 0.0 to 1.0.
+- `FunctionPool.funcs` is a property, which its class described as a call.
+- `blob()` past 2 GB raises, which its `-> ValueBlob | None` signature did not say; the message now names `read_blob`.
+- Three classes could segfault the interpreter from pure Python, and three methods were uncallable or refused an argument they document.
+- 25 constructors named a keyword the binding does not accept, and five classes promised what they do not do.
+- `get()` raises on a key of another concept, which `is_nil()` does not report; `create()`, `open()` and `set()` now state their preconditions.
+- `nodes()` is keyed by `ValueCommitId`, not a uuid, and holds one entry more than there are commits: the root the layout starts from.
+- `commit_ids()` answers a set, in no order to rely on; the undo label is `Undo [...]` and `commit_type()` is what answers `Disable`.
+- `is_equal` compares content, so two registries built apart from the same model are equal, and `hexdigest()` answers the same question on a string.
+- `Value.create` wraps and the constructor copies shallowly, `Definitions.const()` is a live view where a store's `definitions()` is a snapshot, and crossing a store copies.
+- `runtime_id` is computed, not assigned, and from three different things depending on what carries it; it was documented as "the uuid assigned by the runtime" on 40 methods.
+- An out-of-range integer names the type you asked for, and the docstrings no longer name classes the package does not have.
+- The transaction rule is stated on `Databasing`, the class a caller meets, and the stub says what an `encoded` getter hands back.
+- `NameSpace` says its uuid is the model's lasting identity, which is what lets a later run read what an earlier one wrote.
+- `to_dsm()` says how its output is arranged — types sorted, then the mapping, per attachment.
+- The package says what a `.dsm` looks like, and can render your own definitions back as DSM source.
+- `reconcile_state` says where it applies: over a materialized merge, and only there.
+- `Definitions.create_concept`, `create_club` and `create_attachment` say where the documentation they take ends up.
+- Every class in the stub carries its summary, and two declarations that disagreed with the binding were corrected.
+- The relations comment no longer overstates what is total.
+- `PathConst.patch` says which two shapes address a key, an element of a set and a map entry's key, where it described an entry of a set and sent a reader into a raise.
+- `TypeMat` refuses a dimension of zero, and a negative one, which it read as unsigned and built into a matrix of 18446744073709551615 columns. Both it and `TypeVec` take a dimension as wide as a count, and state their bound.
 
 ### 1.2.27 — 2026-09-20
-- **Removed (breaking)** — `BlobArray(blob_layout, size)`, `BlobArray.__setitem__`,
-  `BlobPackRegion.__setitem__` and `BlobPackRegion.copy()`; `BlobArray` and
-  `BlobPackRegion` also lose their writable buffer. A `ValueBlob` is immutable, and each
-  of these wrote into one that already existed — reaching, through `from_blob`, a value
-  the store or another thread held. Fill the bytes first, on the **Added**
-  `BlobArrayBuilder` or `BlobPackBuilder`, and seal them with `build()`.
-- **Fixed** — a read-only buffer refuses a writable request instead of merely declaring
-  itself read-only: `numpy.frombuffer(database.blob(blob_id))` answered a **writeable**
-  array, and writing through it changed the stored value.
-- **Added** — `py.typed`, so mypy reads the type hints instead of treating `dsviper` as
-  untyped. It ships now that the stub says what the binding does: the class hierarchy is
-  real — `isinstance(value, Value)` was False for every value while a checker took it as
-  true — the protocols the binding answers are declared, and a projecting read no longer
-  claims to return a `Value`.
-- **Added** — `encoded=True` on fourteen reads that projected with no way back,
-  keyword-only and the default unchanged; `AttachmentMutating.attachment_getting()`; and
-  `DSMType` / `DSMLiteral`, which the stub declared and the package never exported.
-- **Fixed** — `ValueMap.setdefault` returns the value it finds or inserts;
-  `CommitMergeResolution` checks `chosen` against the type its locus declares;
-  `CommitSynchronizer.sync()` accepts `None`; and `ValueMat` states that it is
-  column-major, which nothing published had said.
-- **Changed** — a blob read from a store is copied once less, and a remote one is held
-  twice at most while it crosses the wire rather than three times.
-- *Ships runtime 1.2.26 — see the runtime section.*
+
+**Changed**
+
+- The blob readers no longer write. `BlobArray` and `BlobPackRegion` lost their writable paths: writing into a sealed value would change what its `BlobId` names.
+- A `BlobPack` is no longer declared a `Mapping`, having none of `keys`, `items` or `values`; `pack['absent']` now raises what `check('absent')` raises.
+- `AttachmentMutating` is an `AttachmentGetting`, which the binding always built and the stub did not declare.
+- A remote database holds a blob twice at most while it crosses the wire, not three times, and a blob read from a store is copied once less.
+
+**Removed (breaking)**
+
+- `BlobArray(blob_layout, size)` — it allocated a blob of zeros whose hash and `BlobId` were computed on those zeros. Use `BlobArrayBuilder` to fill, `BlobArray(layout, blob)` to read.
+- `BlobArray.__setitem__`, `BlobPackRegion.__setitem__` and `BlobPackRegion.copy()` — they wrote into a blob shared with whoever held the value.
+
+**Added**
+
+- `py.typed` — mypy and Pyright now check your code against the binding's real surface.
+- `BlobArrayBuilder(blob_layout, count)` fills the bytes of a blob, then seals them.
+- `AttachmentMutating.attachment_getting()` reads back what a mutable state holds.
+- `encoded=True` on the fourteen reads that projected to a native with no way back.
+- `DSMType` and `DSMLiteral` are declared, with their subclasses.
+
+**Fixed**
+
+- Nothing writes into a `ValueBlob` any more, and a read-only buffer refuses a writable request.
+- The class hierarchy the type hints declare is the one the binding builds, the protocols it answers are declared, and `copy` is typed by its receiver.
+- The type hints say what a projecting read returns, accept what the binding accepts, and a read that can answer `None` says so where one that cannot does not.
+- `AttachmentMutating.set` and `diff` refuse a document of another type, and a merge resolution keeps the type of its locus.
+- A namespace cycle closed through an attachment or a key is rejected.
+- A remote database no longer reserves the memory a peer announces but never sends, and `CommitDatabaseRemote.upload_speed` / `download_speed` report the direction they measure.
+- `ValueMap.setdefault` returns the value, `ValueMat` says it is column-major, and `CommitSynchronizer.sync()` takes `None` for its logging.
 
 ### 1.2.26 — 2026-09-05
-- **Changed (breaking)** — seven constructor keywords now carry the name their parameter
-  actually has: `database` → `database_path` on `CommitDatabaseServer`, `value` →
-  `initial_value` on `ValueString`, `ValueUInt16` and `ValueBool`, `element_type` →
-  `numeric_type` on `TypeVec` and `TypeMat`, and the `src_` / `dst_` prefixes → `source_` /
-  `target_` on `DefinitionsMapper`. Renaming an entry in a `kws[]` array changes what CPython
-  matches a call against, so **a caller passing any of these by keyword breaks**; a positional
-  call is unaffected, as is the `element_type()` accessor, whose name is right for what it
-  returns.
-- **Changed** — the class and method docstrings say what each class and method does. They are
-  published surface — CPython renders them as the class summary in the API reference, and
-  `help()` shows them in any session — and a large share said nothing beyond restating the
-  class name. Rewritten domain by domain against the C++ they wrap, class by class rather than
-  by family average. The serialization domain is the clearest gain: one formula had been hiding
-  four distinct behaviours — integer writers refuse a float and range-check, `write_double`
-  accepts an int and converts, `write_float` converts then checks the value fits 32 bits,
-  `write_bool` refuses an int (which surprises in Python, where `bool` derives from `int`), and
-  the three id writers accept a `str` and parse it.
-- **Changed** — four decided behaviours are now stated on the public surface: `ValueSet` and
-  `ValueMap` iterate in **sorted** order, not insertion order (a Python `set` has no order at
-  all, so nothing in the host language sets that expectation); `NaN` is a single data-model
-  value rather than the IEEE 754 artefact — it equals itself, hashes deterministically, and
-  sits below `-inf` in the total order, which is what lets a NaN be found in a set,
-  deduplicated as a dict key and seen by a diff (arithmetic is untouched; read the float back
-  with `encoded()`); the `NAN`, `INF` and `NEG_INF` singletons existed undocumented; and
-  `Value.dumps`' `json` flag changes two things, not the one its own text claimed.
-- **Fixed** — eight `__init__.pyi` returns promised a value where the C++ returns `None`:
-  `DSMConcept.parent`, `DSMStructureField.default_value`, and `blob` / `blob_info` on
-  `CommitDatabase`, `Database` and `BlobGetting`. The interfaces already declared `| None`; the
-  classes now match, so a type checker stops certifying an `Optional` unpacking as unnecessary.
-- **Fixed** — `get()` was documented as returning `None` when the attachment holds nothing. On
-  `AttachmentGetting`, `AttachmentMutating`, `Database` and `Databasing` it always returns a
-  `ValueOptional`, so `if db.get(a, k) is not None:` is true whatever the attachment holds; the
-  text now sends the reader to `is_nil()` / `unwrap()`.
-- **Fixed** — four docstrings rendered their signature as prose (CPython reads `Name(args)` as a
-  signature only when it is followed by `\n--\n\n`), and `StreamWriterFile`, `StreamReaderFile`
-  and `StreamReaderSharedMemory` advertised a no-argument constructor that requires one. Two
-  class docstrings described a different class: `Socket` carried `SharedMemory`'s text verbatim,
-  and `StreamWriting` called itself "an interface used to read data".
-- *Ships runtime 1.2.25, unchanged — nothing has landed in the runtime since it, and
-  `viper_version()` reports the same triple over the same sources.*
+
+*Ships runtime 1.2.25.*
+
+**Changed (breaking)**
+
+- Seven constructor keywords are renamed, and a caller passing one by keyword breaks: `CommitDatabaseServer(database_path=)`, `ValueString`, `ValueUInt16` and `ValueBool` `(initial_value=)`, `TypeVec` and `TypeMat` `(numeric_type=)`, `DefinitionsMapper` `(source_…, target_…)`.
+
+**Changed**
+
+- The docstrings say what each class and method does, rewritten against the C++ they wrap; the stream writers state which Python types each accepts and converts.
+- The docstrings state the decided behaviours: `ValueSet` and `ValueMap` iterate sorted, NaN equals itself and sorts below `-inf`, and `Value.dumps`' `json` flag changes two things.
+
+**Fixed**
+
+- Eight stub returns admit `None`: `DSMConcept.parent`, `DSMStructureField.default_value`, and `blob` / `blob_info` on `CommitDatabase`, `Database` and `BlobGetting`.
+- `get()` is documented as returning a `ValueOptional`, always; the text said `None`, so a `get(...) is not None` test was always true.
+- Four signatures render as signatures in `help()`, and three stream constructors no longer claim to take no argument.
+- `Socket` and `StreamWriting` describe themselves, not `SharedMemory` and a reader; `DSMTypeMat` describes a matrix, and three classes state their instantiability correctly. Ships runtime 1.2.25.
 
 ### 1.2.25 — 2026-08-27
-- **Fixed** — `Type.representation()` no longer depends on call order: on a tuple or a variant, the
-  no-argument form answers the fully qualified name and `representation(namespace=ns)` the form
-  relative to that namespace. Whichever was asked first used to fix the answer for every later
-  caller, in both directions, so a caller wanting the qualified name could receive an unqualified,
-  ambiguous one. It surfaces wherever a composite type is described — `dumps` output, a type
-  mismatch's message, any `Type` a tuple or a variant appears in. A host serving a commit database
-  was exposed to the race half as well: `CommitDatabaseServer` serves every client on its own C++
-  thread, outside the GIL, and those threads share one `Definitions`. Nothing memoizes the
-  representation now, so there is nothing left to race on.
-- **Fixed** — a wrong argument type passed to `ValueXArray.rebuild_from` raises CPython's own
-  message: the check moved to argument parsing instead of a hand-written test in the body.
-- *No change to the binding surface — `__init__.pyi` is untouched, no method added, removed or
-  renamed.*
-- *Ships runtime 1.2.25 (namespace-keyed tuple and variant representations — see the runtime
-  section).*
+
+*Ships runtime 1.2.25.*
+
+**Fixed**
+
+- `Type.representation()` of a tuple or a variant no longer depends on call order, nor races between the client threads of a `CommitDatabaseServer`.
+- `ValueXArray.rebuild_from` refuses a source of the wrong type with CPython's own `TypeError`. Ships runtime 1.2.25.
 
 ### 1.2.24 — 2026-08-04
-- **Added** — `CommitDatabaseServer.finish_before(timeout_in_sec)` bounds the teardown wait and
-  **returns how many client threads it could not join** — zero meaning every client ended, non-zero
-  meaning the process is not idle yet. `step(timeout_in_sec)` is likewise a bounded wait, which is
-  what lets a Python host run its `SIGINT` handler between calls and stop within one timeout.
-- **Added** — `Socket.close()` / `Socket.is_closed()`: a passive local socket **is a file on disk**,
-  and deallocation depends on the last reference going away, which a host cannot always predict.
-  Every other resource handle in the binding carried `close()`; this one did not, so a host that
-  abandoned a socket (a failed bind, a reconfiguration, a shutdown) had no way to say so.
-- **Fixed** — a logger that calls back into Python is refused by `CommitDatabaseServer`: clients are
-  served on C++ threads that sit *outside* the GIL and must never re-enter the interpreter, so
-  `LoggerPrint` and a logger built with `Logging.create` now raise a `TypeError` at construction
-  instead of corrupting the interpreter later. The check is a marker type, not a name list. Use
-  `LoggerConsole`, `LoggerNull` or `LoggerReport`.
-- *Ships runtime 1.2.24 (cooperative server termination; POSIX transport truncation; remote
-  `createZeroBlob`; Windows build — see the runtime section).*
+
+*Ships runtime 1.2.24.*
+
+**Added**
+
+- `CommitDatabaseServer.finish_before(timeout_in_sec)` bounds the teardown and returns how many client threads it could not join; `step(timeout_in_sec)` is a bounded wait, so `SIGINT` is handled between steps.
+- `Socket.close()` and `Socket.is_closed()`: a passive local socket is a file, which a host can now release.
+
+**Fixed**
+
+- `CommitDatabaseServer` refuses a logger that calls back into Python (`LoggerPrint`, one built with `Logging.create`) with a `TypeError`; its client threads run outside the GIL and would corrupt the interpreter.
+
+**Packaging**
+
+- A source file added to the runtime is picked up without re-running CMake. Ships runtime 1.2.24.
 
 ### 1.2.23 — 2026-07-23
-- **Fixed** — `AttachmentGetting.get` returns a document isolated from the commit state's
-  cache: on a cache miss the runtime handed back the cached `ValueOptional` itself, so mutating
-  a read result (`wrap` / `clear`, or mutating the unwrapped container) poisoned the state's
-  cache and corrupted every later read of that key. The frozen-snapshot contract that
-  read/query layers rely on is restored.
-- *Ships runtime 1.2.23 (commit-read cache isolation — see the runtime section).*
+
+*Ships runtime 1.2.23.*
+
+**Fixed**
+
+- `AttachmentGetting.get` on a `CommitState` returns a document its cache does not share: mutating a first read changed every later read of that key. Ships runtime 1.2.23.
 
 ### 1.2.22 — 2026-07-22
-- **Added** — `DSMSourceMap` exposed to Python: a `DSMSourceMap()` passed to
-  `DSMBuilder.parse(source_map=…)` collects, as a parse by-product, the source span of every
-  declaration, field, case, namespace, type sub-expression and *resolved* type-reference (with
-  `.pyi` typings for the whole surface) — enabling an in-place patch of a `.dsm` tree under a
-  schema change instead of regenerating it.
-- **Fixed** — `CommitMergeResolution.chosen` no longer leaks a mutable alias into the immutable
-  stored decree; the accessor now returns a copy, matching every other `Value const` accessor in
-  the binding.
-- *Ships runtime 1.2.22 (DSM parser source map; merge-decree value-semantics fix — see the
-  runtime section).*
+
+*Ships runtime 1.2.22.*
+
+**Added**
+
+- `DSMSourceMap`: `DSMBuilder.parse(source_map=DSMSourceMap())` records the source span of every declaration, field, case, namespace, type and resolved reference.
+
+**Fixed**
+
+- `CommitMergeResolution.chosen` returns a copy: it handed out the stored decree itself, which a caller could then change. Ships runtime 1.2.22.
 
 ### 1.2.21 — 2026-07-20
-- **Fixed** — interior NUL preserved across the Python string frontier: `str` decode/encode
-  used the null-terminated `PyUnicode_AsUTF8` / `PyUnicode_FromString`, so a `ValueString`
-  carrying an interior `\0` was silently truncated at the first null; the frontier is now
-  size-aware (`PyUnicode_AsUTF8AndSize` / `PyUnicode_FromStringAndSize`) and such a string
-  round-trips faithfully. (The Node binding was already size-correct.)
-- *Ships runtime 1.2.21 (HTML-output escaping fix; byte-exact XML codec; UTF-8 `ValueString`;
-  DSM-expressible docstrings — see the runtime section).*
+
+*Ships runtime 1.2.21.*
+
+**Changed**
+
+- A `ValueString` must be valid UTF-8, and documentation cannot contain `"""`; both were accepted before.
+
+**Fixed**
+
+- A string holding a NUL byte crosses the binding whole; it was cut at the first NUL.
+- The HTML renderer escapes names, strings and documentation. Ships runtime 1.2.21.
 
 ### 1.2.20 — 2026-07-13
-- **Added** — `Value.collect_commit_ids(value, type, definitions)` and `Type.use_commit_id(type)`
-  — gather every `CommitId` a value references (the commit-id twin of `collect_blob_ids`);
-  `use_commit_id` is the pruning predicate over a type, so a schema-change rebuild can discover
-  intra-DAG references.
-- **Added** — `ValueXArray.items(encoded=…)` keyword now matches `ValueMap.items` (default
-  `True`); `encoded=False` yields typed `Value` elements, so an xarray of scalar elements can be
-  walked and rebuilt faithfully. New `ValueXArray.rebuild_from(source, …)` performs an atomic
-  trans-definitions rewrite (positions + tombstones copied, re-mapped elements swapped in a
-  single memento, no partial state exposed).
-- **Fixed** — a conflicting schema upgrade no longer corrupts a database: `extend_definitions`
-  against a schema that redefined an existing type under a new `runtimeId` used to commit a
-  second, same-named definition and leave the base unopenable; it now fails cleanly before any
-  write.
-- **Changed** — construction-time DSM governance: a `DSMDefinitions` built through the binding
-  can no longer escape DSM-expressibility — DSM keywords, forked/cyclic namespaces, non-literal
-  field defaults, and duplicate parameter names are rejected at construction.
-- *Ships runtime 1.2.20.*
+
+*Ships runtime 1.2.20.*
+
+**Added**
+
+- `Value.collect_commit_ids(value, type, definitions)` and `Type.use_commit_id(type)`, the commit-id twins of `collect_blob_ids` and `use_blob_id`.
+- `ValueXArray.items(encoded=...)`, as on `ValueMap`: `encoded=False` yields the typed elements.
+- `ValueXArray.rebuild_from(source, ...)` copies a source xarray's positions and tombstones and installs new elements in one step.
+
+**Fixed**
+
+- `extend_definitions` with a type redefined under a new `runtimeId` is refused before any write; it left a database that no longer opened.
+- A `DSMDefinitions` built through the binding is refused where the DSM could not write it: keywords as names, forked or cyclic namespaces, non-literal defaults, duplicate parameters. Ships runtime 1.2.20.
 
 ### 1.2.19 — 2026-07-06
-- **Added** — XML wire format: `Value.to_xml_string(value, indent=…)` /
-  `Value.from_xml_string(string, type, definitions)` and `DSMDefinitions.to_xml_string(indent=…)` /
-  `DSMDefinitions.from_xml_string(string)` — the XML dialect of the type-driven serializer,
-  alongside the existing JSON/BSON codecs. Additive — no change to the existing surface.
-- *Ships runtime 1.2.19.*
+
+*Ships runtime 1.2.19.*
+
+**Changed**
+
+- The third-party notices list pugixml, now linked into the wheel. Ships runtime 1.2.19.
+
+**Added**
+
+- `Value.to_xml_string(value, indent=...)`, `Value.from_xml_string(string, type, definitions)`, `DSMDefinitions.to_xml_string(indent=...)` and `DSMDefinitions.from_xml_string(string)`.
 
 ### 1.2.18 — 2026-07-03
-- **Fixed** — the binding's `TypeAnyConcept` comparison (`==` / `!=`) delegated to the
-  `TypeAny` singleton, so `Type.ANY_CONCEPT == Type.ANY_CONCEPT` was `False` and
-  `Type.ANY_CONCEPT == Type.ANY` was `True`; the runtime was already correct.
-- **Changed** — packaging: the documentation URL now points at the `dsviper-python` landing
-  page (`docs.digitalsubstrate.io/dsviper-python/`), following the documentation chapter rename.
-- *Ships runtime 1.2.18.*
+
+*Ships runtime 1.2.18.*
+
+**Changed**
+
+- The documentation link points at the `dsviper-python` landing page. Ships runtime 1.2.18.
+
+**Fixed**
+
+- `==` and `!=` between values never raise: they converted the other operand to the receiver's type and raised on a mismatch. Two values now compare in the runtime's total order; a native that does not fit compares unequal.
+- `ValueAny` and `ValueVariant` compare symmetrically: an any equalled its raw content while the content did not equal the any. An any now equals an any only; unwrap it to compare the content.
+- `Type.ANY_CONCEPT == Type.ANY_CONCEPT` is `True`: the comparison used the `TypeAny` singleton, so it also equalled `Type.ANY`.
 
 ### 1.2.17 — 2026-06-28
-- **Added** — `viper_version()` reports the embedded Viper runtime version,
-  distinct from `version()` (the wheel version); the wheel's `PATCH` stream now
-  moves independently of the runtime over the shared `1.2` contract.
-- **Fixed** — `ValueBlobId.encoded()` now returns a `str` (previously returned a
-  `ValueBlobId`).
-- **Fixed** — `TypeMap.values_type()` now returns the value type (a `vector`)
-  instead of the key type (a `set`).
-- **Fixed** — bound `size()` / `hash()` methods that the runtime exposes but the
-  binding was missing.
-- **Fixed** — type stubs: `ValueOptional.unwrap()` / `get()` were annotated
-  `encoded=False` but the binding defaults to `encoded=True` (hint-only
-  correction); corrected the `dispatch` return annotation; removed phantom
-  declarations bound nowhere (`CommitData.transcode`, `DSMParseError.part`).
-- **Fixed** — packaging: the documentation URL now points at the dsviper landing
-  page; the PyPI Quick Start routes through `CommitStateBuilder.initial_state(db)`
-  / `state(db, commit_id)`.
-- *Ships runtime 1.2.17 (phantom — see the runtime section).*
+
+*Ships runtime 1.2.17.*
+
+**Added**
+
+- `viper_version()` answers the runtime the wheel embeds, apart from `version()`, the wheel's own; from here the wheel's patch number moves on its own.
+
+**Fixed**
+
+- `ValueBlobId.encoded()` returns a `str`, as `ValueCommitId` and `ValueUUId` do; it returned a `ValueBlobId`.
+- `TypeMap.values_type()` is a vector of the elements; it answered the key set.
+- `StreamReaderSharedMemory.size()`, `ValueOptional.hash()` and `ValueEnumeration.hash()` exist; the stub declared them and calling them raised `AttributeError`.
+- The stub states `ValueOptional.unwrap` and `get` default to `encoded=True`, as they do, and that `CommitStore.dispatch` returns the callable's result.
+- The stub no longer declares `CommitData.transcode` or `DSMParseError.part`, which exist nowhere.
+- The README's example builds states through `CommitStateBuilder`, as 1.2.15 requires. Ships runtime 1.2.17.
 
 ### 1.2.16 — 2026-06-13
-- **Fixed** — memory-safety hardening in the binding (reference-count leaks across
-  the encode and commit paths); `blob` / `del_blob` now type-check the blob id;
-  exception boundaries around `DefinitionsConst` inject/discard and tuple/`XArray`
-  operations.
-- *Ships runtime 1.2.16.*
+
+*Ships runtime 1.2.16.*
+
+**Added**
+
+- `CommitStateBuilder.merge_state`, `merge_enabled_by_commit_id`, and `CommitMergeAnalyzer.analyze_virtual_merge`, `reconcile_state`, `materialize_merge`: a merge analysed and reconciled before it is written.
+
+**Fixed**
+
+- `DefinitionsExtendInfo.memberships()` maps each club to its members; it mapped each club to itself.
+- `DefinitionsInspector.check_attachment` reads its identifier: a wrong argument format made every call undefined.
+- `blob` and `del_blob` refuse a `blob_id` that is not a `ValueBlobId` with a `TypeError`; they read any object as one and crashed.
+- An error inside `DefinitionsConst.inject` or `discard`, a tuple's `repr` or `len`, or an xarray's iteration becomes a Python exception; it escaped into the interpreter.
+- Returned tuples, dicts and map items no longer leak: some twenty sites kept a reference per element. Ships runtime 1.2.16.
 
 ### 1.2.15 — 2026-06-11
-- **Changed** — binding call sites moved to the runtime's new free-function
-  namespaces (`CommitDatabaseHelper` / `CommitStateBuilder`); no other change.
-- *Ships runtime 1.2.15.*
+
+*Ships runtime 1.2.15.*
+
+**Changed**
+
+- `CommitDatabase.forward`, `fast_forward`, `reduce_heads`, `initial_state`, `state` and `enabled_by_commit_id` are gone: use `CommitDatabaseHelper` and `CommitStateBuilder`, which take the database first.
+- `CommitDatabaseHelper.reduce_heads(commit_database, commit_id=None)` merges the other heads into the one you name.
+
+**Removed (breaking)**
+
+- `CommitStore.instance()`: build a `CommitStore()` and keep it. Ships runtime 1.2.15.
 
 ### 1.2.14 — 2026-06-10
-- **Added** — `Fuzzer` gains an optional `seed` keyword and `seed()` method
-  (deterministic, replayable runs).
-- *Ships runtime 1.2.14.*
+
+*Ships runtime 1.2.14.*
+
+**Added**
+
+- `Fuzzer(definitions, seed=...)` and `Fuzzer.seed()`: a run replays from its seed. Ships runtime 1.2.14.
 
 ### 1.2.13 — 2026-06-04
-- **Fixed** — use-after-free on the streaming read channel: the source
-  `ValueBlob` is retained for the stream's lifetime.
-- **Added** — `remaining()` / `size()` on the streaming reader types.
-- *Ships runtime 1.2.13.*
+
+*Ships runtime 1.2.13.*
+
+**Added**
+
+- `remaining()` on the stream readers and `size()` on the raw readers.
+
+**Fixed**
+
+- A stream read over a temporary `ValueBlob` reads valid memory: the reader did not keep the blob alive, and read freed bytes. Ships runtime 1.2.13.
 
 ### 1.2.12 — 2026-05-31
-- **Added** — Database ↔ CommitDatabase transfer toolkit:
-  `DatabaseToCommitDatabaseConverter`, `CommitDatabaseToDatabaseConverter`,
-  `DatabaseCopier`, `CommitDatabaseFlattener`; a shared `DatabaseTransferInfo`; a
-  subclassable `StepperDelegate`; pre-opened handles, 64 MiB blob streaming, and
-  orphan/superseded blob dropping.
-- **Changed (breaking)** — `Databasing.create_blob` is now
-  `(BlobId, BlobLayout, Blob) -> bool` (the caller supplies the id), matching
-  `CommitDatabasing`.
+
+*Ships runtime 1.2.12.*
+
+**Changed (breaking)**
+
+- `Databasing.create_blob(blob_id, blob_layout, blob)` takes the id and returns a `bool`, whether it created the blob, as `CommitDatabasing` does; it returned the computed id. Ships runtime 1.2.12.
+
+**Added**
+
+- `DatabaseToCommitDatabaseConverter`, `CommitDatabaseToDatabaseConverter`, `DatabaseCopier` and `CommitDatabaseFlattener` move documents and blobs between the two stores, each answering a `DatabaseTransferInfo`.
+- `StepperDelegate`, subclassed in Python, receives the progress of a transfer.
 
 ### 1.2.11 — 2026-05-29
-- *Ships runtime 1.2.11* (`CommitMergeAnalyzer` post-merge reconciliation;
-  key-decode conformance; JSON decoder diagnostics).
+
+*Ships runtime 1.2.11.*
+
+**Added**
+
+- `CommitMergeAnalyzer`, `CommitMergeAnalysis`, `CommitMergeDocument`, `CommitMergeConflict` and `CommitMergeResolution`: what a merge dropped, per document and per path, and the commit that writes the chosen values back.
+
+**Fixed**
+
+- A key built from Python natives is checked against its field's type, as the runtime's decoders now do: its concept must be the field's or a descendant. Ships runtime 1.2.11.
 
 ### 1.2.10 — 2026-05-11
 - *Ships runtime 1.2.10* (content-addressed `CommitId` narrowed — **breaking**;
   `reduceHeads` atomicity; `lastCommitId` tie-break).
 
 ### 1.2.9 — 2026-05-08
-- *Ships runtime 1.2.9.*
+
+*Ships runtime 1.2.9.*
+
+**Changed**
+
+- An editable install rebuilds incrementally on import (`editable.rebuild`, a persistent build directory). Ships runtime 1.2.9.
 
 ### 1.2.8 — 2026-05-03
-- **Changed** — packaging moved to PEP 639 license metadata
-  (`License-Expression: LicenseRef-DigitalSubstrate-Commercial-1.2`; `LICENSE`
-  and third-party notices embedded under `dist-info/licenses/`).
+
+**Changed**
+
+- Packaging — PEP 639 license metadata: `LICENSE` + `THIRD-PARTY-NOTICES.txt` embedded under `dist-info/licenses/`; `License-Expression: LicenseRef-DigitalSubstrate-Commercial-1.2` (the deprecated proprietary classifier removed).
+- Ecosystem — runtime/DevKit split: the viper repo scopes to the runtime (`src/Viper`, `src/P_Viper`, `dsviper_wheel`); DevKit content extracted to standalone repos. README rewritten around the runtime-only scope; `requirements.txt` dropped.
 
 ### 1.2.7 — 2026-04-16
-- **Fixed** — error-path safety in the binding; corrected several type-stub
-  (`__init__.pyi`) return types.
-- **Added** — multi-platform CI test matrix (Linux / macOS / Windows × 5 Python
-  versions) and automated PyPI publication; robustness hardening with 270 new
-  unit tests.
-- *Ships runtime 1.2.7.*
+
+*Ships runtime 1.2.7.*
+
+**Changed**
+
+- The wheel builds with scikit-build-core (PEP 517), configured in `pyproject.toml`; `setup.py` and `build.py` are gone.
+
+**Added**
+
+- Wheels for Linux, macOS and Windows are built, tested and published by CI — five Python versions per platform, a release candidate to TestPyPI first; publication was manual.
+- `ValueDouble.INF`, `NEG_INF`, `NAN`, and the same on `ValueFloat`.
+
+**Fixed**
+
+- `ValueString(None)` is the empty string, as `ValueBool`, `ValueInt*` and `ValueDouble` already default on `None`.
+- `ValueFloat` accepts a Python float that is ±inf or NaN.
+- A set the binding returns no longer leaks: every `wrapSetOf*` kept one reference per element.
+- A buffer is released when decoding it fails; `decodeBlobBuffer` released it on success only.
+- A C++ exception of any type becomes a Python error: one not derived from `std::exception` crossed the C API boundary, which is undefined.
+- Ten return types in the stub were wrong: `Definitions.extend`, `extend_concepts`, `ValueVoid.encoded`, `CommitDatabase.reduce_heads` and `SharedMemory.unlink` said `None`, as did the in-place set and map operators.
+- PyPI lists all three supported operating systems; each wheel advertised its own build machine's.
+- Wheels build on manylinux, which ships no `libpython`: CMake asked for `Development` instead of `Development.Module`.
 
 ### 1.2.5 — 2026-03-24
-- **Fixed** — `CommitStore` dispatch error handling aligned with the C++
-  semantics; inject/discard may target any namespace; complete wheel metadata.
-- **Added** — semantic-version release tooling.
-- *Ships runtime 1.2.5.*
+
+*Ships runtime 1.2.5.*
+
+**Fixed**
+
+- `CommitStore.dispatch` reports a failing Python callback through `notify_dispatch_error` instead of raising, as the C++ store does; `notify_error` is renamed to match.
+- `DefinitionsConst.inject` and `discard` take an optional namespace, a dict or a module, so an embedded editor evaluating in its own globals sees the constants; they wrote into `__main__`.
+- Every wheel carries its long description and full metadata. Ships runtime 1.2.5.
 
 ### 1.2.0 — 2026-03-20
 Initial release.
@@ -589,244 +803,294 @@ Initial release.
 The npm package `@digitalsubstrate/dsviper`. See {doc}`dsviper-node/index`.
 
 ### 1.2.13 — 2026-09-27
-- **Changed (breaking)** — a stream array read answers a `ValueVec`, as in Python
-  (`toArray()` gives the native array); `BlobArray.at()` answers one datum, the element
-  reading moving to `blobView()`; `new BlobArray(blobLayout, blob)` replaces
-  `BlobArray.fromBlob`; and a native that does not fit its type throws `ViperError`, not
-  `TypeError` or `RangeError`.
-- **Added** — `Semaphore`, which the wheel already had; `ViperError` as an exported class
-  carrying `code`, `component` and `domain`; a `ValueSet` wherever a list of ids is taken;
-  `readBlob(blobId, size, offset)` past 2 GB; `TypeName` constructible; the transfers'
-  `commitId()`.
-- **Fixed** — a boolean flag of another type was coerced (`open(path, 'yes')` opened
-  read-only); a NaN, negative or fractional blob size or offset was accepted; a `bigint`
-  beyond int64 decoded to 0; `SharedMemory.fd()` returned the region's size; and
-  `PathConst.equals` answered differently in each direction.
-- **Changed** — every optional parameter declares `| null`, which the binding always
-  accepted and JSON needs; the third-party notices list what the package embeds, and
-  nothing else.
-- *Ships runtime 1.2.27 — see the runtime section.*
+
+*Ships runtime 1.2.27.*
+
+**Changed (breaking)**
+
+- A stream array read answers a `ValueVec`, as in Python: `readUint8s(n)` and its nine siblings return a `vec<T, n>`; `toArray()` gives the native array.
+- `BlobArray` reads binary. `at()` answers one datum as a native number (a bigint for the 64-bit types) and iteration walks the data; `blobView()` is the element reading, and `toTypedArray()` still hands out the whole run.
+- `new BlobArray(blobLayout, blob)` replaces `BlobArray.fromBlob`.
+
+**Changed**
+
+- An array write takes a `ValueVec`, as declared, and refuses a sequence that does not hold `size` elements; it ignored `size`.
+- A native that does not fit its type throws `ViperError`, stream writers included, naming the type expected, what was given and the path, as Python does. A signature argument still throws `TypeError`.
+- Every optional parameter declares `| null`. The binding has always taken null as absent — each optional argument is read through a type guard — and the declarations now say so, which matters because JSON has no `undefined`.
+- A transfer runs once. `convert()` and `flatten()` throw on a second call, so `commitId()` is never ambiguous.
+- The third-party notices list what the package embeds, and nothing else.
+
+**Added**
+
+- `Semaphore`, the named semaphore the wheel already had: `create`, `open`, `exists`, `unlink`, `tryWait`, `wait` and `post`. `wait` blocks the event loop; `tryWait` polled between `setImmediate` turns waits without blocking it.
+- `ViperError` is a class, exported: a runtime refusal is `instanceof ViperError` and carries `code`, `component` and `domain`. `name` stays `'ViperError'`; an index past the end stays a `RangeError`. It names the three layers a call crosses.
+- A method taking ids takes a `ValueSet` as well as an array — `blobInfos`, `blobDatas`, `commitDatas`, `syncData`, `unknownBlobIds` — so what a query answers can be handed back.
+- `new TypeName(nameSpace, name)` builds one, and `representation()` / `representationIn()` render it qualified or short.
+- `DefinitionsInspector.isAmbiguous(attachment)` says whether a short name still names one thing.
+- `BlobGetting.readBlob(blobId, size, offset)` reads a blob in pieces, including past 2 GB where `blob()` refuses.
+- `FunctionPrototype.name()` answers the name of the function it describes.
+- `DatabaseToCommitDatabaseConverter.commitId()` and `CommitDatabaseFlattener.commitId()` answer the commit the transfer made, or undefined before it ran.
+- `BlobArrayBuilder.dataCount()` answers the length `copy()` requires: `count()` times `blobLayout.components()`.
+- `Codec.query` and `Codec.check` name the three stream codecs, say what each keeps, and which transport each belongs to. Mixing `STREAM_RAW` and `STREAM_BINARY` cannot be reported: on a little-endian host they write the same bytes.
+- The twelve constants the declarations promised now exist, and the README names the entry points a reader could not find.
+
+**Fixed**
+
+- `CommitData.data()` is declared to return a `ValueBlob`, which it always returned; the declaration said `CommitData`.
+- A thrown `TypeError` names parameters a JS caller can type: `blob(blobId)`, not `blob(blob_id)`. The messages printed Python's snake_case, and two printed `seed=None`.
+- `Value` states the runtime's total order: across types by kind, then type; a vector, a set or a map by size first, so `[3, 1, 2]` sorts after `[4]`.
+- `keys()` and `CommitStore.state()` are snapshots: a later write or dispatch does not reach them. A blob copies its bytes in, and `encoded()` returns a copy.
+- `ServiceRemote.connect` extends the definitions it is given, so an empty `new Definitions()` suffices; the port has no default. The README names the client half.
+- `runtimeId` is computed, not assigned: `Definitions` says from what for each kind, and `NameSpace` that its uuid is the model's lasting identity, the invalid one being `GLOBAL`'s.
+- A name is an identifier and not a C++, Python or TypeScript keyword; `inject()` spells names in upper snake case; `KeyNamer` says which attachment carries a display name.
+- The `CommitStore` texts say what `close()` releases, that an undo after `useCommit` opens a second head, that `timestamp` orders nothing, and that a merge keeps the later side unsignalled, `CommitMergeAnalyzer` reconstructing it.
+- `reconcileState` says where it applies: over a materialized merge. Committing it over a virtual merge state adds a third head; `materializeMerge` is the route.
+- A transfer states its target and its failure: it writes into a freshly created database, a run that throws part-way keeps what it wrote, and a throwing progress callback is ignored.
+- The database texts say what they answer: `path()` of a database in memory, that transactions do not nest, that `'Deferred'` is the default, and that a file locked by another process waits 10 s, then throws.
+- The codecs say what each keeps: XML carries every value, `toJsonString` writes a uint64 bare and an enumeration as `.case`, and `decode` needs the type, the definitions and the codec from elsewhere.
+- Both READMEs run as written: a `Database` sample, the path from `parse()` to an `Attachment`, a pinned namespace uuid, and `definitions.const().toDsmDefinitions()`, which threw without `const()`.
+- `ValueStructure.set` and `setIn` with an undeclared field throw the runtime's `ViperError`, as `at` does; they threw a plain `Error` that `Error.parse` could not read. A field name that is not a string throws `TypeError`.
+- `CommitStore.dispatch` is declared to return `T | undefined`: a callable that throws commits nothing and answers undefined, its error going to the notifier. The class says what a dispatch throws and what it notifies.
+- An any or a variant compares with a native decoded to the type of the value it holds: `equals(5)` on an any holding int32 5 answered false. null against an any is the empty any.
+- A blob size or offset is checked: `readBlob`, `blobStreamCreate` and the other blob sizes, and `SharedMemory.create`/`open`, throw on NaN, a negative or a fraction. A negative or NaN offset read from offset 0; a NaN size opened an empty stream.
+- A bigint beyond int64 decodes to the double it names; it became 0.
+- A boolean flag of another type throws `TypeError`: `readonly` of `open`, `json` of `dumps`, `packSized`, `recursive` of `dispatchDiff`, `showType` of `documentsDetails` and `enabled` of `dispatchEnableCommit` coerced any value, so `open(path, 'yes')` opened read-only.
+- Null as an input is read by the type it is decoded to: empty in an optional or an any, void in a void slot, no default where the type cannot hold it.
+- `ValueMap.get`/`pop` honour a null default, and a void slot accepts null, as its class says.
+- `ValueVoid.encoded()` returns null, as `Value.dumps` does; it returned `undefined`, the one primitive whose `encoded()` disagreed with `dumps`.
+- A call on a closed `ServiceRemote` throws `ViperError`; it threw a plain `Error` naming the client's own, empty, address.
+- `ServiceRemoteAttachmentFunction.call` declares the `AttachmentMutating` it takes first: a type-checked caller could not write the call its class text describes.
+- `PathConst.equals` takes a `Path`, as `Path.equals` took a `PathConst`: the two with the same components are equal both ways. It answered false one way and true the other.
+- `SharedMemory.fd()` returns the file descriptor; it returned the region's size.
+- `DocumentNode` states the fifteen kinds `type()` answers, what `stringValue()`, `stringComponent()` and `stringValueTooltip()` show for each, and that a uuid or a blob id is primitive. `ValueKey.detailTypeRepresentation()`, `new BlobPack(descriptor)`, `Attachment.description()` and the passive `Socket` factories say what they do.
+- `collectBlobIds` / `collectCommitIds` take a Path, CommitState, CommitMutableState or ValueProgram, as documented; they refused all but a Value.
+- `TypeKey.compare` takes any Type, as declared; it refused a type that is not a key.
+- `ValueVectorIter`, `ValueSetIter` and `ValueTupleIter` are exported, as declared.
+- `isCompact`, `isSized` and `packSized` say what they are; a pack-sized vector hands out copies.
+- `conceptMembers` says what it answers: the concept and its descendants, not its clubs; the source-map span docs say where each span starts and stops.
+- The `CommitStore` operations say what they do to the undo stack; `dispatchDiff` says what `recursive` walks; `isClosed` and the `*Speed` measures say what they measure.
+- `CommitData.blobIds` answers the empty set for a commit without mutations; it threw.
+- `needTransmit` and `sync` say they read `dataVersion()`, which a write through the synchronized connection does not move.
+- `CommitStoreNotifying.create` refuses an object missing a notify method with a `TypeError`, as the declaration says and Python does; it accepted any object.
+- `SQLite.compileOptions()` answers `[name, value]` pairs, as its declaration states; it answered a plain object.
+- `NameSpace` refuses an invalid name or uuid with `TypeError`, as the other signature checks do; it threw a plain `Error`.
+- An enumeration case is read one way everywhere: `case`, `.case` or `Enum.case`, the enumeration named. A string that is not base64 names its path.
+- `syncData` no longer promises the blobs its commits reference; they travel through `blobDatas`.
+- `blob()` and `createZeroBlob` say that a reserved blob throws until `freezeBlob` seals it; `blob()` promised undefined.
+- An optional argument of another type throws instead of being dropped. `undefined` and `null` still mean the default; `createConcept(ns, name, parent)` no longer creates a parentless concept.
+- `keys()` is declared a `ValueSet<ValueKey>`, and a structure's field map takes `undefined` as the runtime does, like `null`: a typed caller no longer casts either.
+- A second copy of the package in one process is refused, naming both. Two copies of the native binary do not recognise each other's objects; loading both failed with an unrelated message.
+- Five declarations refused code that runs: a `ValueSet` built from ids, `createBlobFromBuffer` given a typed array or `ArrayBuffer`, a `bigint` seed or pack size, and a progress callback.
+- `ValueOpcodeKey` compares by value and `BlobPackRegion` reads a datum, as Python's `==`, `hash()` and `region[i]` do: `equals`, `compare`, `hashKey()` and `at(index)`.
+- `ValueMat` iterates its columns, each a native array of its rows, as Python's does. Spreading one threw.
+- `ValueXArray.size()` and `BlobArray.dataCount()` count what `len()` counts in Python. Neither array could be counted: `positions()` includes END, and `BlobArray` had to be iterated.
+- An index, a size or a count is an integer, or the call throws. NaN was read as 0 and 1.5 as 1, so `set(NaN, v)` overwrote element 0. `position()` and `Path.fromIndex()` refuse a negative index.
+- `SQLite.getPragma` takes a string, as the runtime always did: it was declared taking a `ValueKey`, which refused the one call that works. `runtimeId()` on an attachment and on an opcode key no longer calls it a type.
+- `TypeName` and `NameSpace` have a `hashKey()` that follows `equals`. Keyed by their text, a native Map or Set merged two namespaces sharing a name and split a renamed one.
+- A set of ids comes back as a `ValueSet`, not an array — `blobIds()`, `commitIds()`, `headCommitIds()` and 33 others. An array had no membership by value: `includes()` compares identity, and `some()` scanned. A spread gives the array back.
+- Iterating a `ValueSet` is linear. It walked the set from the start at every step.
+- A stray property on a value is refused instead of shadowing the field: `s.name = 'Alice'` answered on read while the field stayed empty. Every wrapper is sealed; strict code throws `TypeError`, a sloppy script drops the write.
+- `PathConst.encode` named the wrong codec. It documented `STREAM_TOKEN_BINARY` where it and `Path.decode` both use `STREAM_BINARY`, so the round trip it describes would not have worked as written.
+- `StreamCodecInstancing.name()` said the name travels in the stream. It does not: a stream carries no record of which codec wrote it.
+- `chunked()` said a chunked blob reads like any other. Past 2 GB it is written with `blobStreamCreate` / `Write` / `Close` and read with `readBlob`; `blob()` refuses it.
+- `DSMSourceSpan` offsets are characters, start 0-based and stop inclusive, as `DSMSourcePosition` counts them; and `DSMAttachment.identifier` cited two calls that class does not have.
+- `get()` and `enumerate()` hand back a copy, which only the write side stated, on all four classes that expose them.
+- `ValueString` declared `hash()` twice, and `Cancelation` now says the flag latches and that `cancel()` is safe from a signal handler.
+- A bad stream-codec argument segfaulted the process. It is now refused with a `TypeError`, and an absent one takes the default.
+- `DatabaseTransferInfo.blobs()` was declared `bigint` and returns `number`, and `TypeVector.cast` declared the wrong class.
+- 47 docstrings said "the set of" and returned an array, and four classes carried the same false promises as their Python twins.
+- `index.d.ts` did not compile for a consumer without `@types/node`, and cited names Node does not have.
+- `nodes()` is keyed by `ValueCommitId`, not a uuid, and holds one entry more than there are commits: the root the layout starts from.
+- `get()` throws on a key of another concept, which `isNil()` does not report; `create()`, `open()` and `set()` now state their preconditions.
+- `isEqual` compares content, so two registries built apart from the same model are equal, and `hexdigest()` answers the same question on a string.
+- `Value.create` wraps and the constructor copies shallowly, `Definitions.const()` is a live view where a store's `definitions()` is a snapshot, and crossing a store copies.
+- An out-of-range integer names the type you asked for, and the undo label is `Undo [...]` where `commitType()` is what answers `Disable`.
+- The transaction rule is stated on `Databasing`, the class a caller meets, and the README samples type-check under `tsc` and still run.
+- `toDsm()` says how its output is arranged — types sorted, then the mapping, per attachment — and the package says what a `.dsm` looks like.
+- `ServiceRemoteFunctionPoolFunctions` documented a path this binding does not have, and `ServiceRemoteAttachmentFunctionPool.definitions` is gone from the declarations.
+- `Definitions.createConcept`, `createClub` and `createAttachment` say where the documentation they take ends up.
+- `PathConst.patch` says which two shapes address a key, an element of a set and a map entry's key, where it described an entry of a set and sent a reader into a throw.
+- `TypeMat` refuses a dimension of zero, and a negative one, which it read as unsigned and built into a matrix of 18446744073709551615 columns. `TypeVec` and `TypeMat` now state their bound.
 
 ### 1.2.12 — 2026-09-20
-- **Removed (breaking)** — `BlobPackRegion.copy(buffer)` and
-  `new BlobArray(blobLayout, size)`. A `ValueBlob` is immutable, and `copy()` wrote into
-  one that already existed; `BlobPack.fromBlob` shares the caller's blob, so the write
-  landed in a value held elsewhere. Fill the bytes first, on the **Added**
-  `BlobArrayBuilder` or `BlobPackBuilder`, and seal them with `build()`.
-- **Fixed (breaking)** — a 64-bit integer never takes a rounded value in silence:
-  `new ValueInt64(2 ** 53 + 1)` stored `2 ** 53`, JavaScript having rounded it before the
-  call. A `number` is accepted only when it is a safe integer, with a `RangeError`
-  pointing to `bigint`.
-- **Fixed (breaking)** — a host class can no longer derive from a bound one. The runtime
-  creates every instance it hands back, so a subclass only ever held objects the caller
-  built, never one a call returned.
-- **Fixed** — a `Value` passed where a type is in scope is checked against it, and one
-  passed to an `any` or `variant` position is boxed, as the Python binding does. Code
-  that was writing mistyped documents now raises.
-- **Fixed** — `index.d.ts` says what Node answers: a subclass inherits its base's statics
-  (19 on `Value` and 28 on `Type` resolved to `undefined`), `OutputValue` describes what
-  a projection hands back, nine declarations omitted the `undefined` the call answers,
-  and `AttachmentMutating` is an `AttachmentGetting`.
-- **Added** — `encoded` on thirteen reads that projected with no way back, positional and
-  last; a set-typed input takes a JS `Set` wherever it takes an array; and
-  `AttachmentMutating.attachmentGetting()`.
-- **Changed** — a blob read from a store is copied once less, and a remote one is held
-  twice at most while it crosses the wire rather than three times.
-- *Ships runtime 1.2.26 — see the runtime section.*
+
+**Changed**
+
+- The blob readers no longer write. `BlobPackRegion` lost `copy()`: writing into a sealed value would change what its `BlobId` names.
+- `AttachmentMutating` is an `AttachmentGetting`, which the binding always built and the declarations did not say.
+- A remote database holds a blob twice at most while it crosses the wire, not three times, and a blob read from a store is copied once less.
+
+**Removed (breaking)**
+
+- `new BlobArray(blobLayout, size)` — it handed out a blob of zeros to be written into, and on this side nothing could reach those bytes. Use `BlobArrayBuilder`.
+- `BlobPackRegion.copy(buffer)` — it wrote into a blob shared with whoever held the value.
+
+**Added**
+
+- A set-typed input takes a JS `Set`, alongside the array it already took.
+- `new BlobArrayBuilder(blobLayout, count)` fills the bytes of a blob, then seals them.
+- `AttachmentMutating.attachmentGetting()` reads back what a mutable state holds.
+- `encoded` on the reads that projected to a native with no way back.
+
+**Fixed**
+
+- Nothing writes into a `ValueBlob` any more, and a host class can no longer derive from a bound one.
+- `index.d.ts` says what Node answers: a subclass inherits its base's statics, a read that can answer `undefined` says so, `value.compare(other)` declares the native it takes, and `new ValueBlob(value)` declares what it takes.
+- A 64-bit integer never takes a rounded value in silence, and a Value passed where a type is in scope is checked against it.
+- `AttachmentMutating.set` and `diff` refuse a document of another type, and a merge resolution keeps the type of its locus.
+- A namespace cycle closed through an attachment or a key is rejected.
+- A remote database no longer reserves the memory a peer announces but never sends, and `CommitDatabaseRemote.uploadSpeed` / `downloadSpeed` report the direction they measure.
+- `new ValueSet` and `new ValueMap` take what `Value.create` takes, and `CommitSynchronizer.sync(logging)` passes the logging on.
 
 ### 1.2.11 — 2026-09-05
-- **Changed** — Node 24 is the floor (`engines: ">=24"`, was `>=18`). Node 18 reached
-  end-of-life on 2025-04-30 and Node 20 on 2026-04-30. Holding a floor nobody runs was not free:
-  `[Symbol.dispose]` had to sit behind a `typeof Symbol.dispose === 'symbol'` guard and the
-  binding carried three capability tiers for one product (18: `close()` only; 20.4:
-  `Symbol.dispose`; 24: `using`). `[Symbol.dispose]` is now installed unconditionally on the
-  thirteen resource handles. Formally a restriction for consumers, shipped on the patch stream
-  because this binding's `MAJOR.MINOR` track the runtime contract rather than its own
-  compatibility.
-- **Fixed** — ten members the C++ registers were absent from `index.d.ts`, so a TypeScript
-  consumer could not call them and TypeDoc did not document them. `DatabaseTransferInfo` was
-  missing its whole surface — it is the only exposed type wrapping a plain data struct, which
-  makes the Python side declare attributes rather than methods, so the `.pyi` → `.d.ts`
-  bootstrap had nothing to translate. The other eight are `equals` and `compare` on the five
-  classes outside the Value and Type hierarchies: `NameSpace`, `TypeName` and `BlobLayout` carry
-  both, `Path` and `PathConst` only `equals` — the runtime registers no comparison for a path.
-  Declarations only, and no consumer can break, since nothing compiles today.
-- **Fixed** — 69 JSDoc comments promised `null` where the method answers `undefined`, sending a
-  reader to write `x === null`, false exactly when the query found nothing. The binding returns
-  `undefined` on 442 sites against 19 returning `null`, and the declarations always said so; the
-  descriptions had inherited Python's "or None". All realigned on the declared type.
-- **Changed** — the JSDoc describes JavaScript, not Python. Class and method descriptions had
-  been copied from their Python twins without translating the vocabulary, so every editor
-  tooltip and the published reference told a Node developer that a uint64 value is "seamless
-  with a Python int", where it is a `bigint` and the declaration on the next line says so. 24
-  such clauses translated, 116 `True`/`False` lowered, 79 identifiers camelised (a reader
-  following `Path.from_field` looks for a method that does not exist — it is `fromField`), and
-  74 class summaries realigned. DSM type names — `blob_id`, `element_type`, `commit_id` — keep
-  their spelling, being the model's words rather than the binding's. Each container's shape is
-  now read off a run rather than a family average: a map projects as an array of key/value
-  pairs, a set and a vector as plain arrays, a structure as a plain object.
-- **Changed** — four decided behaviours are now stated on the public surface: `ValueSet` and
-  `ValueMap` iterate in **sorted** order, not insertion order (a JS `Set` and `Map` promise the
-  opposite); `NaN` is a single data-model value rather than the IEEE 754 artefact — it equals
-  itself, hashes deterministically, and sits below `-Infinity` in the total order, which is what
-  lets a NaN be found in a set, deduplicated as a map key and seen by a diff (arithmetic is
-  untouched; read the float back with `encoded()`); the `NAN`, `INF` and `NEG_INF` singletons
-  existed undocumented; and `Value.dumps`' `json` flag changes two things, not the one its own
-  text claimed.
-- *Ships runtime 1.2.25, unchanged from 1.2.10 — `viperVersion()` reports the same triple over
-  the same sources.*
+
+*Ships runtime 1.2.25.*
+
+**Changed**
+
+- Node 24 is the floor (`engines: ">=24"`, was `>=18`); `[Symbol.dispose]` is installed on the thirteen resource handles unconditionally.
+- The JSDoc describes JavaScript: it had been copied from the Python docstrings, `True`, `None`, snake_case names and "seamless with a Python int" included.
+- The JSDoc states the decided behaviours: `ValueSet` and `ValueMap` iterate sorted, NaN equals itself and sorts below `-Infinity`, and `Value.dumps`' `json` flag changes two things.
+
+**Fixed**
+
+- `index.d.ts` declares ten members the binding has: the surface of `DatabaseTransferInfo`, and `equals` / `compare` on `NameSpace`, `TypeName`, `BlobLayout`, `Path` and `PathConst`.
+- 69 JSDoc said `null` where the method answers `undefined`. Ships runtime 1.2.25.
 
 ### 1.2.10 — 2026-08-27
-- **Fixed** — `type.representation()` no longer depends on call order: on a tuple or a variant, the
-  no-argument form answers the fully qualified name and `representation(nameSpace)` the form
-  relative to that namespace. Whichever was asked first used to decide the answer for every later
-  caller, in both directions, so a caller wanting the qualified name could receive an unqualified,
-  ambiguous one. It surfaces wherever a composite type is described — `dumps` output, a type
-  mismatch's message, any `Type` a tuple or a variant appears in. A Node host that serves a commit
-  database was exposed to the race half as well: `CommitDatabaseServer` — new in 1.2.9 — serves
-  every client on its own C++ thread, and those threads share one `Definitions`. Nothing memoizes
-  the representation now, so there is nothing left to race on.
-- *No change to the binding surface — not one signature in `index.d.ts` differs.*
-- *Ships runtime 1.2.25 (namespace-keyed tuple and variant representations — see the runtime
-  section).*
+
+*Ships runtime 1.2.25.*
+
+**Fixed**
+
+- `type.representation()` of a tuple or a variant no longer depends on call order, nor races between the client threads of a `CommitDatabaseServer`. Ships runtime 1.2.25.
 
 ### 1.2.9 — 2026-08-04
-- **Added** — `CommitDatabaseServer`, `Socket` and `Cancelation`: a Node host can now **serve** a
-  commit database, not only consume one over RPC — running a server no longer means installing the
-  Python wheel for a program that is C++ on both sides. The loop belongs to the host:
-  `step(timeoutInSec)` is a bounded wait, so a `setImmediate` between calls keeps timers, I/O and
-  signal delivery alive and `SIGINT` is honoured within one timeout; `finishBefore(sec)` bounds the
-  teardown and returns the number of client threads still running. `Socket` exposes only
-  `createPassiveLocal` and `createPassiveInet` — a host consumes a service through the `*Remote`
-  classes, it does not drive a socket by hand.
-- **Added** — `Socket.close()` / `Socket.isClosed()`, and `Socket` joins the resource handles that
-  implement `[Symbol.dispose]`, so `using socket = Socket.createPassiveLocal(path)` releases it at
-  scope exit. A passive local socket **is a file on disk**, and V8 releases nothing on a schedule a
-  host can rely on.
-- *Ships runtime 1.2.24 (cooperative server termination; POSIX transport truncation; remote
-  `createZeroBlob`; Windows build — see the runtime section).*
+
+*Ships runtime 1.2.24.*
+
+**Added**
+
+- `CommitDatabaseServer`, `Socket` and `Cancelation`: a Node host can serve a commit database. `step(timeoutInSec)` is a bounded wait, and `finishBefore(sec)` answers how many client threads are still running.
+- `Socket.close()`, `Socket.isClosed()` and `[Symbol.dispose]`: a passive local socket is a file, which a host can now release. Ships runtime 1.2.24.
 
 ### 1.2.8 — 2026-07-23
-- **Fixed** — `AttachmentGetting.get` returns a document isolated from the commit state's
-  cache: on a cache miss the runtime handed back the cached `ValueOptional` itself, so mutating
-  a read result (`wrap` / `clear`, or mutating the unwrapped container) poisoned the state's
-  cache and corrupted every later read of that key. The frozen-snapshot contract that
-  read/query layers rely on is restored.
-- *Ships runtime 1.2.23 (commit-read cache isolation — see the runtime section).*
+
+*Ships runtime 1.2.23.*
+
+**Fixed**
+
+- `AttachmentGetting.get` on a `CommitState` returns a document its cache does not share: mutating a first read changed every later read of that key. Ships runtime 1.2.23.
 
 ### 1.2.7 — 2026-07-22
-- **Added** — `DSMSourceMap` exposed to Node: a `new DSMSourceMap()` passed to
-  `DSMBuilder.parse(sourceMap)` collects, as a parse by-product, the source span of every
-  declaration, field, case, namespace, type sub-expression and *resolved* type-reference —
-  enabling an in-place patch of a hand-authored `.dsm` tree under a schema change (file split,
-  comments and ordering preserved) instead of regenerating it.
-- **Fixed** — `ValueMap.items` / `keys` / `values` now hand out typed handles: `items` returned
-  a single `ValueVector` of tuples that native-decodes on a JS destructure, so `items(false)`
-  yielded native scalars instead of `Value` handles (breaking every `Map<_, scalar>` data
-  migration). `items` now returns a JS array of `[key, value]` pairs (key copied, value carried);
-  `keys` / `values` return the wrapped element.
-- **Fixed** — immutable values are copied, never const-cast, across the JS frontier: every
-  accessor that hands out an immutable value (set elements, map keys, the merge decree
-  `CommitMergeResolution.chosen`) now returns a copy, so a caller can no longer reach in and
-  corrupt the container or decree in place.
-- *Ships runtime 1.2.22 (DSM parser source map; merge-decree value-semantics fix — see the
-  runtime section).*
+
+*Ships runtime 1.2.22.*
+
+**Changed (breaking)**
+
+- `ValueMap.items()` returns an array of `[key, value]` pairs of handles, and `keys()` / `values()` the wrapped elements; `items` returned a `ValueVector` of tuples, so `items(false)` gave natives.
+
+**Added**
+
+- `DSMSourceMap`: `DSMBuilder.parse(sourceMap)` records the source span of every declaration, field, case, namespace, type and resolved reference.
+
+**Fixed**
+
+- A set element, a map key and `CommitMergeResolution.chosen` are handed out as copies: a caller could change them inside their container. Ships runtime 1.2.22.
 
 ### 1.2.6 — 2026-07-19
-- **Added** — non-mutating container combinators: `ValueVector.concat` (`v1 + v2`, also
-  accepts a native array) returns a new vector and `ValueMap.merge` (`m1 | m2`, the other
-  map wins on a shared key) returns a new map, both leaving the operands untouched (the
-  in-place `extend` / `update` remain). `ValueSet.contains` / `ValueXArray.contains` are now
-  declared in the typings (the runtime already exposed them).
-- *Ships runtime 1.2.21 (HTML-output escaping fix; byte-exact XML codec; UTF-8 `ValueString`;
-  DSM-expressible docstrings — see the runtime section).*
+
+*Ships runtime 1.2.21.*
+
+**Changed**
+
+- A `ValueString` must be valid UTF-8, and documentation cannot contain `"""`; both were accepted before.
+
+**Added**
+
+- `ValueVector.concat` and `ValueMap.merge` return a new container and leave their operands untouched; `extend` and `update` still work in place.
+- `index.d.ts` declares `ValueSet.contains` and `ValueXArray.contains`, which the binding had.
+
+**Fixed**
+
+- The HTML renderer escapes names, strings and documentation. Ships runtime 1.2.21.
 
 ### 1.2.5 — 2026-07-13
-- **Added** — `Value.collectCommitIds(value, type, definitions)` and `Type.useCommitId(type)`
-  — gather every `CommitId` a value references (the commit-id twin of `collectBlobIds`);
-  `useCommitId` is the pruning predicate over a type, so a schema-change rebuild can discover
-  intra-DAG references.
-- **Added** — `ValueXArray.items(encoded?)` gains the `encoded` argument (default `true`,
-  matching prior behaviour); `items(false)` yields typed `Value` elements, so an xarray of
-  scalar elements can be walked and rebuilt faithfully. New `ValueXArray.rebuildFrom(source, …)`
-  performs an atomic trans-definitions rewrite (positions + tombstones copied, re-mapped
-  elements swapped in a single memento, no partial state exposed).
-- **Fixed** — a conflicting schema upgrade no longer corrupts a database: `extendDefinitions`
-  against a schema that redefined an existing type under a new `runtimeId` used to commit a
-  second, same-named definition and leave the base unopenable; it now fails cleanly before any
-  write.
-- **Fixed** — `decodeVariant` short-circuits an already-wrapped `ValueVariant`: placing a typed
-  `ValueVariant` handle into a struct field re-elaborated it as an arm and dropped the inner
-  value (`x: 9` → `0`); it now recognises the wrapped handle first, mirroring `decodeEnumeration`.
-- **Changed** — construction-time DSM governance: a `DSMDefinitions` built through the binding
-  can no longer escape DSM-expressibility — DSM keywords, forked/cyclic namespaces, non-literal
-  field defaults, and duplicate parameter names are rejected at construction.
-- *Ships runtime 1.2.20.*
+
+*Ships runtime 1.2.20.*
+
+**Added**
+
+- `Value.collectCommitIds(value, type, definitions)` and `Type.useCommitId(type)`, the commit-id twins of `collectBlobIds` and `useBlobId`.
+- `ValueXArray.items(encoded?)`, as in Python: `items(false)` yields the typed elements.
+- `ValueXArray.rebuildFrom(source, ...)` copies a source xarray's positions and tombstones and installs new elements in one step.
+
+**Fixed**
+
+- A `ValueVariant` handle placed in a structure field keeps its value; it was re-read as an arm and reset (`x: 9` became `0`).
+- `extendDefinitions` with a type redefined under a new `runtimeId` is refused before any write; it left a database that no longer opened. Ships runtime 1.2.20.
 
 ### 1.2.4 — 2026-07-06
-- **Added** — XML wire format: `Value.toXmlString(value, indent?)` /
-  `Value.fromXmlString(string, type, definitions)` and `DSMDefinitions.toXmlString(indent?)` /
-  `DSMDefinitions.fromXmlString(string)` — the XML dialect of the type-driven serializer,
-  alongside the existing JSON/BSON codecs. Additive.
-- *Ships runtime 1.2.19.*
+
+*Ships runtime 1.2.19.*
+
+**Added**
+
+- `Value.toXmlString(value, indent?)`, `Value.fromXmlString(string, type, definitions)`, `DSMDefinitions.toXmlString(indent?)` and `DSMDefinitions.fromXmlString(string)`. Ships runtime 1.2.19.
 
 ### 1.2.3 — 2026-07-02
-- **Stable** — 1.2.3 stabilises the Node binding surface. It is the last release to carry
-  breaking renames/removals; the binding is stable from here.
-- **Added** — ES2022 negative indexing (`.at(-1)`, with `.set(-1, …)`) on the indexed
-  sequences — `ValueVector`, `ValueVec`, `ValueTuple`, ordered `ValueSet`, blob views, and
-  `ValueMat` (per-axis); out-of-range still throws.
-- **Added** — `toArray()` on `ValueVec` / `ValueMat`, and an iterable `ValueVec` (`for..of`,
-  spread, `Array.from`) yielding `number` — or `bigint` for 64-bit ints.
-- **Added** — Blob ⇆ TypedArray for GPU / WebGL — `BlobView`/`BlobArray.toTypedArray()`,
-  `BlobLayout.glAttribParams()`, and `BlobArray.fromTypedArray(layout, ta)`.
-- **Added** — `toJSON()` on every value (`JSON.stringify(value)` yields a JSON-ready POD;
-  64-bit ints promote to a number when exact, else throw; Blob → base64). BSON
-  (`toBsonBlob` / `fromBsonBlob`) and the streaming / DSM entry points that were
-  not-yet-usable stubs are now bound.
-- **Fixed** — argument errors cross the boundary as their real `TypeError` / `RangeError`; a
-  sweep of `index.d.ts` corrected declared constructors against runtime reality; the shared
-  JSON codec accepts a bare integer for a `float`/`double` field (`5` → `5.0`).
-- **Breaking** — codec methods renamed to the `to…` / `from…` convention
-  (`jsonEncode` → `toJsonString`, `bsonEncode` → `toBsonBlob`, …; old names removed);
-  `toTuple()` → `toArray()`; the raw `ValueOpcode` codec and `Logging.create(object)` are
-  removed.
+
+*Ships runtime 1.2.18.*
+
+**Removed (breaking)**
+
+- `jsonEncode`, `jsonDecode`, `bsonEncode` and `bsonDecode`, renamed `toJsonString`, `fromJsonString`, `toBsonBlob` and `fromBsonBlob`, on `Value` and `DSMDefinitions`.
+- `ValueVec.toTuple()` and `ValueMat.toTuple()`: use `toArray()`.
+- `ValueOpcode.encode`, `decode`, `read` and `write`.
+- `Logging.create(object)`, which only ever threw. Ships runtime 1.2.18.
+
+**Added**
+
+- `.at(-1)` and `.set(-1, …)` on the indexed sequences: `ValueVector`, `ValueVec`, `ValueTuple`, `ValueSet`, `BlobView`, `BlobArray`, and `ValueMat` per axis. Out of range still throws `RangeError`.
+- `ValueVec` is iterable, and `ValueVec` / `ValueMat` have `toArray()`.
+- A blob converts to and from a TypedArray: `BlobView.toTypedArray()`, `BlobArray.toTypedArray()`, `BlobArray.fromTypedArray(layout, ta)`, and `BlobLayout.glAttribParams()` for `gl.vertexAttribPointer`.
+- `toJSON()` on every value: a 64-bit integer becomes a number when it fits exactly, else throws `RangeError`; a blob becomes base64.
+- `Value.toBsonBlob` / `fromBsonBlob`, `DefinitionsConst.toDsmDefinitions`, `DefinitionsConst.write`, `Definitions.read`, `Definitions.extendConcepts`, `Path.read` and `PathConst.write` work; they threw "not yet usable".
+- `getIn` / `setIn` descend through an optional, an any or a variant.
+- `Symbol.toStringTag` on every class, and `Path` is iterable.
+
+**Fixed**
+
+- An argument error crosses as a real `TypeError` or `RangeError`, not a generic `Error` prefixed `"exception "`.
+- `index.d.ts` declares the constructors as they are: `CommitDatabase` has none public; `TypeAny`, `TypeAnyConcept`, `BlobPackDescriptor` and `StreamWriterBlob` have one. `ServiceRemoteFunction.call` returns its result.
+- `Value.fromJsonString` reads an integer literal into a `float` or `double` field.
 
 ### 1.2.2 — 2026-06-30
-- **Added** — `hashKey()` on every value type: a 128-bit `bigint` value-identity key
-  usable directly in a JS `Map` / `Set` / `Map.groupBy` (which key by identity and call
-  no custom hash/equals). It folds the value's type into the hash, so width variants
-  (`Int8(1)` / `Int16(1)` / `Int64(1)`) and empty typed containers stay distinct where the
-  raw `hash()` is type-blind. It is a hash — collisions are possible.
-- **Added** — `[Symbol.dispose]` / `using`: resource handles (`Database`, `CommitDatabase`,
-  `CommitStore`, `ServiceRemote`, file streams) release deterministically at scope exit — the
-  JS analogue of the Python binding's refcount finalization (guarded on engines without
-  `Symbol.dispose`).
-- **Added** — recursive `Value.deduce`: the `any` input bridge now deduces nested natives
-  (Array → `Vector`, Set → `ValueSet`, Map → `ValueMap`, object → `Map<string, …>`, plus
-  scalars / `Blob` / `Void`), inferring a heterogeneous element type as `Variant`.
-- **Fixed** — `compare()` / `equals()` expose the runtime's total, trans-type order instead of
-  pre-decoding the operand to the receiver's exact type and throwing on a mismatch:
-  `compare(other)` orders any two values (a heterogeneous collection sorts deterministically),
-  `equals(other)` is total (false across types, never raises).
-- **Changed** — type declarations (`index.d.ts`) clarify `dumps` depth and the encoded vs.
-  deep-projection regimes.
-- *Ships runtime 1.2.17.*
+
+*Ships runtime 1.2.17.*
+
+**Added**
+
+- `value.hashKey()`, a `bigint` folding the type into the value's hash, to key a JS `Map` or `Set` by value; `hash()` alone hashes `Int8(1)` and `Int64(1)` alike.
+- `[Symbol.dispose]` on the resource handles, so `using` releases a database, a store or a stream at scope exit.
+- `Value.deduce` descends into nested natives: an array, a `Set`, a `Map` or an object becomes the matching container.
+
+**Fixed**
+
+- `.compare()` and `.equals()` accept any value and never throw: two values compare in the runtime's total order. An any or a variant compares the operand as its own type. Ships runtime 1.2.17.
 
 ### 1.2.1 — 2026-06-29
-- **Added** — `ServiceRemote` by-name accessors `functionPoolFunc(poolIdOrName, name)`
-  and `attachmentFunctionPoolFunc(...)` — fetch a single callable remote function
-  directly, without iterating the whole pool.
-- **Added** — restored the macOS Intel (x86_64) prebuilt binary; the package again
-  ships a binary for every Linux / macOS / Windows × x64 / arm64 target.
-- **Fixed** — `Definitions.decode` / `DefinitionsConst.encode` honor the optional
-  `streamCodecInstancing` argument and default to the token-binary stream codec
-  (previously pinned to the plain-binary codec), so a definitions blob round-trips at
-  the default codec — consistent with the Python binding and with default-encoded
-  embedded definitions.
-- **Changed** — package homepage and README point at the dsviper-node documentation
-  page.
-- *Ships runtime 1.2.17.*
+
+*Ships runtime 1.2.17.*
+
+**Added**
+
+- `ServiceRemote.functionPoolFunc(pool, name)` and `attachmentFunctionPoolFunc(pool, name)` reach one remote function by name.
+- A prebuilt binary for macOS Intel.
+
+**Fixed**
+
+- `Definitions.decode` and `DefinitionsConst.encode` take a `streamCodecInstancing` and default to `StreamTokenBinaryCodec`, as Python does; a definitions blob encoded by default did not decode. Ships runtime 1.2.17.
 
 ### 1.2.0 — 2026-06-27
 First release — the in-process Node.js binding over the Viper runtime, bound
@@ -846,3 +1110,4 @@ roughly 1:1 with the Python surface via N-API.
 - **Note** — the remote-service *server* tier, transport, and IPC/threading
   primitives are intentionally not bound (incompatible with Node's event loop).
 - *Ships runtime 1.2.*
+

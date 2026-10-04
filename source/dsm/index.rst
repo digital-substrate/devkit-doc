@@ -62,17 +62,31 @@ Validate the syntax:
 
    python3 tools/dsm_util.py check model.dsm
 
-Generate a typed Python package (this delegates to Kibo with the viper
-template):
+Generate a typed package with Kibo: a ``kibo.toml`` beside the model states
+the generation once, and :doc:`kibo-project <../kibo/kibo-project>` renders
+it with the ``kibo-template-viper`` pack:
+
+.. code-block:: toml
+
+   [project]
+   definitions = "model.dsm"
+   infrastructure = "model"
+
+   [generator]
+   templates = "2"
+
+   [target.python]
+   features = ["Base"]
+   output = "."
 
 .. code-block:: bash
 
-   python3 tools/dsm_util.py create_python_package model.dsm
+   python3 kibo_project.py generate
 
-For C++ generation against the :term:`Viper C++` runtime, invoke Kibo directly
-with the C++ templates from ``kibo-template-viper``. See :doc:`../kibo/usage`
-for the invocation patterns and :doc:`../kibo-template-viper/features` for
-the C++ feature catalogue.
+The same file declares C++ or TypeScript targets for the :term:`Viper C++`
+runtime and the Node binding. See :doc:`../kibo-template-viper/features` for
+the features of each target, and :doc:`../using-generated-sdk/index` for the
+generated surface.
 
 To use a model without code generation — load it through dsviper's dynamic
 API at runtime — see :doc:`../dsviper-python/dsm`.

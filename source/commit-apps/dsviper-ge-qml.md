@@ -1,7 +1,7 @@
 # dsviper-ge-qml
 
 PySide6 + QML desktop application — the QML port of [dsviper-ge](dsviper-ge.md). Same
-DSM model, same generated `ge/` package, same hand-written `model/`
+DSM model, same generated `gei/` package, same hand-written `ge/`
 business logic, same `CommitStore` facade. The UI is QML, driven by Python
 `QObject` models registered as QML context properties. Built on the Qt
 Quick variant of `dsviper-components`.
@@ -19,13 +19,13 @@ for Qt Quick:
 | Layer      | Where in dsviper-ge-qml                           | DevKit doc                                            |
 |------------|-------------------------------------------|-------------------------------------------------------|
 | DSM model  | DSM definitions of the Graph              | [DSM](../dsm/index.rst)                               |
-| Code-gen   | `graph_editor/ge/` package (Kibo output)  | [Kibo](../kibo/index.rst)                             |
+| Code-gen   | `graph_editor/gei/` package (Kibo output) | [Kibo](../kibo/index.rst), [Python SDK](../using-generated-sdk/python.md) |
 | Runtime    | `dsviper.CommitStore` usage               | [dsviper](../dsviper-python/index.rst)                       |
 | Shared QML | `dsviper_components_qml/` (vendored copy) | [dsviper-components](../dsviper-components/index.rst) |
 
 The interesting comparison with dsviper-ge is what changes — and what doesn't —
-when the UI moves from imperative widgets to declarative QML. `model/`,
-`ge/`, and `Context` are essentially identical to dsviper-ge: the entire
+when the UI moves from imperative widgets to declarative QML. `ge/`,
+`gei/`, and `Context` are essentially identical to dsviper-ge: the entire
 business stack is reused.
 
 ## Architecture
@@ -44,13 +44,13 @@ and slots. Six layers in total:
 │     Properties + Slots, registered as QML context props     │
 ├─────────────────────────────────────────────────────────────┤
 │  3. CommitStore Facade                                      │
-│     model/context.py — singleton wrapping CommitStore       │
+│     ge/context.py — singleton wrapping CommitStore          │
 ├─────────────────────────────────────────────────────────────┤
 │  4. Business Logic (hand-written Python)                    │
-│     model/*.py — vertex.py, graph.py, selection_*.py, …     │
+│     ge/*.py — vertex.py, graph.py, selection_*.py, …        │
 ├─────────────────────────────────────────────────────────────┤
 │  5. Generated Data (Kibo output)                            │
-│     ge/*.py — data, attachments, definitions, value_type    │
+│     gei/ — the graph unit, containers, definitions()        │
 ├─────────────────────────────────────────────────────────────┤
 │  6. dsviper Runtime                                         │
 │     CommitDatabase, CommitStore, CommitMutableState, Value  │
@@ -58,8 +58,9 @@ and slots. Six layers in total:
 ```
 
 The bridge layer is what makes a QML application different from a Widgets
-application — and why the `model/` and `ge/` layers are bit-for-bit
-shareable with dsviper-ge.
+application — and why the `ge/` and `gei/` layers are shareable with
+dsviper-ge: `gei/` is generated identically in both, and of `ge/` only
+`context.py` differs — a few comments and one extra scripting facade method.
 
 ## Repository layout
 
@@ -72,8 +73,8 @@ dsviper-ge-qml/
 │   ├── Graph*Panel.qml         # Domain panels (vertex, list, tags, comments, render)
 │   ├── *_model.py              # QObject bridges exposed to QML
 │   ├── transient_notifier.py   # Live-preview channel (illusion pattern)
-│   ├── ge/                     # Kibo-generated infrastructure (same as dsviper-ge)
-│   ├── model/                  # Hand-written business logic (same as dsviper-ge)
+│   ├── gei/                    # Kibo-generated infrastructure (same as dsviper-ge)
+│   ├── ge/                     # Hand-written business logic (same as dsviper-ge)
 │   │   ├── context.py          # Singleton: store + graph_key + facade
 │   │   ├── graph.py, vertex.py, edge.py, …
 │   │   └── script_*.py         # Reusable scripts
@@ -81,8 +82,9 @@ dsviper-ge-qml/
 │   ├── list/                   # List-view items
 │   ├── scripts/                # User-editable Python scripts (run from the embedded editor)
 │   └── images/                 # App icon and assets
-└── dsviper_components_qml/     # Vendored copy of dsviper-components-qml
-                                #   (synced with dev/sync_dsviper_components_qml.py)
+├── dsviper_components_qml/     # Vendored copy of dsviper-components-qml
+│                               #   (synced with dev/sync_dsviper_components_qml.py)
+└── kibo.toml                   # How graph_editor/gei is generated from the DSM model
 ```
 
 The shim at the repo root keeps `python3 graph_editor.py` working from any
@@ -90,37 +92,40 @@ directory; the real entry point is `graph_editor/main.py`.
 
 ## The Context singleton
 
-`graph_editor/model/context.py` is identical in spirit (and almost
+`graph_editor/ge/context.py` is identical in spirit (and almost
 character-for-character) to dsviper-ge's `Context`. Same singleton, same
-`CommitStore`, same `Graph_GraphKey`, same `use(database)` lifecycle,
+`CommitStore`, same `graph.GraphKey`, same `use(database)` lifecycle,
 same `dispatch` / `undo` / `redo` facade for scripting.
 
 ```python
-from dsviper import CommitStore, CommitDatabase, CommitStateBuilder, CommitState, CommitMutableState
-from ge import attachments, definitions
-from ge.data import Graph_GraphKey
-from model import graph
+from dsviper import CommitStore, CommitDatabase, CommitStateBuilder, CommitState, CommitMutableState, ValueCommitId
+
+from gei import definitions, graph
+from gei.graph import attachments
+from ge import graph as ge_graph
 
 
 class Context:
 
     @classmethod
-    def instance(cls) -> "Context":
+    def instance(cls) -> Context:
         if not hasattr(cls, "_instance"):
             setattr(cls, "_instance", cls())
         return getattr(cls, "_instance")
 
     def __init__(self):
         self.store = CommitStore()
-        self.graph_key = Graph_GraphKey.create()
+        self.graph_key = graph.GraphKey.create()
 
     def use(self, database: CommitDatabase):
         if not database.commit_ids():
             self._create_initial_commit(database, CommitStateBuilder.initial_state(database))
+
         commit_id = database.last_commit_id()
         self.store.set_state(CommitStateBuilder.state(database, commit_id))
         self.store.set_database(database)
         self.store.notify_database_did_open()
+
         self.load()
 ```
 
@@ -143,20 +148,34 @@ def setValue(self, new_value: int):
     label = f"Set Value '{new_value}' For Vertex '{self._value}'"
     self._context.store.dispatch(
         label,
-        lambda m: attachments.graph_vertex_visual_attributes_set_value(
+        lambda m: attachments.Vertex.visual_attributes.set_value(
             m, self._vertex_key, new_value))
 ```
 
 ```qml
-// GraphVertexPanel.qml
+// GraphVertexPanel.qml — preview while the stepper is held, commit on release
 SpinBox {
+    id: vertexValueSpinBox
     value: vertexModel.value
-    onValueModified: vertexModel.setValue(value)
+    editable: true
+    property bool stepping: up.pressed || down.pressed
+    onValueModified: {
+        if (stepping)
+            vertexModel.previewValue(value)
+        else
+            vertexModel.setValue(value)
+    }
+    onSteppingChanged: {
+        if (!stepping)
+            vertexModel.setValue(value)
+    }
 }
 ```
 
-The body of the lambda is **plain Python** that calls into `model/` and
-the generated `ge.attachments` API — exactly as in dsviper-ge. The only
+The body of the lambda is **plain Python** that calls into `ge/` and
+the generated `gei.graph.attachments` API — exactly as in dsviper-ge:
+`attachments.Vertex.visual_attributes.set_value` is the field operation `set_value` of
+the attachment `visual_attributes`, keyed on the concept `Vertex`. The only
 difference is the firing path: QML ➔ Slot ➔ dispatch ➔ business logic.
 
 ```{tip}
@@ -178,12 +197,26 @@ This is the layer dsviper-ge does not have. Each `*_model.py` is a
   every time the store changes.
 
 ```python
+# vertex_model.py — abridged
+from ge.context import Context
+from gei.graph import attachments
+from gei import graph
+
+
 class VertexModel(QObject):
+    """Exposes vertex value/color/position to QML when exactly 1 vertex is selected."""
+
     valueChanged = Signal()
+    # ...
 
     def __init__(self, notifier, parent=None):
         super().__init__(parent)
         self._context = Context.instance()
+        self._vertex_key: graph.VertexKey | None = None
+        self._value: int = 0
+        # ...
+        notifier.database_did_open.connect(self._on_database_did_open)
+        notifier.database_did_close.connect(self._on_database_did_close)
         notifier.state_did_change.connect(self._configure)
 
     def _get_value(self) -> int:
@@ -193,24 +226,30 @@ class VertexModel(QObject):
 
     @Slot(int)
     def setValue(self, new_value: int):
+        if not self._vertex_key:
+            return
+        label = f"Set Value '{new_value}' For Vertex '{self._value}'"
         self._context.store.dispatch(
-            f"Set Value '{new_value}'",
-            lambda m: attachments.graph_vertex_visual_attributes_set_value(
+            label,
+            lambda m: attachments.Vertex.visual_attributes.set_value(
                 m, self._vertex_key, new_value))
 
-    def _configure(self):
-        # re-read state on every notification, emit *Changed signals
-        ...
+    # _configure re-reads the state on every notification and emits the *Changed signals
 ```
 
 `main.py` instantiates each model with the notifier from
 `CommitAdminModel.notifier` and wires it to QML:
 
 ```python
+notifier = commit_admin.notifier
+list_model = ListModel(notifier)
+vertex_model = VertexModel(notifier)
+render_model = RenderModel(notifier)
+# ...
 ctx = engine.rootContext()
-ctx.setContextProperty("vertexModel", VertexModel(notifier))
-ctx.setContextProperty("listModel", ListModel(notifier))
-ctx.setContextProperty("renderModel", RenderModel(notifier))
+ctx.setContextProperty("listModel", list_model)
+ctx.setContextProperty("vertexModel", vertex_model)
+ctx.setContextProperty("renderModel", render_model)
 ```
 
 QML files reference these by name (`vertexModel.value`,
@@ -226,65 +265,76 @@ and only calls `dispatch` on release.
 
 ```python
 @Slot(QColor)
-def previewColor(self, color: QColor):  # while the picker is open
-    TransientNotifier.instance().notify_vertex_color(self._vertex_key, color)
-
+def setColor(self, new_color: QColor):
+    if not self._vertex_key:
+        return
+    color = graph.Color()
+    color.red = new_color.redF()
+    color.green = new_color.greenF()
+    color.blue = new_color.blueF()
+    label = f"Set Color For Vertex '{self._value}'"
+    self._context.store.dispatch(
+        label,
+        lambda m: attachments.Vertex.visual_attributes.set_color(
+            m, self._vertex_key, color))
 
 @Slot(QColor)
-def setColor(self, new_color: QColor):  # when the user accepts
-    self._context.store.dispatch(
-        f"Set Color For Vertex '{self._value}'",
-        lambda m: attachments.graph_vertex_visual_attributes_set_color(
-            m, self._vertex_key, _to_graph_color(new_color)))
+def previewColor(self, color: QColor):
+    """Transient color preview"""
+    if not self._vertex_key:
+        return
+    TransientNotifier.instance().notify_vertex_color(self._vertex_key, color)
 ```
 
 Render and panels subscribe to `TransientNotifier` for the live preview
 and to the store for the committed state. The two channels never mix —
 only `dispatch` writes to the DAG.
 
-## Business logic — `model/`
+## Business logic — `ge/`
 
 Identical role and almost identical code to dsviper-ge: pure-Python functions
 taking an `AttachmentMutating` plus the keys/values they need, returning
 the keys they create.
 
 ```python
-# model/vertex.py
+# ge/vertex.py
 def add(attachment_mutating: AttachmentMutating,
-        graph_key: Graph_GraphKey,
+        graph_key: graph.GraphKey,
         value: int,
-        position: Graph_Position,
-        color: Graph_Color) -> Graph_VertexKey:
+        position: graph.Position,
+        color: graph.Color) -> graph.VertexKey:
+
     vertex_key = create(attachment_mutating, value, position, color)
 
-    vertex_keys = Set_Graph_VertexKey()
+    vertex_keys = containers.Set_of_Graph_VertexKey()
     vertex_keys.add(vertex_key)
-    attachments.graph_graph_topology_union_vertex_keys(
-        attachment_mutating, graph_key, vertex_keys)
+    attachments.Graph.topology.union_vertex_keys(attachment_mutating, graph_key, vertex_keys)
 
     return vertex_key
 ```
 
-`model/` modules import from `ge/` (the generated layer); the bridge
-models import from `model/` and `ge/`. The dependency graph still flows
+`ge/` modules import from `gei/` (the generated layer); the bridge
+models import from `ge/` and `gei/`. The dependency graph still flows
 in one direction.
 
-## Generated data — `ge/`
+## Generated data — `gei/`
 
-`graph_editor/ge/` is the Kibo Python output for the Graph DSM model —
-same structure as dsviper-ge:
+`graph_editor/gei/` is the Kibo Python output for the Graph DSM model, generated with
+kibo 2 and the kibo-template-viper 2.0 pack — the same package as dsviper-ge's. The
+`kibo.toml` at the root of the repository declares it, with `output = "graph_editor"`,
+and [kibo-project](../kibo/kibo-project.md) regenerates it after a model change
+(`python3 ../kibo-project/kibo_project.py generate`):
 
-| File                | Purpose                                                |
-|---------------------|--------------------------------------------------------|
-| `ge/data.py`        | Concept keys (`Graph_VertexKey`), structures, enums    |
-| `ge/attachments.py` | Typed accessors (`graph_vertex_visual_attributes_set`) |
-| `ge/definitions.py` | Embedded DSM definitions, loaded into the database     |
-| `ge/value_type.py`  | Type registry helpers                                  |
-| `ge/path.py`        | Field paths                                            |
-| `ge/resources.py`   | Embedded definitions (base64 blob)                     |
+| Name                      | What it is                                                      |
+|---------------------------|-----------------------------------------------------------------|
+| `gei.graph`               | The DSM namespace `Graph`: keys (`graph.VertexKey`), structures (`graph.Color`) |
+| `gei.graph.attachments`   | The attachments, by concept: `attachments.Vertex.visual_attributes.set_color(…)` |
+| `gei.containers`          | One class per container shape: `containers.Set_of_Graph_VertexKey` |
+| `gei.definitions()`       | The model's definitions, loaded into the database               |
+| `gei/resources.py`        | The embedded definitions `definitions()` decodes                |
 
-Regenerated from the DSM model and never edited by hand. The mapping
-follows [Kibo's naming conventions](../kibo/index.rst).
+Never edited by hand. The mapping from DSM names to Python identifiers is described in
+[Using the generated SDK — Python](../using-generated-sdk/python.md).
 
 ## Notification flow
 
@@ -404,8 +454,8 @@ their own — is walked through in [cdbe](cdbe.md).
 1. `graph_editor/main.py` — the wiring spine: `Context`, the admin /
    documents / scripting models, the domain bridge models, and the QML
    engine boot.
-2. `graph_editor/model/context.py` — the singleton facade and database
-   lifecycle (compare side-by-side with dsviper-ge's `model/context.py`).
+2. `graph_editor/ge/context.py` — the singleton facade and database
+   lifecycle (compare side-by-side with dsviper-ge's `ge/context.py`).
 3. `graph_editor/vertex_model.py` — a complete bridge model:
    Properties, Slots, notifier subscription, `TransientNotifier`
    preview, dispatch.
@@ -417,7 +467,9 @@ their own — is walked through in [cdbe](cdbe.md).
 ## Reference
 
 * [DSM](../dsm/index.rst) — the language dsviper-ge-qml's data model is written in.
-* [Kibo](../kibo/index.rst) — the generator that produces `ge/`.
+* [Kibo](../kibo/index.rst) — the generator that produces `gei/`, driven by
+  [kibo-project](../kibo/kibo-project.md).
+* [Using the generated SDK — Python](../using-generated-sdk/python.md) — the surface of `gei/`.
 * [dsviper](../dsviper-python/index.rst) — the runtime exercised through
   `Context.store`.
 * [dsviper-components](../dsviper-components/index.rst) — the shared

@@ -57,8 +57,8 @@ A **key** identifies a specific instance of a concept. Think of it as a typed UU
 Keys are created at runtime and persist across sessions:
 
 ```python
-# Python example
-vertex_key = Graph_VertexKey.create()
+# Python example (graph is the generated module of the DSM namespace Graph)
+vertex_key = graph.VertexKey.create()
 print(vertex_key.instance_id())  # fc472756-8f9e-42aa-a06f-051d330d0108
 ```
 

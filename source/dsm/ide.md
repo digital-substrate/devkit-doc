@@ -229,8 +229,8 @@ The typical DSM development cycle:
 Write DSM  →  Validate  →  Fix Errors  →  Generate Code
    │            │             │              │
    ▼            ▼             ▼              ▼
- IDE        Cmd+Shift+B    Click error    generate.py
- Snippets   or Ctrl+Alt+V  to navigate    or dsm_util.py
+ IDE        Cmd+Shift+B    Click error    kibo_project.py
+ Snippets   or Ctrl+Alt+V  to navigate    generate
 ```
 
 ### Project Structure
@@ -242,7 +242,7 @@ my_project/
 │   └── Pools.dsm
 ├── src/generated/      # Kibo output (C++)
 ├── python/mymodel/     # Kibo output (Python)
-└── generate.py         # Code generation script
+└── kibo.toml           # Code generation, run by kibo-project
 ```
 
 ## What's Next

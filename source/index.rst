@@ -11,24 +11,29 @@ dsviper runtime gives you:
 - **Mutation DAG** - Every mutation lands as a typed commit in a content-addressed graph
 - **Seamless Python integration** - Work with native Python types, dsviper handles conversions
 
-.. code-block:: python
+.. doctest::
 
-   from dsviper import CommitDatabase, CommitStateBuilder, CommitMutableState
-   import model.attachments as ma
+   >>> from dsviper import CommitDatabase, CommitStateBuilder, CommitMutableState
+   >>> import model                  # the package Kibo generated from the DSM model
+   >>> from model import tuto        # the module of the DSM namespace Tuto
 
-   # Open a commit database
-   db = CommitDatabase.open("model.cdb")
+   >>> # Open a commit database that knows the model
+   >>> db = CommitDatabase.create_in_memory()
+   >>> _ = db.extend_definitions(model.definitions())
 
-   # Create and modify typed data
-   key = ma.Tuto_UserKey.create()
-   login = ma.Tuto_Login()
-   login.nickname = "alice"
+   >>> # Create typed data
+   >>> key = tuto.UserKey.create()
+   >>> login = tuto.Login(nickname="alice")
 
-   # Commit the mutation
-   state = CommitMutableState(CommitStateBuilder.initial_state(db))
-   ma.tuto_user_login_set(state.attachment_mutating(), key, login)
-   db.commit_mutations("Add user", state)
+   >>> # Commit the mutation
+   >>> state = CommitMutableState(CommitStateBuilder.initial_state(db))
+   >>> tuto.attachments.User.login.set(state.attachment_mutating(), key, login)
+   >>> commit_id = db.commit_mutations("Add user", state)
 
+   >>> # Read it back from the commit
+   >>> committed = CommitStateBuilder.state(db, commit_id)
+   >>> tuto.attachments.User.login.get(committed.attachment_getting(), key).unwrap().nickname
+   'alice'
 
 DevKit, dsviper, Viper C++
 --------------------------

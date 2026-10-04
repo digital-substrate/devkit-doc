@@ -50,13 +50,19 @@ method does not know it is talking to a remote state:
 // Server-side bridge — the same code runs locally and remotely.
 // When called via RPC, `mutating` is AttachmentMutatingRemote,
 // which proxies every Set/Get/Update back to the client.
-PlayerKey create(std::shared_ptr<Viper::AttachmentMutating> const & mutating,
-                 std::string const & nickname, Demo::Level level) {
-    auto const key      = PlayerKey::create();
-    auto const property = PlayerProperty{nickname, level};
-    Attachments::Player_Property::set(mutating, key, property);  // proxied!
+// From devkit-codegen-test, service/cpp/src/PlayerModelPoolBridges.cpp.
+using namespace service::demo;
+
+namespace service::player_model {
+
+PlayerKey create(std::shared_ptr<Viper::AttachmentMutating> const & mutating, std::string const & nickname, service::demo::Level level) {
+    auto const key{PlayerKey::create()};
+    auto const property{PlayerProperty{nickname, level}};
+    attachments::Player::property::set(mutating, key, property);  // proxied!
     return key;
 }
+
+} // namespace service::player_model
 ```
 
 The Viper RPC layer defines fifteen callback packet types covering

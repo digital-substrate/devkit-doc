@@ -9,8 +9,8 @@ function objects hanging off it.
 The single entry point is :meth:`ServiceRemote.connect` — everything else is
 discovered at runtime from the service's embedded DSM. The same handle connects
 to *any* Viper service with no per-service codegen; the Kibo-generated typed
-proxies (``function_pool_remotes``, ``attachment_function_pool_remotes``) are a
-comfort layer that wraps this same surface. For *what* a service is, the two
+proxies (the ``Remote`` class of each pool module, e.g. ``service.tools.Remote``)
+are a comfort layer that wraps this same surface. For *what* a service is, the two
 pool kinds, and the server side, see :doc:`/services/index`.
 
 **When to use**: Use this family when a Viper service already runs somewhere and

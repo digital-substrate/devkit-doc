@@ -3,6 +3,18 @@
 `dsm_util.py` is the command-line tool for working with DSM definitions. It validates
 models, creates databases, and generates Python packages.
 
+```{note}
+`dsm_util.py` is a tool of the 1.2 line. Its package generation renders the templates of
+the kibo-template-viper **1.2** pack, so the package it produces has the **1.2 generated
+surface** (`model.data`, `model.attachments`, names prefixed by their namespace such as
+`Tuto_Login`), not the 2.0 surface the rest of this documentation describes. To generate
+with kibo 2 and the 2.0 pack, write a `kibo.toml` and run
+{doc}`kibo-project <../kibo/kibo-project>`; the result is described in
+{doc}`../using-generated-sdk/index`. The other commands — `check`, `encode`, `decode`,
+`create_database`, `create_commit_database` — work on DSM definitions and databases only,
+and do not depend on a generated package.
+```
+
 ## Commands
 
 | Command                  | Description                  |
@@ -63,13 +75,17 @@ Use this for simpler applications that don't need history.
 
 ## Create Python Package
 
-Generate a complete Python package from DSM definitions:
+Generate a complete Python package from DSM definitions, with the 1.2 pack:
 
 ```bash
-python3 tools/dsm_util.py create_python_package model.dsm --repos /path/to/repos
+python3 tools/dsm_util.py create_python_package model.dsm
 ```
 
-### Generated Package Contents
+It runs kibo with the 1.2 pack's `python/package` templates (and, with `--wheel`, its
+`python/wheel/pyproject.toml.stg`). The 2.0 pack has no such layout: for the 2.0 surface,
+use {doc}`kibo-project <../kibo/kibo-project>`.
+
+### Generated Package Contents (1.2 surface)
 
 | Module              | Description                                                    |
 |---------------------|---------------------------------------------------------------|
@@ -83,7 +99,7 @@ python3 tools/dsm_util.py create_python_package model.dsm --repos /path/to/repos
 A model that declares function pools also emits `model.function_pools`
 (and the RPC / attachment-pool variants).
 
-### Usage
+### Usage (1.2 surface)
 
 ```pycon
 >>> import model.attachments as ma
@@ -100,12 +116,11 @@ A model that declares function pools also emits `model.function_pools`
 
 ### Options
 
-| Option       | Description                                |
-|--------------|--------------------------------------------|
-| `--repos`    | Path to Digital Substrate repositories     |
-| `--wheel`    | Generate pyproject.toml for wheel building |
-| `--kibo`     | Path to kibo JAR file                      |
-| `--template` | Path to template folder                    |
+| Option        | Description                                |
+|---------------|--------------------------------------------|
+| `--wheel`     | Generate pyproject.toml for wheel building |
+| `--kibo`      | Path to kibo JAR file                      |
+| `--templates` | Path to the folder of Python templates     |
 
 ## Encode to JSON
 
@@ -139,7 +154,7 @@ python3 tools/dsm_util.py check model.dsm
 # 3. Create database
 python3 tools/dsm_util.py create_commit_database model.dsm model.cdb
 
-# 4. Generate Python package
+# 4. Generate a Python package (the 1.2 surface; for 2.0, use kibo-project)
 python3 tools/dsm_util.py create_python_package model.dsm
 
 # 5. Use in Python

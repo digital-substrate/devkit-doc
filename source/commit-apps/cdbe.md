@@ -28,8 +28,8 @@ remove every domain-specific piece.
 |----------------------------------|--------------------------------------------------------------------------------------------------|
 | 1 — UI Layer                     | `cdbe.py` (`MainWindow` and dialogs)                                                             |
 | 2 — Application Context (facade) | `MainWindow` constructs and owns a `CommitStore`, bound to the `DSCommitStoreNotifier.instance()` convenience singleton |
-| 3 — Business Logic               | **Empty** — no domain, no `model/`                                                               |
-| 4 — Generated Data (Kibo output) | **Empty** — no DSM model, no `ge/`                                                               |
+| 3 — Business Logic               | **Empty** — no domain, no `ge/`                                                                  |
+| 4 — Generated Data (Kibo output) | **Empty** — no DSM model, no `gei/`                                                              |
 | 5 — dsviper Runtime              | `CommitStore`, `CommitDatabase`, `CommitSynchronizer`, introspection API                         |
 
 What replaces the missing layers 3 and 4 is the **runtime
@@ -80,7 +80,7 @@ dsviper-tools/
 └── resources_rc.py          # Compiled Qt resources (icons)
 ```
 
-There is no `model/`, no `ge/`, no `components/`. Everything visible
+There is no `ge/`, no `gei/`, no `components/`. Everything visible
 to the user is either `cdbe.py` itself (≈800 lines of menu / action
 plumbing) or imported from `dsviper_components`.
 
@@ -312,7 +312,7 @@ owns plus the notifier singleton, a model-agnostic central widget, and
 the shared library's admin dialogs. From there:
 
 * [dsviper-ge](dsviper-ge.md) re-introduces the domain — a DSM model, Kibo
-  output, business functions in `model/`, and a `Context` class that
+  output (`gei/`), business functions in `ge/`, and a `Context` class that
   owns the `graph_key`. Same Model, with the layers 3 and 4 filled in.
 * [dsviper-ge-qml](dsviper-ge-qml.md) keeps the same domain and swaps the
   presentation tier from Qt Widgets to Qt Quick / QML.

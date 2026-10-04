@@ -38,25 +38,27 @@ Install:
 
 Open a commit database, write a typed value, commit:
 
-.. code-block:: python
+.. doctest::
 
-   from dsviper import CommitDatabase, CommitStateBuilder, CommitMutableState
-   import model.attachments as ma
+   >>> from dsviper import CommitDatabase, CommitStateBuilder, CommitMutableState
+   >>> import model
+   >>> from model import tuto
 
-   db = CommitDatabase.open("model.cdb")
+   >>> db = CommitDatabase.create_in_memory()
+   >>> _ = db.extend_definitions(model.definitions())
 
-   key = ma.Tuto_UserKey.create()
-   login = ma.Tuto_Login()
-   login.nickname = "alice"
+   >>> key = tuto.UserKey.create()
+   >>> login = tuto.Login(nickname="alice")
 
-   state = CommitMutableState(CommitStateBuilder.initial_state(db))
-   ma.tuto_user_login_set(state.attachment_mutating(), key, login)
-   db.commit_mutations("Add user", state)
+   >>> state = CommitMutableState(CommitStateBuilder.initial_state(db))
+   >>> tuto.attachments.User.login.set(state.attachment_mutating(), key, login)
+   >>> commit_id = db.commit_mutations("Add user", state)
 
-The ``model.attachments`` module above is a generated package — the
+The ``model`` package above is a generated package — the
 :term:`static API <static API / dynamic API>` produced by Kibo from a DSM
-model. For the dynamic API (no code generation, definitions loaded at
-runtime), see :doc:`dsm`.
+model, with one module per DSM namespace (``model.tuto`` for ``Tuto``); see
+:doc:`../using-generated-sdk/python`. For the dynamic API (no code generation,
+definitions loaded at runtime), see :doc:`dsm`.
 
 
 .. _metadata-everywhere-principle:

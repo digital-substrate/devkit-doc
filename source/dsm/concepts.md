@@ -18,7 +18,8 @@ These concepts have no concrete implementation—only their keys exist at runtim
 
 ```python
 # Python: Creating concept instances
-vertex_key = Graph_VertexKey.create()
+# (graph is the generated module of the DSM namespace Graph)
+vertex_key = graph.VertexKey.create()
 print(vertex_key.instance_id())  # fc472756-8f9e-42aa-a06f-051d330d0108
 ```
 

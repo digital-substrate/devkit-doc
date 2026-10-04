@@ -18,7 +18,7 @@ isolation:
 | Layer     | Where in dsviper-ge               | DevKit doc                                            |
 |-----------|------------------------------|-------------------------------------------------------|
 | DSM model | DSM definitions of the Graph | [DSM](../dsm/index.rst)                               |
-| Code-gen  | `ge/` package (Kibo output)  | [Kibo](../kibo/index.rst)                             |
+| Code-gen  | `gei/` package (Kibo output) | [Kibo](../kibo/index.rst), [Python SDK](../using-generated-sdk/python.md) |
 | Runtime   | `dsviper.CommitStore` usage  | [dsviper](../dsviper-python/index.rst)                       |
 | Shared UI | `dsviper_components/`        | [dsviper-components](../dsviper-components/index.rst) |
 
@@ -38,13 +38,13 @@ boundary.
 │     PySide6 widgets (graph_editor.py, components/, render/) │
 ├─────────────────────────────────────────────────────────────┤
 │  2. CommitStore Facade                                      │
-│     model/context.py — singleton wrapping CommitStore       │
+│     ge/context.py — singleton wrapping CommitStore          │
 ├─────────────────────────────────────────────────────────────┤
 │  3. Business Logic (hand-written Python)                    │
-│     model/*.py — vertex.py, graph.py, selection_*.py, …     │
+│     ge/*.py — vertex.py, graph.py, selection_*.py, …        │
 ├─────────────────────────────────────────────────────────────┤
 │  4. Generated Data (Kibo output)                            │
-│     ge/*.py — data, attachments, definitions, value_type    │
+│     gei/ — the graph unit, containers, definitions()        │
 ├─────────────────────────────────────────────────────────────┤
 │  5. dsviper Runtime                                         │
 │     CommitDatabase, CommitStore, CommitMutableState, Value  │
@@ -56,12 +56,16 @@ boundary.
 ```text
 dsviper-ge/
 ├── graph_editor.py          # Application entry point (QApplication, MainWindow)
-├── ge/                      # Kibo-generated infrastructure
-│   ├── data.py              # Concept keys, structures, enums
-│   ├── attachments.py       # Typed attachment accessors
-│   ├── definitions.py       # Embedded DSM definitions
-│   └── value_type.py        # Type registry helpers
-├── model/                   # Hand-written business logic
+├── kibo.toml                # How gei/ is generated from the DSM model
+├── gei/                     # Kibo-generated infrastructure, never edited by hand
+│   ├── __init__.py          # definitions(), the units, AnyConceptKey, Key, …
+│   ├── containers.py        # One class per container shape the model uses
+│   ├── graph/               # The DSM namespace Graph
+│   │   ├── data.py          # Concept keys, structures, their runtime ids
+│   │   └── attachments.py   # One class per concept, one accessor per attachment
+│   ├── resources.py         # Embedded DSM definitions
+│   └── _codegen/            # The runtime the generated package carries
+├── ge/                      # Hand-written business logic
 │   ├── context.py           # Singleton: store + graph_key + facade
 │   ├── graph.py             # Graph creation
 │   ├── vertex.py            # Vertex creation
@@ -80,44 +84,57 @@ dsviper-ge/
 
 ## The Context singleton
 
-`model/context.py` is the single point of truth for the running database,
+`ge/context.py` is the single point of truth for the running database,
 the active graph, and the `CommitStore` that drives undo/redo and UI
 notifications. The UI never talks to a `CommitDatabase` directly.
 
 ```python
-from dsviper import CommitStore, CommitDatabase, CommitStateBuilder, CommitState, CommitMutableState
-from ge import attachments, definitions
-from ge.data import Graph_GraphKey
-from model import graph
+from dsviper import CommitStore, CommitDatabase, CommitStateBuilder, CommitState, CommitMutableState, ValueCommitId
+
+from gei import definitions, graph
+from gei.graph import attachments
+from ge import graph as ge_graph
 
 
 class Context:
 
     @classmethod
-    def instance(cls) -> "Context":
+    def instance(cls) -> Context:
         if not hasattr(cls, "_instance"):
             setattr(cls, "_instance", cls())
         return getattr(cls, "_instance")
 
     def __init__(self):
         self.store = CommitStore()
-        self.graph_key = Graph_GraphKey.create()
+        self.graph_key = graph.GraphKey.create()
+
+    def create_database(self, file_path: str) -> CommitDatabase:
+        result = CommitDatabase.create(file_path, documentation="A Graph Editor Commit Database")
+        result.extend_definitions(definitions())
+        return result
 
     def use(self, database: CommitDatabase):
         if not database.commit_ids():
             self._create_initial_commit(database, CommitStateBuilder.initial_state(database))
+
         commit_id = database.last_commit_id()
         self.store.set_state(CommitStateBuilder.state(database, commit_id))
         self.store.set_database(database)
         self.store.notify_database_did_open()
+
         self.load()
 ```
+
+The generated package is imported twice over: `graph`, the module of the DSM namespace
+`Graph` (its keys and structures), and `attachments`, the attachments of that namespace,
+grouped by the concept they are keyed on. The application's own module `ge.graph` has
+the same short name as the unit, so it is imported under an alias.
 
 The `Context` exposes the store directly (`context.store.dispatch(...)`)
 and adds a small facade for scripting (`context.dispatch`,
 `context.undo`, `context.redo`).
 
-See `dsviper-ge/model/context.py` for the full implementation.
+See `dsviper-ge/ge/context.py` for the full implementation.
 
 ## The dispatch pattern
 
@@ -131,17 +148,17 @@ the lambda returns, the store commits the mutations and notifies the UI.
 def _random_vertex_triggered(self):
     context = Context.instance()
     size = self._render_component.render_widget().size()
-    rect = Graph_Rectangle()
+    rect = graph.Rectangle()
     rect.x, rect.y, rect.w, rect.h = 0, 0, size.width(), size.height()
-    context.store.dispatch(
-        "Random Vertex",
-        lambda m: model_random.add_vertex(m, context.graph_key, rect),
-    )
+    context.store.dispatch("Random Vertex",
+                           lambda m: model_random.add_vertex(m, context.graph_key, rect))
 ```
 
-The body of the lambda is **plain Python** that calls into `model/`. Since
+`graph.Rectangle` is a structure of the generated unit, and `model_random` is the
+business module `ge.random`, imported under that name. The body of the lambda is
+**plain Python** that calls into `ge/`. Since
 business logic is already in Python, no function pool is needed — the
-lambda calls `model.random.add_vertex()` directly. This is the central
+lambda calls `ge.random.add_vertex()` directly. This is the central
 simplification that distinguishes dsviper-ge (and dsviper-ge-qml) from the C++
 equivalent.
 
@@ -151,48 +168,62 @@ stack and in the commit history. Pick labels that describe user intent,
 not implementation steps.
 ```
 
-## Business logic — `model/`
+## Business logic — `ge/`
 
-`model/` is hand-written Python organised by functional domain. Each module
+`ge/` is hand-written Python organised by functional domain. Each module
 exposes pure functions taking an `AttachmentMutating` plus the keys/values
 they need to operate on, and returns the keys they create. They are
 trivially unit-testable in isolation.
 
 ```python
-# model/vertex.py
+# ge/vertex.py
+from dsviper import AttachmentMutating
+
+from gei.graph import attachments
+from gei import containers, graph
+
+
 def add(attachment_mutating: AttachmentMutating,
-        graph_key: Graph_GraphKey,
+        graph_key: graph.GraphKey,
         value: int,
-        position: Graph_Position,
-        color: Graph_Color) -> Graph_VertexKey:
+        position: graph.Position,
+        color: graph.Color) -> graph.VertexKey:
+
     vertex_key = create(attachment_mutating, value, position, color)
 
-    vertex_keys = Set_Graph_VertexKey()
+    vertex_keys = containers.Set_of_Graph_VertexKey()
     vertex_keys.add(vertex_key)
-    attachments.graph_graph_topology_union_vertex_keys(
-        attachment_mutating, graph_key, vertex_keys)
+    attachments.Graph.topology.union_vertex_keys(attachment_mutating, graph_key, vertex_keys)
 
     return vertex_key
 ```
 
-`model/` modules import from `ge/` (the generated layer) — never the other
+`ge/` modules import from `gei/` (the generated layer) — never the other
 way around.
 
-## Generated data — `ge/`
+## Generated data — `gei/`
 
-`ge/` is the Kibo output for the Python target. It is regenerated from the
-DSM model and never edited by hand. The four files most consumed by the
-rest of the app:
+`gei/` is the Kibo output for the Python target, generated with kibo 2 and the
+kibo-template-viper 2.0 pack. `kibo.toml` at the root of the repository declares it — the
+model's definitions, the infrastructure name `gei`, the pack's line `2` and the `Base`
+feature — and [kibo-project](../kibo/kibo-project.md) regenerates it after a model
+change:
 
-| File                | Purpose                                                |
-|---------------------|--------------------------------------------------------|
-| `ge/data.py`        | Concept keys (`Graph_VertexKey`), structures, enums    |
-| `ge/attachments.py` | Typed accessors (`graph_vertex_visual_attributes_set`) |
-| `ge/definitions.py` | Embedded DSM definitions, loaded into the database     |
-| `ge/value_type.py`  | Type registry helpers                                  |
+```bash
+python3 ../kibo-project/kibo_project.py generate
+```
 
-The mapping from DSM concepts to Python identifiers follows
-[Kibo's naming conventions](../kibo/index.rst).
+It is never edited by hand. What the rest of the app consumes:
+
+| Name                      | What it is                                                      |
+|---------------------------|-----------------------------------------------------------------|
+| `gei.graph`               | The DSM namespace `Graph`: keys (`graph.VertexKey`), structures (`graph.Position`) |
+| `gei.graph.attachments`   | The attachments, by concept: `attachments.Vertex.visual_attributes.set(…)` |
+| `gei.containers`          | One class per container shape: `containers.Set_of_Graph_VertexKey` |
+| `gei.definitions()`       | The model's definitions, loaded into the database               |
+
+The mapping from DSM names to Python identifiers, and the surface of each of these, is
+described in [Using the generated SDK — Python](../using-generated-sdk/python.md).
 
 ## Notification flow
 
@@ -334,7 +365,7 @@ The scripts a user writes from the Editor have direct access to:
 - `ctx.dispatch("label", lambda m: …)` — the same dispatch path the UI uses.
 - `store.state()`, `store.attachment_getting()` — read-only access to the
   current state.
-- domain modules (`from model import …`) — the same business logic
+- domain modules (`from ge import …`) — the same business logic
   exposed to the menu actions.
 
 The editor itself contributes a pre-wired **Editor menu** (open / save /
@@ -369,8 +400,8 @@ is walked through in [cdbe](cdbe.md).
 
 1. `graph_editor.py` lines around `_setup_connections` — how the UI wires
    itself to the store's signals.
-2. `model/context.py` — the singleton facade and database lifecycle.
-3. `model/vertex.py`, `model/graph.py` — the smallest, most readable
+2. `ge/context.py` — the singleton facade and database lifecycle.
+3. `ge/vertex.py`, `ge/graph.py` — the smallest, most readable
    examples of model functions.
 4. `graph_editor.py` lines around `_random_vertex_triggered` — a complete
    round trip: UI action → dispatch → model → notification → redraw.
@@ -380,7 +411,9 @@ is walked through in [cdbe](cdbe.md).
 ## Reference
 
 * [DSM](../dsm/index.rst) — the language dsviper-ge's data model is written in.
-* [Kibo](../kibo/index.rst) — the generator that produces `ge/`.
+* [Kibo](../kibo/index.rst) — the generator that produces `gei/`, driven by
+  [kibo-project](../kibo/kibo-project.md).
+* [Using the generated SDK — Python](../using-generated-sdk/python.md) — the surface of `gei/`.
 * [dsviper](../dsviper-python/index.rst) — the runtime exercised through
   `Context.store`.
 * [dsviper-components](../dsviper-components/index.rst) — the shared

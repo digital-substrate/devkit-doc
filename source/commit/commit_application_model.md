@@ -46,8 +46,8 @@ In C++, the Context additionally holds the generated **local
 function-pool wrapper classes** (see below). In Python these wrapper
 classes are unnecessary — a Python module already serves the same
 role, so the Context holds direct references to the business-logic
-modules. (Distinct from `function_pool_remotes`, the RPC proxy
-classes generated in both languages — see
+modules. (Distinct from the pools' `Remote` classes, the RPC proxies
+generated in both languages — see
 {doc}`../services/services`.)
 
 ## Two language profiles
@@ -86,7 +86,7 @@ alongside [Viper C++](../ecosystem/naming.md#viper-c);
 │     Domain functions: Vertex, Edge, Graph, …                │
 ├─────────────────────────────────────────────────────────────┤
 │  5. Generated Infrastructure (Kibo)                         │
-│     Data, Database, ValueEncoder, FunctionPools             │
+│     Data, Codec, Attachments, Pools                         │
 ├─────────────────────────────────────────────────────────────┤
 │  6. Viper C++ Runtime                                       │
 │     Type, Value, Commit, Database, RPC                      │
@@ -97,8 +97,8 @@ Function pools (and their bridges) exist for **two reasons**:
 
 * They expose C++ business logic to the **Viper C++ runtime** through a
   typed surface — typed methods registered with Viper C++'s type system,
-  whose implementations are routed to hand-written C++ code through
-  the generated pool bridges.
+  whose implementations are hand-written C++ functions, registered
+  by the pool Kibo generates.
 * They give the dispatch layer a uniform handle on actions —
   `store->dispatch("label", pool.function, args...)` — without
   knowing where the implementation lives.
@@ -192,7 +192,7 @@ lambda calls the model functions directly.
 │     Owns the store, exposes domain state and dispatch       │
 ├─────────────────────────────────────────────────────────────┤
 │  3. Business Logic (hand-written Python)                    │
-│     model/*.py — direct calls, no pool indirection          │
+│     ge/*.py — direct calls, no pool indirection             │
 ├─────────────────────────────────────────────────────────────┤
 │  4. Generated Data (Kibo output)                            │
 │     Data classes, attachments, definitions                  │
@@ -203,19 +203,20 @@ lambda calls the model functions directly.
 ```
 
 A real Python Application Context, abridged from `dsviper-ge`
-(`model/context.py`):
+(`ge/context.py`; `graph` is the generated module of the DSM namespace
+`Graph`):
 
 ```python
 class Context:
     @classmethod
-    def instance(cls) -> "Context":
+    def instance(cls) -> Context:
         if not hasattr(cls, "_instance"):
             setattr(cls, "_instance", cls())
         return getattr(cls, "_instance")
 
     def __init__(self):
         self.store = CommitStore()
-        self.graph_key = Graph_GraphKey.create()
+        self.graph_key = graph.GraphKey.create()
 
     # Database lifecycle
     def use(self, database: CommitDatabase): ...
@@ -238,7 +239,7 @@ class Context:
 
 Same three ingredients as the C++ Context: singleton, composed
 `store`, domain state (`graph_key`). The function-pool block is
-absent — Python business logic in `model/*.py` is called directly
+absent — Python business logic in `ge/*.py` is called directly
 from the dispatch lambda.
 
 This profile applies to all four Commit Applications shipped or
@@ -283,7 +284,7 @@ In Python, dispatch takes a lambda calling business logic directly
 
 ```python
 store.dispatch("Create Vertex",
-               lambda m: model.vertex.add(m, graph_key, value, position))
+               lambda m: ge.vertex.add(m, graph_key, value, position, color))
 ```
 
 After the lambda returns, the store has:

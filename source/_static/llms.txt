@@ -27,22 +27,26 @@ DevKit is the **distribution** that bundles **DSM** (the modeling language), **K
 
 ## Kibo — code generation
 
-- [Usage](https://docs.digitalsubstrate.io/kibo/usage.html): Running Kibo to produce per-app Bridge code.
-- [Templates](https://docs.digitalsubstrate.io/kibo/templates.html): Available templates.
-- [Template model](https://docs.digitalsubstrate.io/kibo/template_model.html): How to author or extend a template.
+- [Usage](https://docs.digitalsubstrate.io/kibo/usage.html): Running the kibo 2 JAR: its options, targets and the files it writes.
+- [Templates](https://docs.digitalsubstrate.io/kibo/templates.html): What a templated feature is, and how a template pack groups features.
+- [kibo-project](https://docs.digitalsubstrate.io/kibo/kibo-project.html): Generating a project from a kibo.toml: targets, features, the pack and the JAR it resolves.
+- [Template model](https://docs.digitalsubstrate.io/kibo/template_model.html): Template Model 2: the entries, units, binding types and formats a template reads.
+- [Migrating a template pack](https://docs.digitalsubstrate.io/kibo/migrating.html): Moving a template pack from Template Model 1 to Template Model 2, checked by a fixed point.
 
 ## kibo-template-viper — first-party template pack
 
-- [Features](https://docs.digitalsubstrate.io/kibo-template-viper/features.html): What the first-party template pack emits — C++/Python surfaces, RPC, dispatch.
-- [Wheels](https://docs.digitalsubstrate.io/kibo-template-viper/wheels.html): Generated wheel layout and build options.
-- [npm Packages](https://docs.digitalsubstrate.io/kibo-template-viper/node.html): Creating a distributable npm package from your DSM model — the TypeScript analogue of Python wheels <wheels>, over the @digitalsubstrate/dsviper Node binding instead of CPython.
+- [Features](https://docs.digitalsubstrate.io/kibo-template-viper/features.html): The pack's features per target — C++, Python, TypeScript — their dependencies and what each renders.
+- [Wheels](https://docs.digitalsubstrate.io/kibo-template-viper/wheels.html): Building and installing the generated Python package as a wheel.
+- [npm packages](https://docs.digitalsubstrate.io/kibo-template-viper/node.html): Building and installing the generated TypeScript package with npm.
+- [Python and TypeScript](https://docs.digitalsubstrate.io/kibo-template-viper/parity.html): One design in two idioms: how the Python and TypeScript packages spell the same surface.
 
 ## Using your generated SDK
 
 - [Using your generated SDK](https://docs.digitalsubstrate.io/using-generated-sdk/index.html): The generated consumer SDK layer — one self-contained page per language.
-- [Generated SDK in Python](https://docs.digitalsubstrate.io/using-generated-sdk/python.html): Types, the proxy posture, attachment-verb mutation, and the commit loop.
-- [Generated SDK in Node](https://docs.digitalsubstrate.io/using-generated-sdk/node.html): Types, attachment-verb objects, and the commit loop in TypeScript.
-- [Generated SDK in C++](https://docs.digitalsubstrate.io/using-generated-sdk/cpp.html): Native value types and the static/dynamic ValueEncoder/ValueDecoder bridge.
+- [Generated SDK in Python](https://docs.digitalsubstrate.io/using-generated-sdk/python.html): Units, proxies and ownership, containers, keys, attachments, stores, the bridge, errors and pools.
+- [Generated SDK in Node](https://docs.digitalsubstrate.io/using-generated-sdk/node.html): The same surface in TypeScript: units, proxies, containers, keys, attachments, stores and pools.
+- [Generated SDK in C++](https://docs.digitalsubstrate.io/using-generated-sdk/cpp.html): Native value types, attachments, and the codec crossing to a Viper Value through the static layer.
+- [Migrating application code from 1.2](https://docs.digitalsubstrate.io/using-generated-sdk/migrating.html): What moved in the generated surface between 1.2 and 2.0, per language, with a worked example.
 
 ## dsviper for Python
 
@@ -113,7 +117,7 @@ DevKit is the **distribution** that bundles **DSM** (the modeling language), **K
 ## Tools and components
 
 - [Editors](https://docs.digitalsubstrate.io/dsviper-tools/editors.html): Standalone editor applications.
-- [dsm_util](https://docs.digitalsubstrate.io/dsviper-tools/dsm_util.html): CLI utility for DSM model inspection.
+- [dsm_util](https://docs.digitalsubstrate.io/dsviper-tools/dsm_util.html): CLI utility for DSM models and databases; its package generation is the 1.2 surface.
 - [Export & Import](https://docs.digitalsubstrate.io/dsviper-tools/export_import.html): Round-trip a database state through an open JSON bundle — portability and backup, no lock-in.
 - [Server](https://docs.digitalsubstrate.io/dsviper-tools/server.html): The dsviper server component.
 - [Widgets](https://docs.digitalsubstrate.io/dsviper-components/widgets.html): Reusable UI widgets over dsviper.
@@ -121,7 +125,7 @@ DevKit is the **distribution** that bundles **DSM** (the modeling language), **K
 
 ## Release notes
 
-- [Release notes](https://docs.digitalsubstrate.io/changelog.html): Curated changelog for the runtime, the Python wheel and the Node binding across the 1.2.x line.
+- [Release notes](https://docs.digitalsubstrate.io/changelog.html): Curated changelog for the runtime, the Python wheel and the Node binding across the 1.2.x line, and for kibo 2.0 and its template pack.
 
 ## For LLM agents and RAG pipelines
 

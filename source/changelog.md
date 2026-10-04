@@ -1,6 +1,7 @@
 # Release notes
 
-User-facing release notes for the Viper runtime and the two `dsviper` bindings.
+User-facing release notes for the Viper runtime and the two `dsviper` bindings, and for
+the code generator that targets them, kibo, with its template pack.
 
 There is **one runtime contract** — Viper C++ on the `1.2` line (`MAJOR.MINOR`) —
 delivered through **two installable packages**, each with its **own independent
@@ -54,6 +55,67 @@ satellite versions itself strictly and independently: `dsviper-query` is at 0.1.
 `dsviper-database-tools` at 0.2.4, and neither number tracks `1.2`. Viper does not
 yet — it is the runtime, it is still stabilising, and the breaking changes listed
 below are what that looks like.
+
+## Code generation — kibo 2.0 and kibo-template-viper 2.0
+
+Kibo and its template pack version themselves on their own: their `2.0.0` is a
+generator line, not a runtime one. Both generate over the **1.2 runtime** described on
+this page, which does not change; kibo 1.2 and the 1.2 pack stay supported on their
+`LTS-1.2` line, documented in the 1.2 version of this site. The full lists are the two
+repositories' CHANGELOGs:
+[kibo](https://github.com/digital-substrate/kibo/blob/main/CHANGELOG.md),
+[kibo-template-viper](https://github.com/digital-substrate/kibo-template-viper/blob/main/CHANGELOG.md).
+
+### kibo 2.0.0
+
+- **Template Model 2.** The accessors that describe a type as a binding sees it are
+  renamed (`pythonType` → `bindingType`, …) and answer for the target being generated;
+  every entity carries its DSM name, `dsmType`. **Breaking** for a template pack: a
+  Model 1 pack does not render until migrated, and a C++ pack migrates with no edit —
+  {doc}`kibo/migrating`.
+- **`--converter` selects a target** — `cpp`, `python` or `typescript` — and kibo knows
+  how each binding spells the DSM types.
+- **A template renders once per scope it declares**: `model(m)` once, `unit(u)` once per
+  DSM namespace, `pool(p)` and `attachment_pool(p)` once per pool, beside `main(m)`. A
+  namespace carries what it needs to be generated on its own: its dependencies, its
+  include guard, its attachments grouped by concept.
+- **Formats** carry a model's documentation into generated code (`string`, `docstring`,
+  `comment`), and one snake_case rule names static symbols (`snake`, `usnake`).
+- **A model whose outputs would collide is refused before rendering**, and a template
+  that reads a name the model does not carry is reported on stderr.
+- **kibo-project** drives a project's generation from a `kibo.toml`, in place of each
+  project's `generate.py` — {doc}`kibo/kibo-project`.
+
+### kibo-template-viper 2.0.0
+
+Requires kibo 2. Targets `dsviper >= 1.2.29`, `@digitalsubstrate/dsviper >= 1.2.14` and a
+`viper` C++ runtime that carries its static layer. **Breaking**: the generated surface
+changes throughout, and code written against the 1.2 output needs migrating —
+{doc}`using-generated-sdk/migrating`.
+
+- **One DSM namespace is one unit**: a C++ namespace and file prefix, a Python module, a
+  TypeScript directory. Types lose their namespace prefix, and two namespaces may
+  declare the same name.
+- **A project selects features** from `features.json`, and the dependencies follow —
+  {doc}`kibo-template-viper/features`.
+- **Python and TypeScript are proxies over the runtime**: a proxy is a box around one
+  Viper value, with its type and the bridge `wrap_value` / `unwrap_value`
+  (`wrapValue` / `unwrapValue`); containers are declared classes named by their shape
+  (`Vector_of_uint8`); keys follow the runtime's model, one instance seen through many
+  views; errors follow the binding's three layers. The two packages expose the same
+  surface, member by member, each in its language's idiom —
+  {doc}`kibo-template-viper/parity`.
+- **Attachments are objects**, grouped by the concept they are keyed on, in every target.
+- **The generated Python is fully annotated**, its runtime included, and the generated
+  TypeScript compiles under `--strict`.
+- **The generated C++ goes through the runtime's static layer** to cross to a `Value`,
+  to serialize and to hash; `Stream`, `ValueCodec`, `Json`, `ValueHasher`, `Database` and
+  the generated attachment pool are removed, their work done by the runtime.
+- **Function pools use the DSM spelling** for their functions, in C++ and on the wire;
+  each language keeps its idiom for the static names. `Pool` is the server side,
+  `PoolRemote` the client side.
+- **Added**: `Fields` (C++), every field's name and path as constants; `Package`
+  (TypeScript), a ready-to-build npm package.
 
 ## Viper C++ runtime
 

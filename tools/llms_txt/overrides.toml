@@ -74,30 +74,50 @@ sort = 80
 
 [overrides."https://docs.digitalsubstrate.io/kibo/usage.html"]
 title = "Usage"
-description = "Running Kibo to produce per-app Bridge code."
+description = "Running the kibo 2 JAR: its options, targets and the files it writes."
 sort = 10
 
 [overrides."https://docs.digitalsubstrate.io/kibo/templates.html"]
 title = "Templates"
-description = "Available templates."
+description = "What a templated feature is, and how a template pack groups features."
 sort = 20
 
 [overrides."https://docs.digitalsubstrate.io/kibo/template_model.html"]
 title = "Template model"
-description = "How to author or extend a template."
+description = "Template Model 2: the entries, units, binding types and formats a template reads."
 sort = 30
+
+[overrides."https://docs.digitalsubstrate.io/kibo/kibo-project.html"]
+title = "kibo-project"
+description = "Generating a project from a kibo.toml: targets, features, the pack and the JAR it resolves."
+sort = 25
+
+[overrides."https://docs.digitalsubstrate.io/kibo/migrating.html"]
+title = "Migrating a template pack"
+description = "Moving a template pack from Template Model 1 to Template Model 2, checked by a fixed point."
+sort = 40
 
 # ---- kibo-template-viper ---------------------------------------------
 
 [overrides."https://docs.digitalsubstrate.io/kibo-template-viper/features.html"]
 title = "Features"
-description = "What the first-party template pack emits — C++/Python surfaces, RPC, dispatch."
+description = "The pack's features per target — C++, Python, TypeScript — their dependencies and what each renders."
 sort = 10
 
 [overrides."https://docs.digitalsubstrate.io/kibo-template-viper/wheels.html"]
 title = "Wheels"
-description = "Generated wheel layout and build options."
+description = "Building and installing the generated Python package as a wheel."
 sort = 20
+
+[overrides."https://docs.digitalsubstrate.io/kibo-template-viper/node.html"]
+title = "npm packages"
+description = "Building and installing the generated TypeScript package with npm."
+sort = 30
+
+[overrides."https://docs.digitalsubstrate.io/kibo-template-viper/parity.html"]
+title = "Python and TypeScript"
+description = "One design in two idioms: how the Python and TypeScript packages spell the same surface."
+sort = 40
 
 # ---- Using your generated SDK ----------------------------------------
 
@@ -108,18 +128,23 @@ sort = 10
 
 [overrides."https://docs.digitalsubstrate.io/using-generated-sdk/python.html"]
 title = "Generated SDK in Python"
-description = "Types, the proxy posture, attachment-verb mutation, and the commit loop."
+description = "Units, proxies and ownership, containers, keys, attachments, stores, the bridge, errors and pools."
 sort = 20
 
 [overrides."https://docs.digitalsubstrate.io/using-generated-sdk/node.html"]
 title = "Generated SDK in Node"
-description = "Types, attachment-verb objects, and the commit loop in TypeScript."
+description = "The same surface in TypeScript: units, proxies, containers, keys, attachments, stores and pools."
 sort = 30
 
 [overrides."https://docs.digitalsubstrate.io/using-generated-sdk/cpp.html"]
 title = "Generated SDK in C++"
-description = "Native value types and the static/dynamic ValueEncoder/ValueDecoder bridge."
+description = "Native value types, attachments, and the codec crossing to a Viper Value through the static layer."
 sort = 40
+
+[overrides."https://docs.digitalsubstrate.io/using-generated-sdk/migrating.html"]
+title = "Migrating application code from 1.2"
+description = "What moved in the generated surface between 1.2 and 2.0, per language, with a worked example."
+sort = 50
 
 # ---- dsviper ---------------------------------------------------------
 
@@ -253,7 +278,7 @@ sort = 10
 
 [overrides."https://docs.digitalsubstrate.io/dsviper-tools/dsm_util.html"]
 title = "dsm_util"
-description = "CLI utility for DSM model inspection."
+description = "CLI utility for DSM models and databases; its package generation is the 1.2 surface."
 sort = 20
 
 [overrides."https://docs.digitalsubstrate.io/dsviper-tools/export_import.html"]
@@ -357,5 +382,5 @@ sort = 200
 
 [overrides."https://docs.digitalsubstrate.io/changelog.html"]
 title = "Release notes"
-description = "Curated changelog for the runtime, the Python wheel and the Node binding across the 1.2.x line."
+description = "Curated changelog for the runtime, the Python wheel and the Node binding across the 1.2.x line, and for kibo 2.0 and its template pack."
 sort = 10

@@ -1,0 +1,43 @@
+// The shapes the "Using your generated SDK" chapter needs beyond Tuto: a concept that is
+// another, a club, a structure holding a structure and containers, a declared default.
+namespace Studio {3a5c2f8e-6b1d-4c7a-9e2f-8d4b6a1c3e5f} {
+
+"""A member of the studio."""
+concept Member;
+
+"""A member who administers the others."""
+concept Admin is a Member;
+
+"""A device a member signs in from."""
+concept Device;
+
+"""Anything that signs in: a member or a device."""
+club Principal;
+membership Principal Member;
+membership Principal Device;
+
+"""A name, as a member gives it."""
+struct Name {
+    string first;
+    string last;
+};
+
+"""How a member presents itself."""
+struct Profile {
+    Name name;
+    vector<string> tags;
+    set<string> roles;
+    map<string, string> settings;
+    optional<string> motto;
+    uint8 level = 1;
+};
+
+"""What a principal signs in with."""
+struct Credentials {
+    string login;
+};
+
+attachment<Member, Profile> profile;
+attachment<Principal, Credentials> credentials;
+
+};

@@ -158,7 +158,7 @@ db = _new_tuto_db()
 # The committed kibo 2 Tuto SDK, for the "Using your generated SDK" chapter:
 # `model` is the package, `tuto` the module of the DSM namespace Tuto.
 import model
-from model import tuto, containers
+from model import tuto, studio, containers
 '''
 
 

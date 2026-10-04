@@ -8,10 +8,10 @@
 
 Each DSM namespace is a module holding its structures, enumerations and keys, and its
 attachments as `attachments`:
-`model.tuto`.
+`model.tuto`, `model.studio`.
 `containers` holds one class per container shape the model uses, in a structure, an
 attachment or a pool; another shape is built with the runtime, from Viper values:
-`dsviper.Value.create(dsviper.TypeSet(model.tuto.UserKey.type()), [k.unwrap_value() for k in keys])`.
+`dsviper.Value.create(dsviper.TypeSet(model.studio.AdminKey.type()), [k.unwrap_value() for k in keys])`.
 `definitions()` is the model.
 
 A document is stored in a dsviper database that knows the model, and read and written
@@ -20,7 +20,7 @@ through an attachment, given the database or a state:
     db = dsviper.Database.create_in_memory()     # a CommitDatabase keeps every commit
     db.extend_definitions(model.definitions())
     db.begin_transaction()
-    model.tuto.attachments.User.account.set(db, key, document)
+    model.studio.attachments.Member.profile.set(db, key, document)
     db.commit()
 
 A generated object is a box around a Viper value: `p.unwrap_value()` gives it, and
@@ -41,7 +41,7 @@ import dsviper as _dsviper
 from . import resources
 from ._codegen import AnyConceptKey, AnyValue, AttachmentProxy, Key
 
-__all__ = ["AnyConceptKey", "AnyValue", "AttachmentProxy", "Key", "containers", "definitions", "tuto"]
+__all__ = ["AnyConceptKey", "AnyValue", "AttachmentProxy", "Key", "containers", "definitions", "tuto", "studio"]
 
 @_functools.cache
 def definitions() -> _dsviper.DefinitionsConst:
@@ -53,3 +53,4 @@ def definitions() -> _dsviper.DefinitionsConst:
 
 from . import containers  # noqa: E402
 from . import tuto  # noqa: E402
+from . import studio  # noqa: E402

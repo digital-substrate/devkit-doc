@@ -11,7 +11,8 @@ Producing the package is {doc}`kibo-project <../kibo/kibo-project>`'s job, packa
 wheel is described in {doc}`../kibo-template-viper/wheels`, and the raw runtime the package
 delegates to is the {doc}`dsviper for Python <../dsviper-python/index>` chapter.
 
-The examples are doctests, run against the package generated from this small model:
+The examples are doctests, run against the package generated from two small DSM
+namespaces. `Tuto` is the model the runtime pages use:
 
 ```text
 namespace Tuto {f529bc42-0618-4f54-a3fb-d55f95c5ad03} {
@@ -31,13 +32,42 @@ attachment<User, Account> account;
 };
 ```
 
-The infrastructure name (Kibo's `-n`) is `model`, so the package is `model`. Tuto has no
-nested structure, no container field, no concept inheritance, no club and no pool; where a
-feature needs one, the example uses the `features` model of the generator's laboratory,
-[devkit-codegen-test](https://github.com/digital-substrate/devkit-codegen-test) — a
-namespace `Demo` with `concept ConceptC is a ConceptB;`, a club `Klub` whose members are
-`ConceptC` and `ConceptD`, and structures `StructureS`, `StructureT`, `StructureU`,
-`StructureV` — and says so. Those snippets assume `from features import demo, containers`.
+`Studio` adds what Tuto lacks — a concept that is another, a club, a structure holding a
+structure and containers, a declared default:
+
+```text
+namespace Studio {3a5c2f8e-6b1d-4c7a-9e2f-8d4b6a1c3e5f} {
+
+concept Member;
+concept Admin is a Member;
+concept Device;
+
+club Principal;
+membership Principal Member;
+membership Principal Device;
+
+struct Name { string first; string last; };
+struct Profile {
+    Name name;
+    vector<string> tags;
+    set<string> roles;
+    map<string, string> settings;
+    optional<string> motto;
+    uint8 level = 1;
+};
+struct Credentials { string login; };
+
+attachment<Member, Profile> profile;
+attachment<Principal, Credentials> credentials;
+
+};
+```
+
+The infrastructure name (Kibo's `-n`) is `model`, so the package is `model`, with one module
+per namespace: `model.tuto` and `model.studio`. Neither declares a function pool; the pool
+examples use the `service` model of the generator's laboratory,
+[devkit-codegen-test](https://github.com/digital-substrate/devkit-codegen-test), and are
+not doctests, since a remote pool needs a running service.
 
 ## The package
 
@@ -151,12 +181,16 @@ Tuto::Login(nickname=, password=)
 True
 ```
 
-In the `features` model, `StructureV` declares `uint8 f_uint8 = 8;`:
+Studio's `Profile` declares `uint8 level = 1;`:
 
-```python
-v = demo.StructureV()
-v.f_uint8                                            # 8
-demo.StructureV.type().fields()[1].default_value()   # 8
+```{doctest}
+>>> from model import studio
+>>> studio.Profile().level
+1
+>>> [field.name() for field in studio.Profile.type().fields()][5]
+'level'
+>>> studio.Profile.type().fields()[5].default_value()
+1
 ```
 
 ## Enumerations
@@ -176,6 +210,8 @@ An enumeration is an `enum.Enum` whose values are the DSM case names:
 <Status.ACTIVE: 'active'>
 >>> tuto.Status.ACTIVE.index()
 1
+>>> tuto.Status.PENDING < tuto.Status.ACTIVE < tuto.Status.COMPLETED   # in declaration order
+True
 ```
 
 A case is a host value, not a box: it converts to the runtime's enumeration value with
@@ -233,23 +269,19 @@ True
 'dave'
 ```
 
-In the `features` model, `StructureT` holds a `StructureS` field and `StructureU` a
-`set<StructureS>`:
+Studio's `Profile` holds a `Name`. A field read is live, and a field write keeps the object
+it is given:
 
-```python
-t = demo.StructureT()
-t.field_structure_s.f_string = "live"       # a field read is live
-t.field_structure_s.f_string                # 'live'
-
-s = demo.StructureS(f_string="given")
-t.field_structure_s = s                     # a field write keeps s
-s.f_string = "after"
-t.field_structure_s.f_string                # 'after'
-
-u = demo.StructureU()
-u.f_set_s.add(s)                            # a set element is a copy
-s.f_string = "not in the set"
-u.f_set_s                                   # {{f_float=0.0, f_string='after'}}
+```{doctest}
+>>> profile = studio.Profile()
+>>> profile.name.first = "Ada"              # changes profile
+>>> profile.name.first
+'Ada'
+>>> name = studio.Name(first="Grace")
+>>> profile.name = name                     # profile keeps name
+>>> name.last = "Hopper"
+>>> profile.name
+Studio::Name(first=Grace, last=Hopper)
 ```
 
 ## Containers
@@ -297,28 +329,48 @@ Each kind declares what it does, so a type checker refuses a method the kind doe
 Every view also has `unwrap_value()`, `copy()`, `==`, `hash()` and `<`, and the sequences
 `len`, `in`, `empty()`, `to_list()`.
 
-In the `features` model:
+A container field reads as its declared class — `Profile`'s fields are
+`containers.Vector_of_string`, `Set_of_string`, `Map_of_string_to_string` and
+`Optional_of_string` — and is changed in place:
 
-```python
-u = demo.StructureU()
-u.f_vector.extend([1, 2, 3])                # vector<uint8>
-u.f_vector[0]                               # 1
-u.f_map_s2["a"] = demo.StructureS()         # map<string, StructureS>
-u.f_optional = 4                            # optional<uint8>
-u.f_optional.unwrap()                       # 4
-u.f_variant.set_uint8(7)                    # variant<string, uint8, StructureS>
-u.f_variant.is_uint8(), u.f_variant.get_uint8()   # (True, 7)
-
-v = demo.StructureV()                       # mat<uint8, 2, 3> f_mat = {{1, 2, 3}, {4, 5, 6}}
-v.f_mat[1, 2], v.f_mat[1]                   # (6, (4, 5, 6))
-len(v.f_mat), v.f_mat.size()                # (2, 6)
+```{doctest}
+>>> profile = studio.Profile()
+>>> profile.tags.extend(["math", "logic"])  # vector<string>
+>>> profile.tags[0], len(profile.tags)
+('math', 2)
+>>> profile.roles.add("editor")             # set<string>
+>>> "editor" in profile.roles
+True
+>>> profile.settings["theme"] = "dark"      # map<string, string>
+>>> profile.settings["theme"]
+'dark'
+>>> profile.motto = "Ask"                   # optional<string>: its element, or None
+>>> profile.motto.unwrap()
+'Ask'
+>>> profile.motto = None
+>>> bool(profile.motto)
+False
 ```
 
-A container field also takes the host's own collection when nothing in it is generated
-(`u.f_vector = [1, 2]`, `u.f_set = {1, 2}`): the runtime decodes it at the line that writes
-it. A host collection of generated values is refused with `TypeError`; build its declared
-class instead, `containers.Set_of_Demo_StructureS([s1, s2])`, which checks every element
-where it is built.
+A container field also takes the host's own collection when nothing in it is generated: the
+runtime decodes it at the line that writes it. A host collection of generated values is
+refused with `TypeError`; build its declared class instead (`containers.Set_of_Tuto_UserKey(keys)`),
+which checks every element where it is built:
+
+```{doctest}
+>>> profile.roles = {"admin", "editor"}
+>>> profile.roles
+{'admin', 'editor'}
+>>> profile.tags = [studio.Name()]
+Traceback (most recent call last):
+    ...
+TypeError: a native container of generated values: ...
+```
+
+A variant, a tuple, an xarray, a vec and a mat behave as the table says: a variant tells,
+reads and writes each alternative by its own method (`is_string()`, `get_string()`,
+`set_string()`), and a `mat<uint8, 2, 3>` holding `{{1, 2, 3}, {4, 5, 6}}` gives
+`m[1, 2] == 6`, `m[1] == (4, 5, 6)`, `len(m) == 2` and `m.size() == 6`.
 
 A shape the model does not use has no class. Build it with the runtime, from Viper values:
 
@@ -362,25 +414,50 @@ True
 ```
 
 `from_any_concept_key()` answers `None` when the instance is not one of the concept. In
-the `features` model, `ConceptC` is a `ConceptB`, both in `Demo`, and `Klub` has `ConceptC`
-and `ConceptD` as members:
+Studio, `Admin` is a `Member`:
 
-```python
-c = demo.ConceptCKey.create()
-b = c.to_parent_key()                       # widening: a ConceptBKey of the same instance
-b                                           # …:Demo::ConceptBKey(Demo::ConceptCKey)
-b.to_concept_c_key() == c                   # narrowing, declared in the parent's namespace
-demo.ConceptBKey.create().to_concept_c_key()          # None: not a ConceptC
-demo.ConceptCKey.from_any_concept_key(b) == c         # narrowing from any view
-
-k = demo.KlubKey.from_concept_c_key(c)      # a club key, from a member's key
-k == c, k.to_concept_c_key() == c, k.to_concept_d_key()   # (True, True, None)
+```{doctest}
+>>> admin = studio.AdminKey.create()
+>>> member = admin.to_parent_key()          # widening: a MemberKey of the same instance
+>>> member.description()
+'...:Studio::MemberKey(Studio::AdminKey)'
+>>> member == admin
+True
+>>> member.to_admin_key() == admin          # narrowing, by the parent
+True
+>>> studio.AdminKey.from_any_concept_key(member) == admin    # narrowing from any view
+True
+>>> studio.MemberKey.create().to_admin_key() is None         # not an Admin
+True
 ```
 
 A parent gives `to_<child>_key()` only when the child is declared in the parent's
-namespace, which the parent can name; otherwise narrow with `from_any_concept_key()`. A club
-key is built from a member's key (`demo.KlubKey(c)` too); it has no `create()`, since a club
-has no instances of its own.
+namespace, which the parent can name; otherwise narrow with `from_any_concept_key()`.
+
+A club key is built from a member's key, and converts back to each member; the club
+`Principal` has `Member` and `Device` as members. A club has no instances of its own, so
+its class has no `create()`; with no argument, it gives the invalid key:
+
+```{doctest}
+>>> someone = studio.MemberKey.create()
+>>> principal = studio.PrincipalKey.from_member_key(someone)
+>>> principal == someone, studio.PrincipalKey(someone) == principal
+(True, True)
+>>> principal.to_member_key() == someone, principal.to_device_key()
+(True, None)
+>>> studio.PrincipalKey().is_valid()
+False
+```
+
+An instance of a concept that descends from a member is in the club too: an `Admin` is a
+`Member`, so it is a `Principal`.
+
+```{doctest}
+>>> studio.PrincipalKey(admin.to_parent_key()) == admin
+True
+>>> studio.PrincipalKey.from_any_concept_key(admin.to_any_concept_key()).to_member_key() == admin
+True
+```
 
 A declared container holds keys of exactly its type: convert a key first.
 
@@ -619,9 +696,9 @@ ValueError: 'archived' is not a valid Status
 
 ## Pools
 
-A function pool is a subpackage of its own, imported by its path. Tuto declares none; the
-laboratory's `service` model declares `Tools` (plain functions) and `PlayerModel` (functions
-over an attachment):
+A function pool is a subpackage of its own, imported by its path. Neither Tuto nor Studio
+declares one; the laboratory's `service` model declares `Tools` (plain functions) and
+`PlayerModel` (functions over an attachment):
 
 ```text
 function_pool Tools { int64 add(int64 a, int64 b); Vector3 addVector(Vector3 a, Vector3 b); … };

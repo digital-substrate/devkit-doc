@@ -34,10 +34,11 @@ Generating the code is {doc}`kibo-project <../kibo/kibo-project>`'s job, from a 
 The 2.0 surface replaces the 1.2 one throughout — `md.Tuto_Login` becomes `tuto.Login`,
 the `<ns>_<concept>_<attachment>_set` functions become
 `tuto.attachments.User.login.set`, `vpr_value` becomes `unwrap_value()` — so code written
-against 1.2 output needs migrating. The *Migrating from 1.2* table of the pack's
+against 1.2 output needs migrating. {doc}`migrating` says, per language, what moved and
+why, in what order to move it, and shows a public application migrated; the *Migrating from
+1.2* table of the pack's
 [CHANGELOG](https://github.com/digital-substrate/kibo-template-viper/blob/main/CHANGELOG.md)
-gives, name by name, what a 1.2 client writes and what it writes against 2.0, in each
-language; {ref}`features-from-1-2` says where each 1.2 feature went.
+is its source, and {ref}`features-from-1-2` says where each 1.2 feature went.
 
 ```{toctree}
 :maxdepth: 1
@@ -45,4 +46,5 @@ language; {ref}`features-from-1-2` says where each 1.2 feature went.
 python
 node
 cpp
+migrating
 ```

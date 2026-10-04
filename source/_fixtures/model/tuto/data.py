@@ -199,7 +199,9 @@ class Account(Proxy[dsviper.ValueStructure]):
             source = dsviper.ValueStructure(self.type())
         elif isinstance(source, dict):
             source = dsviper.ValueStructure(self.type(), _unwrap_deep(source))
-        elif source.type() != self.type():
+        elif isinstance(source, Proxy):
+            raise TypeError(f"{source!r} is a generated value, not a source: copy() it, or pass a dict or a Viper value")
+        elif not isinstance(source, dsviper.ValueStructure) or source.type() != self.type():
             raise TypeError("this value is not a Tuto::Account")
         super().__init__(source)
         if not isinstance(state, NotGiven):
@@ -236,7 +238,9 @@ class Identity(Proxy[dsviper.ValueStructure]):
             source = dsviper.ValueStructure(self.type())
         elif isinstance(source, dict):
             source = dsviper.ValueStructure(self.type(), _unwrap_deep(source))
-        elif source.type() != self.type():
+        elif isinstance(source, Proxy):
+            raise TypeError(f"{source!r} is a generated value, not a source: copy() it, or pass a dict or a Viper value")
+        elif not isinstance(source, dsviper.ValueStructure) or source.type() != self.type():
             raise TypeError("this value is not a Tuto::Identity")
         super().__init__(source)
         if not isinstance(firstname, NotGiven):
@@ -283,7 +287,9 @@ class Login(Proxy[dsviper.ValueStructure]):
             source = dsviper.ValueStructure(self.type())
         elif isinstance(source, dict):
             source = dsviper.ValueStructure(self.type(), _unwrap_deep(source))
-        elif source.type() != self.type():
+        elif isinstance(source, Proxy):
+            raise TypeError(f"{source!r} is a generated value, not a source: copy() it, or pass a dict or a Viper value")
+        elif not isinstance(source, dsviper.ValueStructure) or source.type() != self.type():
             raise TypeError("this value is not a Tuto::Login")
         super().__init__(source)
         if not isinstance(nickname, NotGiven):
@@ -331,7 +337,9 @@ class Texture(Proxy[dsviper.ValueStructure]):
             source = dsviper.ValueStructure(self.type())
         elif isinstance(source, dict):
             source = dsviper.ValueStructure(self.type(), _unwrap_deep(source))
-        elif source.type() != self.type():
+        elif isinstance(source, Proxy):
+            raise TypeError(f"{source!r} is a generated value, not a source: copy() it, or pass a dict or a Viper value")
+        elif not isinstance(source, dsviper.ValueStructure) or source.type() != self.type():
             raise TypeError("this value is not a Tuto::Texture")
         super().__init__(source)
         if not isinstance(width, NotGiven):
@@ -389,7 +397,9 @@ class Thumbnail(Proxy[dsviper.ValueStructure]):
             source = dsviper.ValueStructure(self.type())
         elif isinstance(source, dict):
             source = dsviper.ValueStructure(self.type(), _unwrap_deep(source))
-        elif source.type() != self.type():
+        elif isinstance(source, Proxy):
+            raise TypeError(f"{source!r} is a generated value, not a source: copy() it, or pass a dict or a Viper value")
+        elif not isinstance(source, dsviper.ValueStructure) or source.type() != self.type():
             raise TypeError("this value is not a Tuto::Thumbnail")
         super().__init__(source)
         if not isinstance(width, NotGiven):

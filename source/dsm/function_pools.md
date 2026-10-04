@@ -10,7 +10,7 @@ DSM provides two function pool types:
 | Type                       | Purpose                |
 |----------------------------|------------------------|
 | `function_pool`            | Pure utility functions |
-| `attachment_function_pool` | Stateful mutations     |
+| `attachment_function_pool` | Stateful functions: queries and mutations of attachment state |
 
 ## Function Pool (Pure Functions)
 
@@ -44,7 +44,8 @@ Use cases:
 
 ## Attachment Function Pool
 
-An `attachment_function_pool` contains functions that mutate attachment state.
+An `attachment_function_pool` contains functions that work on attachment state, passed by
+the caller: a function declared `mutable` may change it, and one that is not only reads it.
 
 ```dsm
 // From Graph Editor: Graph editing operations
@@ -70,7 +71,9 @@ mutable void clearGraph(key<Graph> graphKey);
 
 ### The `mutable` Keyword
 
-Functions that modify the state are marked `mutable`:
+Functions that modify the state are marked `mutable`, and take the state as an
+`AttachmentMutating`; a function that is not marked only reads, and takes an
+`AttachmentGetting`:
 
 ```dsm
 // Mutable: declares an intent to modify state

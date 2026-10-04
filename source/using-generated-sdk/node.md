@@ -63,7 +63,7 @@ also exports every unit directory (`features/demo`) and the pools (`features/poo
 ```ts
 import dsviper from "@digitalsubstrate/dsviper";
 import { definitions, demo, AnyConceptKey, Vector_of_uint8, Set_of_Demo_StructureS,
-         Set_of_Demo_ConceptBKey, Set_of_uint8 } from "features";
+         Set_of_Demo_ConceptBKey, Set_of_uint8, XArray_of_uint8 } from "features";
 
 const defs: dsviper.DefinitionsConst = definitions();   // the model, decoded once
 ```
@@ -72,10 +72,24 @@ const defs: dsviper.DefinitionsConst = definitions();   // the model, decoded on
 decoding a value needs it. The entry module's header says where to start, and `_codegen`'s
 JSDoc is the reference for the bridge, the containers and the stores.
 
-Names keep the DSM spelling — `f_uint8`, `field_structure_s`, `StructureS` — while
-namespaces and pool modules are snake_case (`demo`, `player_model`); a project spells a
-name its own way with `[names]` in its `kibo.toml` (see {doc}`../kibo/kibo-project`). A
-namespace is a directory, so two namespaces of one model may declare the same name.
+Names keep the DSM spelling — `f_uint8`, `field_structure_s`, `StructureS`, the field
+`f_A`, the attachment `propertiesSeInt8` — and a generated method joins its words in camel
+case around it: `toConceptCKey()`, `fromConceptCKey()`, `setF_uint8()`. Namespaces and
+pool modules are snake_case (`demo`, `player_model`); a project spells a name its own way
+with `[names]` in its `kibo.toml` (see {doc}`../kibo/kibo-project`). A namespace is a
+directory, so two namespaces of one model may declare the same name.
+
+A type of another namespace needs nothing new: import that namespace too and use its
+class. In the laboratory's `crossing` model, the `Woven` structure `Composites` has a field
+`vector<Parts::Colour> f_vector`:
+
+```ts
+import { core, parts, woven } from "crossing";
+
+const composites = new woven.Composites();
+composites.f_vector.append(new parts.Colour({ r: 1 }));   // a Vector_of_Parts_Colour
+composites.f_tuple.set(0, new core.Colour({ r: 1 }));     // tuple<Core::Colour, Parts::Colour>
+```
 
 ### Using it from a project
 
@@ -86,12 +100,57 @@ one copy serves both. Two copies of the native binding cannot share a process �
 one to load stops with a message naming both (`npm ls @digitalsubstrate/dsviper` finds
 them).
 
+**Where a script lives decides what it can import.** An ES module resolves a bare
+specifier — `"@digitalsubstrate/dsviper"`, `"features"` — from the directory of the file
+that imports it, walking up through its `node_modules`, never from the working directory.
+The imports on this page therefore work in a file inside the project that depends on the
+runtime and on the package, at any depth. The same file anywhere else stops with
+`ERR_MODULE_NOT_FOUND`, wherever it is run from.
+
+From a file outside that project, load both by path: the runtime through `createRequire`,
+anchored on the project rather than on the script, as
+{doc}`../dsviper-node/installation` shows it, and the package by importing its built entry
+point. The package's own import of the runtime resolves from the package's location, in
+the same project, so the process still holds one copy:
+
+```js
+import { createRequire } from "node:module";
+
+const project = "/path/to/project";             // the directory holding node_modules
+const require = createRequire(`${project}/package.json`);
+const dsviper = require("@digitalsubstrate/dsviper");
+const { definitions, demo } = await import(`${project}/node_modules/features/dist/index.js`);
+```
+
+`createRequire(import.meta.url)` resolves from the script itself, so it only helps a script
+that already lives in the project. The binding is a CommonJS module: a default import
+(`import dsviper from …`), as the package uses, works; a named import
+(`import { Database } from …`) does not.
+
 Type-checking needs the package's own settings — ES modules resolved the Node way, default
 imports of the CommonJS binding — as the generated `tsconfig.json` has them:
 `"module": "NodeNext"`, `"moduleResolution": "NodeNext"`, `"esModuleInterop": true`,
 `"types": ["node"]`, with `"type": "module"` in the project's `package.json`. A bare
 `tsc --strict file.ts` uses other defaults and fails on the binding's import.
 {doc}`../kibo-template-viper/node` shows a complete project.
+
+### First steps
+
+A document lives in a database that carries the model. Open one, extend it with
+`definitions()`, write a document inside a transaction, and read it back:
+
+```ts
+const store = dsviper.Database.createInMemory();  // Database.create(path) on disk, Database.open(path) to reopen
+store.extendDefinitions(definitions());
+const owner = demo.ConceptAKey.create();
+store.beginTransaction();
+demo.attachments.ConceptA.properties.set(store, owner, new demo.StructureV({ f_string: "hello" }));
+store.commit();
+demo.attachments.ConceptA.properties.get(store, owner).unwrap().f_string;   // "hello"
+```
+
+[Attachments and stores](#attachments-and-stores) covers the rest: reading, deleting,
+updating one field, and the `CommitDatabase` that keeps every commit.
 
 ## Structures
 
@@ -109,6 +168,16 @@ s.toString();                      // "{f_float=2.5, f_string='hello'}"
 In an init object, an `undefined` member means "not given". The checker flags an unknown
 member or a wrong type; at run time an unknown member throws `TypeError`, and a proxy is
 not extensible, so assigning a misspelt field throws at the line, in plain JavaScript too.
+
+A generated object is not a source: given one, of its own type or another, a constructor
+throws `TypeError`. A copy is asked for with `copy()`:
+
+```ts
+new demo.StructureS(s);
+// TypeError: {f_float=2.5, f_string='hello'} is a generated value, not a source:
+// copy() it, or pass an object or a Viper value
+const copied = s.copy();
+```
 
 Equality, hash and order are the runtime's, as methods — `equals`, `hashKey` (a `bigint`
 equal for equal values) and `compare` (-1, 0 or 1) — and `copy()` returns an independent
@@ -138,6 +207,17 @@ new demo.StructureU().f_uint8;                     // 0, the type's
 demo.StructureV.type().fields()[1].defaultValue(); // 8
 ```
 
+`defaultValue()` is `undefined` also when the declared default equals the type's own
+default — `EnumerationE f_E = .a;` in `StructureV`, `.a` being its first case, or
+`uint8 n = 0;`, `string s = "";` — since nothing then differs from the type. The new
+structure holds that value all the same:
+
+```ts
+demo.StructureV.type().fields()[20].name();         // "f_E"
+demo.StructureV.type().fields()[20].defaultValue(); // undefined
+new demo.StructureV().f_E;                          // "a"
+```
+
 ## Enumerations
 
 An enumeration is a union of its case names with a companion object of the same name:
@@ -163,7 +243,8 @@ the runtime's reference semantics and adds no value semantics of its own:
   read from a field changes the object it was read from;
 - a field write keeps the object it is given — changing that object afterwards shows in
   the field;
-- a constructor given a Viper value boxes it, without copying;
+- a constructor given a Viper value boxes it, without copying, and refuses a generated
+  object with `TypeError`;
 - set elements and map keys are copies;
 - a document crossing a database is copied, on `set` as on `get`;
 - any other copy is explicit: `copy()`, or `new Cls(value.copy())`.
@@ -197,8 +278,24 @@ class per container shape the model uses — in a structure field, an attachment
 named `<Kind>_of_<element>`: `Vector_of_uint8`, `Set_of_Demo_StructureS`,
 `Map_of_string_to_Demo_StructureS`, `Optional_of_Demo_StructureV`,
 `Variant_of_string_or_uint8`, `Tuple_of_uint8_and_string`, `XArray_of_uint8`,
-`Vec2_of_uint8`, `Mat2x3_of_uint8`. Each kind declares what it does, typed by its element,
-so `tsc` refuses a method the kind does not have, a misspelt one and a wrong element:
+`Vec2_of_uint8`, `Mat2x3_of_uint8`.
+
+The element is spelled the way the DSM spells it: a primitive by its name (`uint8`,
+`string`), `Any` for an `any`, `AnyConceptKey` for a `key<any_concept>`, a type of a
+namespace as `<Namespace>_<Type>` whatever the namespace (`Demo_StructureS`,
+`Parts_Colour`), and a container by its own class name. A map is `Map_of_<K>_to_<V>`, a
+variant joins its alternatives with `_or_`, a tuple with `_and_`:
+
+| DSM | Class |
+|---|---|
+| `optional<map<int8, string>>` | `Optional_of_Map_of_int8_to_string` |
+| `set<key<any_concept>>` | `Set_of_AnyConceptKey` |
+| `vector<Parts::Colour>` | `Vector_of_Parts_Colour` |
+| `map<key<ModelA::Material>, key<ModelB::Material>>` | `Map_of_ModelA_MaterialKey_to_ModelB_MaterialKey` |
+| `variant<string, uint8, StructureS>` in `Demo` | `Variant_of_string_or_uint8_or_Demo_StructureS` |
+
+Each kind declares what it does, typed by its element, so `tsc` refuses a method the kind
+does not have, a misspelt one and a wrong element:
 
 | DSM | What it does |
 |---|---|
@@ -206,15 +303,18 @@ so `tsc` refuses a method the kind does not have, a misspelt one and a wrong ele
 | `set<T>` | sorted: `add`, `remove`, `discard`, `pop`, `popMax`, `extend`, `min`, `max`, `union`, `intersection`, `difference`, `symmetricDifference` and their `…Update` forms, `issubset`, `issuperset`, `isdisjoint` |
 | `map<K, V>` | `get` (`undefined` when absent), `at` (throws when absent), `set`, `discard`, `pop`, `popitem`, `setdefault`, `update`, `min`, `max`, `entries` |
 | `optional<T>` | `isNil`, `unwrap`, `wrap`, `get(fallback)`, `clear` |
-| `variant<A, B>` | per alternative: `isA()`, `getA()`, `setA()` |
+| `variant<A, B>` | per alternative: `isA()`, `getA()`, `setA()`; `unwrap()` the element it holds, `wrap(e)` or `wrap(e, type)` |
 | `tuple<A, B>` | `at(i)`, `set(i, e)`, and `get0()`, `get1()`, … typed by member |
-| `xarray<T>` | `has`, `index`, `positionOf`, `extend`, `insertPosition`, `disablePosition`, `entries`; `END` and `createPosition()` on its class |
+| `xarray<T>` | positions that survive concurrent edits: `append`, `insert`, `remove`, `at` and `set` (by position or index), `positions`, `position`, `index`, `hasPosition`, `positionOf`, `has`, `entries`, `extend`, `insertPosition`, `disablePosition`, `toVector`, `size`; `END` and `createPosition()` on its class |
 | `vec<T, n>` | `at(i)`, `set(i, e)` |
-| `mat<T, c, r>` | column-major: `at(c, r)`, `set(c, r, e)`, `column(c)`, `setColumn(c, …)`; `columns`, `rows`, and `size` its elements |
+| `mat<T, c, r>` | column-major: `at(c, r)`, `set(c, r, e)`, `column(c)`, `setColumn(c, …)`; `columns`, `rows`, and `size` its elements; iterating yields its columns |
 
-Every view also has `unwrapValue()`, `copy()`, `equals`, `hashKey`, `compare`, `toJSON`;
-the sequences have `size` / `length`, `has`, `toArray` and iterate with `for…of` — a map
-iterates its `[key, value]` entries, as a `Map` does.
+Every view also has `unwrapValue()`, `copy()`, `equals`, `hashKey`, `compare`, `toJSON`.
+The vector, the set, the tuple and the vec are sequences: `size` / `length`, `has`,
+`toArray()` and `for…of`. The xarray has `size`, `has` and `for…of`, and `toVector()` and
+`entries()` in place of `toArray()`; the mat has `toArray()`, an array of its columns; a map
+has `size`, `has`, `keys()`, `values()`, `entries()` and iterates its `[key, value]`
+entries, as a `Map` does.
 
 ```ts
 const w = new demo.StructureU();
@@ -234,7 +334,55 @@ defaults.f_mat.at(1, 2);                   // 6
 defaults.f_mat.column(1);                  // [4, 5, 6]
 defaults.f_mat.columns;                    // 2
 defaults.f_mat.size;                       // 6
+[...defaults.f_mat];                       // [[1, 2, 3], [4, 5, 6]]: its columns
 ```
+
+A variant's methods are named after the alternative as a container class names its
+element: `isString()` for a `string`, `isDemo_StructureS()`, `getDemo_StructureS()`,
+`setDemo_StructureS()` for a structure `StructureS` of `Demo` (a key is
+`…Demo_ConceptAKey`). `unwrap()` reads whichever alternative it holds, and `wrap(e)` writes
+the alternative the runtime finds for `e`, or the one `wrap(e, type)` names.
+
+An xarray is a sequence addressed by positions — `dsviper.ValueUUId`s that stay valid
+whatever is inserted or removed around them, so that concurrent edits merge. `append(e)`
+returns the new position; `insert(before, e)` inserts before a position (`END` appends) and
+returns the new one. `at(position)` reads by position and `at(i)` by index, and
+`position(i)` gives the position of the i-th element. `positions()` lists every position
+the array holds, in order, including the removed ones, and ends with `END`;
+`index(position): number | undefined` is the place of a position in that list, so it is
+not the element's index once something was removed. `remove(position)` removes the element
+and keeps the position, which reads `undefined` and can be `set` again;
+`disablePosition(position)` removes it for good, and a later `set` there stores nothing.
+`insertPosition(before, position)` inserts a position that holds no element yet, to be
+`set` later:
+
+```ts
+const trail = new XArray_of_uint8();
+const head = trail.append(10);              // the new position
+const middle = trail.append(20);
+const tail = trail.append(30);
+trail.size, trail.positions().length;       // 3, 4: positions() ends with END
+trail.at(middle), trail.at(1);              // 20, 20: by position, or by index
+trail.remove(middle);
+[...trail], trail.hasPosition(middle), trail.at(middle);   // [10, 30], true, undefined
+trail.index(tail), trail.position(1)?.equals(tail);       // 2, true
+for (const [position, element] of trail.entries()) {      // removed positions left out
+    console.log(position.equals(head), element);          // true 10, then false 30
+}
+trail.insert(tail, 25);                     // before tail; returns its position
+trail.toVector().toArray();                 // [10, 25, 30]
+```
+
+What removes an element, per kind:
+
+| Kind | Removing |
+|---|---|
+| vector | `remove(e)` (the first equal element; `ViperError` when absent), `pop()` / `pop(i)`, `clear()` |
+| set | `discard(e)` (nothing when absent), `remove(e)` (`ViperError` when absent), `pop()`, `clear()` |
+| map | `discard(k)` (nothing when absent), `remove(k)` (`ViperError` when absent), `pop(k)`, `clear()` |
+| optional | `clear()`, or assign `undefined` to the field |
+| xarray | `remove(position)`; `disablePosition(position)` |
+| variant, tuple, vec, mat | none: a fixed shape is changed by writing an element |
 
 A container field also takes the host's own collection when nothing in it is generated —
 an array, a `Set`, a `Map` or pairs: the runtime decodes it at the line that writes it. A
@@ -326,6 +474,13 @@ properties.runtimeId;              // a constant: which attachment an id names
 properties.descriptor;             // the runtime's dsviper.Attachment
 ```
 
+An attachment on a club is grouped by the club (`demo.attachments.Klub.propertiesD`, from
+`attachment<Klub, StructureV> propertiesD;`), one on any concept under `AnyConcept`
+(`demo.attachments.AnyConcept.propertiesAnyConceptAny`, from
+`attachment<any_concept, any> propertiesAnyConceptAny;`), and one on a concept of another
+namespace under `<Namespace>_<Concept>` (`attachment<Core::Thing, Parts::Colour> mark;` in
+the `crossing` model's `Woven` gives `woven.attachments.Core_Thing.mark`).
+
 **Reading** — `keys`, `has`, `get`, `enumerate` — takes an `AttachmentGetting` (a state's or
 a mutable state's `attachmentGetting()`) or a `Database`. `get` returns the document as an
 optional, which is a copy: write it back with `set`.
@@ -359,6 +514,21 @@ db.commit();
 properties.get(db, second).isNil();                 // true
 ```
 
+A `Database` writes whole documents. To change one field, read the document, change the
+copy, and write it back:
+
+```ts
+const stored = properties.get(db, first).unwrap();
+stored.f_uint8 = 9;
+db.beginTransaction();
+properties.set(db, first, stored);
+db.commit();
+properties.get(db, first).unwrap().f_uint8;         // 9
+```
+
+The field operations below write one field without reading the document, on a
+`CommitDatabase`.
+
 ### On a `CommitDatabase`
 
 A `CommitDatabase` keeps every commit. Its writes — `set`, `diff` and the field
@@ -388,6 +558,29 @@ const at = (id: dsviper.ValueCommitId) =>
 at(v1).f_string;                   // "v1"
 at(v2).f_string;                   // "v2"
 ```
+
+On disk, `dsviper.CommitDatabase.create(path)` makes the file and `extendDefinitions` puts
+the model in it. The definitions persist in the file: a database reopened with
+`dsviper.CommitDatabase.open(path)` already carries them, and needs no second
+`extendDefinitions`:
+
+```ts
+const path = "/path/to/demo.cdb";
+const ondisk = dsviper.CommitDatabase.create(path);
+ondisk.extendDefinitions(definitions());
+const initial = new dsviper.CommitMutableState(dsviper.CommitStateBuilder.initialState(ondisk));
+properties.set(initial.attachmentMutating(), key, new demo.StructureV({ f_string: "kept" }));
+ondisk.commitMutations("First version", initial);
+ondisk.close();
+
+const reopened = dsviper.CommitDatabase.open(path);
+const latest = dsviper.CommitStateBuilder.state(reopened, reopened.lastCommitId());
+properties.get(latest.attachmentGetting(), key).unwrap().f_string;   // "kept"
+reopened.close();
+```
+
+A `Database` works the same way, with `dsviper.Database.create(path)` and
+`dsviper.Database.open(path)`.
 
 A field operation on a key that holds no document does nothing and throws nothing: set the
 document first.
@@ -501,9 +694,10 @@ attachment_function_pool PlayerModel {
 };
 ```
 
-A client calls a pool through a service with its `Remote`, over a `dsviper.ServiceRemote`;
-`isAvailable()` says whether the service carries the pool, and each pool module exports its
-`NAME` and `UUID`:
+The package calls a pool only through a service: its `Remote`, over a
+`dsviper.ServiceRemote` connected to a running server (the {doc}`../services/services` page
+says how the laboratory starts one); it renders no local pool. `isAvailable()` says whether
+the service carries the pool, and each pool module exports its `NAME` and `UUID`:
 
 ```ts
 import dsviper from "@digitalsubstrate/dsviper";
@@ -528,7 +722,8 @@ demo.attachments.Player.property.get(state.attachmentGetting(), player).unwrap()
 
 An attachment function takes the state its parameter type names: an `AttachmentMutating`
 for a `mutable` function, an `AttachmentGetting` for one that only reads. The state must
-know the model — one built over the package's `definitions()`, or a commit database
-extended with it. The service reads and writes that state in place, and nothing is stored
+know the model — one built over the package's `definitions()`, over the
+`dsviper.Definitions` given to `connect` (which `connect` fills with the service's model;
+pass its `const()`), or a commit database extended with it. The service reads and writes that state in place, and nothing is stored
 until it is committed. Where services come from is the {doc}`../services/index` chapter's
 subject.

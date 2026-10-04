@@ -22,8 +22,12 @@ restrictions (see {doc}`index`).
 | equality, hash, order, display | `==`, `hash()`, `<`, `repr()` | `equals`, `hashKey`, `compare`, `toString` / `toJSON` |
 | container protocol | `len()`, `in`, `contains`, `empty`, `to_list` / `to_tuple`, `items`, `v + w`, `m[c] = column` | `size` / `length`, `has`, `toArray`, `entries`, `concat`, `setColumn` |
 | a value of another type | `TypeError`, from every `wrap_value` and constructor | `TypeError`, from every `wrapValue` and constructor |
+| key conversion | `to_parent_key()`, `to_<child>_key()`, `from_<member>_key()`, `to_<member>_key()`, `to_any_concept_key()`, `from_any_concept_key()` | `toParentKey()`, `to<Child>Key()`, `from<Member>Key()`, `to<Member>Key()`, `toAnyConceptKey()`, `fromAnyConceptKey()` |
+| an unknown case name (`from_str` / `fromStr`) | `ValueError` | `dsviper.ViperError` |
+| a variant read as an alternative it does not hold (`get_A()` / `getA()`) | `ValueError` | `TypeError` |
+| a native number stored in an `any` | an `int` is an integer (`Any(42)`, an `int64`), a `float` a `double` | a `number` is a `double` (`Any(42.0)`); a `bigint` is an `int64` (`new AnyValue(42n)` is `Any(42)`) |
 | documentation | the DSM documentation on the class, the field, the attachment | the same places; a structure's, on the class, not on its `…Init` |
-| attachment | `<unit>.attachments.<Concept>.<attachment>.get(getting, key)` | `<Concept>.<attachment>.get(getting, key)` |
+| attachment | `<unit>.attachments.<Concept>.<attachment>.get(getting, key)` | `<unit>.attachments.<Concept>.<attachment>.get(getting, key)`; `<Concept>` is also exported by the unit's `attachments` module |
 | attachment verbs | `keys`, `has`, `get`, `enumerate`, `diff_keys`, `set`, `delete`, `diff` (`del` is a keyword) | `keys`, `has`, `get`, `enumerate`, `diffKeys`, `set`, `del`, `diff`, as the C++ |
 | field-level verbs | `set_<f>`, `union_<f>`, `subtract_<f>`, `update_<f>`, `insert_<f>`, `remove_<f>` | `set<F>`, `union<F>`, `subtract<F>`, `update<F>`, `insert<F>`, `remove<F>` |
 | function pool | `Pool` (local, holding `NAME` and `UUID`) and `Remote` | `Remote`; `NAME` and `UUID` are the module's |
@@ -38,6 +42,16 @@ where TypeScript has `undefined`; Python's `del` is a keyword, so an attachment 
 `delete` there and with `del` in TypeScript, as in C++; Python reaches a container through its
 dunder protocol (`len()`, `in`, `+`), TypeScript through `Symbol.iterator` and methods; Python
 hashes with `hash()`, TypeScript gives `hashKey()`, the key a native `Map` or `Set` needs.
+
+The error rows follow the three layers both pages describe — an argument of another kind,
+content the runtime refuses, a read — and each language's own name for the last one. A case
+name is a lookup: Python's `enum` answers a failed lookup with `ValueError`, while
+TypeScript has no such convention and passes on the runtime's `ViperError`. A variant read
+as the wrong alternative is a read of a value of another type: Python names it
+`ValueError`, as it does for a value it cannot take, and TypeScript `TypeError`. The `any`
+row is each language's number type: Python's `int` and `float` are two types, and the
+runtime keeps the difference; a JavaScript `number` is always a double, and an integer
+reaches an `any` as a `bigint`, as `int64` fields take it.
 
 The line between idiom and drift is the runtime. A difference that lives in the static surface
 and follows the host language — an `enum.Enum` against a literal union, `del` against

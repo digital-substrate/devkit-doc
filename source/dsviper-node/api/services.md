@@ -29,7 +29,7 @@ const s = ServiceRemote.connect('localhost', '54328', defs);
 
 // Resolve a function by pool name + function name, then call it.
 const add = s.functionPoolFunc('Tools', 'add');
-add.call(32, 10);                      // 42
+add.call(32, 10);                      // 42n: an int64 is a bigint
 
 s.close();
 ```

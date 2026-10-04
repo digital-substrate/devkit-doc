@@ -2,9 +2,17 @@
 
 A `Viper::Service` aggregates DSM definitions and function pools into
 an immutable container that can be exposed over a network socket. The
-**Transparent Remote Access** principle of the Viper runtime means
-clients use the same typed pool API whether they are calling local or
-remote functions — the network is hidden by the runtime.
+**Transparent Remote Access** principle of the Viper runtime means a
+remote call has the shape of a local one — same functions, same
+arguments, same state passed in — and the network is hidden by the
+runtime.
+
+Which side a language can play differs. A pool is implemented and hosted
+in C++. The generated Python and TypeScript packages call a pool only
+through a service, with the pool's `Remote` over a `ServiceRemote`; the
+local `Pool` a Python package also renders wraps a pool that a C++ host
+application hands to its embedded Python, and the package cannot build
+one on its own.
 
 ## Two pool types
 
@@ -34,8 +42,10 @@ string  randomString(uint32 size);
 
 ### `AttachmentFunctionPool` — stateful
 
-Groups functions that operate inside a stateful context, with access
-to an `AttachmentMutating` for reads and mutations.
+Groups functions that operate inside a stateful context: the state the
+client passes at call time, read through an `AttachmentGetting`, and
+written through an `AttachmentMutating` by the functions declared
+`mutable`.
 
 ```dsm
 """This pool provides Player utility functions."""
@@ -45,13 +55,16 @@ optional<key<Player>> hasPlayer(string nickname);
 };
 ```
 
-* **Stateful** — access to an `AttachmentMutating` passed by the
-  client at call time.
-* **`mutable`** — mutating methods explicitly marked in the DSM.
-* **`AttachmentMutating` is the protocol**, not the storage. The
-  service has no opinion on what backs the interface — the client
-  picks the implementation that fits its scenario, and the service
-  reads from / writes to it through the interface alone.
+* **Stateful** — each call takes a state passed by the client at call
+  time.
+* **`mutable`** — a function marked `mutable` in the DSM takes an
+  `AttachmentMutating` and may write; a function without it
+  (`hasPlayer` above) takes an `AttachmentGetting` and only reads.
+* **`AttachmentGetting` and `AttachmentMutating` are the protocol**,
+  not the storage. The service has no opinion on what backs the
+  interface — the client picks the implementation that fits its
+  scenario, and the service reads from / writes to it through the
+  interface alone.
 
 ## Server side — assembling and serving
 
@@ -86,6 +99,19 @@ serverSocket = Viper::Socket::makePassiveInet(inetAddress, inetPort);
 // 3) Run the service (blocking).
 Viper::ServiceServer::run(serverSocket, service, logging, cancelation);
 ```
+
+The laboratory builds this server as `build/service/cpp/service_server`
+(the `service_server` target of its CMake project, which
+`service/cpp/run_test.sh` builds with
+`cmake -S . -B build && cmake --build build --target service_server`
+from the repository root). It listens on TCP with `-a <address> -p <port>`,
+or on a local socket with `-s <socket path>`, and serves until stopped:
+
+```bash
+build/service/cpp/service_server -a localhost -p 54328
+```
+
+The clients below connect to `localhost:54328`.
 
 Three things to note:
 
@@ -184,15 +210,25 @@ if player_model.is_available():
     state = dsviper.CommitState(defs.const())
     mutable = dsviper.CommitMutableState(state)
     mutating = mutable.attachment_mutating()
+    getting = mutable.attachment_getting()
 
     nickname = "the shadow man"
     key = player_model.create(mutating, nickname, Level.BEGINNER)
 
-    if found := player_model.has_player(mutating, nickname):
-        if document := attachments.Player.property.get(mutating, found.unwrap()):
+    if found := player_model.has_player(getting, nickname):
+        if document := attachments.Player.property.get(getting, found.unwrap()):
             player = document.unwrap()
             print(f"nickname={player.nickname}, level={player.level}")
 ```
+
+The state is built over `defs`, the `Definitions` given to `connect`:
+that works because `connect()` fills it with the service's model, so the
+state knows the attachments the pool writes. A state over empty
+definitions fails on the first write with an *unregistered attachment*
+error; the package's own `service.definitions()` works too. `create` is
+`mutable` and takes the `AttachmentMutating`; `has_player` only reads and
+takes an `AttachmentGetting` — here the mutable state's, which sees what
+`create` wrote.
 
 Python spells a pool function in snake_case (`add_vector`, `has_player`); the
 `Remote` calls the function under its DSM name. See

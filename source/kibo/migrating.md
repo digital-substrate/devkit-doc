@@ -44,6 +44,18 @@ comparison, or ignore its line the same way. Take up what Model 2 makes possible
 messages, dropping a leaf table — as a second change, once the first diff is accounted for;
 otherwise a diff tells you two things at once.
 
+## Names you build yourself
+
+The diff shows what kibo 2 renders differently. It cannot show a name your templates build
+by concatenation when that name reads the same in both renders but no longer designates
+anything: `Set_<proxy>` renders `Set_Demo_ConceptAKey` before and after, while kibo 2's
+packs generate `Set_of_Demo_ConceptAKey`. The rows of the next section say which names
+moved; then check the generated code itself for a name it uses and does not define — a
+compiler for C++, `tsc --noEmit` for TypeScript, a linter such as `pyflakes` for Python, or
+simply importing and exercising the package. Search your templates for the places that
+concatenate a class name (`Set_`, `Optional_`, `Vector<`, `…Suffix>`); each is a place to
+check.
+
 ## Read the diagnostics, but do not stop there
 
 A template that reads an accessor the model does not carry renders the **empty string**. The
@@ -55,8 +67,9 @@ kibo: templates/data.py.stg: context [/main /structure] 12:8 no such property or
 ```
 
 They are warnings: the file is still written and kibo still exits zero. During the migration a
-line on stderr is a rename not yet done. **An empty stderr is not the end**: it says every name
-resolves, not that every value is the one your templates expect. The diff above says that.
+line on stderr is a rename not yet done. **An empty stderr is not the end**: it says every
+accessor resolves, not that every value is the one your templates expect — the diff says that —
+nor that every name your templates build still designates a generated class.
 
 ## The renames
 
@@ -99,8 +112,8 @@ diff shows; the last column says what a template does about it.
 | 2 | **The untyped key lives in the infrastructure namespace**, the one `-n` names | `AnyConceptKey` → `::features::AnyConceptKey` | Declare `AnyConceptKey` in the namespace `-n` names, or read the name from the model rather than writing it. |
 | 3 | **A parent from another namespace is named with its namespace** in `parentNameInNamespace` | `Thing` → `core::Thing` | Nothing, if you used it as a C++ name: Model 1 named a parent from another namespace as if it were local. |
 | 4 | **An attachment's `representation` names a type of another namespace with its namespace** | `attachment<Material, string> Annotations::note` → `attachment<ModelA::Material, string> Annotations::note` | Nothing, unless you parse it. A type of the attachment's own namespace stays unqualified. |
-| 5 | **A container class of a binding is named after what it holds**: `bindingType.proxy` and `bindingType.type` of a container | `Map_int8_to_string` → `Map_of_int8_to_string`; `Vec_uint8_2` → `Vec2_of_uint8`; `Mat_uint8_2_3` → `Mat2x3_of_uint8`; `Tuple_uint8_string` → `Tuple_of_uint8_and_string`; `Variant_A_B` → `Variant_of_A_or_B` | Name your container classes from `proxy`, never by concatenating parts yourself: a name built by hand (`Set_<proxy>`) points at a class that is no longer generated. A map's set of keys and an attachment's set of keys have their own binding type, `bindingKeySetType`. |
-| 6 | **A concept's or a club's `bindingType.type` is its key class** | `Demo_ConceptA` → `Demo_ConceptAKey` | Where you appended `Key` to `bindingType.type`, read `bindingType.type` alone, or `bindingType.proxy` and append `Key`; `proxy` is unchanged. |
+| 5 | **A container class of a binding is named after what it holds**: `bindingType.proxy` and `bindingType.type` of a container | `Map_int8_to_string` → `Map_of_int8_to_string`; `Vec_uint8_2` → `Vec2_of_uint8`; `Mat_uint8_2_3` → `Mat2x3_of_uint8`; `Tuple_uint8_string` → `Tuple_of_uint8_and_string`; `Variant_A_B` → `Variant_of_A_or_B` | Name a container class from its `proxy`. A map's set of keys and an attachment's set of keys have their own binding type, `bindingKeySetType`. Where no accessor carries the class you need — the optional an attachment's `get` returns, the vector an xarray converts to — build it by the same rule: `Optional_of_<proxy>`, `Vector_of_<proxy>`. A name built by the 1.2 rule (`Set_<proxy>`, `Vector<elementTypeSuffix>`) points at a class that is no longer generated, and reads the same in both renders: see [Names you build yourself](#names-you-build-yourself). |
+| 6 | **A concept's or a club's `bindingType.type` is its key class** | `Demo_ConceptA` → `Demo_ConceptAKey` | Every name you built from a concept's or a club's `bindingType.type` moves: where you appended `Key`, read `bindingType.type` alone; where you meant the entity's own name (a runtime id constant, say), read `bindingType.proxy`, which is unchanged. |
 | 7 | **`any` is a proxy** | `bindingType.type` `dsviper.ValueAny` → `Any`; `useProxy` `false` → `true` | A pack that generates no `Any` class keeps a leaf table for it: test the type suffix `_any`, and write `dsviper.ValueAny` yourself. |
 | 8 | **A set of keys is spelled as the DSM spells it** in `dsmType` | `set<Demo::ConceptA>` → `set<key<Demo::ConceptA>>` | Nothing, unless you parsed the old form. |
 | 9 | **A binding accessor answers for the target being generated**, and a native target has no binding | under `-c cpp`, the `type` of `bindingType`, `bindingElementType` and `bindingKeyType`, `bindingSequenceType`, `bindingColumnType` and a member's `bindingType.type` are empty (`proxy` is not); Model 1 returned Python spellings there | Generate binding code with the binding's own target: `-c python` gives exactly what Model 1 gave under any target, apart from rows 5 to 7; `-c typescript` gives the TypeScript spellings (`bigint` for a 64-bit integer). |
@@ -160,5 +173,7 @@ The [Template Model reference](template_model.md) describes each.
 4. `diff -r -I 'by kibo-[0-9.]*\.jar' before/ after/`, and give each difference its row in
    [What reads differently](#what-reads-differently). Adapt your templates where the row says
    so; a difference with no row is a step done wrong.
-5. Only then take up `dsmType` in messages and comments, or drop your leaf table, each as its
+5. Check the generated code for names it uses and does not define: the
+   [names you build yourself](#names-you-build-yourself) do not show in the diff.
+6. Only then take up `dsmType` in messages and comments, or drop your leaf table, each as its
    own change with its own diff.

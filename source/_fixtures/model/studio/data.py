@@ -375,7 +375,9 @@ class Credentials(Proxy[dsviper.ValueStructure]):
             source = dsviper.ValueStructure(self.type())
         elif isinstance(source, dict):
             source = dsviper.ValueStructure(self.type(), _unwrap_deep(source))
-        elif source.type() != self.type():
+        elif isinstance(source, Proxy):
+            raise TypeError(f"{source!r} is a generated value, not a source: copy() it, or pass a dict or a Viper value")
+        elif not isinstance(source, dsviper.ValueStructure) or source.type() != self.type():
             raise TypeError("this value is not a Studio::Credentials")
         super().__init__(source)
         if not isinstance(login, NotGiven):
@@ -412,7 +414,9 @@ class Name(Proxy[dsviper.ValueStructure]):
             source = dsviper.ValueStructure(self.type())
         elif isinstance(source, dict):
             source = dsviper.ValueStructure(self.type(), _unwrap_deep(source))
-        elif source.type() != self.type():
+        elif isinstance(source, Proxy):
+            raise TypeError(f"{source!r} is a generated value, not a source: copy() it, or pass a dict or a Viper value")
+        elif not isinstance(source, dsviper.ValueStructure) or source.type() != self.type():
             raise TypeError("this value is not a Studio::Name")
         super().__init__(source)
         if not isinstance(first, NotGiven):
@@ -463,7 +467,9 @@ class Profile(Proxy[dsviper.ValueStructure]):
             source = dsviper.ValueStructure(self.type())
         elif isinstance(source, dict):
             source = dsviper.ValueStructure(self.type(), _unwrap_deep(source))
-        elif source.type() != self.type():
+        elif isinstance(source, Proxy):
+            raise TypeError(f"{source!r} is a generated value, not a source: copy() it, or pass a dict or a Viper value")
+        elif not isinstance(source, dsviper.ValueStructure) or source.type() != self.type():
             raise TypeError("this value is not a Studio::Profile")
         super().__init__(source)
         if not isinstance(name, NotGiven):

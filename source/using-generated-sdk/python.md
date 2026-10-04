@@ -108,6 +108,26 @@ blob: a database is extended with it, and decoding a value needs it. The package
 itself — `help(model)` says where to start — and so does `_codegen`, whose docstrings are
 the reference for the bridge, the containers and the stores.
 
+### First steps
+
+A document lives in a database that carries the model. Open one, extend it with
+`model.definitions()`, write a document inside a transaction, and read it back:
+
+```{doctest}
+>>> db = dsviper.Database.create_in_memory()     # Database.create(path) on disk, Database.open(path) to reopen
+>>> _ = db.extend_definitions(model.definitions())
+>>> alice = tuto.UserKey.create()
+>>> db.begin_transaction()
+>>> tuto.attachments.User.login.set(db, alice, tuto.Login(nickname="alice"))
+True
+>>> db.commit()
+>>> tuto.attachments.User.login.get(db, alice).unwrap().nickname
+'alice'
+```
+
+[Attachments and stores](#attachments-and-stores) covers the rest: reading, deleting,
+updating one field, and the `CommitDatabase` that keeps every commit.
+
 ### Where each name comes from
 
 A namespace is a module, so two namespaces of one model may declare the same name. Static
@@ -121,8 +141,42 @@ in its `kibo.toml` (see {doc}`../kibo/kibo-project`):
 | `tuto.Status.ACTIVE` | an enumeration case | `enum Status { …, active, … }` |
 | `tuto.UserKey` | a concept | `concept User;` |
 | `tuto.attachments.User.login` | an attachment, grouped by its concept | `attachment<User, Login> login;` |
+| `studio.attachments.Principal.credentials` | an attachment on a club, grouped by the club | `attachment<Principal, Credentials> credentials;` |
+| `<unit>.attachments.AnyConcept.<attachment>` | an attachment on any concept | `attachment<any_concept, any> propertiesAnyConceptAny;` in the laboratory's `Demo` gives `demo.attachments.AnyConcept.properties_any_concept_any` |
+| `<unit>.attachments.<Namespace>_<Concept>.<attachment>` | an attachment on a concept of another namespace | `attachment<Core::Thing, Parts::Colour> mark;` in the laboratory's `Woven` gives `woven.attachments.Core_Thing.mark` |
 | `containers.Set_of_Tuto_UserKey` | a container shape | `set<key<User>>` |
 | `tuto.LOGIN` | the runtime id of a type | `struct Login` |
+
+A function, a field, an attachment or a module of several words is put in snake case: split
+into words at its capitals, lowercased, the words joined by an underscore; an underscore the
+author wrote is kept, and a run of capitals stays one word (`userIDs` gives `user_ids`).
+With the laboratory's `features` model
+(`concept ConceptC is a ConceptB;`, `attachment<ConceptA, set<int8>> propertiesSeInt8;`, a
+field `key<ConceptA> f_A;`):
+
+| DSM | Python | TypeScript |
+|---|---|---|
+| narrowing to `ConceptC` | `to_concept_c_key()` | `toConceptCKey()` |
+| a club key from a `ConceptC` key | `from_concept_c_key()` | `fromConceptCKey()` |
+| attachment `propertiesSeInt8` | `properties_se_int8` | `propertiesSeInt8` |
+| field `f_A` | `f_a` | `f_A` |
+| function `hasPlayer` | `has_player` | `hasPlayer` |
+
+Classes keep the DSM spelling (`ConceptCKey`, `StructureS`), and an enumeration case is
+uppercased (`Status.ACTIVE`). The complete rule is the
+[`snake` format](../kibo/template_model.md#string-formats) of the Template Model.
+
+A type of another namespace needs nothing new: import that namespace's module and use its
+class. In the laboratory's `crossing` model, the `Woven` structure `Composites` has a field
+`vector<Parts::Colour> f_vector`:
+
+```python
+from crossing import core, parts, woven
+
+composites = woven.Composites()
+composites.f_vector.append(parts.Colour(r=1.0))   # f_vector is containers.Vector_of_Parts_Colour
+composites.f_tuple.set(0, core.Colour(r=1))       # tuple<Core::Colour, Parts::Colour>
+```
 
 A function pool is a subpackage imported by its path, `import model.<pool>`: the entry
 module belongs to the `Base` feature and cannot import what only the `Pool` feature renders
@@ -147,6 +201,18 @@ names, as the runtime takes it, or a Viper value of its type (see [Ownership](#o
 
 ```{doctest}
 >>> tuto.Login({"nickname": "bob"})
+Tuto::Login(nickname=bob, password=)
+```
+
+A generated object is not a source: given one, of its own type or another, a constructor
+raises `TypeError`. A copy is asked for with `copy()`:
+
+```{doctest}
+>>> tuto.Login(tuto.Login(nickname="bob"))
+Traceback (most recent call last):
+    ...
+TypeError: Tuto::Login(nickname=bob, password=) is a generated value, not a source: copy() it, or pass a dict or a Viper value
+>>> tuto.Login(nickname="bob").copy()
 Tuto::Login(nickname=bob, password=)
 ```
 
@@ -193,6 +259,11 @@ Studio's `Profile` declares `uint8 level = 1;`:
 1
 ```
 
+`default_value()` is `None` also when the declared default equals the type's own default —
+`EnumerationE f_E = .a;` in the laboratory's `features` model, `.a` being its first case, or
+`uint8 n = 0;`, `string s = "";` — since
+nothing then differs from the type. The new structure holds that value all the same.
+
 ## Enumerations
 
 An enumeration is an `enum.Enum` whose values are the DSM case names:
@@ -234,7 +305,8 @@ the runtime's reference semantics and adds no value semantics of its own:
   read from a field changes the object it was read from;
 - a field write keeps the object it is given — changing that object afterwards shows in
   the field;
-- a constructor given a Viper value boxes it, without copying;
+- a constructor given a Viper value boxes it, without copying, and refuses a generated
+  object with `TypeError`;
 - set elements and map keys are copies;
 - a document crossing a database is copied, on `set` as on `get`;
 - any other copy is explicit: `copy()`, or `Cls(value.copy())`.
@@ -292,6 +364,20 @@ in `containers`, named `<Kind>_of_<element>`: Tuto's attachments use
 `containers.Set_of_Tuto_UserKey` for their keys and `containers.Optional_of_Tuto_Login` for
 a read document.
 
+The element is spelled the way the DSM spells it: a primitive by its name (`uint8`,
+`string`), `Any` for an `any`, `AnyConceptKey` for a `key<any_concept>`, a type of a
+namespace as `<Namespace>_<Type>` whatever the namespace (`Tuto_UserKey`, `Parts_Colour`),
+and a container by its own class name. A map is `Map_of_<K>_to_<V>`, a variant joins its
+alternatives with `_or_`, a tuple with `_and_`:
+
+| DSM | Class |
+|---|---|
+| `optional<map<int8, string>>` | `Optional_of_Map_of_int8_to_string` |
+| `set<key<any_concept>>` | `Set_of_AnyConceptKey` |
+| `vector<Parts::Colour>` | `Vector_of_Parts_Colour` |
+| `map<key<ModelA::Material>, key<ModelB::Material>>` | `Map_of_ModelA_MaterialKey_to_ModelB_MaterialKey` |
+| `variant<string, uint8, StructureS>` in `Demo` | `Variant_of_string_or_uint8_or_Demo_StructureS` |
+
 ```{doctest}
 >>> bob = tuto.UserKey.create()
 >>> users = containers.Set_of_Tuto_UserKey([alice, bob])
@@ -320,14 +406,17 @@ Each kind declares what it does, so a type checker refuses a method the kind doe
 | `set<T>` | `Set_of_T` | sorted: `add`, `remove`, `discard`, `pop`, `min`, `max`, the set operations, their `_update` forms and operators |
 | `map<K, V>` | `Map_of_K_to_V` | a `dict`-like mapping: `m[k]`, `get`, `items`, `popitem`, `min`, `max`, … |
 | `optional<T>` | `Optional_of_T` | `is_nil`, `unwrap`, `wrap`, `get(default)`, `clear`; its truth is presence |
-| `variant<A, B>` | `Variant_of_A_or_B` | per alternative: `is_A()`, `get_A()`, `set_A()` |
+| `variant<A, B>` | `Variant_of_A_or_B` | per alternative: `is_A()`, `get_A()`, `set_A()`; `unwrap()` the element it holds, `wrap(e)` or `wrap(e, type)` |
 | `tuple<A, B>` | `Tuple_of_A_and_B` | fixed length: `t[i]`, `set(i, e)`, and `get_0()`, `get_1()`, … typed by member |
-| `xarray<T>` | `XArray_of_T` | positions that survive concurrent edits: `append`, `insert`, `remove`, `positions`, `position_of`, `disable_position`, … |
+| `xarray<T>` | `XArray_of_T` | positions that survive concurrent edits: `append`, `insert`, `remove`, `x[i]` or `x[position]`, `at`, `set`, `positions`, `position`, `index`, `has_position`, `position_of`, `items`, `extend`, `insert_position`, `disable_position`, `create_position()` and `END`, `to_vector` |
 | `vec<T, n>` | `Vec<n>_of_T` | fixed length: `v[i]`, `set(i, e)` |
-| `mat<T, c, r>` | `Mat<c>x<r>_of_T` | column-major: `m[c, r]`, `m[c]` a column, `at`, `set`; `len` its columns, `size()` its elements |
+| `mat<T, c, r>` | `Mat<c>x<r>_of_T` | column-major: `m[c, r]`, `m[c]` a column, `at`, `set`, `column`, `columns`, `rows`; `len` its columns, `size()` its elements; iterating yields its columns |
 
-Every view also has `unwrap_value()`, `copy()`, `==`, `hash()` and `<`, and the sequences
-`len`, `in`, `empty()`, `to_list()`.
+Every view also has `unwrap_value()`, `copy()`, `==`, `hash()` and `<`. The vector, the set,
+the tuple and the vec are sequences: `len`, `in`, iteration, `empty()`, `to_list()` and
+`to_tuple()`. The xarray has `len`, `in`, iteration and `empty()`, and `to_vector()` in place
+of `to_list()`; the mat has `to_tuple()`, a tuple of its columns; the map has `keys()`,
+`values()` and `items()`.
 
 A container field reads as its declared class — `Profile`'s fields are
 `containers.Vector_of_string`, `Set_of_string`, `Map_of_string_to_string` and
@@ -367,10 +456,57 @@ Traceback (most recent call last):
 TypeError: a native container of generated values: ...
 ```
 
-A variant, a tuple, an xarray, a vec and a mat behave as the table says: a variant tells,
-reads and writes each alternative by its own method (`is_string()`, `get_string()`,
-`set_string()`), and a `mat<uint8, 2, 3>` holding `{{1, 2, 3}, {4, 5, 6}}` gives
-`m[1, 2] == 6`, `m[1] == (4, 5, 6)`, `len(m) == 2` and `m.size() == 6`.
+A variant, a tuple, a vec and a mat behave as the table says. A variant tells, reads and
+writes each alternative by its own method, named after the alternative as a container class
+names its element: `is_string()`, `get_string()`, `set_string()` for a `string`, and
+`is_Demo_StructureS()`, `get_Demo_StructureS()`, `set_Demo_StructureS()` for a structure
+`StructureS` of `Demo` (a key is `…_Demo_ConceptAKey`). `unwrap()` reads whichever
+alternative it holds, and `wrap(e)` writes the alternative the runtime finds for `e`, or the
+one `wrap(e, type)` names. A `mat<uint8, 2, 3>` holding `{{1, 2, 3}, {4, 5, 6}}` gives
+`m[1, 2] == 6`, `m[1] == (4, 5, 6)`, `len(m) == 2`, `m.size() == 6`, and
+`list(m) == [(1, 2, 3), (4, 5, 6)]`: iterating a mat yields its columns.
+
+An xarray is a sequence addressed by positions — `dsviper.ValueUUId`s that stay valid
+whatever is inserted or removed around them, so that concurrent edits merge. `append(e)`
+returns the new position; `insert(before, e)` inserts before a position (`END` appends) and
+returns the new one. `x[i]` reads the i-th element, `x[position]` or `at(position)` reads by
+position, and `position(i)` gives the position of the i-th element. `positions()` lists
+every position the array holds, in order, including the removed ones, and ends with `END`;
+`index(position) -> int | None` is the place of a position in that list, so it is not the
+element's index once something was removed. `remove(position)` (or `del x[position]`)
+removes the element and keeps the position, which reads `None` and can be `set` again;
+`disable_position(position)` removes it for good, and a later `set` there stores nothing.
+`insert_position(before, position)` inserts a position that holds no element yet, to be
+`set` later. On the laboratory's `features` model:
+
+```python
+from features import containers
+
+trail = containers.XArray_of_uint8()
+first = trail.append(10)                    # the new position
+second = trail.append(20)
+third = trail.append(30)
+len(trail), len(trail.positions())          # (3, 4): positions() ends with END
+trail[second], trail[1]                     # (20, 20): by position, or by index
+trail.remove(second)
+list(trail), trail.has_position(second), trail[second]   # ([10, 30], True, None)
+trail.index(third), trail.position(1) == third            # (2, True)
+for position, element in trail.items():     # (position, element) pairs, removed ones left out
+    print(position == first, element)       # True 10, then False 30
+trail.insert(third, 25)                     # before third; returns its position
+trail.to_vector()                           # [10, 25, 30]
+```
+
+What removes an element, per kind:
+
+| Kind | Removing |
+|---|---|
+| vector | `del v[i]`, `remove(e)` (the first equal element; `dsviper.ViperError` when absent), `pop()` / `pop(i)`, `clear()` |
+| set | `discard(e)` (nothing when absent), `remove(e)` (`KeyError` when absent), `pop()`, `clear()` |
+| map | `del m[k]` or `remove(k)` (`KeyError` when absent), `discard(k)`, `pop(k)`, `clear()` |
+| optional | `clear()`, or assign `None` to the field |
+| xarray | `remove(position)` or `del x[position]`; `disable_position(position)` |
+| variant, tuple, vec, mat | none: a fixed shape is changed by writing an element |
 
 A shape the model does not use has no class. Build it with the runtime, from Viper values:
 
@@ -391,6 +527,8 @@ instance and an instance id:
 '...:Tuto::UserKey'
 >>> alice.is_valid()
 True
+>>> type(alice.instance_id())                # the instance id
+<class 'dsviper.ValueUUId'>
 >>> tuto.UserKey(alice.instance_id()) == alice   # the key of that instance
 True
 >>> tuto.UserKey()                           # the invalid key
@@ -528,6 +666,23 @@ nil
 
 (`delete` and not `del`, which is Python's keyword.)
 
+A `Database` writes whole documents. To change one field, read the document, change the
+copy, and write it back:
+
+```{doctest}
+>>> document = login_of.get(db, alice).unwrap()
+>>> document.password = "n3w"
+>>> db.begin_transaction()
+>>> login_of.set(db, alice, document)
+True
+>>> db.commit()
+>>> login_of.get(db, alice).unwrap().password
+'n3w'
+```
+
+The field operations below write one field without reading the document, on a
+`CommitDatabase`.
+
 ### On a `CommitDatabase`
 
 A `CommitDatabase` keeps every commit. Its writes — `set`, `diff` and the field
@@ -559,6 +714,31 @@ Every commit stays readable — a past state is built the same way:
 >>> nickname_at(first), nickname_at(second)
 ('alice', 'alice2')
 ```
+
+On disk, `dsviper.CommitDatabase.create(path)` makes the file and `extend_definitions` puts
+the model in it. The definitions persist in the file: a database reopened with
+`dsviper.CommitDatabase.open(path)` already carries them, and needs no second
+`extend_definitions`:
+
+```{doctest}
+>>> import os, tempfile
+>>> path = os.path.join(tempfile.mkdtemp(), "users.cdb")
+>>> ondisk = dsviper.CommitDatabase.create(path)
+>>> _ = ondisk.extend_definitions(model.definitions())
+>>> state = dsviper.CommitMutableState(dsviper.CommitStateBuilder.initial_state(ondisk))
+>>> login_of.set(state.attachment_mutating(), alice, tuto.Login(nickname="alice"))
+>>> _ = ondisk.commit_mutations("Register alice", state)
+>>> ondisk.close()
+
+>>> reopened = dsviper.CommitDatabase.open(path)
+>>> latest = dsviper.CommitStateBuilder.state(reopened, reopened.last_commit_id())
+>>> login_of.get(latest.attachment_getting(), alice).unwrap().nickname
+'alice'
+>>> reopened.close()
+```
+
+A `Database` works the same way, with `dsviper.Database.create(path)` and
+`dsviper.Database.open(path)`.
 
 A field operation on a key that holds no document does nothing and raises nothing: set the
 document first.
@@ -650,7 +830,8 @@ Traceback (most recent call last):
 TypeError: ... is not a Tuto::UserKey: widen it with to_parent_key(), or narrow it with from_any_concept_key()
 ```
 
-An unknown keyword given to a constructor is a `TypeError` too.
+An unknown keyword given to a constructor is a `TypeError` too, and so is a generated object
+given as its source (see [Structures](#structures)).
 
 **Content that does not fit** the type, native or generated, in a field, a container or an
 attachment, is refused by the runtime with `dsviper.ViperError`, naming the element at
@@ -708,8 +889,10 @@ attachment_function_pool PlayerModel {
 };
 ```
 
-A client calls a pool through a service with its `Remote`, over a `dsviper.ServiceRemote`;
-`is_available()` says whether the service carries the pool:
+The package calls a pool only through a service: its `Remote`, over a
+`dsviper.ServiceRemote` connected to a running server (the {doc}`../services/services` page
+says how the laboratory starts one). `is_available()` says whether the service carries the
+pool:
 
 ```python
 import dsviper
@@ -728,8 +911,10 @@ if tools.is_available():
 
 An attachment function takes the state its parameter type names: an `AttachmentMutating`
 for a `mutable` function, an `AttachmentGetting` for one that only reads. The state must
-know the model — one built over the package's `definitions()`, or a commit database extended
-with it; over other definitions a call fails on an unregistered attachment. The service
+know the model — one built over the package's `definitions()`, over the `dsviper.Definitions`
+given to `connect` (which `connect` fills with the service's model; pass its `const()`),
+or a commit database extended with it; over other definitions a call fails on an
+unregistered attachment. The service
 reads and writes that state in place, and nothing is stored until it is committed:
 
 ```python

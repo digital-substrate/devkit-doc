@@ -66,8 +66,8 @@ Kibo renders an entry only when the template **defines it and it takes that argu
 `pool(po)` written as a loop body before these names were reserved is not mistaken for an
 entry. A template may declare several entries — most declare both
 `unit` and `model`, because the concepts and structures of a namespace belong to a unit while
-what no unit can claim belongs to the model. `main` and `model` render to the same file, so
-declare one of them. A file `-t` names that declares none is an error, not an empty file; in
+what no unit can claim belongs to the model. `main` and `model` render to the same file, so a
+template declaring both is refused. A file `-t` names that declares none is an error, not an empty file; in
 a directory, such a file is one the others import — a pack's banner — and is skipped.
 
 A pool is a unit too — a namespace holding only functions — so it is named and laid out like

@@ -1,13 +1,17 @@
 # Command-line usage
 
-Kibo is the code generator that transforms DSM definitions into C++ and Python
-infrastructure code. See [Templates](templates.md) for the template model.
+Kibo renders one template against a DSM model per run. A project rarely calls it by hand:
+[kibo-project](kibo-project.md) reads the project's `kibo.toml` and runs kibo once per
+template the chosen features need. This page is for calling the jar directly, or for
+understanding what kibo-project does on your behalf. See [Templates](templates.md) for
+templates as an ecosystem and the [Template Model reference](template_model.md) for what a
+template reads.
 
 ## Synopsis
 
 ```bash
-java -jar kibo-1.2.7.jar \
-  -c [converter] \
+java -jar kibo-2.0.0.jar \
+  -c [cpp | python | typescript] \
   -n [namespace] \
   -d [definitions.dsm.json] \
   -t [template] \
@@ -16,139 +20,73 @@ java -jar kibo-1.2.7.jar \
 
 ## Options
 
-| Option              | Description                        |
-|---------------------|------------------------------------|
-| `-c, --converter`   | Target language: `cpp` or `python` |
-| `-n, --namespace`   | Namespace for generated files      |
-| `-d, --definitions` | Path to definitions (`.dsm.json`)  |
-| `-t, --template`    | Template directory or file         |
-| `-o, --output`      | Output directory or file           |
-| `-q, --quiet`       | Disable output messages            |
-| `-h, --help`        | Show help                          |
-| `-v, --version`     | Show version                       |
+| Option | Description |
+|---|---|
+| `-c, --converter` | The target: `cpp`, `python` or `typescript`. It decides how a type is spelled for the binding (`int64` is `int` in Python, `bigint` in TypeScript) and how output files are named |
+| `-n, --namespace` | The name of the generated infrastructure. In C++ it is the namespace every generated line lives under, taken as written; in Python and TypeScript, the package |
+| `-d, --dsm` | The DSM definitions, `.dsm.json` |
+| `-t, --template` | A template file, or a directory of them |
+| `-o, --output` | The output directory |
+| `--atom WORD` | A word the snake_case of a static name never splits (`IPv4`, `YCoCg`); repeatable |
+| `--rename NAME=snake_name` | A DSM name and the snake_case it takes; repeatable |
+| `-q, --quiet` | Disable output messages |
+| `-l, --log` | Display internal process steps |
+| `-h, --help` | Show help |
+| `-v, --version` | Show the version |
 
-## Available templates
+## What a run renders
 
-Kibo itself is template-agnostic — it does not bundle templates. The
-first-party template pack for the Viper ecosystem is
-[`kibo-template-viper`](../kibo-template-viper/index.rst), which ships
-both C++ and Python templates. The full catalogue (which template
-generates which files, and for which purpose) is in
-[Templated Features](../kibo-template-viper/features.md).
+A template declares what it is rendered for by the entry it defines: `main` or `model` once
+for the whole model, `unit` once per DSM namespace, `pool` and `attachment_pool` once per
+function pool. Kibo renders every entry the template declares, and names each output after
+the scope it covers and the target's layout. The [Template Model
+reference](template_model.md) lists the entries, their arguments and the layout.
 
-## Generation strategy
+A template that reads an accessor the model does not carry renders the empty string. Kibo
+reports every such miss on stderr, each once with its count; a clean render prints nothing.
 
-Generation strategy is project-specific. Teams typically encode their
-choices (which features, where to put generated code, which template paths)
-in a `generate.py` script that invokes Kibo. See
-[Templated Features](../kibo-template-viper/features.md) for the available
-features in the viper template pack.
+## Names
 
-## Usage Examples
+Where a target projects a DSM name to snake_case — a Python field, method, parameter or
+module, a package directory — one rule applies: `vec3Curves` is `vec3_curves`, `docUInt8` is
+`doc_uint8`, `render2DAttributes` is `render_2d_attributes`. A module name Python reserves
+takes a trailing underscore (`annotations_`), in both bindings. `--atom` and `--rename` carry
+what only a project knows. Two names that land on one spelling in one scope stop the
+generation, and so does a namespace or a pool spelled like the model-wide code or like
+another one.
 
-### Generate All C++ Features
+## Example
 
-```python
-# From generate.py
-templates = [
-    'Model',
-    'Data',
-    'Stream', 'Json',
-    'Database',
-    'Attachments', 'AttachmentFunctionPool_Attachments',
-    'ValueType', 'ValueCodec', 'ValueHasher',
-    'Test',
-]
+Render the Python package of a model, from the first-party pack:
 
-for template in templates:
-    subprocess.run([
-        'java', '-jar', JAR,
-        '-c', 'cpp',
-        '-n', 'Features',
-        '-d', 'Features.dsm.json',
-        '-t', f'{TEMPLATES}/cpp/{template}',
-        '-o', 'Features',
-    ])
+```bash
+java -jar kibo-2.0.0.jar -c python -n features \
+  -d features.dsm.json -t kibo-template-viper/python -o python/generated
 ```
 
-### Generate Python Package
+The same with kibo-project, which also assembles the definitions, resolves the features into
+their templates, embeds the definitions and copies the pack's runtime:
 
-```python
-subprocess.run([
-    'java', '-jar', JAR,
-    '-c', 'python',
-    '-n', 'features',
-    '-d', 'Features.dsm.json',
-    '-t', f'{TEMPLATES}/python/package',
-    '-o', 'python/features',
-])
+```toml
+# kibo.toml
+[project]
+definitions = "definitions"
+infrastructure = "features"
+
+[generator]
+templates = "2"
+
+[target.python]
+features = ["Base", "Wheel"]
+output = "python/generated"
 ```
 
-### Mixing the viper template pack with custom templates
-
-Real projects often combine the shared `kibo-template-viper` pack with
-project-local templates that emit code for a custom framework or surface.
-Two distinct `-t` paths follow this convention:
-
-| Source             | `-t` argument                | Purpose                                    |
-|--------------------|------------------------------|--------------------------------------------|
-| Shared viper pack  | `{TEMPLATES}/cpp/{template}` | Standard viper code (`Model`, `Data`, …)   |
-| Project-local pack | `templates/{template}`       | Bindings for a custom framework or surface |
-
-```{tip}
-Project-local templates live in the project repo (e.g. `templates/RaptorLogic/`)
-and are versioned with the code they target. The viper pack lives in its own
-repo so it can evolve independently of any consumer.
+```bash
+python3 kibo_project.py generate kibo.toml
 ```
 
-### Skeleton generate.py
+## Coming from kibo 1.2
 
-A minimal script combining the viper pack with a project-local pack:
-
-```python
-import os, subprocess
-from dsviper import DSMBuilder
-
-JAR       = os.environ.get('KIBO_JAR')         # path to kibo-X.Y.Z.jar
-TEMPLATES = os.environ.get('KIBO_TEMPLATES')   # path to kibo-template-viper
-KIBO      = ['java', '-jar', JAR]
-
-
-def generate_viper(namespace, dsm_path, template, output):
-    """Render a template from the shared viper pack."""
-    subprocess.run(KIBO + [
-        '-c', 'cpp', '-n', namespace,
-        '-d', dsm_path, '-t', f'{TEMPLATES}/cpp/{template}',
-        '-o', output,
-    ])
-
-
-def generate_project_local(namespace, dsm_path, template, output):
-    """Render a project-local template (e.g. custom framework bindings)."""
-    subprocess.run(KIBO + [
-        '-c', 'cpp', '-n', namespace,
-        '-d', dsm_path, '-t', f'templates/{template}',
-        '-o', output,
-    ])
-
-
-def generate_package(name, dsm_path, output):
-    """Render a Python package from the viper pack."""
-    subprocess.run(KIBO + [
-        '-c', 'python', '-n', name,
-        '-d', dsm_path, '-t', f'{TEMPLATES}/python/package',
-        '-o', output,
-    ])
-
-
-# Parse DSM, persist the .dsm.json, then run as many generations as needed.
-builder = DSMBuilder.assemble('definitions/MyApp')
-report, dsm_definitions, definitions = builder.parse()
-with open('MyApp.dsm.json', 'w') as f:
-    f.write(dsm_definitions.json_encode())
-
-generate_viper('MyApp', 'MyApp.dsm.json', 'Model', 'src/MyApp')
-generate_project_local('MyAppLogic', 'MyApp.dsm.json', 'MyAppLogic', 'src/MyAppLogic')
-generate_package('myapp', 'MyApp.dsm.json', 'python/myapp')
-```
-
+A template pack written for kibo 1.2 reads Template Model 1; moving it is covered in
+[Migrating a template pack](migrating.md). A project's `generate.py` gives way to a
+`kibo.toml` and [kibo-project](kibo-project.md).

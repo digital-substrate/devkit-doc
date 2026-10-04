@@ -155,10 +155,10 @@ def _new_tuto_db():
 
 db = _new_tuto_db()
 
-# The committed Kibo-generated Tuto SDK, for the "Using your generated SDK"
-# chapter. `md` = types, `ma` = attachment verbs.
-import model.data as md
-import model.attachments as ma
+# The committed kibo 2 Tuto SDK, for the "Using your generated SDK" chapter:
+# `model` is the package, `tuto` the module of the DSM namespace Tuto.
+import model
+from model import tuto, containers
 '''
 
 

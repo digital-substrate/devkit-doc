@@ -1,188 +1,290 @@
 # C++
 
-You defined a data model in DSM and ran Kibo over it. For C++, what you get back is
-not a wrapper library — it is **native C++ value types** (`struct`s, `enum class`es,
-STL containers) plus the generated machinery that links them to the Viper C++
-runtime. You write ordinary, value-semantic C++; the generated code crosses to the
-dynamic runtime for you.
+You defined a data model in DSM and ran Kibo over it with the
+{doc}`kibo-template-viper <../kibo-template-viper/index>` pack. For C++, what you get
+back is not a wrapper library: it is **C++17 value types** — `struct`s, `enum class`es,
+key classes, STL containers — and the generated code that crosses them to the Viper C++
+runtime. You write ordinary, value-semantic C++; the codec and the attachments cross to the
+runtime's dynamic `Viper::Value` for you.
 
-This page is that surface, end to end. For *why* the generated code exists (the
-adapter/Dual Reality pattern), see {doc}`../kibo-template-viper/index`; for the
-persistence model, see {doc}`../commit/index`. The runtime it links against is Viper
-C++ (commercial).
+The generated C++ is the pack's base reference: the {doc}`Python <python>` and
+{doc}`TypeScript <node>` packages offer what it offers, with its restrictions. Producing it
+is {doc}`kibo-project <../kibo/kibo-project>`'s job, and which files a project renders is
+the feature selection described in {doc}`../kibo-template-viper/features`. The runtime it
+links against is Viper C++ (commercial) on its 1.2 line, with its static layer
+(`Viper_StaticType`, `Viper_StaticWriter`, `Viper_StaticReader`, `Viper_StaticHash`).
 
-```{note}
-In the examples, `App` stands for your project name (the `-n` passed to Kibo) and
-`Tuto` is the DSM namespace.
-```
-
-## Anatomy of the generated C++
-
-C++ is generated **per feature**, not as one importable package: each Kibo run emits
-a header/implementation pair, and you link the ones you need into your application.
+The examples use the `features` model of the generator's laboratory,
+[devkit-codegen-test](https://github.com/digital-substrate/devkit-codegen-test), whose
+infrastructure name (Kibo's `-n`) is `features`. It declares one namespace, `Demo`:
 
 ```text
-<App>_Data.hpp / .cpp          ← the types: struct / enum class / key, in namespace Tuto
-<App>_Attachments.hpp / .cpp   ← the verbs: get / set / enumerate, in namespace App::Tuto::Attachments
-<App>_ValueEncoder.hpp / .cpp  ← static C++ → dynamic Viper::Value
-<App>_ValueDecoder.hpp / .cpp  ← dynamic Viper::Value → static C++
-<App>_ValueType.hpp / .cpp     ← Viper type handles (plumbing)
+namespace Demo {
+concept ConceptA;
+concept ConceptB;
+concept ConceptC is a ConceptB;
+concept ConceptD;
+club Klub;                         // members: ConceptC, ConceptD
+enum EnumerationE { a, b, c };
+struct StructureS { float f_float; string f_string; };
+struct StructureV { uint8 f_uint8 = 8; string f_string = "Forty Two"; set<uint8> f_set = {1, 2, 3}; … };
+attachment<ConceptA, StructureV> properties;
+…
+};
 ```
 
-Two namespaces divide the work: your **value types** land in the DSM namespace
-(`Tuto::Login`, `Tuto::UserKey`), the **machinery** in your project namespace
-(`App::Tuto::Attachments::…`, `App::ValueEncoder`, `App::ValueDecoder`). Every file
-carries a "Do not edit by hand." header — it is a build artifact, regenerated on
-every model change.
+## What is generated
 
-Unlike Python and Node, C++ has a **lexical namespace**, so the DSM namespace becomes
-a real `namespace Tuto`, not a `Tuto_` symbol prefix.
+A DSM namespace is a **unit**: a file-name prefix and a C++ namespace inside the
+infrastructure's. `Demo` in the infrastructure `features` gives `features_demo_data.hpp`
+and `namespace features::demo`, so two namespaces of one model may declare the same name.
+Which files are rendered depends on the features a project selects:
 
-## Two representations, one bridge
+| Feature | Files | What they hold |
+|---|---|---|
+| `Base` | `<ns>_<unit>_data`, `_model`, `_codec`, `<ns>_codec`, `<ns>_any_concept`, `<ns>_resources` | structures, enumerations, keys; their identity in the definitions; the codec to a `Viper::Value` |
+| `Fields` | `<ns>_<unit>_fields` | every field's name and path, for code that goes through the dynamic API |
+| `Attachments` | `<ns>_<unit>_attachments` | one scope per attachment, its operations |
+| `Pool` | `<ns>_<pool>_pool` | the functions an application implements, and the pool it exposes |
+| `PoolRemote` | `<ns>_<pool>_remote` | the same pool, called through a service |
 
-This is where C++ differs most from the Python and Node SDKs. There, a proxy object
-*holds* the runtime value (`vpr_value` / `vprValue`) — one value seen through a typed
-view. In C++ there are **two genuinely separate representations**:
+Every file starts with a header naming the generator, the templates and the runtime, and
+says *Do not edit by hand*: it is a build artifact, regenerated on every model change. A
+defect in it is fixed in the DSM model or in the templates, never in the output.
 
-- **Developer Reality** — native C++ value types: `Tuto::Login`, `Tuto::Status`,
-  `std::set<Tuto::UserKey>`, `std::optional<Tuto::Login>`. Value semantics, RAII,
-  operators, zero wrapper overhead.
-- **Runtime Reality** — `Viper::Value` (dynamic, `shared_ptr`, metadata-driven), what
-  the engine stores and manipulates.
-
-The bridge between them is the generated `ValueEncoder` / `ValueDecoder` — the
-{term}`Dual Reality` made concrete:
+The examples below include:
 
 ```cpp
-std::shared_ptr<Viper::ValueStructure> v = App::ValueEncoder::encode(login);  // static → dynamic
-Tuto::Login back = App::ValueDecoder::decode_Tuto_Login(v);                    // dynamic → static
+#include "features_codec.hpp"              // the codec, for every namespace of the model
+#include "features_demo_attachments.hpp"
+#include "Viper_CommitDatabase.hpp"
+#include "Viper_CommitMutableState.hpp"
+#include "Viper_CommitState.hpp"
+#include "Viper_CommitStateBuilder.hpp"
+#include "Viper_CommitStore.hpp"
+#include "Viper_Database.hpp"
+
+using namespace features;
 ```
 
-`encode` is **overloaded** on its argument (`encode(Tuto::Login const&)`,
-`encode(std::optional<Tuto::Login> const&)`, `encode(bool)`, …); `decode` is a
-**named function per type** (`decode_Tuto_Login`, `decode_bool`, …), because C++
-cannot overload on return type.
+## Structures and enumerations
 
-You rarely call them yourself: the attachment and database verbs take and return
-native types and cross the bridge internally. You reach for `encode` / `decode`
-explicitly only when you need a raw `Viper::Value` — serialization, RPC, or dynamic
-interop. So there is no "don't reach for `vpr_value`" rule here; the discipline is
-simply to know which side of the bridge you are on and to cross it deliberately.
-
-## Living in the value types
-
-### Keys — concepts and clubs
-
-A concept or club becomes a value class. A key is an identity, not data:
+A structure is a `struct` with public fields, a default constructor and a constructor
+taking every field in declaration order; a one-field structure converts from its field.
+A new structure holds the model's defaults — the default a field declares, or else the
+default of its type:
 
 ```cpp
-auto user = Tuto::UserKey::create();   // a fresh identity
-user.instanceId();                      // its UUId
-user.description();                     // "<uuid>:Tuto::UserKey"
-user == other;                          // value comparison (operator==)
+demo::StructureS s(1.5f, "hello");           // every field, in declaration order
+demo::StructureS empty;                      // {0.0, ""}
+s.f_string = "world";
+
+demo::StructureV v;
+v.f_uint8;                                   // 8, declared in the model
+v.f_set;                                     // std::set<std::uint8_t>{1, 2, 3}
 ```
 
-Keys are hashable and ordered (`hash()`, `operator<`), so they drop straight into
-`std::set<Tuto::UserKey>` or `std::map<Tuto::UserKey, …>`.
-
-### Structs — plain public members
-
-A struct becomes a value class with public data members and value constructors:
+Copying copies. Equality and order are generated (`==`, `!=`, `<`), and so is a
+`std::hash` specialization, over the runtime's static hash:
 
 ```cpp
-Tuto::Login login;
-login.nickname = "alice";
-login.password = "s3cret";
-// or, all at once:
-Tuto::Login other{"bob", "hunter2"};
-
-login == other;                         // value equality, generated
+bool const same{s == demo::StructureS{1.5f, "world"}};
+bool const before{empty < s};
+std::size_t const h{std::hash<demo::StructureS>{}(s)};
 ```
 
-### Enums — `enum class`
+An enumeration is an `enum class` whose enumerators are the DSM cases, capitalized:
+`demo::EnumerationE::A`, `B`, `C`.
+
+The types map to C++ as you would write them: `std::string`, the fixed-width integers,
+`std::vector`, `std::set`, `std::map`, `std::optional`, `std::tuple`, `std::variant`,
+`std::array` for a `vec` and an array of columns for a `mat`, `Viper::XArray` for an
+`xarray`, `Viper::Any` for an `any`, `Viper::UUId`, `Viper::Blob`.
+
+## The codec
+
+A value crosses to a `Viper::Value` through the codec, which copies, and back:
 
 ```cpp
-Tuto::Account account{Tuto::Status::active};
-account.state = Tuto::Status::pending;
+auto const value{codec::encode(s)};                          // a Viper::ValueStructure
+auto const back{codec::decode<demo::StructureS>(value)};     // equal to s
+auto const definitions{codec::definitions()};                // the model, as the runtime knows it
 ```
 
-### Containers — the STL, directly
+`encode` takes any generated type and any container of them; `decode<T>` checks the value's
+type and throws a `Viper::Error` when it is not `T`. JSON, XML and a hexdigest are one
+runtime call on what `encode` returns: the pack generates the bridge, not what composes it
+with a runtime feature. The binary form is the runtime's static layer — `write(w, v)` on a
+`Viper::StaticWriter::Writer`, `read(r, tag<T>{})` on a `Viper::StaticReader::Reader`, found
+by argument-dependent lookup.
 
-`vector` / `set` / `map` / `optional` map to their STL counterparts —
-`std::vector`, `std::set`, `std::map`, `std::optional` — parameterized by the value
-type. There is no proxy collection to learn: you use the STL type the generated API
-hands you.
+## Keys
+
+A concept or a club gives a `final` key class: an instance id and the runtime id of the
+instance's concept. `create()` mints a fresh instance, and the default constructor gives
+the invalid key:
 
 ```cpp
-std::set<Tuto::UserKey> keys = /* … from an attachment … */;
-for (Tuto::UserKey const & k : keys) {
-  // …
+auto const a{demo::ConceptAKey::create()};
+demo::ConceptAKey const invalid;
+a.isValid();                                 // true
+invalid.isValid();                           // false
+a.instanceId();                              // a Viper::UUId
+```
+
+Keys are values — `==`, `<`, `std::hash` — so they go into `std::set`, `std::map` and
+`std::unordered_set` as they are.
+
+A child key widens to its parent's by an implicit conversion or `toParentKey()`, and a
+parent key narrows with `Child::from(anyConceptKey)`, or `parent.asChildKey()` for a
+child declared in the parent's namespace, which the parent can name. A club key converts
+from a member's key and narrows to each member the same way. Every key gives `toAny()`,
+also named `toAnyConceptKey()`:
+
+```cpp
+auto const c{demo::ConceptCKey::create()};
+demo::ConceptBKey const b{c};                                 // widening, implicit
+demo::ConceptBKey const parent{c.toParentKey()};              // widening, named
+std::optional<demo::ConceptCKey> const child{b.asConceptCKey()};          // narrowing
+std::optional<demo::ConceptCKey> const fromAny{demo::ConceptCKey::from(b.toAny())};
+
+demo::KlubKey const klub{c};                                  // a club key, from a member's
+std::optional<demo::ConceptDKey> const notD{klub.asConceptDKey()};       // std::nullopt
+
+AnyConceptKey const anyone{c.toAnyConceptKey()};
+bool const sameInstance{anyone == b.toAny()};                 // true
+```
+
+A narrowing answers `std::nullopt` when the instance is not one of the target concept.
+
+## Attachments
+
+An attachment is a scope, `<ns>::<unit>::attachments::<Concept>::<attachment>`:
+
+- `get`, `has`, `keys` take any `std::shared_ptr<Viper::AttachmentGetting>` — a
+  `Viper::Database`, a `Viper::CommitState`, a `Viper::CommitMutableState` are ones;
+- `set`, `diff` and the field operations take a `Viper::AttachmentMutating`;
+- `set` and `del` also take a `Viper::Database`, inside a transaction.
+
+`runtimeId` is the attachment's runtime id, a constant, and `descriptor()` the runtime's
+`Viper::Attachment`.
+
+On a `Viper::Database`, extended with the model once:
+
+```cpp
+namespace properties = demo::attachments::ConceptA::properties;
+
+auto const db{Viper::Database::createInMemory()};
+db->extendDefinitions(codec::definitions());
+auto const key{demo::ConceptAKey::create()};
+
+db->beginTransaction(Viper::DatabaseTransactionMode::Deferred);
+properties::set(db, key, demo::StructureV{});
+db->commit();
+
+std::optional<demo::StructureV> const document{properties::get(db, key)};
+std::set<demo::ConceptAKey> const stored{properties::keys(db)};
+
+db->beginTransaction(Viper::DatabaseTransactionMode::Deferred);
+properties::del(db, key);
+db->commit();
+```
+
+On a `Viper::CommitDatabase`, the writes go to a `Viper::CommitMutableState` — built from
+`CommitStateBuilder::initialState(db)` for the first commit, `CommitStateBuilder::state(db,
+commitId)` to carry on — and are stored once it is committed:
+
+```cpp
+auto const cdb{Viper::CommitDatabase::createInMemory()};
+cdb->extendDefinitions(codec::definitions());
+
+auto state{Viper::CommitMutableState::make(Viper::CommitStateBuilder::initialState(cdb))};
+properties::set(state, key, demo::StructureV{});
+properties::setF_string(state, key, "v1");                   // a field operation
+properties::unionF_set(state, key, {7});
+auto const v1{cdb->commitMutations("First version", state)};
+
+state = Viper::CommitMutableState::make(Viper::CommitStateBuilder::state(cdb, v1));
+properties::setF_string(state, key, "v2");
+auto const v2{cdb->commitMutations("Second version", state)};
+
+auto const past{Viper::CommitStateBuilder::state(cdb, v1)};  // every commit stays readable
+std::string const first{properties::get(past, key)->f_string};   // "v1"
+```
+
+The field operations are named after the field: `set<Field>` for every field, and for a
+collection field `union<Field>`, `subtract<Field>` (set, map), `update<Field>` (map),
+`insert<Field>`, `remove<Field>` (xarray). A field operation on a key that holds no document
+does nothing: set the document first. A `Viper::CommitStore` keeps that thread for an
+application, with undo and redo:
+
+```cpp
+auto const store{Viper::CommitStore::make()};
+store->use(cdb);
+store->dispatch("Third version", [&](std::shared_ptr<Viper::AttachmentMutating> const & mutating) {
+    properties::setF_string(mutating, key, "v3");
+});
+store->undo();
+```
+
+The commit model itself — heads, history, merges — is the {doc}`../commit/index`
+subsystem's.
+
+## Pools
+
+A function pool is a namespace, `<ns>::<pool>`. The laboratory's `service` model (the
+infrastructure `service`) declares `Tools`:
+
+```text
+function_pool Tools { int64 add(int64 a, int64 b); Vector3 addVector(Vector3 a, Vector3 b); … };
+```
+
+With the `Pool` feature, the application implements the functions in that namespace, and
+`pool()` returns the `Viper::FunctionPool` it exposes; `poolName` and `poolId` name it:
+
+```cpp
+#include "service_tools_pool.hpp"
+
+namespace service::tools {
+
+std::int64_t add(std::int64_t a, std::int64_t b) {
+    return a + b;
 }
-```
 
-## Mutating: calling an attachment verb
-
-Data hangs off a key as **attachments**. Each attachment generates a namespace of
-verbs — `set`, per-field `set<Field>`, `get`, `keys`, `diff` — taking native types
-and a state drawn from a `CommitDatabase` (see {doc}`../commit/index`).
-
-### Write, then commit
-
-```cpp
-using namespace App::Tuto::Attachments;   // brings User_Login, User_Account, … into scope
-
-auto db = CommitDatabase::open("model.cdb");
-
-auto user = Tuto::UserKey::create();
-Tuto::Login login{"alice", "s3cret"};
-
-auto state = CommitMutableState::make(CommitStateBuilder::initialState(db));
-User_Login::set(state->attachmentMutating(), user, login);
-User_Login::setNickname(state->attachmentMutating(), user, "alice2");   // fine-grained
-db->commitMutations("Register alice", state);
-```
-
-The verbs take native `Tuto::Login` and `std::string` — the encode step is internal.
-
-### Read
-
-```cpp
-auto s = CommitMutableState::make(
-    CommitStateBuilder::state(db, db->lastCommitId().value()));
-auto getting = s->attachmentGetting();
-
-std::set<Tuto::UserKey> users = User_Login::keys(getting);
-if (std::optional<Tuto::Login> maybe = User_Login::get(getting, user)) {
-  std::cout << maybe->nickname << '\n';   // "alice2"
+demo::Vector3 addVector(demo::Vector3 const & a, demo::Vector3 const & b) {
+    return {a.x + b.x, a.y + b.y, a.z + b.z};
 }
+
+// … every function the pool declares
+
+} // namespace service::tools
+
+std::shared_ptr<Viper::FunctionPool> const exposed{service::tools::pool()};
 ```
 
-`get` returns a `std::optional<Tuto::Login>` — a native value, already decoded.
+With the `PoolRemote` feature, a client calls the same pool through a service, with
+`Remote` over a `Viper::ServiceRemote`; it links without the functions only a server
+implements. An attachment function takes an `AttachmentMutating` when it is `mutable`, an
+`AttachmentGetting` when it only reads:
 
-The mental model is uniform: **a verb is a free function in the attachment's
-namespace, taking a getting/mutating handle, a key, and (for setters) a native
-value.** A `DatabaseAttachments` feature offers the same verbs against a plain,
-non-commit `Viper::Database`.
+```cpp
+#include "service_codec.hpp"
+#include "service_tools_remote.hpp"
+#include "service_player_model_remote.hpp"
+#include "Viper_CommitMutableState.hpp"
+#include "Viper_CommitState.hpp"
 
-## Reading a repro
+auto const remote{Viper::ServiceRemote::connect("localhost", "54328", Viper::Definitions::make())};
+service::tools::Remote const tools{remote};
+if (tools.isAvailable()) {
+    std::int64_t const sum{tools.add(32, 10)};            // 42
+}
 
-Because every generated name is mechanical, an error written in generated symbols
-maps straight back to your model:
+service::player_model::Remote const players{remote};
+auto const state{Viper::CommitMutableState::make(Viper::CommitState::make(service::codec::definitions()))};
+auto const player{players.create(state, "zoe", service::demo::Level::Expert)};
+std::optional<service::demo::PlayerKey> const found{players.hasPlayer(state, "zoe")};
+```
 
-- **`Tuto::Login`** → type `Login` in `namespace Tuto` → the `Data` header, and the
-  DSM line `struct Login { … }`.
-- **`App::Tuto::Attachments::User_Login::set`** → project `App`, namespace `Tuto`,
-  attachment `login` on key concept `User`, verb `set` → the DSM line
-  `attachment<User, Login> login;`.
-- **`App::ValueDecoder::decode_Tuto_Login`** → the decoder that turns a runtime
-  `Viper::ValueStructure` back into a `Tuto::Login`.
-
-From there:
-
-1. The generated file says **"Do not edit by hand."** The defect is upstream — in the
-   DSM model, or in the template — never a patch to the output.
-2. Regenerate after any model change (per feature, `kibo -c cpp -t cpp/<Feature>`);
-   the generated code is a build artifact and a stale copy will lie about the model.
-
-That legibility is the payoff of the generated layer: the names you debug are the
-names you declared.
+Most projects do not expose their pools as a service; where services come from is the
+{doc}`../services/index` chapter's subject.

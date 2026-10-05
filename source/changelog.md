@@ -123,6 +123,28 @@ The engine shipped inside both bindings; `viperVersion()` reports this version.
 Binding- or packaging-only releases are omitted — except a *phantom* version (a runtime
 number minted with no runtime change, from a lockstep bump), listed to explain the gap.
 
+### 1.2.28 — 2026-10-04
+
+**Changed (breaking)**
+
+- Enumeration values order by their definition, as a C++ enum class does: they ordered by case name. A set or a map keyed by an enumeration iterates, encodes and hashes in that order; stored data reads unchanged.
+
+**Changed**
+
+- `ValueXArray::append` returns the position it created, as `insert` does; it returned END, which named no element. `extend` still returns END.
+- A remote attachment function that only reads takes an `AttachmentGetting`: `ServiceRemote::call` widens from `AttachmentMutating`. A function that mutates, given a state that only reads, is refused with `ServiceErrors::ReadOnlyState`. The wire is unchanged.
+- A default mat is all zeros, as a vec, a number and generated C++ are: `Value::create` built the identity. `ValueMat::make(typeMat, identity)` still builds it on request. Data written before reads back unchanged.
+- A default key of a concept names that concept, as generated C++ does; a key of a club or of `any_concept` still names none. Data written before reads back unchanged; test an unset key with `is_valid()`, not by comparison.
+
+**Added**
+
+- The static side of the dual reality, for C++ code that holds a model's values as C++ types — what kibo 2 generates — each found by argument-dependent lookup, so a model adds the overloads for its own types: `StaticType` (`type(tag<T>{})`, the runtime type a C++ type stands for, and `ValueOf<T>`, the `Value` class it becomes); `StaticWriter` and `StaticReader`, the static unfolding of `ValueWriter` and `ValueReader`; `StaticHash`, the hash of a C++ value over the vocabulary and every standard container.
+- `ValueHashKey::of(value)`, a value-identity token that follows `Value::equal`, for a host whose collections key on a primitive: equal values give equal tokens.
+
+**Fixed**
+
+- An xarray compares its elements by position: `equal` and `compare` ignored how many elements each array held and where, so an array with an element removed equalled the array before the removal, or read past the end of the other.
+
 ### 1.2.27 — 2026-09-27
 
 **Added**
@@ -444,6 +466,46 @@ Initial release.
 
 The PyPI wheel (`pip install dsviper`). Its `PATCH` stream is independent of the
 runtime; each release notes the runtime version it ships.
+
+### 1.2.29 — 2026-10-05
+
+*Ships runtime 1.2.28.*
+
+**Changed (breaking)**
+
+- Enumeration values order by their definition, as the runtime now does: a `ValueSet` or a `ValueMap` keyed by an enumeration iterates and encodes in declaration order; it ordered by case name.
+
+**Changed**
+
+- A default key of a concept names that concept: `Value.create(TypeKey(c))` and an unset key field answer `type_concept()` c, with no instance id. A key of a club or of any concept names none.
+- `ValueXArray.append` returns the position of the element it appended, which `at` reads and `remove` removes; it returned END.
+
+**Added**
+
+- A remote attachment function that only reads also takes an `AttachmentGetting`, a database's or a commit state's; one that mutates still requires an `AttachmentMutating`.
+- `ValueMat(type_mat, *, identity=True)` builds the identity; with no initial value and no flag, a mat is all zeros.
+- `Attachment` compares, orders and hashes by its `runtime_id()`, which its definition determines, so it can key a `dict`, join a `set` or be sorted.
+
+**Fixed (breaking)**
+
+- A bool is not an integer: `True` given for an integer, an enumeration's index included, is refused, as a float is and as the Node binding does.
+- A dict is not a set, nor a Value of another type its elements: a set, a vector or an xarray refuses them instead of converting their keys or elements, as the Node binding does.
+
+**Fixed**
+
+- An xarray compares its elements by position: `==` and ordering ignored where each element sat, so an array with an element removed equalled the array before the removal.
+- `xarray[position]` reads `None` for a position that holds no element — `END`, or a removed position — as `at()` does, instead of killing the interpreter.
+- A structure is decoded from a mapping only: a `str`, a `list` or a `tuple` where a structure is expected raises `ViperError`, as a wrong scalar does, instead of an `AttributeError`.
+- `Value.create(key_type, key)` takes a key already made, checked against the type, as the Node binding does; it took a uuid only. A key of a club or of any concept with no value is the invalid key; it raised.
+- A mat built from columns that are not sequences raises `ViperError`, naming the column, instead of Python's `TypeError`.
+- A value constructor given a value of its type builds a deep copy, as every other already did: a vector shared its elements. The constructors' documentation now says so.
+- `TypeStructureField.default_value()` says it is None when the declared default is the type's zero (0, "", false, an enumeration's first case): such a default is not kept.
+- The README no longer says only `dispatch_*` is undoable: the store's own `commit_mutations` is too; a commit made on the `CommitDatabase` directly is not.
+- `ValueBlobId` says it names a blob and stores nothing: a document holding one is written only once the blob is stored, otherwise the write fails with Missing blob.
+- `ValueXArray.positions()` says what it lists: every position created, a removed one included, and END last, so a fresh array gives `[END]`; `items()` pairs only those holding an element.
+- `AttachmentMutating` no longer says every write creates a missing key: `set` and `diff` create the document; `update` and the in-set, in-map and in-xarray writes have no effect on a key holding none, and raise nothing.
+- Every method of the stub has a return annotation, so `mypy --strict` callers no longer get `no-untyped-call` from `Database.commit`, a type's constructor or a pool function's call.
+- Seven parameters the stub declares `| None` refused None (`documentation`, `parent`, `path`, `stream_codec_instancing`); they take it as absent.
 
 ### 1.2.28 — 2026-09-27
 
@@ -863,6 +925,46 @@ Initial release.
 ## dsviper for Node.js
 
 The npm package `@digitalsubstrate/dsviper`. See {doc}`dsviper-node/index`.
+
+### 1.2.14 — 2026-10-04
+
+*Ships runtime 1.2.28.*
+
+**Changed (breaking)**
+
+- Enumeration values order by their definition, as the runtime now does: a `ValueSet` or a `ValueMap` keyed by an enumeration iterates and encodes in declaration order; it ordered by case name.
+
+**Changed**
+
+- A default key of a concept names that concept: `Value.create(new TypeKey(c))` and an unset key field answer `typeConcept()` c, with no instance id. A key of a club or of any concept names none.
+- `ValueXArray.append` returns the position of the element it appended, which `at` reads and `remove` removes; it returned END.
+
+**Added**
+
+- A remote attachment function that only reads also takes an `AttachmentGetting`, a database's or a commit state's; one that mutates still requires an `AttachmentMutating`.
+- `new ValueMat(type, null, true)` builds the identity; with no value and no flag, a mat is all zeros.
+- `Attachment.equals()`, `compare()` and `hashKey()`, by its `runtimeId`, which its definition determines: a `Map` or a `Set` can hold an attachment by value, and attachments sort.
+
+**Fixed (breaking)**
+
+- A structure is built from a plain object only: a `Map`, a `Set`, a class instance or a Value of another type, taken as a structure of defaults, is refused, as in Python.
+- A wrapped Value of another type is refused, as in Python: a structure, key or container Value given to `Value.create` or as an argument is checked against the type expected.
+- An xarray argument is the list of its elements, as in Python: `set`, `update` and `Value.create` take `[e1, e2, …]`, and `[]` is the empty xarray. A caller passing the `dumps` form breaks; `Value.loads` still reads it.
+
+**Fixed**
+
+- An xarray compares its elements by position: `equals` and `compare` ignored where each element sat, so an array with an element removed equalled the array before the removal.
+- `Attachment.createKey` refuses an instance id that is not a `ValueUUId`, as Python does: a uuid string, or any other value, minted a fresh instance, so a document filed under a saved id read back as absent.
+- `ValueVariant.wrap(value)` without a type stores the alternative the value fits, as `Value.create` and Python do: `wrap(3)` on a `string|uint8` is a uint8, where it was refused as a double.
+- A value constructor given a value of its type builds a deep copy, as every other already did: a vector shared its elements, a map its values. The constructors' documentation now says so.
+- `hashKey()` follows `equals()`. Equal values got different keys (a key and its parent view, two nil optionals) and distinct values the same key (`Int8(1)` and `Int64(1)` inside an `any`). It is now the runtime's, a 64-bit bigint; `Value.hashKey(value)` returns it.
+- `index.d.ts` compiles for a TypeScript consumer who lists no types: it references `@types/node`, which TypeScript 6 and later no longer load on their own. 1.2.13 declared the dependency only, and a consumer met 19 errors on `Buffer` and `Symbol.dispose`.
+- The aggregate mutations take a native, as `index.d.ts` declares: `unionInSet`, `subtractInSet`, `unionInMap`, `subtractInMap`, `updateInMap`, `insertInXarray` and `updateInXarray` convert their value from the type the path names; they took a Value only.
+- `TypeStructureField.defaultValue()` says it is undefined when the declared default is the type's zero (0, "", false, an enumeration's first case): such a default is not kept.
+- The README no longer says only `dispatch*` is undoable: the store's own `commitMutations` is too; a commit made on the `CommitDatabase` directly is not.
+- `ValueBlobId` says it names a blob and stores nothing: a document holding one is written only once the blob is stored, otherwise the write fails with Missing blob.
+- `ValueXArray.positions()` says what it lists: every position created, a removed one included, and END last, so a fresh array gives `[END]`; `items()` pairs only those holding an element.
+- `AttachmentMutating` no longer says every write creates a missing key: `set` and `diff` create the document; `update` and the in-set, in-map and in-xarray writes have no effect on a key holding none, and throw nothing.
 
 ### 1.2.13 — 2026-09-27
 

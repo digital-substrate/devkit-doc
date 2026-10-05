@@ -112,7 +112,8 @@ Binary encoding is compact and fast, used for persistence and network transfer.
 ### Encoding Values
 
 `Value.encode(value)` returns a `ValueBlob`; `Value.decode(blob, type, defs)`
-restores the value:
+restores the value — as a native object where the type has one (an `int` for a
+`uint8`), as a `Value` otherwise; `encoded=False` always returns the `Value`:
 
 ```{doctest}
 >>> v = Value.deduce([1, 2, 3])

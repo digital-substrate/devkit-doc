@@ -24,7 +24,9 @@ A `blob` field stores binary data directly in the document. No special API neede
 ### blob_id (Reference)
 
 A `blob_id` is a SHA-1 hash referencing a blob managed by the Database blob API. This
-requires the dedicated blob API:
+requires the dedicated blob API. On this page `db` is a `CommitDatabase`, where
+`create_blob` writes at once; on a `Database` it is a write like any other, so it runs
+between `db.begin_transaction()` and `db.commit()`, and raises outside one:
 
 ```{doctest}
 >>> layout = BlobLayout()

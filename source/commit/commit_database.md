@@ -81,7 +81,15 @@ They are replicated together by
 >>> db = CommitDatabase.open("model.cdb")
 ```
 
-To create a new database with embedded definitions, use:
+To create a new database, create the file and extend it with the model's definitions;
+they are stored with it, so a later `open` needs no second `extend_definitions`:
+
+```pycon
+>>> db = CommitDatabase.create("model.cdb")
+>>> db.extend_definitions(defs)
+```
+
+`dsm_util` does the same from a `.dsm` file:
 
 ```bash
 python3 tools/dsm_util.py create_commit_database model.dsm model.cdb

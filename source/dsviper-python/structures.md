@@ -259,13 +259,14 @@ dsviper.ViperError: ...the case unknown is not defined for enum Tuto::Status...
 
 ### Comparison
 
-Enumerations compare lexicographically by name, not by index:
+Enumerations compare by the order their cases are defined, as a C++ enum class
+does — not by name. A set or a map keyed by an enumeration iterates in that order:
 
 ```{doctest}
 >>> pending = ValueEnumeration(t_status, "pending")
 >>> active = ValueEnumeration(t_status, "active")
 
->>> active < pending
+>>> pending < active
 True
 ```
 

@@ -97,6 +97,12 @@ title = "Migrating a template pack"
 description = "Moving a template pack from Template Model 1 to Template Model 2: the renames, the values that read differently, and a diff that accounts for every change."
 sort = 40
 
+# ---- kibo 1 ------------------------------------------------------------
+
+[overrides."https://docs.digitalsubstrate.io/kibo-1/using-generated-sdk/python.html"]
+title = "Python (kibo 1)"
+description = "The Python package kibo 1 generates: model.data for the types, model.attachments for the verbs, over the dsviper runtime."
+
 # ---- kibo-template-viper ---------------------------------------------
 
 [overrides."https://docs.digitalsubstrate.io/kibo-template-viper/features.html"]

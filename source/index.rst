@@ -67,6 +67,7 @@ Documentation
    kibo/index
    kibo-template-viper/index
    using-generated-sdk/index
+   kibo-1/index
    dsviper-python/index
    dsviper-node/index
    commit/index

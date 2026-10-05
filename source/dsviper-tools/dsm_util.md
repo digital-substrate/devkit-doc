@@ -4,13 +4,13 @@
 models, creates databases, and generates Python packages.
 
 ```{note}
-`dsm_util.py` is a tool of the 1.2 line. Its package generation renders the templates of
-the kibo-template-viper **1.2** pack, so the package it produces has the **1.2 generated
-surface** (`model.data`, `model.attachments`, names prefixed by their namespace such as
-`Tuto_Login`), not the 2.0 surface the rest of this documentation describes. To generate
-with kibo 2 and the 2.0 pack, write a `kibo.toml` and run
-{doc}`kibo-project <../kibo/kibo-project>`; the result is described in
-{doc}`../using-generated-sdk/index`. The other commands — `check`, `encode`, `decode`,
+`dsm_util.py`'s package generation is kibo 1's: it renders the kibo-template-viper **1.2**
+pack with kibo 1.2 — in the DevKit, from its `kibo-1/` folder — so the package it produces
+has the **kibo 1 surface** (`model.data`, `model.attachments`, names prefixed by their
+namespace such as `Tuto_Login`), described in the {doc}`Kibo 1 section <../kibo-1/index>`.
+To generate with kibo 2, write a `kibo.toml` and run
+{doc}`kibo-project <../kibo/kibo-project>` (`tools/kibo_project.py` in the DevKit); the
+result is described in {doc}`../using-generated-sdk/index`. The other commands — `check`, `encode`, `decode`,
 `create_database`, `create_commit_database` — work on DSM definitions and databases only,
 and do not depend on a generated package.
 ```

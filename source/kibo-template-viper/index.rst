@@ -181,6 +181,6 @@ Status
 ------
 
 kibo-template-viper 2 — Template Model 2, over the 1.2 runtime; the 1.2 pack
-is documented in the 1.2 version of this documentation. For Kibo's CLI, the
+is documented in the :doc:`Kibo 1 section <../kibo-1/kibo-template-viper/index>`. For Kibo's CLI, the
 generic template format, and how to write your own template targeting
 another runtime, see the :doc:`Kibo section <../kibo/index>`.

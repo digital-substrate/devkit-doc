@@ -8,11 +8,17 @@ import doctest
 import os
 import sys
 sys.path.insert(0, os.path.abspath('./_ext'))
-# Committed Kibo-generated Tuto SDK (`_fixtures/model/`), imported by the
-# "Using your generated SDK" doctests so their examples run against the real
-# generated surface. Regenerate with tools/regen_model_fixture.sh after any
-# template change (it is a build artifact, not hand-edited).
-sys.path.insert(0, os.path.abspath('./_fixtures'))
+# Committed Kibo-generated Tuto SDKs, one per generator line, each a package
+# named `model`: `_fixtures/kibo-2/model/` (kibo 2, the default of every
+# doctest) and `_fixtures/kibo-1/model/` (kibo 1, which a kibo-1 page selects
+# with `_use_sdk("kibo-1")` in its testsetup). Their examples run against the
+# real generated surface. Regenerate with tools/regen_kibo2_fixture.sh and
+# tools/regen_kibo1_fixture.sh after a template change (build artifacts, not
+# hand-edited). The doctest setup puts one of them on sys.path at a time.
+_SDK_FIXTURES = {
+    line: os.path.abspath(os.path.join(os.path.dirname(__file__), '_fixtures', line))
+    for line in ('kibo-1', 'kibo-2')
+}
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
@@ -155,8 +161,22 @@ def _new_tuto_db():
 
 db = _new_tuto_db()
 
+import importlib as _importlib
+import sys as _sys
+
+def _use_sdk(line):
+    """Make `model` the generated SDK of a generator line: kibo-2 (default) or kibo-1."""
+    for _name in [m for m in _sys.modules if m == "model" or m.startswith("model.")]:
+        del _sys.modules[_name]
+    for _path in {_SDK_FIXTURES!r}.values():
+        while _path in _sys.path:
+            _sys.path.remove(_path)
+    _sys.path.insert(0, {_SDK_FIXTURES!r}[line])
+    _importlib.invalidate_caches()
+
 # The committed kibo 2 Tuto SDK, for the "Using your generated SDK" chapter:
 # `model` is the package, `tuto` the module of the DSM namespace Tuto.
+_use_sdk("kibo-2")
 import model
 from model import tuto, studio, containers
 '''

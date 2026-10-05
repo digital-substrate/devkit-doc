@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Regenerate the committed Tuto SDK fixture at source/_fixtures/model/.
+# Regenerate the committed Tuto SDK fixture at source/_fixtures/kibo-2/model/.
 #
 # This package is the kibo 2 output for source/_fixtures/Tuto/model.dsm and
 # source/_fixtures/Studio/studio.dsm, rendered by
@@ -17,7 +17,7 @@ sibling_root="$(cd "$here/.." && pwd)"                          # repos root (de
 
 dsm="$here/source/_fixtures/Tuto/model.dsm"
 studio="$here/source/_fixtures/Studio/studio.dsm"     # the SDK chapter's own shapes, beside Tuto
-dst="$here/source/_fixtures/model"
+dst="$here/source/_fixtures/kibo-2/model"
 tool="${KIBO_PROJECT:-$sibling_root/kibo-project/kibo_project.py}"
 export KIBO_JAR="${KIBO_JAR:-$(ls "$sibling_root"/kibo/target/kibo-*.jar 2>/dev/null | sort -V | tail -1)}"
 export KIBO_TEMPLATES="${KIBO_TEMPLATES:-$sibling_root/kibo-template-viper}"
@@ -49,4 +49,4 @@ cp -R "$work/generated/model" "$dst"
 find "$dst" -name __pycache__ -type d -prune -exec rm -rf {} +
 
 echo "regenerated $dst from $dsm using $(basename "$KIBO_JAR")"
-echo "review with: git -C \"$here\" diff -- source/_fixtures/model"
+echo "review with: git -C \"$here\" diff -- source/_fixtures/kibo-2/model"

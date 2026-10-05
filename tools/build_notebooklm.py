@@ -73,8 +73,13 @@ BUNDLES: tuple[Bundle, ...] = (
     ),
     Bundle(
         "20-devkit-kibo",
-        "Kibo — code generation from DSM to C++ / Python (per-app Bridge); template authoring.",
-        ("kibo", "kibo-template-viper"),
+        "Kibo 2 — the current code generator: Template Model 2, kibo-project, the kibo-template-viper 2 pack (C++, Python, TypeScript), the generated SDK and migrating from kibo 1.",
+        ("kibo", "kibo-template-viper", "using-generated-sdk"),
+    ),
+    Bundle(
+        "25-devkit-kibo-1",
+        "Kibo 1 — the generator line of existing projects: kibo 1.2, Template Model 1, the kibo-template-viper 1.2 pack and its generated SDK, driven by dsm_util.",
+        ("kibo-1",),
     ),
     Bundle(
         "30-devkit-dsviper",

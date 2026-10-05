@@ -48,6 +48,20 @@ DevKit is the **distribution** that bundles **DSM** (the modeling language), **K
 - [Generated SDK in C++](https://docs.digitalsubstrate.io/using-generated-sdk/cpp.html): Native value types, attachments, and the codec crossing to a Viper Value through the static layer.
 - [Migrating application code from 1.2](https://docs.digitalsubstrate.io/using-generated-sdk/migrating.html): What moved in the generated surface between 1.2 and 2.0, per language, with a worked example.
 
+## Kibo 1 — the generator line of existing projects
+
+- [Kibo 1](https://docs.digitalsubstrate.io/kibo-1/index.html): Kibo 1 — kibo 1.2.x with the kibo-template-viper 1.2.x pack, reading Template Model 1 — is the generator line that projects created before kibo 2 use. It generates for the same Viper LTS-1.2 runtime as kibo 2: the DSM language, the runtime and the databases are the same, only the generator and the code it generates differ.
+- [Templated Features](https://docs.digitalsubstrate.io/kibo-1/kibo-template-viper/features.html): The catalogue of templated features shipped with kibo-template-viper — what each one does, in C++, Python, and TypeScript. Use this page to pick the features you need; pass each to Kibo via the -t flag (see the [Kibo usage guide](../kibo/usage.md)).
+- [npm Packages](https://docs.digitalsubstrate.io/kibo-1/kibo-template-viper/node.html): Creating a distributable npm package from your DSM model — the TypeScript analogue of Python wheels <wheels>, over the @digitalsubstrate/dsviper Node binding instead of CPython.
+- [Python Wheels](https://docs.digitalsubstrate.io/kibo-1/kibo-template-viper/wheels.html): Creating distributable Python wheels from your DSM model.
+- [Template Model Reference](https://docs.digitalsubstrate.io/kibo-1/kibo/template_model.html): This reference documents the Template Model and DSM Model — the two class hierarchies that the StringTemplate engine consumes when generating code from DSM definitions.
+- [Templates](https://docs.digitalsubstrate.io/kibo-1/kibo/templates.html): A templated feature — or "template" for short — is a parameterised code recipe that Kibo expands against a DSM model to produce source code.
+- [Command-line usage](https://docs.digitalsubstrate.io/kibo-1/kibo/usage.html): Kibo is the code generator that transforms DSM definitions into C++ and Python infrastructure code. See [Templates](templates.md) for the template model.
+- [C++](https://docs.digitalsubstrate.io/kibo-1/using-generated-sdk/cpp.html): You defined a data model in DSM and ran Kibo over it. For C++, what you get back is not a wrapper library — it is native C++ value types (structs, enum classes, STL containers) plus the generated machinery that links them to the Viper C++ runtime. You write ordinary, value-semantic C++; the generated code crosses to the dynamic runtime for you.
+- [Using a kibo 1 SDK](https://docs.digitalsubstrate.io/kibo-1/using-generated-sdk/index.html): Kibo turns your DSM model into a typed package you work against every day — the consumer surface that sits on top of the Viper runtime. The principle is shared across languages (the Dual Reality: typed classes over one runtime value, produced by kibo-template-viper <../kibo-template-viper/index>), but the surface is idiomatic to each. Pick your language:
+- [Node](https://docs.digitalsubstrate.io/kibo-1/using-generated-sdk/node.html): You defined a data model in DSM and ran Kibo over it. What you got back — and what you work against every day — is a typed TypeScript package named after your model. You almost never call the @digitalsubstrate/dsviper binding directly: you import a couple of its modules and let them delegate to the runtime for you.
+- [Python (kibo 1)](https://docs.digitalsubstrate.io/kibo-1/using-generated-sdk/python.html): The Python package kibo 1 generates: model.data for the types, model.attachments for the verbs, over the dsviper runtime.
+
 ## dsviper for Python
 
 - [Installation](https://docs.digitalsubstrate.io/dsviper-python/installation.html): `pip install dsviper`.

@@ -81,4 +81,4 @@ Status
 ------
 
 Kibo 2 — Template Model 2, over the 1.2 runtime. Kibo 1.2 and Template
-Model 1 are documented in the 1.2 version of this documentation.
+Model 1 are documented in the :doc:`Kibo 1 section <../kibo-1/index>`.

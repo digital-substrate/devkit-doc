@@ -88,6 +88,12 @@ repositories' CHANGELOGs:
 - **kibo-project** drives a project's generation from a `kibo.toml`, in place of each
   project's `generate.py` — {doc}`kibo/kibo-project`.
 
+### kibo-template-viper 2.0.1 — 2026-10-05
+
+- **The generated Python is fully annotated down to Python 3.10**, the oldest it declares:
+  its runtime used `typing.Self`, a Python 3.11 name, and `mypy --strict` under 3.10 reported
+  19 errors in every package. No run-time or API change.
+
 ### kibo-template-viper 2.0.0 — 2026-10-05
 
 Requires kibo 2. Targets `dsviper >= 1.2.29`, `@digitalsubstrate/dsviper >= 1.2.14` and a

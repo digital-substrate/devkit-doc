@@ -1,7 +1,9 @@
 # Kibo 1
 
 Kibo 1 — kibo 1.2.x with the kibo-template-viper 1.2.x pack, reading **Template Model 1** —
-is the generator line that projects created before kibo 2 use. It generates for the same
+is the generator line that projects created before kibo 2 use. **It is deprecated**: it
+receives fixes only — no new features — for the life of the LTS-1.2 line, and its generation
+says so when it runs. It generates for the same
 Viper LTS-1.2 runtime as kibo 2: the DSM language, the runtime and the databases are the
 same, only the generator and the code it generates differ.
 

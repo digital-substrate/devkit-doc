@@ -44,6 +44,7 @@ extensions = [
 	'dsm_lexer',
 	'pyi_signatures',
 	'js_summary',
+	'deprecated_section',
 	'sphinx_js',
 ]
 

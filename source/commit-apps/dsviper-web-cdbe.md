@@ -84,8 +84,8 @@ ln -sf /path/to/your/model.cdb database.link
 flask run --debug
 ```
 
-If the symlink is missing, the server prints two example invocations
-and exits. This keeps the demo decoupled from any hard-coded path while
+If the symlink is missing, the server prints the command that creates
+it and exits. This keeps the demo decoupled from any hard-coded path while
 still allowing different commit databases to be swapped in
 without restarting the editor more than once.
 

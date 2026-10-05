@@ -66,13 +66,15 @@ repositories' CHANGELOGs:
 [kibo](https://github.com/digital-substrate/kibo/blob/main/CHANGELOG.md),
 [kibo-template-viper](https://github.com/digital-substrate/kibo-template-viper/blob/main/CHANGELOG.md).
 
-### kibo 2.0.0
+### kibo 2.0.0 — 2026-10-05
 
 - **Template Model 2.** The accessors that describe a type as a binding sees it are
   renamed (`pythonType` → `bindingType`, …) and answer for the target being generated;
   every entity carries its DSM name, `dsmType`. **Breaking** for a template pack: a
-  Model 1 pack does not render until migrated, and a C++ pack migrates with no edit —
-  {doc}`kibo/migrating`.
+  Model 1 pack does not render until migrated, and some values read differently under the
+  same accessors — a C++ type names its namespace in lower snake case, a container class
+  is named after what it holds — so a migrated pack's output changes too; each change is
+  listed in {doc}`kibo/migrating`.
 - **`--converter` selects a target** — `cpp`, `python` or `typescript` — and kibo knows
   how each binding spells the DSM types.
 - **A template renders once per scope it declares**: `model(m)` once, `unit(u)` once per
@@ -86,7 +88,7 @@ repositories' CHANGELOGs:
 - **kibo-project** drives a project's generation from a `kibo.toml`, in place of each
   project's `generate.py` — {doc}`kibo/kibo-project`.
 
-### kibo-template-viper 2.0.0
+### kibo-template-viper 2.0.0 — 2026-10-05
 
 Requires kibo 2. Targets `dsviper >= 1.2.29`, `@digitalsubstrate/dsviper >= 1.2.14` and a
 `viper` C++ runtime that carries its static layer. **Breaking**: the generated surface

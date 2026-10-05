@@ -94,7 +94,7 @@ sort = 25
 
 [overrides."https://docs.digitalsubstrate.io/kibo/migrating.html"]
 title = "Migrating a template pack"
-description = "Moving a template pack from Template Model 1 to Template Model 2, checked by a fixed point."
+description = "Moving a template pack from Template Model 1 to Template Model 2: the renames, the values that read differently, and a diff that accounts for every change."
 sort = 40
 
 # ---- kibo-template-viper ---------------------------------------------

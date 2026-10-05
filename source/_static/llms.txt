@@ -31,7 +31,7 @@ DevKit is the **distribution** that bundles **DSM** (the modeling language), **K
 - [Templates](https://docs.digitalsubstrate.io/kibo/templates.html): What a templated feature is, and how a template pack groups features.
 - [kibo-project](https://docs.digitalsubstrate.io/kibo/kibo-project.html): Generating a project from a kibo.toml: targets, features, the pack and the JAR it resolves.
 - [Template model](https://docs.digitalsubstrate.io/kibo/template_model.html): Template Model 2: the entries, units, binding types and formats a template reads.
-- [Migrating a template pack](https://docs.digitalsubstrate.io/kibo/migrating.html): Moving a template pack from Template Model 1 to Template Model 2, checked by a fixed point.
+- [Migrating a template pack](https://docs.digitalsubstrate.io/kibo/migrating.html): Moving a template pack from Template Model 1 to Template Model 2: the renames, the values that read differently, and a diff that accounts for every change.
 
 ## kibo-template-viper — first-party template pack
 

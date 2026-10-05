@@ -70,7 +70,7 @@ dsviper-web-cdbe/
 │   └── documents.html           # Editable attachments of one instance
 ├── static/
 │   └── style.css                # Syntax-style colouring for values
-├── database.link                # Symlink to the .rapmc / .graph database
+├── database.link                # Symlink to the CommitDatabase file
 └── requirements.txt
 ```
 
@@ -80,13 +80,13 @@ dsviper-web-cdbe/
 project root — there is no config file:
 
 ```bash
-ln -sf ~/Databases/Raptor/demo_sync_server.rapmc database.link
+ln -sf /path/to/your/model.cdb database.link
 flask run --debug
 ```
 
 If the symlink is missing, the server prints two example invocations
 and exits. This keeps the demo decoupled from any hard-coded path while
-still allowing different `.rapmc` / `.graph` databases to be swapped in
+still allowing different commit databases to be swapped in
 without restarting the editor more than once.
 
 ## Three views, one introspection chain

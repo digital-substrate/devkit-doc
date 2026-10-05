@@ -120,9 +120,11 @@ back to `dsviper`'s dynamic dispatch — they are not bindings.
 The application embeds CPython, imports `dsviper` and a thin `app`
 extension module that publishes the Python wrapper of the Context,
 and injects the Context singleton as a Python global (typically
-`ctx`). From there, every pool held by the Context is callable
-directly: `ctx.modelGraph.new_vertex(...)` reaches the hand-written
-C++ implementation through the generated pool bridge.
+`ctx`). From there, the Context hands out every pool it holds —
+`ctx.model_graph()` — and the typed Python class Kibo generates for
+the pool wraps it: `model_graph.Pool(ctx.model_graph()).new_vertex(...)`
+reaches the hand-written C++ implementation through the generated pool
+bridge.
 
 This mirrors what `PythonEditorModel(..., namespace_vars={...})` does
 for the Python profile. The two profiles expose the same
@@ -131,7 +133,8 @@ and differ only in whether the business functions are Python (Python
 profile) or C++ fronted by typed pools (C++ profile).
 
 A real Application Context, abridged from the Graph Editor C++
-reference (`GE::Context`):
+reference (`GE::Context`); the generated code lives in the `gei`
+namespace, the one `-n` names:
 
 ```cpp
 namespace GE {
@@ -160,10 +163,9 @@ public:
     std::shared_ptr<Viper::AttachmentFunctionPool>  modelGraph;
     std::shared_ptr<Viper::AttachmentFunctionPool>  modelSelection;
     std::shared_ptr<Viper::AttachmentFunctionPool>  modelIntegrity;
-    std::shared_ptr<Viper::AttachmentFunctionPool>  attachments;
 
     // Domain state (not committed to the DAG)
-    GE::Graph::GraphKey graphKey;
+    gei::graph::GraphKey graphKey;
 
 private:
     Context();
@@ -176,6 +178,71 @@ Note the four ingredients of the pattern in plain sight: the
 `Instance()` singleton, the `store` (composed, not inherited), the
 typed function pools, and the domain state (`graphKey`). The
 notification adapter is held by the store itself.
+
+#### One pool, end to end — `ModelGraph`
+
+The pool that edits the graph's topology shows the three pieces a pool
+is made of. The DSM declares it:
+
+```text
+"""This pool provides access to functions used to edit the graph topology."""
+attachment_function_pool ModelGraph {9bdcbb5b-76e9-426f-b8a6-a10ed2d949e6} {
+
+"""Create a vertex with the specified attributes."""
+mutable key<Vertex> newVertex(key<Graph> graphKey, int64 value, Position position);
+
+"""Move the vertices by the offset."""
+mutable void moveVertices(set<key<Vertex>> vertexKeys, Position offset);
+
+};
+```
+
+Kibo generates the pool — `gei::model_graph::pool()` — and declares one
+C++ function per DSM function, in the namespace `gei::model_graph`. The
+application writes those functions; this is the bridge layer, a thin
+call into the business logic:
+
+```cpp
+namespace gei::model_graph {
+
+gei::graph::VertexKey newVertex(std::shared_ptr<Viper::AttachmentMutating> const & attachmentMutating,
+                                gei::graph::GraphKey const & graphKey,
+                                std::int64_t value,
+                                gei::graph::Position const & position) {
+    return GE::Vertex::add(attachmentMutating, graphKey, value, position, GE::Random::makeColor());
+}
+
+void moveVertices(std::shared_ptr<Viper::AttachmentMutating> const & attachmentMutating,
+                  std::set<gei::graph::VertexKey> const & vertexKeys,
+                  gei::graph::Position const & offset) {
+    GE::Graph::Vertices::move(attachmentMutating, vertexKeys, offset);
+}
+
+} // namespace gei::model_graph
+```
+
+The Context holds the generated pool:
+
+```cpp
+Context::Context() {
+    store = CommitStore::make();
+
+    tools = gei::tools::pool();
+    modelGraph = gei::model_graph::pool();
+    modelIntegrity = gei::model_integrity::pool();
+    modelSelection = gei::model_selection::pool();
+}
+```
+
+A script running in the application dispatches the same function,
+with no code written for the Python side:
+
+```python
+from gei import model_graph
+
+MG = model_graph.Pool(ctx.model_graph())
+ctx.dispatch("New Vertex", MG.new_vertex, graph_key, 42, position)
+```
 
 ### Python profile — five layers, no function pools
 

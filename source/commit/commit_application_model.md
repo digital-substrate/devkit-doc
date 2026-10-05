@@ -120,9 +120,11 @@ back to `dsviper`'s dynamic dispatch — they are not bindings.
 The application embeds CPython, imports `dsviper` and a thin `app`
 extension module that publishes the Python wrapper of the Context,
 and injects the Context singleton as a Python global (typically
-`ctx`). From there, every pool held by the Context is callable
-directly: `ctx.modelGraph.new_vertex(...)` reaches the hand-written
-C++ implementation through the generated pool bridge.
+`ctx`). From there, the Context hands out every pool it holds —
+`ctx.model_graph()` — and the typed Python class Kibo generates for
+the pool wraps it: `afp.ModelGraph(ctx.model_graph()).new_vertex(...)`,
+with `import ge.attachment_function_pools as afp`, reaches the
+hand-written C++ implementation through the generated pool bridge.
 
 This mirrors what `PythonEditorModel(..., namespace_vars={...})` does
 for the Python profile. The two profiles expose the same

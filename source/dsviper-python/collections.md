@@ -285,9 +285,9 @@ another — no edit is lost. It does **not** make the *order* of concurrently
 inserted elements deterministic: where two streams insert independently, their
 relative order is settled by reduction (fusion order), not preserved.
 
-Create and append. Note that `append()` returns `x.END` — the zero-UUID
-sentinel that means "the end of the array" — not the position of the
-just-appended element:
+Create and append. `append()` returns the position of the element it
+appended, which `at()` reads and `remove()` removes. `x.END` is the zero-UUID
+sentinel that means "the end of the array"; `extend()` returns it:
 
 ```{doctest}
 >>> t = TypeXArray(Type.STRING)
@@ -296,10 +296,10 @@ just-appended element:
 >>> x.END
 00000000-0000-0000-0000-000000000000
 
->>> x.append("first")
-00000000-0000-0000-0000-000000000000
->>> x.append("second")
-00000000-0000-0000-0000-000000000000
+>>> first = x.append("first")
+>>> x.at(first)
+'first'
+>>> second = x.append("second")
 >>> x
 ['first', 'second']
 ```

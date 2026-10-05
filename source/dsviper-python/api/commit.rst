@@ -51,6 +51,11 @@ database has no commit yet, so start from the initial state:
 >>> db = CommitDatabase.create_in_memory()
 >>> db.extend_definitions(defs).count()
 3
+
+On disk, ``CommitDatabase.create(path)`` makes the file and
+``CommitDatabase.open(path)`` reopens it; the definitions extended into it are
+stored with it.
+
 >>> last = db.last_commit_id()
 >>> state = CommitStateBuilder.state(db, last) if last else CommitStateBuilder.initial_state(db)
 >>> mutable = CommitMutableState(state)

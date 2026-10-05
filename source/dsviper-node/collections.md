@@ -302,12 +302,13 @@ const x = new ValueXArray(T, [1n, 2n, 3n]);
 [...x.toVector()];   // [1n, 2n, 3n]  (a ValueVector)
 ```
 
-`.append(value)` and `.extend(array)` add at the end and return the END marker (the
-zero/invalid UUID that means "the end of the array"), *not* the new position.
-`.insert(before, value)` inserts before a position and returns the real new position:
+`.append(value)` adds at the end and returns the position it created, as
+`.insert(before, value)` does. `.extend(array)` returns the END marker (the
+zero/invalid UUID that means "the end of the array"):
 
 ```js
-x.append(4n);               // returns ValueXArray.END
+const p4 = x.append(4n);    // the new position
+x.at(p4);                   // 4n
 ValueXArray.END.isValid();  // false
 
 const x2 = new ValueXArray(T, [1n, 2n]);

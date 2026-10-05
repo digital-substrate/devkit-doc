@@ -178,9 +178,15 @@ columns, so `mat<float, 2, 3>` is two columns of three. `m[column]` is a column 
 `m[column, row]` an element — read row-major, as numpy does by default, the matrix
 comes out transposed.
 
+A default mat is all zeros, as a vec is; `ValueMat(t, identity=True)` builds the
+identity.
+
 ```{doctest}
 >>> t = TypeMat(Type.FLOAT, 2, 3)
 >>> Value.create(t)
+[(0.0, 0.0, 0.0), (0.0, 0.0, 0.0)]
+
+>>> ValueMat(t, identity=True)
 [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0)]
 
 >>> m = Value.create(t, ((1, 2, 3), (4, 5, 6)))

@@ -88,6 +88,14 @@ repositories' CHANGELOGs:
 - **kibo-project** drives a project's generation from a `kibo.toml`, in place of each
   project's `generate.py` — {doc}`kibo/kibo-project`.
 
+### kibo-template-viper 2.0.2 — 2026-10-05
+
+- **`from pkg.containers import *` brings the declared containers only**: it also brought the
+  runtime's view classes, whose `Optional` and `Mapping` replaced `typing.Optional` and
+  `typing.Mapping` in the importing module.
+- A map's `keys()`, `values()` and `items()` are documented as what they return: lists, a
+  snapshot the map can change under.
+
 ### kibo-template-viper 2.0.1 — 2026-10-05
 
 - **The generated Python is fully annotated down to Python 3.10**, the oldest it declares:

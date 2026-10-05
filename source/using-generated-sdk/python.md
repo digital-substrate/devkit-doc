@@ -416,7 +416,9 @@ Every view also has `unwrap_value()`, `copy()`, `==`, `hash()` and `<`. The vect
 the tuple and the vec are sequences: `len`, `in`, iteration, `empty()`, `to_list()` and
 `to_tuple()`. The xarray has `len`, `in`, iteration and `empty()`, and `to_vector()` in place
 of `to_list()`; the mat has `to_tuple()`, a tuple of its columns; the map has `keys()`,
-`values()` and `items()`.
+`values()` and `items()`, which return lists — a snapshot of the map, so it can change while
+one is iterated (removing entries in the loop is safe). `from pkg.containers import *` brings
+the declared classes only.
 
 A container field reads as its declared class — `Profile`'s fields are
 `containers.Vector_of_string`, `Set_of_string`, `Map_of_string_to_string` and

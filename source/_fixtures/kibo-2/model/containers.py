@@ -1,5 +1,5 @@
 # Generated from model.dsm.json by kibo-2.0.0.jar. Do not edit by hand.
-# Templates: kibo-template-viper 2.0.0 (MIT), Template Model 2.
+# Templates: kibo-template-viper 2.0.2 (MIT), Template Model 2.
 # Runtime: this file imports `dsviper` >=1.2.29 <1.3.0,
 # distributed under LicenseRef-DigitalSubstrate-Commercial-1.2.
 # Commercial use requires a Commercial Licence from Digital Substrate.
@@ -17,6 +17,29 @@ from ._codegen import AnyValue, Declared, Fixed, Mapping, Matrix, Optional, Orde
 if typing.TYPE_CHECKING:
     from . import containers
     from ._codegen import AnyConceptKey
+
+__all__ = [
+    "Optional_of_AnyConceptKey",
+    "Optional_of_string",
+    "Optional_of_Studio_AdminKey",
+    "Optional_of_Studio_Credentials",
+    "Optional_of_Studio_DeviceKey",
+    "Optional_of_Studio_MemberKey",
+    "Optional_of_Studio_PrincipalKey",
+    "Optional_of_Studio_Profile",
+    "Optional_of_Tuto_Account",
+    "Optional_of_Tuto_Identity",
+    "Optional_of_Tuto_Login",
+    "Optional_of_Tuto_Texture",
+    "Optional_of_Tuto_Thumbnail",
+    "Optional_of_Tuto_UserKey",
+    "Vector_of_string",
+    "Set_of_string",
+    "Set_of_Studio_MemberKey",
+    "Set_of_Studio_PrincipalKey",
+    "Set_of_Tuto_UserKey",
+    "Map_of_string_to_string",
+]
 
 def _type_bool() -> dsviper.TypeBool: return dsviper.TypeBool()
 def _type_uint8() -> dsviper.TypeUInt8: return dsviper.TypeUInt8()

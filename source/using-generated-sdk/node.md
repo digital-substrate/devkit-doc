@@ -314,7 +314,8 @@ The vector, the set, the tuple and the vec are sequences: `size` / `length`, `ha
 `toArray()` and `for…of`. The xarray has `size`, `has` and `for…of`, and `toVector()` and
 `entries()` in place of `toArray()`; the mat has `toArray()`, an array of its columns; a map
 has `size`, `has`, `keys()`, `values()`, `entries()` and iterates its `[key, value]`
-entries, as a `Map` does.
+entries, as a `Map` does. `keys()`, `values()` and `entries()` return arrays — a snapshot of
+the map, so it can change while one is iterated.
 
 ```ts
 const w = new demo.StructureU();

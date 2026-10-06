@@ -403,6 +403,13 @@ class TemplateMapFunction {
 }
 ```
 
+**`name` and `dsmName`.** A named entity's `name` is how the target spells it: the DSM name,
+unless the project spells it otherwise for that target (`[names.<target>.rename]`, kibo's
+`--spell`) because the target cannot take it — a field `wrap_value` in Python. Write `name`
+wherever a name becomes an identifier, and `dsmName` wherever it is sent to the runtime — a
+field read by name, a pool function called — so that the wire keeps the DSM name whatever a
+target spells. A namespace's module and the types kibo computes follow `name` too.
+
 The following sections use a **pseudo-class** representation to illustrate the fields
 accessible by the StringTemplate engine to generate code and propagate the recursion. In the
 Java source most of them are getters (`getTypeSuffix()` is read as `typeSuffix`); a value
@@ -541,7 +548,8 @@ It is the `u` of `unit(u)`.
 public class TemplateNameSpace {
     // Namespace
     public NameSpace nameSpace;   // the DSM namespace (uuid, name)
-    public String name;
+    public String name;            // as the target spells it (--spell), else the DSM name
+    public String dsmName;         // the DSM name: what is sent to the runtime
 
     // Model
     public TemplateDefinitions model;     // the whole model, for what a unit does not own
@@ -643,7 +651,9 @@ public class TemplateConcept {
 
     // Namespace
     public String namespace;
-    public String name;
+    public String name;            // as the target spells it (--spell), else the DSM name
+    public String dsmName;         // the DSM name: what is sent to the runtime
+    public boolean nameIsUpperSnake; // the name is already what format="usnake" makes of it
 
     // Runtime ID
     public String runtimeId;
@@ -710,7 +720,9 @@ public class TemplateClub {
 
     // Namespace
     public String namespace;
-    public String name;
+    public String name;            // as the target spells it (--spell), else the DSM name
+    public String dsmName;         // the DSM name: what is sent to the runtime
+    public boolean nameIsUpperSnake; // the name is already what format="usnake" makes of it
 
     // Runtime ID
     public String runtimeId;
@@ -747,7 +759,9 @@ public class TemplateEnumeration {
 
     // Namespace
     public String namespace;
-    public String name;
+    public String name;            // as the target spells it (--spell), else the DSM name
+    public String dsmName;         // the DSM name: what is sent to the runtime
+    public boolean nameIsUpperSnake; // the name is already what format="usnake" makes of it
 
     // Runtime ID
     public String runtimeId;
@@ -787,7 +801,9 @@ public class TemplateStructure {
 
     // Namespace
     public String namespace;
-    public String name;
+    public String name;            // as the target spells it (--spell), else the DSM name
+    public String dsmName;         // the DSM name: what is sent to the runtime
+    public boolean nameIsUpperSnake; // the name is already what format="usnake" makes of it
 
     // Runtime ID
     public String runtimeId;
@@ -817,7 +833,8 @@ public class TemplateStructureField {
     // DSM
     public DSMStructureField dsmField;
 
-    public String name;
+    public String name;            // as the target spells it (--spell), else the DSM name
+    public String dsmName;         // the DSM name: what is sent to the runtime
     public String passBy;           // " const &", or empty for a type passed by value
     public String defaultValue;     // the C++ default; {} when the model declares none
     public boolean hasDefaultValue; // whether the model declares a default value
@@ -861,7 +878,8 @@ public class TemplateAttachment {
 
     // Namespace
     public String namespace;
-    public String name;
+    public String name;            // as the target spells it (--spell), else the DSM name
+    public String dsmName;         // the DSM name: what is sent to the runtime
 
     // Runtime ID
     public String runtimeId;
@@ -985,7 +1003,8 @@ Corresponds to the definition of a `function_pool`. It is the `p` of `pool(p)`.
 public class TemplateFunctionPool {
     // DSM
     public DSMFunctionPool dsmFunctionPool;
-    public String name;
+    public String name;            // as the target spells it (--spell), else the DSM name
+    public String dsmName;         // the DSM name: what is sent to the runtime
     public String uuid;
 
     // Components
@@ -1018,7 +1037,8 @@ it: in a pool template, a binding's `typeInNamespace` and `annotation` are alway
 ```java
 public class TemplateFunction {
     // DSM
-    public String name;
+    public String name;            // as the target spells it (--spell), else the DSM name
+    public String dsmName;         // the DSM name: what is sent to the runtime
 
     // Components
     public ArrayList<TemplateFunctionParameter> parameters;
@@ -1047,7 +1067,8 @@ public class TemplateFunction {
 ```java
 public class TemplateFunctionParameter {
     // DSM
-    public String name;
+    public String name;            // as the target spells it (--spell), else the DSM name
+    public String dsmName;         // the DSM name: what is sent to the runtime
 
     public String passBy;
 
@@ -1072,7 +1093,8 @@ Corresponds to the definition of an `attachment_function_pool`. It is the `p` of
 public class TemplateAttachmentFunctionPool {
     // DSM
     public DSMAttachmentFunctionPool dsmAttachmentFunctionPool;
-    public String name;
+    public String name;            // as the target spells it (--spell), else the DSM name
+    public String dsmName;         // the DSM name: what is sent to the runtime
     public String uuid;
 
     // Components
@@ -1102,7 +1124,8 @@ public class TemplateAttachmentFunctionPool {
 ```java
 public class TemplateAttachmentFunction {
     // DSM
-    public String name;
+    public String name;            // as the target spells it (--spell), else the DSM name
+    public String dsmName;         // the DSM name: what is sent to the runtime
 
     // Components
     public ArrayList<TemplateFunctionParameter> parameters;

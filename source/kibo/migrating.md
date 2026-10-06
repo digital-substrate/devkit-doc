@@ -27,7 +27,7 @@ them return. So the test is a diff in which **every difference has a reason on t
 java -jar kibo-1.2.x.jar -c <target> -n <ns> -d model.dsm.json -t templates/ -o before/
 
 # after, with kibo 2 and your migrated templates
-java -jar kibo-2.0.1.jar -c <target> -n <ns> -d model.dsm.json -t templates/ -o after/
+java -jar kibo-2.0.2.jar -c <target> -n <ns> -d model.dsm.json -t templates/ -o after/
 
 # every generated file names the jar that produced it, so that one line differs
 diff -r -I 'by kibo-[0-9.]*\.jar' before/ after/

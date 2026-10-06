@@ -28,7 +28,7 @@ Place in the ecosystem
   `digital-substrate/kibo <https://github.com/digital-substrate/kibo>`_,
   a Java tool bridging DSM and StringTemplate, and
   `digital-substrate/kibo-project <https://github.com/digital-substrate/kibo-project>`_.
-* **Distribution** — a single JAR (``kibo-2.0.1.jar``) and the
+* **Distribution** — a single JAR (``kibo-2.0.2.jar``) and the
   ``kibo_project.py`` script.
 
 

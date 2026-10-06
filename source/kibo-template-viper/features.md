@@ -123,10 +123,21 @@ Besides the features, `features.json` declares what a tool driving kibo needs to
 pack, so that the tool carries no knowledge of its own:
 
 - `generator.kibo` — the oldest kibo exposing the Template Model the templates consume,
-  `>=2.0.0`. A floor: a later kibo exposing the same Template Model renders them too.
+  `>=2.0.2`. A floor: a later kibo exposing the same Template Model renders them too.
 - `layout`, per target — where the templates render, below the target's output (`sources`),
   which templates render at the output itself (`root`), the `runtime` copied beside the
   sources, and the embedded definitions (`resources`) with their encoding.
+- `reserved`, per target and per family of names — the names the pack's own code takes: the
+  members every generated class inherits from the runtime's proxy, which a field would mask
+  (`wrap_value`, `copy`, `type` in Python; `wrapValue`, `equals`, `toJSON` in TypeScript), and
+  the modules at the package's root, which a namespace or a pool would replace (`containers`,
+  `definitions`, `resources`, `pools`). A DSM name meeting one stops the generation, saying how
+  to spell it otherwise for that target — {doc}`../kibo/kibo-project`.
+- `validation`, per target — the checks run once a target is written. C++ needs none: its
+  compiler refuses invalid code and says why. Python and TypeScript can run code a name has
+  broken without a word, so Python is imported, every structure built and the package checked
+  with `mypy --strict`; TypeScript is checked with `tsc --noEmit`. A check whose tool is not
+  found fails.
 
 | Target | `sources` | `root` | `runtime` | `resources` |
 |---|---|---|---|---|

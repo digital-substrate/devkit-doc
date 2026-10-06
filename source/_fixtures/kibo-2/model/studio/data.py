@@ -1,11 +1,12 @@
-# Generated from model.dsm.json by kibo-2.0.0.jar. Do not edit by hand.
-# Templates: kibo-template-viper 2.0.2 (MIT), Template Model 2.
+# Generated from model.dsm.json by kibo-2.0.2.jar. Do not edit by hand.
+# Templates: kibo-template-viper 2.0.3 (MIT), Template Model 2.
 # Runtime: this file imports `dsviper` >=1.2.29 <1.3.0,
 # distributed under LicenseRef-DigitalSubstrate-Commercial-1.2.
 # Commercial use requires a Commercial Licence from Digital Substrate.
 
 from __future__ import annotations
 
+import builtins as _builtins
 import enum
 import functools
 import typing
@@ -14,7 +15,8 @@ import dsviper
 
 from .. import definitions
 from .._codegen import NOT_GIVEN, AnyConceptKey, AnyValue, Key, NotGiven, Proxy, is_known, register, unwrap, wrap
-from .._codegen.container import _unwrap_deep
+from .._codegen import NotGiven as _NotGiven
+from .._codegen.container import _init_structure
 
 if typing.TYPE_CHECKING:
     from .. import containers
@@ -366,22 +368,14 @@ class Credentials(Proxy[dsviper.ValueStructure]):
     def type(cls) -> dsviper.TypeStructure:
         return definitions().check_structure(CREDENTIALS)
 
-    def __init__(self, source: dsviper.ValueStructure | dict[str, typing.Any] | None = None, /, *,
+    def __init__(_self, _source: dsviper.ValueStructure | dict[str, typing.Any] | None = None, /, *,
                  login: str | NotGiven = NOT_GIVEN) -> None:
         """Fields by keyword, in snake_case; or a source: a Viper ValueStructure of this
         type, boxed and not copied, or a dict keyed by the DSM field names, as the runtime
         takes it."""
-        if source is None:
-            source = dsviper.ValueStructure(self.type())
-        elif isinstance(source, dict):
-            source = dsviper.ValueStructure(self.type(), _unwrap_deep(source))
-        elif isinstance(source, Proxy):
-            raise TypeError(f"{source!r} is a generated value, not a source: copy() it, or pass a dict or a Viper value")
-        elif not isinstance(source, dsviper.ValueStructure) or source.type() != self.type():
-            raise TypeError("this value is not a Studio::Credentials")
-        super().__init__(source)
-        if not isinstance(login, NotGiven):
-            self.login = login
+        _init_structure(_self, _self.type(), _source, "Studio::Credentials")
+        if not _builtins.isinstance(login, _NotGiven):
+            _self.login = login
 
     @property
     def login(self) -> str:
@@ -404,25 +398,17 @@ class Name(Proxy[dsviper.ValueStructure]):
     def type(cls) -> dsviper.TypeStructure:
         return definitions().check_structure(NAME)
 
-    def __init__(self, source: dsviper.ValueStructure | dict[str, typing.Any] | None = None, /, *,
+    def __init__(_self, _source: dsviper.ValueStructure | dict[str, typing.Any] | None = None, /, *,
                  first: str | NotGiven = NOT_GIVEN,
                  last: str | NotGiven = NOT_GIVEN) -> None:
         """Fields by keyword, in snake_case; or a source: a Viper ValueStructure of this
         type, boxed and not copied, or a dict keyed by the DSM field names, as the runtime
         takes it."""
-        if source is None:
-            source = dsviper.ValueStructure(self.type())
-        elif isinstance(source, dict):
-            source = dsviper.ValueStructure(self.type(), _unwrap_deep(source))
-        elif isinstance(source, Proxy):
-            raise TypeError(f"{source!r} is a generated value, not a source: copy() it, or pass a dict or a Viper value")
-        elif not isinstance(source, dsviper.ValueStructure) or source.type() != self.type():
-            raise TypeError("this value is not a Studio::Name")
-        super().__init__(source)
-        if not isinstance(first, NotGiven):
-            self.first = first
-        if not isinstance(last, NotGiven):
-            self.last = last
+        _init_structure(_self, _self.type(), _source, "Studio::Name")
+        if not _builtins.isinstance(first, _NotGiven):
+            _self.first = first
+        if not _builtins.isinstance(last, _NotGiven):
+            _self.last = last
 
     @property
     def first(self) -> str:
@@ -453,7 +439,7 @@ class Profile(Proxy[dsviper.ValueStructure]):
     def type(cls) -> dsviper.TypeStructure:
         return definitions().check_structure(PROFILE)
 
-    def __init__(self, source: dsviper.ValueStructure | dict[str, typing.Any] | None = None, /, *,
+    def __init__(_self, _source: dsviper.ValueStructure | dict[str, typing.Any] | None = None, /, *,
                  name: Name | NotGiven = NOT_GIVEN,
                  tags: containers.Vector_of_string | typing.Sequence[str] | NotGiven = NOT_GIVEN,
                  roles: containers.Set_of_string | typing.Iterable[str] | NotGiven = NOT_GIVEN,
@@ -463,27 +449,19 @@ class Profile(Proxy[dsviper.ValueStructure]):
         """Fields by keyword, in snake_case; or a source: a Viper ValueStructure of this
         type, boxed and not copied, or a dict keyed by the DSM field names, as the runtime
         takes it."""
-        if source is None:
-            source = dsviper.ValueStructure(self.type())
-        elif isinstance(source, dict):
-            source = dsviper.ValueStructure(self.type(), _unwrap_deep(source))
-        elif isinstance(source, Proxy):
-            raise TypeError(f"{source!r} is a generated value, not a source: copy() it, or pass a dict or a Viper value")
-        elif not isinstance(source, dsviper.ValueStructure) or source.type() != self.type():
-            raise TypeError("this value is not a Studio::Profile")
-        super().__init__(source)
-        if not isinstance(name, NotGiven):
-            self.name = name
-        if not isinstance(tags, NotGiven):
-            self.tags = tags
-        if not isinstance(roles, NotGiven):
-            self.roles = roles
-        if not isinstance(settings, NotGiven):
-            self.settings = settings
-        if not isinstance(motto, NotGiven):
-            self.motto = motto
-        if not isinstance(level, NotGiven):
-            self.level = level
+        _init_structure(_self, _self.type(), _source, "Studio::Profile")
+        if not _builtins.isinstance(name, _NotGiven):
+            _self.name = name
+        if not _builtins.isinstance(tags, _NotGiven):
+            _self.tags = tags
+        if not _builtins.isinstance(roles, _NotGiven):
+            _self.roles = roles
+        if not _builtins.isinstance(settings, _NotGiven):
+            _self.settings = settings
+        if not _builtins.isinstance(motto, _NotGiven):
+            _self.motto = motto
+        if not _builtins.isinstance(level, _NotGiven):
+            _self.level = level
 
     @property
     def name(self) -> Name:

@@ -66,6 +66,21 @@ repositories' CHANGELOGs:
 [kibo](https://github.com/digital-substrate/kibo/blob/main/CHANGELOG.md),
 [kibo-template-viper](https://github.com/digital-substrate/kibo-template-viper/blob/main/CHANGELOG.md).
 
+### kibo 2.0.2 — 2026-10-06
+
+- **A name the template pack's own code takes stops the generation**, saying which directive to
+  write: a field `wrap_value` would mask the method every generated Python class has, a
+  namespace `Containers` replace the package's `containers` module. The pack declares those
+  names (`--reserve`); kibo renames nothing — {doc}`kibo/usage`.
+- **A target spells a DSM name otherwise at the project's word** (`--spell`,
+  `[names.<target>.rename]`), every identifier and computed type included; the DSM name stays
+  the one sent to the runtime, `dsmName` in the Template Model — {doc}`kibo/template_model`.
+- **kibo knows no pack's names**: the four module names it refused a namespace or a pool to
+  take are now the pack's to declare.
+- **kibo-project 0.3.0** passes both, and validates the generated code as the pack declares;
+  a check that cannot run is an error (`validate = false`, `--no-validate`) —
+  {doc}`kibo/kibo-project`.
+
 ### kibo 2.0.1 — 2026-10-06
 
 - **`-t` is repeatable**: several templates, files or directories, render in one run, one
@@ -94,6 +109,21 @@ repositories' CHANGELOGs:
   that reads a name the model does not carry is reported on stderr.
 - **kibo-project** drives a project's generation from a `kibo.toml`, in place of each
   project's `generate.py` — {doc}`kibo/kibo-project`.
+
+### kibo-template-viper 2.0.3 — 2026-10-06
+
+Requires kibo 2.0.2.
+
+- **A namespace with types and no concept** registers them: Python and TypeScript wrote a
+  malformed `register(` line.
+- **A type already in upper snake case** (`RGB`) keeps its name, its runtime-id constant taking
+  `_ID` (`RGB_ID`): TypeScript did not compile, Python failed at import.
+- **A field or a pool parameter named like a name a generated body uses** (`self`, `source`,
+  `dict`, `isinstance`, `super`) no longer changes what a Python constructor or pool function
+  does.
+- **The pack declares its own names and its checks** (`reserved`, `validation`) —
+  {doc}`kibo-template-viper/features`. Every name sent to the runtime is the DSM name, whatever
+  a target spells.
 
 ### kibo-template-viper 2.0.2 — 2026-10-05
 

@@ -10,7 +10,7 @@ template reads.
 ## Synopsis
 
 ```bash
-java -jar kibo-2.0.1.jar \
+java -jar kibo-2.0.2.jar \
   -c [cpp | python | typescript] \
   -n [namespace] \
   -d [definitions.dsm.json] \
@@ -29,6 +29,8 @@ java -jar kibo-2.0.1.jar \
 | `-o, --output` | The output directory |
 | `--atom WORD` | A word the snake_case of a static name never splits (`IPv4`, `YCoCg`); repeatable |
 | `--rename NAME=snake_name` | A DSM name and the snake_case it takes; repeatable |
+| `--spell NAME=identifier` | How this target spells a DSM name it cannot take; the DSM name stays the one sent to the runtime; repeatable since 2.0.2 |
+| `--reserve KIND:name` | A name the template pack's own code takes in this target, for one family of names (`namespace`, `pool`, `type`, `field`, `case`, `attachment`, `function`, `parameter`); repeatable since 2.0.2 |
 | `-q, --quiet` | Disable output messages |
 | `-l, --log` | Display internal process steps |
 | `-h, --help` | Show help |
@@ -52,15 +54,23 @@ module, a package directory — one rule applies: `vec3Curves` is `vec3_curves`,
 `doc_uint8`, `render2DAttributes` is `render_2d_attributes`. A module name Python reserves
 takes a trailing underscore (`annotations_`), in both bindings. `--atom` and `--rename` carry
 what only a project knows. Two names that land on one spelling in one scope stop the
-generation, and so does a namespace or a pool spelled like the model-wide code or like
-another one.
+generation, and so does a namespace or a pool spelled like another one.
+
+Kibo renames nothing on its own. A DSM name meeting a name the pack's own code takes —
+declared with `--reserve`, a field `wrap_value` beside the method every generated Python class
+has, a namespace `Containers` beside the package's `containers` module — stops the
+generation, naming the element, the target and the directive to write. `--spell` is that
+directive: the target spells the name as given, every identifier and every type kibo computes
+included, and the DSM name stays the one sent to the runtime (`dsmName` in the [Template
+Model](template_model.md)). kibo-project passes both: the pack's `reserved` as `--reserve`, the
+project's `[names.<target>.rename]` as `--spell`.
 
 ## Example
 
 Render the Python package of a model, from the first-party pack:
 
 ```bash
-java -jar kibo-2.0.1.jar -c python -n features \
+java -jar kibo-2.0.2.jar -c python -n features \
   -d features.dsm.json -t kibo-template-viper/python -o python/generated
 ```
 

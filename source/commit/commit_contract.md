@@ -217,12 +217,15 @@ defensive-by-design route from day one. They are commonly framed
 as "strategies"; under strong invariants they are better described
 as **modes of loss**: none re-enters the DAG, none recovers intent.
 
-The trigger for import is the `commitMerge` itself, not concurrency or
-automation. A strictly linear history is a *load*: every mutation
-you submitted is exactly the one that contributed to the state. The
-moment the history contains a `commitMerge` — unsupervised reducer
-or human desktop merge — best-effort drops have been applied
-silently, and reading becomes an *import*.
+The trigger for import is a `commitMerge` nobody reviewed, not
+concurrency or automation. A strictly linear history is a *load*: every
+mutation you submitted is exactly the one that contributed to the state.
+So is a history whose every fold a person reviewed: the reviewer owns the
+result. The moment the history of the state read contains a fold nobody
+reviewed — an unsupervised reducer, or a merge accepted as it came —
+best-effort drops have been applied silently, and reading that state, and
+every state after it, becomes an *import*. The engine records the fold,
+not the review: whether a fold was reviewed is the application's to know.
 
 That state answers to no single human intent. Where streams overlap,
 reduction picks by structural rule and can preserve a combination no

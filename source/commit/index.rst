@@ -85,9 +85,11 @@ two heads that are folded without a human reviewing the result?**
   :doc:`CommitStore <commit_store>` and
   :doc:`Commit Application Model <commit_application_model>`; skip the
   rest, since every read returns exactly what was written. The condition
-  is checkable rather than declared: ``head_commit_ids()`` answers one
-  id. Read :doc:`Modes of Use <commit_modes>` anyway if the model is not
-  sealed yet — the choice is hard to reverse once it is.
+  is the application's to hold: the DAG records a fold, not whether a
+  person reviewed it. ``head_commit_ids()`` answering one id says only
+  that no fold is pending. Read :doc:`Modes of Use <commit_modes>` anyway
+  if the model is not sealed yet — the choice is hard to reverse once it
+  is.
 - **Yes, or maybe later.** Two sites syncing, an offline replica, a
   second writer committing in parallel, or heads you diverge yourself
   and fold unreviewed. Start with the

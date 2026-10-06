@@ -97,11 +97,13 @@ every reduced result is reviewed stays **single-stream** —
 
 ```{important}
 In single-stream every read returns exactly what you wrote. In
-multi-stream every read is an
+multi-stream a read is an
 [import](commit_contract.md#reading-the-state-is-an-import-not-a-load)
-— including reads of *past* states, since that state too was produced
-by `commitMerge`. The three operations above do not change between the
-two contexts; what changes is the contract around the state they read.
+as soon as a `commitMerge` nobody reviewed lies in the history of the
+state read — a *past* state included, when such a fold precedes it. A
+state before the first unreviewed fold is still a load. The three
+operations above do not change between the two contexts; what changes is
+the contract around the state they read.
 ```
 
 ---
@@ -110,9 +112,11 @@ two contexts; what changes is the contract around the state they read.
 
 ### Single-stream
 
-One head at all times — every commit extends the one before it. No
-`commitMerge` is reconstructed at read time, so the [Dual-Layer
-Contract](commit_contract.md) is reference material, not load-bearing.
+No fold goes unreviewed — every commit extends the head it read, or a
+person reviews the result of folding the heads they diverged. No
+`commitMerge` that nobody owns is reconstructed at read time, so the
+[Dual-Layer Contract](commit_contract.md) is reference material, not
+load-bearing.
 What defines the regime is where writes land, not how many people are
 behind them: several writers serialised onto the head stay here, and one
 writer committing against a head that has moved does not. Time travel,

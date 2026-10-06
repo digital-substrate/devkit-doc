@@ -99,6 +99,7 @@ Topics
    :maxdepth: 2
 
    introduction
+   names
    types
    concepts
    attachments

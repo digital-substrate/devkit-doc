@@ -24,6 +24,7 @@ DevKit is the **distribution** that bundles **DSM** (the modeling language), **K
 - [Attachments](https://docs.digitalsubstrate.io/dsm/attachments.html): The attachment mechanism.
 - [Function pools](https://docs.digitalsubstrate.io/dsm/function_pools.html): Functional surfaces over the model.
 - [IDE support](https://docs.digitalsubstrate.io/dsm/ide.html): Editor integration.
+- [Names and validity](https://docs.digitalsubstrate.io/dsm/names.html): A DSM model describes data, independently of any programming language. What makes a model valid is the DSM's own rules, written down in the standard's [governance](https://github.com/digital-substrate/dsm/blob/main/spec/dsm-governance.md) and held by the tests of the runtime. In short:
 
 ## Kibo — code generation
 

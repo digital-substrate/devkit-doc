@@ -66,6 +66,13 @@ repositories' CHANGELOGs:
 [kibo](https://github.com/digital-substrate/kibo/blob/main/CHANGELOG.md),
 [kibo-template-viper](https://github.com/digital-substrate/kibo-template-viper/blob/main/CHANGELOG.md).
 
+### kibo 2.0.1 — 2026-10-06
+
+- **`-t` is repeatable**: several templates, files or directories, render in one run, one
+  JVM instead of one per template; a single `-t` behaves as before — {doc}`kibo/usage`.
+- **kibo-project 0.2.0** uses it: one run per output directory. A generation is four to six
+  times faster, and its output the same, byte for byte.
+
 ### kibo 2.0.0 — 2026-10-05
 
 - **Template Model 2.** The accessors that describe a type as a binding sees it are

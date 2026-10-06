@@ -10,11 +10,11 @@ template reads.
 ## Synopsis
 
 ```bash
-java -jar kibo-2.0.0.jar \
+java -jar kibo-2.0.1.jar \
   -c [cpp | python | typescript] \
   -n [namespace] \
   -d [definitions.dsm.json] \
-  -t [template] \
+  -t [template] [-t ...] \
   -o [output]
 ```
 
@@ -25,7 +25,7 @@ java -jar kibo-2.0.0.jar \
 | `-c, --converter` | The target: `cpp`, `python` or `typescript`. It decides how a type is spelled for the binding (`int64` is `int` in Python, `bigint` in TypeScript) and how output files are named |
 | `-n, --namespace` | The name of the generated infrastructure. In C++ it is the namespace every generated line lives under, taken as written; in Python and TypeScript, the package |
 | `-d, --dsm` | The DSM definitions, `.dsm.json` |
-| `-t, --template` | A template file, or a directory of them |
+| `-t, --template` | A template file, or a directory of them; repeatable since 2.0.1 — every template given renders in the same run, one JVM for all |
 | `-o, --output` | The output directory |
 | `--atom WORD` | A word the snake_case of a static name never splits (`IPv4`, `YCoCg`); repeatable |
 | `--rename NAME=snake_name` | A DSM name and the snake_case it takes; repeatable |
@@ -60,7 +60,7 @@ another one.
 Render the Python package of a model, from the first-party pack:
 
 ```bash
-java -jar kibo-2.0.0.jar -c python -n features \
+java -jar kibo-2.0.1.jar -c python -n features \
   -d features.dsm.json -t kibo-template-viper/python -o python/generated
 ```
 

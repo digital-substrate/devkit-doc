@@ -193,7 +193,7 @@ it, rather than leaving it to whoever happens to call first.
 
 Every sync extends the local DAG with commits authored elsewhere.
 Once the local state is reconstructed from a head that descends
-from a `commitMerge`, **reading that state is an
+from a `commitMerge` nobody reviewed, **reading that state is an
 [import](commit_contract.md#reading-the-state-is-an-import-not-a-load)**
 — the same import boundary the contract describes for intra-base
 mechanical reduction. Synchronisation does not weaken the

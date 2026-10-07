@@ -33,8 +33,9 @@ is not hidden: {py:class}`CommitStateTrace` exposes the exact trace per
 document, opcode by opcode (each opcode's exception included). The DAG
 topology and the merge order fix what that trace contains (see
 [How Reduction Picks a Winner](#how-reduction-picks-a-winner)); nothing
-downstream re-examines the result. The state you get back is therefore *input
-to re-validate*, not a stored fact — a read is "an import, not a load", the
+downstream re-examines the result. Once a `commitMerge` nobody reviewed lies in
+its history, the state you get back is therefore *input to re-validate*, not a
+stored fact — a read is "an import, not a load", the
 [Dual-Layer Contract](commit_contract.md#reading-the-state-is-an-import-not-a-load).
 
 **Why it cannot do otherwise.** The analogy a reader reaches for here is
@@ -358,7 +359,8 @@ if the label has to say who reduced and under which policy, issue your own
 
 The implication for the application is treated in the
 [Dual-Layer Contract](commit_contract.md#reading-the-state-is-an-import-not-a-load):
-do not rely on a specific LWW outcome; re-validate at read time.
+do not rely on a specific LWW outcome; once heads fold unreviewed, re-validate at read
+time.
 
 ---
 
@@ -500,8 +502,8 @@ engine — it's on the application.
   But match the path to the semantic unit: letting `diff` split a bound
   value into sub-paths is its own failure mode — see
   [Re-entering the graph](commit_contract.md#re-entering-the-graph).
-- **Re-validate the state when you read it back, not when you build the
-  mutations.** Under best-effort reduction, mutations may have been
+- **Once heads fold unreviewed, re-validate the state when you read it back,
+  not when you build the mutations.** Under best-effort reduction, mutations may have been
   silently dropped and combined states may violate cross-field
   invariants. See
   [The Dual-Layer Contract](commit_contract.md#reading-the-state-is-an-import-not-a-load)

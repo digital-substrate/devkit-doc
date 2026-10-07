@@ -374,8 +374,8 @@ for the full notification list.
 
 The Commit Database guarantees **structural integrity**, not
 **semantic integrity** — that responsibility belongs to the
-Application Context, which re-validates engine output at consumption
-time. See [The Dual-Layer Contract](commit_contract.md) for the full
+Application Context, which, once the DAG folds unreviewed, re-validates
+engine output at consumption time. See [The Dual-Layer Contract](commit_contract.md) for the full
 rationale and when it becomes load-bearing.
 
 ## Generic versus domain-specific instances

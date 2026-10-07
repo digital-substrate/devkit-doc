@@ -22,7 +22,7 @@ Quick Start
 >>> report, dsm_defs, defs = builder.parse()
 >>> report.has_error()
 False
->>> defs.inject(globals())             # MY_APP_T_USER, MY_APP_A_USER_PROFILE, …
+>>> defs.inject(globals())             # MyApp.User, MyApp.attachments.User.profile, …
 
 The declarations are reachable from ``dsm_defs``:
 
@@ -38,15 +38,20 @@ MyApp::Profile
 ...     print(att.type_name(), "-- key:", att.key_type(), "doc:", att.document_type())
 MyApp::profile -- key: MyApp::User doc: MyApp::Profile
 
-``inject()`` fills the namespace with one constant per definition. The
-prefix is derived from the DSM namespace, split on camel case — ``MyApp``
-gives ``MY_APP_``, not ``MYAPP_``:
+``inject()`` binds one object per namespace of the definitions, under the
+namespace's own name: its types, and three views — ``keys``, ``attachments``
+by key concept, ``paths`` by structure:
 
 >>> ns = {}
 >>> defs.inject(ns)
 >>> sorted(ns)
-['MY_APP_A_USER_PROFILE', 'MY_APP_K_USER', 'MY_APP_P_PROFILE_AGE',
- 'MY_APP_P_PROFILE_CITY', 'MY_APP_S_PROFILE', 'MY_APP_T_USER']
+['MyApp']
+>>> ns["MyApp"]
+MyApp: keys, attachments, paths, User, Profile
+>>> ns["MyApp"].attachments.User.profile
+attachment<User, Profile> MyApp::profile
+>>> ns["MyApp"].paths.Profile.city
+.city
 
 A parse that failed reports why, and hands back ``None`` for both
 definitions:

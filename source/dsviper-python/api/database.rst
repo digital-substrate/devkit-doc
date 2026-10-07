@@ -23,9 +23,9 @@ Quick Start
 >>> report, dsm_defs, defs = builder.parse()
 >>> report.has_error()
 False
->>> defs.inject(globals())             # MY_APP_T_USER, MY_APP_A_USER_PROFILE, …
->>> key = ValueKey.create(MY_APP_T_USER, "0d2f0e1a-1111-4222-8333-444455556666")
->>> document = Value.create(MY_APP_S_PROFILE, {"city": "Paris", "age": 30})
+>>> defs.inject(globals())             # MyApp.User, MyApp.attachments.User.profile, …
+>>> key = ValueKey.create(MyApp.User, "0d2f0e1a-1111-4222-8333-444455556666")
+>>> document = Value.create(MyApp.Profile, {"city": "Paris", "age": 30})
 
 A ``Database`` holds one state, with no history. Writes go in a
 transaction:
@@ -34,24 +34,24 @@ transaction:
 >>> db.extend_definitions(defs).count()
 3
 >>> db.begin_transaction()
->>> db.set(MY_APP_A_USER_PROFILE, key, document)
+>>> db.set(MyApp.attachments.User.profile, key, document)
 True
 >>> db.commit()
 
 ``get`` always returns a ``ValueOptional`` — never ``None``. Ask
 ``is_nil()`` whether it holds anything, and ``unwrap()`` for the document:
 
->>> result = db.get(MY_APP_A_USER_PROFILE, key)
+>>> result = db.get(MyApp.attachments.User.profile, key)
 >>> result.is_nil()
 False
 >>> Value.dumps(result.unwrap())
 {'city': 'Paris', 'age': 30}
 
 >>> db.begin_transaction()
->>> db.delete(MY_APP_A_USER_PROFILE, key)
+>>> db.delete(MyApp.attachments.User.profile, key)
 True
 >>> db.commit()
->>> db.get(MY_APP_A_USER_PROFILE, key).is_nil()
+>>> db.get(MyApp.attachments.User.profile, key).is_nil()
 True
 
 .. seealso::

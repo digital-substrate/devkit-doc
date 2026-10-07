@@ -48,21 +48,21 @@ Open the database in Python and list the types and attachments it carries:
 ['Tuto::account', 'Tuto::avatar', 'Tuto::identity', 'Tuto::login', 'Tuto::portrait']
 ```
 
-### Step 5: Inject Constants
+### Step 5: Inject the Namespace
 
-`db.definitions().inject()` makes types accessible as constants in the
-caller's namespace (already done in this tutorial's setup):
+`db.definitions().inject()` binds `Tuto` in the caller's namespace: its types,
+and its keys, attachments and paths (already done in this tutorial's setup):
 
 ```{doctest}
->>> TUTO_A_USER_LOGIN
+>>> Tuto.attachments.User.login
 attachment<User, Login> Tuto::login
 
->>> TUTO_S_LOGIN
+>>> Tuto.Login
 Tuto::Login
 ```
 
-See [DSM Processing — Inject Constants](dsm.md#inject-constants) for the
-naming convention.
+See [DSM Processing — Inject the Namespace](dsm.md#inject-the-namespace) for
+the layout.
 
 ### Step 6: Create a Key and Document
 
@@ -70,7 +70,7 @@ Create a new User key. `instance_id()` returns the underlying UUID
 (randomly generated, so we just check the type here):
 
 ```{doctest}
->>> key = TUTO_A_USER_LOGIN.create_key()
+>>> key = Tuto.attachments.User.login.create_key()
 >>> isinstance(key.instance_id(), ValueUUId)
 True
 ```
@@ -78,7 +78,7 @@ True
 Create a Login document:
 
 ```{doctest}
->>> login = TUTO_A_USER_LOGIN.create_document()
+>>> login = Tuto.attachments.User.login.create_document()
 >>> login
 {nickname='', password=''}
 
@@ -95,7 +95,7 @@ Create a mutable state, associate the document with the key, and commit:
 ```{doctest}
 >>> mutable_state = CommitMutableState(CommitStateBuilder.initial_state(db))
 
->>> mutable_state.attachment_mutating().set(TUTO_A_USER_LOGIN, key, login)
+>>> mutable_state.attachment_mutating().set(Tuto.attachments.User.login, key, login)
 
 >>> commit_id = db.commit_mutations("First Commit", mutable_state)
 >>> isinstance(commit_id, ValueCommitId) and len(str(commit_id)) == 40
@@ -120,7 +120,7 @@ Read the document back:
 
 ```{doctest}
 >>> state = CommitStateBuilder.state(db, commit_id)
->>> result = state.attachment_getting().get(TUTO_A_USER_LOGIN, key)
+>>> result = state.attachment_getting().get(Tuto.attachments.User.login, key)
 >>> result
 Optional({nickname='zoop', password='robust'})
 
@@ -137,7 +137,7 @@ explicit id:
 
 ```{doctest}
 >>> mutable_state = CommitMutableState(CommitStateBuilder.state(db, commit_id))
->>> mutable_state.attachment_mutating().update(TUTO_A_USER_LOGIN, key, TUTO_P_LOGIN_NICKNAME, "zoopy")
+>>> mutable_state.attachment_mutating().update(Tuto.attachments.User.login, key, Tuto.paths.Login.nickname, "zoopy")
 >>> updated_id = db.commit_mutations("Update Nickname", mutable_state)
 ```
 
@@ -147,15 +147,15 @@ Read from different commits:
 
 ```{doctest}
 >>> state = CommitStateBuilder.state(db, updated_id)
->>> state.attachment_getting().get(TUTO_A_USER_LOGIN, key)
+>>> state.attachment_getting().get(Tuto.attachments.User.login, key)
 Optional({nickname='zoopy', password='robust'})
 
 >>> state = CommitStateBuilder.state(db, commit_id)
->>> state.attachment_getting().get(TUTO_A_USER_LOGIN, key)
+>>> state.attachment_getting().get(Tuto.attachments.User.login, key)
 Optional({nickname='zoop', password='robust'})
 
 >>> state = CommitStateBuilder.initial_state(db)
->>> state.attachment_getting().get(TUTO_A_USER_LOGIN, key)
+>>> state.attachment_getting().get(Tuto.attachments.User.login, key)
 nil
 ```
 

@@ -32,7 +32,7 @@ A ``Path`` navigates nested structures. Build it, freeze it with
 ... """)
 >>> report, dsm_defs, defs = builder.parse()
 >>> defs.inject(globals())
->>> document = Value.create(MY_APP_S_PROFILE, {"address": {"city": "Lyon"}, "age": 30})
+>>> document = Value.create(MyApp.Profile, {"address": {"city": "Lyon"}, "age": 30})
 
 >>> path = Path.from_field("address").field("city").const()
 >>> path.representation()
@@ -43,8 +43,9 @@ A ``Path`` navigates nested structures. Build it, freeze it with
 >>> Value.dumps(document)
 {'address': {'city': 'Paris'}, 'age': 30}
 
-``inject()`` also emits a constant per path, so the one above is already
-available as ``MY_APP_P_PROFILE_ADDRESS``.
+``inject()`` also binds the path to each field of a structure:
+``MyApp.paths.Profile.address`` is ``.address``, the first step of the one
+above.
 
 A logger writes to stderr through its ``Logging`` interface:
 

@@ -24,9 +24,9 @@ Quick Start
 >>> report, dsm_defs, defs = builder.parse()
 >>> report.has_error()
 False
->>> defs.inject(globals())             # MY_APP_T_USER, MY_APP_A_USER_PROFILE, …
->>> key = ValueKey.create(MY_APP_T_USER, "0d2f0e1a-1111-4222-8333-444455556666")
->>> document = Value.create(MY_APP_S_PROFILE, {"city": "Paris", "age": 30})
+>>> defs.inject(globals())             # MyApp.User, MyApp.attachments.User.profile, …
+>>> key = ValueKey.create(MyApp.User, "0d2f0e1a-1111-4222-8333-444455556666")
+>>> document = Value.create(MyApp.Profile, {"city": "Paris", "age": 30})
 
 ``AttachmentGetting`` reads and ``AttachmentMutating`` writes. Both are
 reached from a state, never constructed directly. The second **is** the first —
@@ -39,25 +39,25 @@ hands out the read-only view of the same attachments when you want to say so:
 3
 >>> mutable = CommitMutableState(CommitStateBuilder.initial_state(db))
 >>> mutating = mutable.attachment_mutating()
->>> mutating.set(MY_APP_A_USER_PROFILE, key, document)
+>>> mutating.set(MyApp.attachments.User.profile, key, document)
 >>> commit_id = db.commit_mutations("Add user", mutable)
 
 >>> getting = CommitStateBuilder.state(db, commit_id).attachment_getting()
->>> value = getting.get(MY_APP_A_USER_PROFILE, key)
+>>> value = getting.get(MyApp.attachments.User.profile, key)
 >>> value.is_nil()
 False
 
 >>> isinstance(mutating, AttachmentGetting)
 True
->>> mutating.attachment_getting().get(MY_APP_A_USER_PROFILE, key).is_nil()
+>>> mutating.attachment_getting().get(MyApp.attachments.User.profile, key).is_nil()
 False
 >>> Value.dumps(value.unwrap())
 {'city': 'Paris', 'age': 30}
 
 A key that holds nothing is not an error — the optional is simply empty:
 
->>> absent = ValueKey.create(MY_APP_T_USER, "ffffffff-0000-4000-8000-000000000000")
->>> getting.get(MY_APP_A_USER_PROFILE, absent).is_nil()
+>>> absent = ValueKey.create(MyApp.User, "ffffffff-0000-4000-8000-000000000000")
+>>> getting.get(MyApp.attachments.User.profile, absent).is_nil()
 True
 
 Core Classes

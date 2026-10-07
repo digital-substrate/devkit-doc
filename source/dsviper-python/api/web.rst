@@ -29,7 +29,7 @@ Quick Start
        db.definitions().inject()
 
        # Create key and get document accessor
-       key = ValueKey.create(MY_APP_T_ENTITY, str(instance_id))
+       key = ValueKey.create(MyApp.Entity, str(instance_id))
        attachment_getting = CommitStateBuilder.state(db, db.last_commit_id()).attachment_getting()
 
        # Build document tree for all attachments

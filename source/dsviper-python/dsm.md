@@ -154,11 +154,11 @@ The Tuto fixture ties `Status` into a struct used by the `account`
 attachment, so the enum can be exercised end-to-end through the runtime:
 
 ```{doctest}
->>> account = TUTO_A_USER_ACCOUNT.create_document()
+>>> account = Tuto.attachments.User.account.create_document()
 >>> account
 {state=.pending}
 
->>> account.state = ValueEnumeration(TUTO_E_STATUS, "active")
+>>> account.state = ValueEnumeration(Tuto.Status, "active")
 >>> account
 {state=.active}
 ```
@@ -201,29 +201,34 @@ Pass `show_runtime_id=True` to append runtime IDs.
 
 The `DefinitionsConst` from parse enables runtime operations.
 
-### Inject Constants
+### Inject the Namespace
 
-`defs.inject()` makes generated constants available in the namespace.
-The `Tuto` constants are already in scope thanks to the doctest fixture:
+`defs.inject()` binds one object per namespace of the definitions, under the
+namespace's own name: its types, and three views — `keys`, `attachments` by
+key concept, `paths` by structure. `Tuto` is already in scope thanks to the
+doctest fixture:
 
 ```{doctest}
->>> TUTO_S_LOGIN
+>>> Tuto.Login
 Tuto::Login
 
->>> TUTO_A_USER_LOGIN
+>>> Tuto.attachments.User.login
 attachment<User, Login> Tuto::login
 ```
 
-**Naming convention**: Constants follow the pattern `{NAMESPACE}_{KIND}_{NAME}`:
+**Layout**: every name is the definitions' own, as they write it.
 
-| Kind             | Prefix | Example                 | Description               |
-|------------------|--------|-------------------------|---------------------------|
-| Attachment       | `_A_`  | `TUTO_A_USER_LOGIN`     | Attachment type           |
-| Structure        | `_S_`  | `TUTO_S_LOGIN`          | Structure type            |
-| Enumeration      | `_E_`  | `TUTO_E_STATUS`         | Enumeration type          |
-| Concept or club  | `_T_`  | `TUTO_T_USER`           | Concept or club type      |
-| Key              | `_K_`  | `TUTO_K_USER`           | Key of a concept or club  |
-| Path             | `_P_`  | `TUTO_P_LOGIN_NICKNAME` | Path to field             |
+| Reached as                              | Example                       | What                         |
+|-----------------------------------------|-------------------------------|------------------------------|
+| `<Namespace>.<Type>`                    | `Tuto.User`, `Tuto.Login`     | a concept, club, structure or enumeration |
+| `<Namespace>.keys.<Concept>`            | `Tuto.keys.User`              | the key type of a concept or club |
+| `<Namespace>.attachments.<Key>.<name>`  | `Tuto.attachments.User.login` | an attachment, by key concept then name |
+| `<Namespace>.paths.<Structure>.<field>` | `Tuto.paths.Login.nickname`   | the path to a field          |
+
+A key concept of another namespace takes that namespace in front:
+`App.attachments.Lib_User.profile`. A name the target already binds to
+something else is refused, and nothing is bound; `discard()` removes what
+`inject()` bound.
 
 ### Query Types
 

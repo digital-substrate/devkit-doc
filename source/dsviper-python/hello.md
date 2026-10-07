@@ -4,21 +4,21 @@ The shortest possible end-to-end use of the runtime — seven API calls
 that demonstrate the full value chain.
 
 ```{doctest}
->>> key = TUTO_A_USER_LOGIN.create_key()
->>> login = TUTO_A_USER_LOGIN.create_document()
+>>> key = Tuto.attachments.User.login.create_key()
+>>> login = Tuto.attachments.User.login.create_document()
 >>> login.nickname = "alice"
 
 >>> mutable = CommitMutableState(CommitStateBuilder.initial_state(db))
->>> mutable.attachment_mutating().set(TUTO_A_USER_LOGIN, key, login)
+>>> mutable.attachment_mutating().set(Tuto.attachments.User.login, key, login)
 >>> commit_id = db.commit_mutations("Add alice", mutable)
 
->>> CommitStateBuilder.state(db, commit_id).attachment_getting().get(TUTO_A_USER_LOGIN, key)
+>>> CommitStateBuilder.state(db, commit_id).attachment_getting().get(Tuto.attachments.User.login, key)
 Optional({nickname='alice', password=''})
 ```
 
 What this exercises:
 
-- **Typed handles** — `TUTO_A_USER_LOGIN` is the runtime handle for the
+- **Typed handles** — `Tuto.attachments.User.login` is the runtime handle for the
   `attachment<User, Login>` declared in the Tuto fixture model.
   `create_key()` mints a typed `User` key; `create_document()` produces a
   fresh `Login` record matching the schema.
@@ -30,7 +30,7 @@ What this exercises:
   mismatch on either side would have raised at the boundary.
 
 This snippet runs as part of `make doctest`. The fixture (`db`,
-`TUTO_A_USER_LOGIN`) is preloaded by the doctest harness; in your own
+`Tuto.attachments.User.login`) is preloaded by the doctest harness; in your own
 code you obtain the same handles either by importing the
 [Kibo-generated package](../kibo/index.rst) (the static API) or by
 [loading the DSM model at runtime](dsm.md) (the dynamic API).

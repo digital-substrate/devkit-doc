@@ -74,11 +74,11 @@ insp.attachmentIdentifiers();
 ### Step 5: Look Up the Attachment
 
 ```{note}
-**No constant injection.** The Python API can `inject()` types as constants
-into the caller's namespace (`TUTO_A_USER_LOGIN`). Node has no such global
-injection: you look a type or attachment up explicitly, by its identifier, from
-the inspector. The identifier strings are exactly the ones
-`attachmentIdentifiers()` returns.
+**Or inject the namespace.** `definitions.inject(target)` binds one frozen
+object per namespace on `target`, `globalThis` when it is omitted — so
+`Tuto.attachments.User.login` reaches the attachment, as in Python. This step
+looks it up explicitly instead, by its identifier, from the inspector. The
+identifier strings are exactly the ones `attachmentIdentifiers()` returns.
 ```
 
 ```js

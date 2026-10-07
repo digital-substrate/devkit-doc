@@ -341,9 +341,9 @@ exposes a `Thumbnail` struct with a `blob` field, attached to `User` as
 `avatar`:
 
 ```{doctest}
->>> user_key = TUTO_A_USER_AVATAR.create_key()
+>>> user_key = Tuto.attachments.User.avatar.create_key()
 
->>> thumb = TUTO_A_USER_AVATAR.create_document()
+>>> thumb = Tuto.attachments.User.avatar.create_document()
 >>> thumb.width = 64
 >>> thumb.height = 64
 >>> thumb.data = ValueBlob(bytes([1, 2, 3, 4, 5]))
@@ -351,10 +351,10 @@ exposes a `Thumbnail` struct with a `blob` field, attached to `User` as
 {width=64, height=64, data=blob(5)}
 
 >>> ms = CommitMutableState(CommitStateBuilder.initial_state(db))
->>> ms.attachment_mutating().set(TUTO_A_USER_AVATAR, user_key, thumb)
+>>> ms.attachment_mutating().set(Tuto.attachments.User.avatar, user_key, thumb)
 >>> avatar_commit = db.commit_mutations("Add avatar", ms)
 
->>> CommitStateBuilder.state(db, avatar_commit).attachment_getting().get(TUTO_A_USER_AVATAR, user_key)
+>>> CommitStateBuilder.state(db, avatar_commit).attachment_getting().get(Tuto.attachments.User.avatar, user_key)
 Optional({width=64, height=64, data=blob(5)})
 ```
 
@@ -369,16 +369,16 @@ as `portrait`:
 >>> mesh_content = ValueBlob(bytes([10, 20, 30, 40]))
 >>> texture_blob_id = db.create_blob(mesh_layout, mesh_content)
 
->>> texture = TUTO_A_USER_PORTRAIT.create_document()
+>>> texture = Tuto.attachments.User.portrait.create_document()
 >>> texture.width = 1024
 >>> texture.height = 1024
 >>> texture.pixels = texture_blob_id
 
 >>> ms = CommitMutableState(CommitStateBuilder.state(db, avatar_commit))
->>> ms.attachment_mutating().set(TUTO_A_USER_PORTRAIT, user_key, texture)
+>>> ms.attachment_mutating().set(Tuto.attachments.User.portrait, user_key, texture)
 >>> portrait_commit = db.commit_mutations("Add portrait", ms)
 
->>> CommitStateBuilder.state(db, portrait_commit).attachment_getting().get(TUTO_A_USER_PORTRAIT, user_key)
+>>> CommitStateBuilder.state(db, portrait_commit).attachment_getting().get(Tuto.attachments.User.portrait, user_key)
 Optional({width=1024, height=1024, pixels=...})
 ```
 

@@ -57,7 +57,7 @@ the head, and notifies observers — atomically:
 ```pycon
 >>> store.dispatch(
 ...     "Add Alice",
-...     lambda m: m.set(TUTO_A_USER_LOGIN, key, login),
+...     lambda m: m.set(Tuto.attachments.User.login, key, login),
 ... )
 ```
 
@@ -139,7 +139,7 @@ store.use(CommitDatabase.open("model.cdb"))
 store.set_notifier(my_notifier)  # observable
 
 store.dispatch("Add Alice",
-               lambda m: m.set(TUTO_A_USER_LOGIN, key, login))
+               lambda m: m.set(Tuto.attachments.User.login, key, login))
 
 assert store.can_undo()
 store.undo()

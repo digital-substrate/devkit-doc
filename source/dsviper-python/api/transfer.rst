@@ -80,9 +80,9 @@ Quick Start
 >>> report, dsm_defs, defs = builder.parse()
 >>> report.has_error()
 False
->>> defs.inject(globals())             # MY_APP_T_USER, MY_APP_A_USER_PROFILE, …
->>> key = ValueKey.create(MY_APP_T_USER, "0d2f0e1a-1111-4222-8333-444455556666")
->>> document = Value.create(MY_APP_S_PROFILE, {"city": "Paris", "age": 30})
+>>> defs.inject(globals())             # MyApp.User, MyApp.attachments.User.profile, …
+>>> key = ValueKey.create(MyApp.User, "0d2f0e1a-1111-4222-8333-444455556666")
+>>> document = Value.create(MyApp.Profile, {"city": "Paris", "age": 30})
 
 Build a source with two commits:
 
@@ -90,11 +90,11 @@ Build a source with two commits:
 >>> source.extend_definitions(defs).count()
 3
 >>> mutable = CommitMutableState(CommitStateBuilder.initial_state(source))
->>> mutable.attachment_mutating().set(MY_APP_A_USER_PROFILE, key, document)
+>>> mutable.attachment_mutating().set(MyApp.attachments.User.profile, key, document)
 >>> first = source.commit_mutations("first", mutable)
 >>> mutable = CommitMutableState(CommitStateBuilder.state(source, first))
 >>> mutable.attachment_mutating().set(
-...     MY_APP_A_USER_PROFILE, key, Value.create(MY_APP_S_PROFILE, {"city": "Lyon", "age": 31}))
+...     MyApp.attachments.User.profile, key, Value.create(MyApp.Profile, {"city": "Lyon", "age": 31}))
 >>> head_commit_id = source.commit_mutations("second", mutable)
 
 Flatten collapses a chosen commit into a fresh single-commit
@@ -116,7 +116,7 @@ Converting materializes one commit's state into a plain, history-free
 3
 >>> CommitDatabaseToDatabaseConverter().convert(source, head_commit_id, flat_db).documents
 1
->>> Value.dumps(flat_db.get(MY_APP_A_USER_PROFILE, key).unwrap())
+>>> Value.dumps(flat_db.get(MyApp.attachments.User.profile, key).unwrap())
 {'city': 'Lyon', 'age': 31}
 
 ``source``, ``target`` and ``flat_db`` are already-open database handles; see

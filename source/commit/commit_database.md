@@ -113,15 +113,14 @@ set()
 ```
 
 `CommitStateBuilder.initial_state(db)` always works and returns the empty
-state. The example uses constants like `TUTO_A_USER_LOGIN` exposed
-by the database's embedded definitions — see
+state. The example reaches `Tuto.attachments.User.login` through the
+database's embedded definitions — see
 [Embedded Definitions](#embedded-definitions) below; a one-line
-`db.definitions().inject()` makes them available in the calling
-namespace.
+`db.definitions().inject()` binds `Tuto` in the calling namespace.
 
 ```{doctest}
 >>> initial = CommitStateBuilder.initial_state(db)
->>> len(initial.attachment_getting().keys(TUTO_A_USER_LOGIN))
+>>> len(initial.attachment_getting().keys(Tuto.attachments.User.login))
 0
 ```
 
@@ -170,17 +169,17 @@ chain further mutations or read the resulting state:
 Add an Alice document and read it back:
 
 ```{doctest}
->>> key = TUTO_A_USER_LOGIN.create_key()
->>> login = TUTO_A_USER_LOGIN.create_document()
+>>> key = Tuto.attachments.User.login.create_key()
+>>> login = Tuto.attachments.User.login.create_document()
 >>> login.nickname = "alice"
 >>> login.password = "secret"
 
 >>> mutable = CommitMutableState(CommitStateBuilder.initial_state(db))
->>> mutable.attachment_mutating().set(TUTO_A_USER_LOGIN, key, login)
+>>> mutable.attachment_mutating().set(Tuto.attachments.User.login, key, login)
 >>> commit_id = db.commit_mutations("Add Alice", mutable)
 
 >>> state = CommitStateBuilder.state(db, commit_id)
->>> state.attachment_getting().get(TUTO_A_USER_LOGIN, key)
+>>> state.attachment_getting().get(Tuto.attachments.User.login, key)
 Optional({nickname='alice', password='secret'})
 ```
 
@@ -207,7 +206,7 @@ compose when multiple users write concurrently.
 ### Field Update
 
 ```pycon
->>> mutating.update(TUTO_A_USER_LOGIN, key, TUTO_P_LOGIN_NICKNAME, "alice_updated")
+>>> mutating.update(Tuto.attachments.User.login, key, Tuto.paths.Login.nickname, "alice_updated")
 ```
 
 ### Why Paths Matter
@@ -281,8 +280,8 @@ CommitDatabase stores its definitions:
 ['Tuto::Account', 'Tuto::Identity', 'Tuto::Login', 'Tuto::Status', 'Tuto::Texture', 'Tuto::Thumbnail', 'Tuto::User']
 ```
 
-Calling `defs.inject()` makes `TUTO_A_USER_LOGIN`, `TUTO_S_LOGIN`, etc.
-available as constants in the calling namespace.
+Calling `defs.inject()` binds `Tuto` in the calling namespace: its types
+(`Tuto.Login`) and its keys, attachments and paths (`Tuto.attachments.User.login`).
 
 ---
 

@@ -88,7 +88,7 @@ doctest_default_flags = (
 )
 
 # Global doctest setup: load the bundled Tuto fixture model and inject its
-# generated constants (TUTO_A_USER_LOGIN, TUTO_S_LOGIN, …) so Zone 2
+# namespace object (Tuto.attachments.User.login, Tuto.Login, …) so Zone 2
 # examples can use them without depending on a Kibo-generated package.
 _FIXTURE_TUTO = os.path.join(os.path.dirname(__file__), '_fixtures', 'Tuto')
 # Coverage builder: report which symbols of `dsviper` are not referenced by

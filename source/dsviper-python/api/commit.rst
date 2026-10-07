@@ -40,9 +40,9 @@ Quick Start
 >>> report, dsm_defs, defs = builder.parse()
 >>> report.has_error()
 False
->>> defs.inject(globals())             # MY_APP_T_USER, MY_APP_A_USER_PROFILE, …
->>> key = ValueKey.create(MY_APP_T_USER, "0d2f0e1a-1111-4222-8333-444455556666")
->>> document = Value.create(MY_APP_S_PROFILE, {"city": "Paris", "age": 30})
+>>> defs.inject(globals())             # MyApp.User, MyApp.attachments.User.profile, …
+>>> key = ValueKey.create(MyApp.User, "0d2f0e1a-1111-4222-8333-444455556666")
+>>> document = Value.create(MyApp.Profile, {"city": "Paris", "age": 30})
 
 A ``CommitDatabase`` keeps every commit. Mutations are applied to a
 ``CommitMutableState`` built over the state you start from — a fresh
@@ -59,23 +59,23 @@ stored with it.
 >>> last = db.last_commit_id()
 >>> state = CommitStateBuilder.state(db, last) if last else CommitStateBuilder.initial_state(db)
 >>> mutable = CommitMutableState(state)
->>> mutable.attachment_mutating().set(MY_APP_A_USER_PROFILE, key, document)
+>>> mutable.attachment_mutating().set(MyApp.attachments.User.profile, key, document)
 >>> commit_id = db.commit_mutations("Add user", mutable)
 
 Reading goes through the state at a commit:
 
 >>> state = CommitStateBuilder.state(db, commit_id)
->>> Value.dumps(state.attachment_getting().get(MY_APP_A_USER_PROFILE, key).unwrap())
+>>> Value.dumps(state.attachment_getting().get(MyApp.attachments.User.profile, key).unwrap())
 {'city': 'Paris', 'age': 30}
 
 A second commit records only what changed:
 
 >>> mutable = CommitMutableState(CommitStateBuilder.state(db, commit_id))
 >>> mutable.attachment_mutating().set(
-...     MY_APP_A_USER_PROFILE, key, Value.create(MY_APP_S_PROFILE, {"city": "Lyon", "age": 31}))
+...     MyApp.attachments.User.profile, key, Value.create(MyApp.Profile, {"city": "Lyon", "age": 31}))
 >>> second = db.commit_mutations("Move to Lyon", mutable)
 >>> Value.dumps(CommitStateBuilder.state(db, second)
-...             .attachment_getting().get(MY_APP_A_USER_PROFILE, key).unwrap())
+...             .attachment_getting().get(MyApp.attachments.User.profile, key).unwrap())
 {'city': 'Lyon', 'age': 31}
 
 .. seealso::
@@ -107,7 +107,7 @@ different fields converge automatically.
    mutating = mutable.attachment_mutating()
 
    # Update only the city field (not the whole document)
-   mutating.update(MY_APP_A_USER_PROFILE, user_key, path_city, "Paris")
+   mutating.update(MyApp.attachments.User.profile, user_key, path_city, "Paris")
 
    # Commit
    db.commit_mutations("Update city", mutable)

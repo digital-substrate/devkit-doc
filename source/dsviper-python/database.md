@@ -82,8 +82,8 @@ In your own code you would assemble definitions from your DSM model:
 Create a key and a document:
 
 ```{doctest}
->>> key = TUTO_A_USER_LOGIN.create_key()
->>> login = TUTO_A_USER_LOGIN.create_document()
+>>> key = Tuto.attachments.User.login.create_key()
+>>> login = Tuto.attachments.User.login.create_document()
 >>> login.nickname = "alice"
 ```
 
@@ -91,14 +91,14 @@ Write — all mutations require a transaction:
 
 ```{doctest}
 >>> db.begin_transaction()
->>> _ = db.set(TUTO_A_USER_LOGIN, key, login)
+>>> _ = db.set(Tuto.attachments.User.login, key, login)
 >>> db.commit()
 ```
 
 Read:
 
 ```{doctest}
->>> result = db.get(TUTO_A_USER_LOGIN, key)
+>>> result = db.get(Tuto.attachments.User.login, key)
 >>> result.unwrap()
 {nickname='alice', password=''}
 ```
@@ -106,7 +106,7 @@ Read:
 Check existence:
 
 ```{doctest}
->>> db.has(TUTO_A_USER_LOGIN, key)
+>>> db.has(Tuto.attachments.User.login, key)
 True
 ```
 
@@ -115,19 +115,19 @@ Update:
 ```{doctest}
 >>> db.begin_transaction()
 >>> login.password = "secret"
->>> _ = db.set(TUTO_A_USER_LOGIN, key, login)
+>>> _ = db.set(Tuto.attachments.User.login, key, login)
 >>> db.commit()
 
->>> db.get(TUTO_A_USER_LOGIN, key).unwrap()
+>>> db.get(Tuto.attachments.User.login, key).unwrap()
 {nickname='alice', password='secret'}
 ```
 
 List keys for an attachment — `keys()` returns a `ValueSet` of `ValueUUId`:
 
 ```{doctest}
->>> isinstance(db.keys(TUTO_A_USER_LOGIN), ValueSet)
+>>> isinstance(db.keys(Tuto.attachments.User.login), ValueSet)
 True
->>> len(db.keys(TUTO_A_USER_LOGIN))
+>>> len(db.keys(Tuto.attachments.User.login))
 1
 ```
 
@@ -135,10 +135,10 @@ Delete:
 
 ```{doctest}
 >>> db.begin_transaction()
->>> _ = db.delete(TUTO_A_USER_LOGIN, key)
+>>> _ = db.delete(Tuto.attachments.User.login, key)
 >>> db.commit()
 
->>> db.has(TUTO_A_USER_LOGIN, key)
+>>> db.has(Tuto.attachments.User.login, key)
 False
 ```
 
@@ -161,9 +161,9 @@ A transaction can also be rolled back:
 
 ```{doctest}
 >>> db.begin_transaction()
->>> _ = db.set(TUTO_A_USER_LOGIN, key, login)
+>>> _ = db.set(Tuto.attachments.User.login, key, login)
 >>> db.rollback()
->>> db.has(TUTO_A_USER_LOGIN, key)
+>>> db.has(Tuto.attachments.User.login, key)
 False
 ```
 

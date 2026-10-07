@@ -178,8 +178,8 @@ Where it sits in the value chain
 
 Without the Commit Database, ``dsviper`` reads and writes against the plain
 ``Database`` backend — flat key-value, no history. The Commit Database adds
-versioning over the same backend: an immutable mutation DAG with
-deterministic reduction between concurrent streams. A
+versioning over the same backend: an immutable mutation DAG; when heads
+diverge, a deterministic reduction folds them back into one. A
 :doc:`CommitStore <commit_store>` adds the navigation, dispatch, and
 notifications on top. See :doc:`../ecosystem/value-chains` for the broader
 picture.

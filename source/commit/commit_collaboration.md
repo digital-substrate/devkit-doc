@@ -32,7 +32,7 @@ authors do not control
 ([the mechanism](commit_database.md#how-reduction-picks-a-winner)).
 The reduced state is therefore deterministic, but the determinant is
 the opcode shape, which head is most recent, and the hash ordering of the rest,
-not the authors' intent — so to an observer, *which* intent the merge keeps is
+not the authors' intent — so to an observer, *which* intent the fold keeps is
 arbitrary. This is the index's own caveat: "which sequence is applied when
 several heads meet is an application strategy, not an engine guarantee".
 

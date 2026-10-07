@@ -31,7 +31,8 @@ This is the path for multi-stream usage, not a back-stop when the
 This is a discipline you engineer, not a feature you enable. There is no
 general recipe: the shape of the disjointness is specific to your domain,
 and no pattern here has been validated at scale as a general solution. It is
-decided in the `.dsm` before any code is written — and it does not cover
+decided in the model (the `.dsm`, or a `Definitions` built by hand) before
+any code is written — and it does not cover
 strong invariants at all, whatever the decomposition (see
 [What scope decomposition does not solve](#what-scope-decomposition-does-not-solve)).
 ```
@@ -110,7 +111,7 @@ a general solution.
 
 ### Modelling levers
 
-Disjointness is engineered in the `.dsm`, not at runtime. The DSM
+Disjointness is engineered in the model's definitions, not at runtime. The DSM
 language provides the levers — none of them new:
 
 - **Multiple attachments per concept** rather than one monolithic
@@ -136,7 +137,8 @@ language provides the levers — none of them new:
   the {ref}`ModelIntegrity <pool-modelintegrity-dsm>` pattern as an
   uncommon worked example.
 
-These choices are made in the `.dsm` before any code is written —
+These choices are made in the model (the `.dsm`, or a `Definitions` built
+by hand) before any code is written —
 which is why the single-stream / multi-stream decision is
 architectural, not runtime.
 

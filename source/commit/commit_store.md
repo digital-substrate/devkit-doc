@@ -90,14 +90,14 @@ True
 >>> store.undo()
 >>> store.redo()
 >>> store.use_commit(some_commit_id)        # jump anywhere
->>> store.forward()                         # follow to the most plausible head
+>>> store.forward()                         # onto the head; with several, walk down from here
 >>> store.reduce_heads()                    # collapse multi-head to one
 ```
 
 For the conceptual model of divergence and multi-head exploration,
-see [Modes of Use](commit_modes.md). For the underlying
-DAG guarantees the store leans on, see
-[the Dual-Layer Contract](commit_contract.md).
+see [Modes of Use](commit_modes.md). For the structural DAG guarantees
+the store leans on, see
+[What Commit Provides](commit_contract.md#what-commit-provides).
 
 ### 4. The notification protocol
 

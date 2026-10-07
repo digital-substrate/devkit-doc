@@ -9,7 +9,7 @@ application composes a [`CommitStore`](commit_store.md) — the in-memory
 wrapper over a [Commit Database](commit_database.md), provided by the
 Viper C++ runtime — with its own domain state, dispatch surface, and
 platform notifications, so that the state changes the application makes flow
-through the [mutation DAG](commit_database.md) with built-in undo/redo, an audit
+through the [mutation DAG](commit_database.md) with built-in undo/redo, a change
 trail, and — where the DAG is allowed to diverge and fold unreviewed —
 deterministic reduction of divergent heads (see
 [The Dual-Layer Contract](commit_contract.md) for what that costs).

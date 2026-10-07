@@ -113,8 +113,8 @@ the contract around the state they read.
 ### Single-stream
 
 No fold goes unreviewed — every commit extends the head it read, or a
-person reviews the result of folding the heads they diverged. No
-`commitMerge` that nobody owns is reconstructed at read time, so the
+person reviews the result of folding the heads they diverged. No state
+you read has a `commitMerge` nobody reviewed in its history, so the
 [Dual-Layer Contract](commit_contract.md) is reference material, not
 load-bearing.
 What defines the regime is where writes land, not how many people are

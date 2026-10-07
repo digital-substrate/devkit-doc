@@ -106,7 +106,7 @@ back to a whole-field `Document_Update` where it would not (see
 
 ## Granularity and its ceiling
 
-The decree's reach mirrors the merge's own nature, container by container:
+The decree's reach mirrors how reduction treats each container:
 
 | Container       | Reconciliation                                          |
 |-----------------|---------------------------------------------------------|
@@ -120,8 +120,8 @@ the *value* that should survive there
 (`CommitMergeResolution(conflict, chosen)`). `reconcile` applies a recursive
 deep `Document_Update` at that path, so the reduced document's sibling fields
 and leaves are preserved untouched; the blast radius is bounded to the locus,
-not the whole document. Sequence reordering and element-level XArray merge are
-out of scope.
+not the whole document. Sequence reordering and element-level XArray decrees
+are out of scope.
 
 ## When there is no base
 
@@ -195,9 +195,9 @@ Two bounds keep the gate honest:
 
 ## Honest bounds
 
-- **It inherits the engine's reduction; it does not repair it.** The merge
-  stays hash-ordered and target-wins — this layer only makes the lost intent
-  observable and correctable.
+- **It inherits the engine's reduction; it does not repair it.** The
+  reduction stays target-wins, and the default fold stays hash-ordered — this
+  layer only makes the lost intent observable and correctable.
 - **It sees dropped opcodes, not invented combinations.** Detection asks
   whether an opcode's effect is present in the merge state. When two streams
   write *disjoint* paths every effect is present, so nothing is reported —

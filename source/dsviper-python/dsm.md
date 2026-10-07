@@ -165,8 +165,10 @@ attachment, so the enum can be exercised end-to-end through the runtime:
 
 ### DSMAttachment
 
-Inspect attachment definitions. `identifier()` returns the fully qualified
-name `<concept>.<attachment>`:
+Inspect attachment definitions. `identifier()` returns the attachment's
+namespace, its key written relative to that namespace, and its name — unique
+among the attachments. Here `Tuto::User.login`; an attachment `login` that
+namespace `App` declares on `Tuto::User` is `App::Tuto::User.login`:
 
 ```{doctest}
 >>> att = dsm_defs.attachments()[0]

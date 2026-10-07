@@ -266,7 +266,7 @@ club.members().map(m => m.typeName().name());   // member concept names
 
 ```js
 const att = dsmDefs.attachments()[0];
-att.identifier();                  // a string id that round-trips queryAttachment
+att.identifier();                  // 'Tuto::User.login': namespace::key.name, round-trips queryAttachment
 att.keyType();                     // a DSMType
 att.documentType();                // a DSMType
 ```

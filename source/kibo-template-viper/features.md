@@ -151,11 +151,13 @@ target that does not render `Base` — the client side of a pool, rendered with
 `with_requirements = false` — gets neither.
 
 The runtime belongs to the pack, not to dsviper: the proxy base, the registry that wraps and
-unwraps values, the container views (`Sequence`, `Mapping`, `Ordered`, `Optional`,
-`Variant`) and the attachment accessor, written once and copied into every generated package
+unwraps values, the container views (`Sequence`, `Mapping`, `Ordered`, `Optional`, `Variant`)
+and the attachment accessor, written once and copied into every generated package
 (`_codegen/` in Python: `proxy.py`, `container.py`, `attachment.py`; `src/_codegen/` in
 TypeScript: `proxy.ts`, `container.ts`, `attachment.ts`, `registry.ts`, `value.ts`). It
-versions with the templates that call it. The embedded definitions are decoded once by the
+versions with the templates that call it. Python names the optional's view `Option`: an
+annotation `Optional[D]` reads as `typing.Optional`, a value or None, where it is a box opened
+with `unwrap()`. The declared classes keep their name in both languages (`Optional_of_…`). The embedded definitions are decoded once by the
 package's `definitions()`, or by `codec::definitions()` in C++.
 
 ## A project's own features

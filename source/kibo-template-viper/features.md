@@ -123,7 +123,7 @@ Besides the features, `features.json` declares what a tool driving kibo needs to
 pack, so that the tool carries no knowledge of its own:
 
 - `generator.kibo` — the oldest kibo exposing the Template Model the templates consume,
-  `>=2.0.2`. A floor: a later kibo exposing the same Template Model renders them too.
+  `>=2.0.0`. A floor: a later kibo exposing the same Template Model renders them too.
 - `layout`, per target — where the templates render, below the target's output (`sources`),
   which templates render at the output itself (`root`), the `runtime` copied beside the
   sources, and the embedded definitions (`resources`) with their encoding.

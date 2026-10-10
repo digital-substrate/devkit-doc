@@ -66,29 +66,7 @@ repositories' CHANGELOGs:
 [kibo](https://github.com/digital-substrate/kibo/blob/main/CHANGELOG.md),
 [kibo-template-viper](https://github.com/digital-substrate/kibo-template-viper/blob/main/CHANGELOG.md).
 
-### kibo 2.0.2 — 2026-10-06
-
-- **A name the template pack's own code takes stops the generation**, saying which directive to
-  write: a field `wrap_value` would mask the method every generated Python class has, a
-  namespace `Containers` replace the package's `containers` module. The pack declares those
-  names (`--reserve`); kibo renames nothing — {doc}`kibo/usage`.
-- **A target spells a DSM name otherwise at the project's word** (`--spell`,
-  `[names.<target>.rename]`), every identifier and computed type included; the DSM name stays
-  the one sent to the runtime, `dsmName` in the Template Model — {doc}`kibo/template_model`.
-- **kibo knows no pack's names**: the four module names it refused a namespace or a pool to
-  take are now the pack's to declare.
-- **kibo-project 0.3.0** passes both, and validates the generated code as the pack declares;
-  a check that cannot run is an error (`validate = false`, `--no-validate`) —
-  {doc}`kibo/kibo-project`.
-
-### kibo 2.0.1 — 2026-10-06
-
-- **`-t` is repeatable**: several templates, files or directories, render in one run, one
-  JVM instead of one per template; a single `-t` behaves as before — {doc}`kibo/usage`.
-- **kibo-project 0.2.0** uses it: one run per output directory. A generation is four to six
-  times faster, and its output the same, byte for byte.
-
-### kibo 2.0.0 — 2026-10-05
+### kibo 2.0.0
 
 - **Template Model 2.** The accessors that describe a type as a binding sees it are
   renamed (`pythonType` → `bindingType`, …) and answer for the target being generated;
@@ -103,53 +81,38 @@ repositories' CHANGELOGs:
   DSM namespace, `pool(p)` and `attachment_pool(p)` once per pool, beside `main(m)`. A
   namespace carries what it needs to be generated on its own: its dependencies, its
   include guard, its attachments grouped by concept.
+- **`-t` is repeatable**: several templates, files or directories, render in one run, one
+  JVM instead of one per template — {doc}`kibo/usage`.
 - **Formats** carry a model's documentation into generated code (`string`, `docstring`,
   `comment`), and one snake_case rule names static symbols (`snake`, `usnake`).
 - **A model whose outputs would collide is refused before rendering**, and a template
   that reads a name the model does not carry is reported on stderr.
+- **A name the template pack's own code takes stops the generation**, saying which directive to
+  write: a field `wrap_value` would mask the method every generated Python class has, a
+  namespace `Containers` replace the package's `containers` module. The pack declares those
+  names (`--reserve`); kibo renames nothing — {doc}`kibo/usage`.
+- **A target spells a DSM name otherwise at the project's word** (`--spell`,
+  `[names.<target>.rename]`), every identifier and computed type included; the DSM name stays
+  the one sent to the runtime, `dsmName` in the Template Model — {doc}`kibo/template_model`.
+- **A C++ set or map keyed by a floating-point value takes `Viper::StaticLess`**, the runtime's
+  order: with `std::less`, a NaN left the tree undefined.
 - **kibo-project** drives a project's generation from a `kibo.toml`, in place of each
-  project's `generate.py` — {doc}`kibo/kibo-project`.
+  project's `generate.py`: one kibo run per output directory, the pack's reserved names and
+  the project's spellings passed, the generated code validated as the pack declares —
+  {doc}`kibo/kibo-project`.
 
-### kibo-template-viper 2.0.3 — 2026-10-06
+### kibo-template-viper 2.0.0
 
-Requires kibo 2.0.2.
-
-- **A namespace with types and no concept** registers them: Python and TypeScript wrote a
-  malformed `register(` line.
-- **A type already in upper snake case** (`RGB`) keeps its name, its runtime-id constant taking
-  `_ID` (`RGB_ID`): TypeScript did not compile, Python failed at import.
-- **A field or a pool parameter named like a name a generated body uses** (`self`, `source`,
-  `dict`, `isinstance`, `super`) no longer changes what a Python constructor or pool function
-  does.
-- **The pack declares its own names and its checks** (`reserved`, `validation`) —
-  {doc}`kibo-template-viper/features`. Every name sent to the runtime is the DSM name, whatever
-  a target spells.
-
-### kibo-template-viper 2.0.2 — 2026-10-05
-
-- **`from pkg.containers import *` brings the declared containers only**: it also brought the
-  runtime's view classes, whose `Optional` and `Mapping` replaced `typing.Optional` and
-  `typing.Mapping` in the importing module.
-- A map's `keys()`, `values()` and `items()` are documented as what they return: lists, a
-  snapshot the map can change under.
-
-### kibo-template-viper 2.0.1 — 2026-10-05
-
-- **The generated Python is fully annotated down to Python 3.10**, the oldest it declares:
-  its runtime used `typing.Self`, a Python 3.11 name, and `mypy --strict` under 3.10 reported
-  19 errors in every package. No run-time or API change.
-
-### kibo-template-viper 2.0.0 — 2026-10-05
-
-Requires kibo 2. Targets `dsviper >= 1.2.29`, `@digitalsubstrate/dsviper >= 1.2.14` and a
-`viper` C++ runtime that carries its static layer. **Breaking**: the generated surface
-changes throughout, and code written against the 1.2 output needs migrating —
+Requires kibo 2.0.0. Targets `dsviper >= 1.2.29`, `@digitalsubstrate/dsviper >= 1.2.14` and a
+`viper` C++ runtime `>= 1.2.29`, which carries the static layer. **Breaking**: the generated
+surface changes throughout, and code written against the 1.2 output needs migrating —
 {doc}`using-generated-sdk/migrating`.
 
 - **One DSM namespace is one unit**: a C++ namespace and file prefix, a Python module, a
   TypeScript directory. Types lose their namespace prefix, and two namespaces may
   declare the same name.
-- **A project selects features** from `features.json`, and the dependencies follow —
+- **A project selects features** from `features.json`, and the dependencies follow; every
+  target has `Base`, `Fields`, `Paths`, `Attachments` and `Pool` —
   {doc}`kibo-template-viper/features`.
 - **Python and TypeScript are proxies over the runtime**: a proxy is a box around one
   Viper value, with its type and the bridge `wrap_value` / `unwrap_value`
@@ -158,17 +121,24 @@ changes throughout, and code written against the 1.2 output needs migrating —
   views; errors follow the binding's three layers. The two packages expose the same
   surface, member by member, each in its language's idiom —
   {doc}`kibo-template-viper/parity`.
-- **Attachments are objects**, grouped by the concept they are keyed on, in every target.
-- **The generated Python is fully annotated**, its runtime included, and the generated
-  TypeScript compiles under `--strict`.
+- **Attachments are objects**, grouped by the concept they are keyed on, in a module of
+  their own in every target.
+- **`Fields` and `Paths`**: every field's name and its path as constants, for code that
+  handles a structure through the dynamic API, in the three targets.
+- **The generated Python is fully annotated down to Python 3.10**, its runtime included, and
+  the generated TypeScript compiles under `--strict`; the TypeScript package takes the runtime
+  as a peer dependency.
 - **The generated C++ goes through the runtime's static layer** to cross to a `Value`,
-  to serialize and to hash; `Stream`, `ValueCodec`, `Json`, `ValueHasher`, `Database` and
-  the generated attachment pool are removed, their work done by the runtime.
+  to serialize, to hash and to compare: a structure holding NaN equals itself, and its `<`
+  is an order. `Stream`, `ValueCodec`, `Json`, `ValueHasher`, `Database` and the generated
+  attachment pool are removed, their work done by the runtime.
 - **Function pools use the DSM spelling** for their functions, in C++ and on the wire;
   each language keeps its idiom for the static names. `Pool` is the server side,
   `PoolRemote` the client side.
-- **Added**: `Fields` (C++), every field's name and path as constants; `Package`
-  (TypeScript), a ready-to-build npm package.
+- **The pack declares its own names and its checks** (`reserved`, `validation`) —
+  {doc}`kibo-template-viper/features`. Every name sent to the runtime is the DSM name, whatever
+  a target spells.
+- **Added**: `Package` (TypeScript), a ready-to-build npm package.
 
 ## Viper C++ runtime
 

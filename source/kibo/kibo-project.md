@@ -8,41 +8,55 @@ a generation script.
 For each target of the project file, `kibo_project.py`:
 
 1. assembles the definitions with `dsviper`, into `<infrastructure>.dsm.json` beside the
-   project file — an intermediate, to ignore in version control;
+   project file — an intermediate, to ignore in version control — or only the attachments the
+   project selects, and what they depend on ([`[select]`](#a-part-of-the-model));
 2. finds the template pack, and the newest kibo jar the pack accepts;
 3. resolves the features into the templates they need, dependencies included;
 4. runs kibo, into the directories the pack declares — once per directory, every template in
    the same run, with kibo 2.0.0 or later; once per template with an older kibo;
 5. writes the embedded definitions in the encoding the pack declares, and copies the pack's
    runtime beside the generated sources;
-6. validates the target as the pack declares (kibo-project 0.3.0).
+6. validates what it wrote, as the pack declares: for the script targets, where a wrong name
+   would otherwise go unnoticed — Python imported, every structure built, `mypy --strict`;
+   TypeScript through `tsc`. A validation that cannot run, its tool missing, is an error.
 
 The tool knows nothing of a particular pack: what a feature renders, where it lands and how
 the definitions are embedded are read from the pack's `features.json`. Every file it writes
-says where it comes from.
+says where it comes from: kibo's banner names the `.dsm.json` relative to the project, the same
+on every machine, and the embedded definitions open with the same line, naming this tool.
 
 Source: [digital-substrate/kibo-project](https://github.com/digital-substrate/kibo-project).
-It needs Python 3.11 or later with `dsviper`, and Java 17 for kibo.
+It needs Python 3.11 or later with `dsviper` (on Python 3.10, install `tomli`), and Java 17 for
+kibo.
 
 ## Usage
 
 ```bash
 python3 kibo_project.py generate [kibo.toml] [--target NAME ...] [--definitions PATH] [--into DIR] [--no-validate]
 python3 kibo_project.py plan     [kibo.toml] [--definitions PATH]
+python3 kibo_project.py check    [kibo.toml] [--target NAME ...] [--definitions PATH]
 ```
 
-`plan` shows the jar and the pack it found and, per target, the features it renders and every
-template with where it lands, without writing anything. `--definitions` renders another model
-than the project's, for one run. `--into` renders into another directory, each output keeping
+`plan` shows the jar and the pack it found and, per target, the features it renders and
+every template with where it lands, without writing anything. `--definitions` renders
+another model than the project's, for one run: a test programme checked against a real
+project's model, for instance. `--into` renders into another directory, each output keeping
 its place relative to the project, and leaves the project untouched: two renderings, before
 and after a change, can then be compared. `--no-validate` skips the pack's validation of every
-target, and says so.
+target, for a rendering compared as text rather than run.
+
+`check` says whether the outputs in place are what the project generates now, and writes nothing
+in the project: every target is rendered into a scratch directory and compared file by file. It
+exits 0 when they are current; otherwise 1, listing per target each file that differs, is missing,
+or is extra — extra only in a directory the generator owns (`clean`), where it is a file of a type
+the definitions no longer declare. Files that running the code leaves (`__pycache__`, `.mypy_cache`)
+are not compared. The pack's validation does not run: the comparison is of text.
 
 ## The project file
 
 ```toml
 [project]
-definitions = "definitions"          # a .dsm file or a directory of them
+definitions = "definitions"          # a .dsm file, a directory of them, or a list of either
 infrastructure = "crossing"          # the name passed to kibo as -n
 
 [generator]
@@ -76,12 +90,18 @@ language = "cpp"
 features = ["PoolRemote"]
 with_requirements = false            # Base is the infrastructure's
 output = "client/generated"
+
+[target.scripts]
+language = "python"
+features = ["Base", "Pool"]
+output = "RaptorEditor/RaptorEditor/Scripts"
 ```
 
 - `[generator] kibo = "2"` optionally pins the kibo line; by default the pack's floor decides.
-- `with_requirements = false` renders only the templates of the features named, not those they
-  require. It is refused unless another target of the same language and infrastructure renders
-  the rest.
+- `with_requirements = false` renders only the templates of the features named, not of those
+  they require. It is refused unless another target of the same language and infrastructure
+  renders the rest. The embedded definitions and the runtime go with the feature that reads
+  them, as the pack declares, so such a target gets neither.
 - `clean` removes the files of a type the definitions no longer declare. It is refused when the
   sources directory holds the project itself.
 - `validate` — on by default — runs, once a target is written, the checks the pack declares for
@@ -95,8 +115,13 @@ output = "client/generated"
   which directive to write — a field `wrap_value` beside the method every generated class has.
 - A project's own manifest follows the pack's format; its templates sit beside it, in
   `<manifest dir>/<target>/`. A feature name the pack already declares is refused.
+  Its `reserved` names — the modules or names its own templates take — are reserved as the
+  pack's are: a DSM name meeting one stops the generation.
 
-A project spells a static name its own way where the snake_case rule cannot know better:
+How a static name is spelled where kibo projects it to snake_case — a Python field, method,
+parameter or module, the packages' directories — follows one rule (`vec3Curves` →
+`vec3_curves`, `docUInt8` → `doc_uint8`, `render2DAttributes` → `render_2d_attributes`). Two
+names that land on one spelling stop the generation. A project says what only its author knows:
 
 ```toml
 [names]
@@ -106,25 +131,68 @@ atoms = ["IPv4", "YCoCg"]            # never split: IPv4Address -> ipv4_address
 "f_E" = "f_enum"                     # a whole name, spelled as written here
 ```
 
-A DSM name kibo refused for a target — a field `wrap_value`, the name of a method every Python
-proxy has — is spelled otherwise for that target, the model unchanged; the DSM name stays the
-one sent to the runtime:
+A DSM name is valid in every language or in none, and the model is never changed for one
+target. When a target cannot take a name — a field `class` in C++, which its compiler refuses —
+or a name meets one the pack's own code takes — a field `wrap_value` beside the method every
+generated class has, which kibo refuses, saying so — the project spells it otherwise for that
+target:
 
 ```toml
+[names.cpp.rename]
+class = "klass"                      # every C++ identifier for the DSM name `class`
+
 [names.python.rename]
-wrap_value = "wrapped_value"
+wrap_value = "wrapped"
 ```
+
+The DSM name stays the one sent to the runtime: a C++ client and a Python service still meet on
+the wire. Nothing is renamed without such a line.
+
+### A part of the model
+
+A project that reads a few attachments of a large model names them, and every target is
+generated from those attachments and the types they depend on, nothing else:
+
+```toml
+[select]
+attachments = [
+    "Patchwork3D::Surface.geometry",     # Namespace::KeyType.identifier
+    "Patchwork3D::Product.name",
+]
+# or: attachments = "attachments.txt"  -- one name per line, `#` starts a comment
+```
+
+- A name is `Namespace::KeyType.identifier`: an identifier alone is not unique, the same one may
+  be declared on several concepts.
+- dsviper writes the selection as DSM source, which is parsed again: the model every target reads
+  is held to the same parse as any other. Runtime ids are the whole model's, so a program built on
+  the selection opens a database written with the whole model.
+- The embedded definitions are the selection's; the intermediate is
+  `<infrastructure>.subset.dsm.json`, so every generated file's banner says it renders a subset,
+  and the embedded definitions say how much of the model (`46 of its 385 attachments`).
+- `plan` prints the selection's counts (attachments, concepts, structures, enumerations) beside
+  the whole model's.
+- Refused, before anything is written: a name the model does not declare (the refusal lists the
+  declarations nearest to it), an empty selection (remove `[select]` to generate the whole model),
+  and any key but `attachments` — function pools, and types read outside any attachment, are not
+  selectable.
+- A project that reads an attachment it did not select fails to build: the accessor does not
+  exist in C++, the import fails in Python and TypeScript.
 
 ## Where the generator comes from
 
 | | |
 |---|---|
-| kibo jar | `KIBO_JAR`; else `kibo-*.jar` beside the script; else `../kibo/target/kibo-*.jar` |
-| template pack | `KIBO_TEMPLATES`; else `../templates`; else `../kibo-template-viper` |
+| kibo jar | `KIBO_JAR`; else `kibo-*.jar` beside this script, or in `../kibo-*/tools/`; else `../kibo/target/kibo-*.jar` |
+| template pack | `KIBO_TEMPLATES`; else `../kibo-<line>/templates`; else `../templates`; else `../kibo-template-viper` |
+
+In the DevKit, this script is `tools/kibo_project.py`, and each generator line sits beside
+`tools/` in its own folder: `kibo-2/tools/kibo-2.*.jar` and `kibo-2/templates/` for
+`templates = "2"`.
 
 The pack is checked against the project's declared line through the version stamped in its
-templates. The jar is the newest at or above the floor the pack declares; an explicit
-`KIBO_JAR` below that floor is refused.
+templates. The jar is the newest at or above the floor the pack declares (`generator.kibo` in
+`features.json`); an explicit `KIBO_JAR` below that floor is refused.
 
 ## Coming from a generate.py
 

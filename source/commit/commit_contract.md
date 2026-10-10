@@ -57,16 +57,17 @@ encode every application's rules (breaking generality).
 | Layer           | Guarantees                                               |
 |-----------------|----------------------------------------------------------|
 | **Commit**      | DAG consistency, immutability, and a reduction that is deterministic given a fixed merge sequence — see *What Commit Does NOT Provide* for what it drops |
-| **Application** | Re-validates engine output before acting on it           |
+| **Application** | Once heads fold unreviewed, re-validates engine output before acting on it |
 
 When concurrent streams are reduced, mutations are applied using a **best-effort**
 algorithm:
 
 - Mutations targeting non-existent documents or unresolved paths are **silently
-  ignored**.
+  ignored** (each recorded in the `CommitStateTrace`, never surfaced).
 - Business rule violations are **not** detected by the Commit Database.
-- LWW arbitration may keep a value that no single submitted intent would have
-  produced.
+- LWW arbitration keeps one submitted value verbatim and drops the others;
+  recombination on disjoint paths may assemble a value no single submitted
+  intent produced.
 
 This is by design. The engine is intentionally agnostic to your domain rules
 and never refuses to reduce — it picks a deterministic outcome and moves on.
@@ -228,15 +229,15 @@ every state after it, becomes an *import*. The engine records the fold,
 not the review: whether a fold was reviewed is the application's to know.
 
 That state answers to no single human intent. Where streams overlap,
-reduction picks by structural rule and can preserve a combination no
-contributor would have written.
+reduction picks by structural rule; where they wrote disjoint paths, it can
+assemble a combination no contributor would have written.
 
 It is tempting to say the mechanism authored it. The mechanism decided
 nothing: `commitMerge` is a pure function, and the outcome on a contested
 path follows from the order the heads were folded in — [an application's
 choice, not the engine's](commit_database.md#how-reduction-picks-a-winner).
 Whoever launched the reduction chose that order, and with it the result.
-That is an act of arbitration, performed blind: the caller cannot predict
+That is a choice, made blind: the caller cannot predict
 which value survives, is not told that a choice is being made, and leaves no
 trace of having made one: the header records no strategy any more than it
 records an author. The agency is
@@ -333,8 +334,8 @@ of its weakest stage.
 **Writing back with `set`.** A whole-document write replaces the document and
 does not recombine. Concurrent writers to the same document are not folded
 together — one whole document survives and the others are dropped. The
-recombination is gone, and with it the appearance that several authors
-collaborated: the Commit Database is then a key-value store with history.
+recombination of several writers' paths is gone: the Commit Database is then
+a key-value store with history.
 
 Neither verb is collaboration. `set` gives an honest versioned store where a
 contested document keeps one whole version — which one is a
@@ -379,9 +380,9 @@ The contract shapes how you should write code on top of `dsviper.Commit*`:
 
 ## Summary
 
-> **"I guarantee structural integrity. I hand you back data that is
-> structurally sound but semantically untrusted. You re-validate it
-> on read."**
+> **"I guarantee structural integrity. Once heads fold unreviewed, I hand
+> you back data that is structurally sound but semantically untrusted.
+> You re-validate it on read."**
 >
 > — The Dual-Layer Contract
 

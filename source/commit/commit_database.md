@@ -46,8 +46,10 @@ rejected instead of applied. An opcode carries none.
 `Document_Update(key, path, value)` says *write this value at this path*, and
 nothing about the state it was written against; there is nothing for the
 evaluator to check, and so no reject path for it to take. An opcode can still
-*fail* — a path that does not resolve raises, and the trace above records it —
-but that is the write being impossible, never the write being out of date.
+*fail* — a path that does not resolve raises inside the replay, which records
+the exception in the trace above and carries on, so nothing reaches the reader
+of the state — but that is the write being impossible, never the write being
+out of date.
 Every opcode whose target resolves applies, and one authored against a state
 that is no longer there applies exactly as cleanly as one that finds the state
 it expected. That is what *no notion of conflict* means here.

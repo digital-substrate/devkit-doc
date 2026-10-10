@@ -35,8 +35,9 @@ states; when states disagree, the algorithm cannot pick and
 surfaces a conflict for human arbitration.
 
 The Commit Database is a **mutation DAG**: each node contains a
-sequence of path-based mutations. Its `commitMerge` composes
-mutation sequences; when mutations target the same path,
+sequence of path-based mutations. Its `commitMerge` records a join
+of two heads, and reconstruction then composes their mutation
+sequences; when mutations target the same path,
 deterministic composition rules apply (last-writer-wins by
 linearisation order). No conflict is ever surfaced.
 This is what makes mechanical reduction possible — and what makes the
@@ -119,7 +120,8 @@ you read has a `commitMerge` nobody reviewed in its history, so the
 load-bearing.
 What defines the regime is where writes land, not how many people are
 behind them: several writers serialised onto the head stay here, and one
-writer committing against a head that has moved does not. Time travel,
+writer committing against a head that has moved, with nobody reviewing
+the fold, does not. Time travel,
 undo / redo and multi-head exploration all apply with only the read-side
 structural guarantees — there is nothing for the engine to pick between.
 

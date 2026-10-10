@@ -146,6 +146,39 @@ The engine shipped inside both bindings; `viperVersion()` reports this version.
 Binding- or packaging-only releases are omitted — except a *phantom* version (a runtime
 number minted with no runtime change, from a lockstep bump), listed to explain the gap.
 
+### 1.2.29 — 2026-10-10
+
+**Added**
+
+- **`StaticCompare`**, the equality and the order of a static C++ value and its containers: `equal` is reflexive (every NaN one value, the two zeros one), `less` a strict weak order (NaN below every number). Generated code compares through it.
+- **`StaticLess`**, the comparator of a `std::set` or a `std::map` keyed by a floating-point value, which `std::less` cannot order once a NaN is present. The static walks accept a set or a map with any comparator.
+- A source span and a parse error also carry their offsets in UTF-16 units, the index of a JS string, beside the code points they count (`utf16Start`, `utf16Stop`, `utf16Pos`).
+
+**Changed**
+
+- **A name is the DSM's own.** Words C++, Python or TypeScript reserve are names like any other, for the parser and the definitions API; the code generator spells them for its target. Every DSM and database valid before stays valid.
+- A docstring may end with quotes: those after the closing `"""` end its text.
+
+**Fixed**
+
+- **`XArray::operator<` is an order**: it answered `true` only when the positions, the disabled positions and the elements were all less, so two different arrays could be neither less nor equal. It is lexicographic over the three.
+- `StaticHash` hashes every NaN alike, as `equal` requires.
+- **`Value.hexdigest` speaks of the value**: `-0.0` and `0.0` have one digest, and so has every NaN, a decoded `vec` or `mat` included. Stored bytes and runtime ids are unchanged.
+- `StaticWriter` writes every NaN as the canonical one, the bytes the runtime writes for it.
+- **A `vec` or a `mat` holding NaN equals itself**, and hashes alike whatever the NaN's bits, as a scalar does: a document holding one was rewritten at every save, and `diff_keys` of a state against itself reported it different.
+- **A type can no longer take a built-in type's name** (`int64`, `uuid`, `any`...): a reference to it was read back as the built-in one, and a field changed type silently.
+- The DSM errors for a namespace reopened under another UUID and a pool declared twice.
+- **A namespace with the nil UUID is a parse error**, in the report: `parse()` raised `ViperError` when the first type was registered in it.
+- **An attachment's identifier names its namespace**: `App::Lib::User.profile`. Two attachments of one name over one key, in two namespaces, shared one identifier, and the parse gave one the other's runtime id. Unchanged when the key is the attachment's namespace's.
+- An attachment declared twice in one namespace, its key written `A` then `App::A`, is a parse error in the report; `parse()` raised.
+- **A remote pool checked by name now throws when the service does not serve it**: `ServiceRemote::checkFunctionPool` and `checkAttachmentFunctionPool` by name returned null, as their `query` twins do.
+- An xarray refusing a position it holds says the position "is already defined"; it read "is ready defined".
+- `DSMBuilder.assemble(directory)` reads the `.dsm` files in path order: in the filesystem's order, one directory assembled to different lines and spans from one machine to another.
+
+**Removed**
+
+- The remote database protocol's `GetDatabase` call, which no client sends: a client keeps the name of the database it opened. The server no longer answers it, and the `ReturnOptionalString` packet that carried its reply goes with it.
+
 ### 1.2.28 — 2026-10-04
 
 **Changed (breaking)**
@@ -489,6 +522,39 @@ Initial release.
 
 The PyPI wheel (`pip install dsviper`). Its `PATCH` stream is independent of the
 runtime; each release notes the runtime version it ships.
+
+### 1.2.30 — 2026-10-10
+
+*Ships runtime 1.2.29.*
+
+**Changed (breaking)**
+
+- **A set of ids or names comes back as a `ValueSet`, not a `set`** — `blob_ids()`, `commit_ids()`, `attachment_identifiers()` and 35 others, as in Node: an element of another type is refused, iteration is sorted. `isinstance(x, set)` no longer holds.
+- **A field named like a struct method leaves the attribute to the method** (`at`, `copy`, `hash`, `type`...); `at()` and `set()` reach it. Other fields read as attributes as before.
+- **`DefinitionsConst.inject()` binds one object per namespace**, named as the definitions name it: its types, and `keys`, `attachments`, `paths` — `Tuto.attachments.User.login` for `TUTO_A_USER_LOGIN`. It refuses a name the namespace holds; `discard()` removes what it bound.
+
+**Added**
+
+- **`ValueSet` is generic in the stub**: `ValueSet[ValueBlobId]` iterates `ValueBlobId`, and its copy and set operations keep the element type. Unparameterized, it reads as before.
+- **`keys(attachment)` is typed `ValueSet[ValueKey]`** on `Database`, `AttachmentGetting` and their interfaces, so `db.get(a, key)` in a loop over them type-checks; `Value` declares `==`, so comparing one with a native passes `mypy --strict`.
+
+**Changed**
+
+- Names follow the runtime's rule: a word a target language reserves is a name.
+
+**Fixed**
+
+- **A constructor handed a null pointer refuses it**, naming the class (`SystemError` in Python): it wrapped it into an object whose first method crashed the process.
+- **`CommitStore.dispatch()` raises `ViperError` without a database**, as the runtime's does: it ran the callable on a state over nothing, and the process crashed.
+- A dict naming a field the structure lacks raises "structure 'Shop::Box' has no field 'zzz'", as in Node: it read "expected field 'zzz'", as if one were required and missing.
+- A refused write to a structure field names the structure and the field in the error's path (`set.struct('Shop::Box').pop.uint32`); it read `checkValue.uint32`.
+- **A native container left of an operator no longer crashes the process**: `{1} | value_set` (`&`, `-`, `^`, `|=`) answers a `ValueSet`, `{'a': 1} | value_map` a `ValueMap`; `'x' / path` raises `TypeError`.
+
+**Documented**
+
+- `CommitDatabasing` and `Databasing` are the drivers beneath the stores again: low-level, and trusting their caller — nothing checks that a `blob_id` names the bytes stored under it.
+- Which layer refuses a name (`ValueError` for a `NameSpace`'s, `ViperError` for a field's), and an ordering against a native (`TypeError`).
+- The JSON shape of a set, a map and a key; terms that read two ways (`decode`, `Raw`, `size`).
 
 ### 1.2.29 — 2026-10-05
 
@@ -948,6 +1014,39 @@ Initial release.
 ## dsviper for Node.js
 
 The npm package `@digitalsubstrate/dsviper`. See {doc}`dsviper-node/index`.
+
+### 1.2.15 — 2026-10-10
+
+*Ships runtime 1.2.29.*
+
+**Changed (breaking)**
+
+- **`DefinitionsConst.inject()` binds one frozen object per namespace**, named as the definitions name it: its types, and `keys`, `attachments`, `paths` — `Tuto.attachments.User.login` for `TUTO_A_USER_LOGIN`. It refuses a name the object holds; `discard()` removes what it bound.
+- **`new TypeName(ns, name)` throws `TypeError` for a name that is not an identifier**, as `NameSpace` does and as Node's own `ERR_INVALID_ARG_VALUE` is; it threw `RangeError`, which the binding keeps for a number out of range.
+
+**Changed**
+
+- Names follow the runtime's rule: a word a target language reserves is a name like any other; a type cannot take the name of a built-in type.
+- **`encoded` is typed by overloads**: `encoded` false declares the Value, true or absent the native, so a TypeScript caller no longer narrows `map.at(1, false)` before `.type()`.
+
+**Fixed**
+
+- **A source span's offsets and a parse error's position count UTF-16 units**, a JS string's index: `content.slice(start, stop + 1)` slices the span past an emoji; code points drifted.
+- **`ValueVector.pop(index)` takes a negative index, counting from the end**, as `at()` and Python's `pop` do; it threw `RangeError`.
+- **`ValueVector.index()` answers `undefined` when the vector does not hold the value**, as the runtime and `ValueSet.index()` / `ValueXArray.index()` do; it threw a plain `Error`.
+- **A constructor handed a null pointer refuses it**, naming the class (`Error`): it wrapped it into an object whose first method crashed the process.
+- **`CommitStore.dispatch()` throws `ViperError` without a database**, as the runtime's does: it ran the callable on a state over nothing, and the process crashed.
+- **`functionPoolFunc` and `attachmentFunctionPoolFunc` throw `ViperError` for a pool the service does not serve**, as declared: the process was killed (segfault).
+- **`Value.hexdigest(value, hashing)` hashes with the `Hashing` given**: it ignored the argument, hashed with SHA1 and took anything there. A hasher crosses through `hashing()`, as for `Type.hexdigest` and in Python.
+- **`index.d.ts` takes a class only where it, or a class it extends, is expected**, as the binding does. Classes with the same members were interchangeable: `tsc --strict` accepted `new TypeMat(Type.STRING, 2, 3)` or `queryType(new ValueCommitId())`, which throw TypeError.
+- A refused write to a structure field names the structure and the field in the error's path (`ValueStructure.set.struct('Shop::Box').pop.uint32`); it read `ValueStructure.set.uint32`.
+
+**Documented**
+
+- **The package is CommonJS**: `require()` it, or import it whole from an ES module; a named import type-checks and fails when the module loads.
+- `CommitDatabasing` and `Databasing` are the drivers beneath the stores again: low-level, and trusting their caller — nothing checks that a `blobId` names the bytes stored under it.
+- Which layer refuses a name (`TypeError` for a `NameSpace`'s, `ViperError` for a field's) or a number (`RangeError` for an index, `ViperError` for a value out of its type's range).
+- The JSON shape of a set, a map and a key; terms that read two ways (`decode`, `Raw`, `size`).
 
 ### 1.2.14 — 2026-10-04
 

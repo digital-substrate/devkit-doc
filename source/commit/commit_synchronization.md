@@ -64,7 +64,9 @@ The operation in one pass:
    on both sides — if they differ, `extendDefinitions` adds the
    sender's missing types to the receiver. `extendDefinitions` is
    strictly additive by construction (DSM types are sealed by
-   definition), so independent schema evolution never blocks sync. Additive here means
+   definition), so new types on either side never block sync; a type both
+   sides hold and one side changed — a field added — makes
+   `extendDefinitions` raise, and the sync stops there. Additive here means
    *new types*: `extendDefinitions` never rewrites data that already
    exists, which is also why it is not a migration path: reshaping data that
    already exists happens outside the runtime, with

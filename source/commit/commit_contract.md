@@ -65,8 +65,9 @@ algorithm:
 - Mutations targeting non-existent documents or unresolved paths are **silently
   ignored** (each recorded in the `CommitStateTrace`, never surfaced).
 - Business rule violations are **not** detected by the Commit Database.
-- LWW arbitration may keep a value that no single submitted intent would have
-  produced.
+- LWW arbitration keeps one submitted value verbatim and drops the others;
+  recombination on disjoint paths may assemble a value no single submitted
+  intent produced.
 
 This is by design. The engine is intentionally agnostic to your domain rules
 and never refuses to reduce — it picks a deterministic outcome and moves on.
@@ -228,8 +229,8 @@ every state after it, becomes an *import*. The engine records the fold,
 not the review: whether a fold was reviewed is the application's to know.
 
 That state answers to no single human intent. Where streams overlap,
-reduction picks by structural rule and can preserve a combination no
-contributor would have written.
+reduction picks by structural rule; where they wrote disjoint paths, it can
+assemble a combination no contributor would have written.
 
 It is tempting to say the mechanism authored it. The mechanism decided
 nothing: `commitMerge` is a pure function, and the outcome on a contested

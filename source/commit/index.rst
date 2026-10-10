@@ -63,12 +63,12 @@ Deterministic reduction is not a sixth item on that list. It is the
 price of letting the DAG diverge at all: once two heads exist, closing
 them without a human requires a structural rule. A stream that never
 diverges never pays it — every read returns exactly what was written. A
-fold nobody reviews pays it in full.
+fold nobody reviews pays it wherever two heads wrote the same path.
 
 Which is why most of what follows documents a regime to leave rather than
 one to settle into. The engine permits divergence and cannot arbitrate
-it, so everything downstream of an unreviewed fold is containment, not
-capability.
+it, so everything downstream of an unreviewed fold over shared paths is
+containment, not capability.
 
 Start here
 ----------

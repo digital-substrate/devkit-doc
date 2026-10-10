@@ -6,7 +6,8 @@ sets out when — that supervisor is yours to design; the *engine* provides
 none. What `dsviper` ships, and what this page documents, is one
 implementation of the identify-and-apply half; the deciding stays yours.
 It is an API that **identifies, surfaces, and applies your decision at** a
-reconstructed conflict, over a `commitMerge` already written into the DAG.
+reconstructed conflict, over a `commitMerge` already written into the DAG or
+before it is written.
 
 It is **additive**: a set of free functions over `CommitDatabase`'s public
 API, with no change to the engine, the storage format, or the runtime. It

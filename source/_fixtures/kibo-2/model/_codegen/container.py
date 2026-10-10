@@ -1,8 +1,9 @@
-# The runtime of the kibo-template-viper 2.0.3 Python templates (MIT), copied into every
+# The runtime of the kibo-template-viper 2.0.0 Python templates (MIT), copied into every
 # generated package. Do not edit by hand.
 
 from __future__ import annotations
 
+import collections.abc
 import typing
 
 import dsviper
@@ -336,8 +337,9 @@ class Matrix(View[dsviper.ValueMat], typing.Generic[E]):
 class Mapping(View[dsviper.ValueMap], typing.Generic[K, E]):
     """A map. `m[key]` raises KeyError for a key it does not hold; `get(key)` answers None.
 
-    `keys()`, `values()` and `items()` return lists, a snapshot of the map: it can change
-    while one is iterated."""
+    `keys()`, `values()` and `items()` return lists taken now: a list does not follow the map,
+    which can change while one is iterated. A value in it is the map's own, as an element read
+    is; a key is a copy."""
     __slots__ = ()
 
     def __len__(self) -> int:
@@ -510,9 +512,10 @@ class Ordered(View[dsviper.ValueXArray], typing.Generic[E]):
         return len(self._value)
 
 
-class Optional(View[dsviper.ValueOptional], typing.Generic[E]):
-    """An optional. `clear()` empties it; read from a field, it empties that field.
-    `unwrap()` of a nil optional raises dsviper.ViperError; `get(default)` answers default."""
+class Option(View[dsviper.ValueOptional], typing.Generic[E]):
+    """An optional: a box holding a value or nothing, not `typing.Optional`. `unwrap()` opens it,
+    and raises dsviper.ViperError when it is nil; `get(default)` answers default. `clear()`
+    empties it; read from a field, it empties that field."""
     __slots__ = ()
 
     def __bool__(self) -> bool:
@@ -604,7 +607,7 @@ _CASTS: dict[type, typing.Callable[[typing.Any], typing.Any]] = {
     Matrix: dsviper.ValueMat.cast,
     Mapping: dsviper.ValueMap.cast,
     Ordered: dsviper.ValueXArray.cast,
-    Optional: dsviper.ValueOptional.cast,
+    Option: dsviper.ValueOptional.cast,
     Variant: dsviper.ValueVariant.cast,
 }
 
@@ -616,7 +619,7 @@ def _holds(container: typing.Any, element: object) -> bool:
 
 
 def _init_structure(proxy: Proxy[dsviper.ValueStructure], type_: dsviper.TypeStructure,
-                    source: dsviper.ValueStructure | dict[str, typing.Any] | None, name: str) -> None:
+                    source: dsviper.Value | dict[str, typing.Any] | None, name: str) -> None:
     if source is None:
         source = dsviper.ValueStructure(type_)
     elif isinstance(source, dict):
@@ -631,13 +634,13 @@ def _init_structure(proxy: Proxy[dsviper.ValueStructure], type_: dsviper.TypeStr
 def _unwrap_deep(value: typing.Any) -> typing.Any:
     if hasattr(value, "_unwrap"):
         return value._unwrap()
-    if isinstance(value, dict):
+    if isinstance(value, collections.abc.Mapping):
         return {_unwrap_deep(k): _unwrap_deep(v) for k, v in value.items()}
     if isinstance(value, tuple):
         return tuple(_unwrap_deep(element) for element in value)
-    if isinstance(value, list):
-        return [_unwrap_deep(element) for element in value]
-    if isinstance(value, (set, frozenset)):
+    if isinstance(value, (str, bytes, bytearray, memoryview, dsviper.Value)):
+        return value
+    if isinstance(value, collections.abc.Iterable):
         return [_unwrap_deep(element) for element in value]
     return value
 

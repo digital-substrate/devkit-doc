@@ -39,7 +39,7 @@ infrastructure = "model"
 templates = "2"
 
 [target.python]
-features = ["Base"]
+features = ["Base", "Attachments"]
 output = "generated"
 TOML
 python3 "$tool" generate "$work/kibo.toml"

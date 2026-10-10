@@ -1,5 +1,5 @@
-# Generated from model.dsm.json by kibo-2.0.2.jar. Do not edit by hand.
-# Templates: kibo-template-viper 2.0.3 (MIT), Template Model 2.
+# Generated from model.dsm.json by kibo-2.0.0.jar. Do not edit by hand.
+# Templates: kibo-template-viper 2.0.0 (MIT), Template Model 2.
 # Runtime: this file imports `dsviper` >=1.2.29 <1.3.0,
 # distributed under LicenseRef-DigitalSubstrate-Commercial-1.2.
 # Commercial use requires a Commercial Licence from Digital Substrate.
@@ -12,7 +12,7 @@ import typing
 import dsviper
 
 from . import definitions
-from ._codegen import AnyValue, Declared, Fixed, Mapping, Matrix, Optional, Ordered, SetView, Variant, Vector, declare
+from ._codegen import AnyValue, Declared, Fixed, Mapping, Matrix, Option, Ordered, SetView, Variant, Vector, declare, wrap
 
 if typing.TYPE_CHECKING:
     from . import containers
@@ -115,7 +115,7 @@ def _type_set_Tuto_UserKey() -> dsviper.Type: return dsviper.TypeSet(_type_Tuto_
 @functools.cache
 def _type_map_string_to_string() -> dsviper.Type: return dsviper.TypeMap(_type_string(), _type_string())
 
-class Optional_of_AnyConceptKey(Declared, Optional["AnyConceptKey"]):
+class Optional_of_AnyConceptKey(Declared, Option["AnyConceptKey"]):
     __slots__ = ()
 
     def __init__(self, value: Optional_of_AnyConceptKey | dsviper.ValueOptional | AnyConceptKey | None = None) -> None:
@@ -125,7 +125,7 @@ class Optional_of_AnyConceptKey(Declared, Optional["AnyConceptKey"]):
     def type(cls) -> dsviper.Type:
         return _type_optional_AnyConceptKey()
 
-class Optional_of_string(Declared, Optional["str"]):
+class Optional_of_string(Declared, Option["str"]):
     __slots__ = ()
 
     def __init__(self, value: Optional_of_string | dsviper.ValueOptional | str | None = None) -> None:
@@ -135,7 +135,7 @@ class Optional_of_string(Declared, Optional["str"]):
     def type(cls) -> dsviper.Type:
         return _type_optional_string()
 
-class Optional_of_Studio_AdminKey(Declared, Optional["studio.AdminKey"]):
+class Optional_of_Studio_AdminKey(Declared, Option["studio.AdminKey"]):
     __slots__ = ()
 
     def __init__(self, value: Optional_of_Studio_AdminKey | dsviper.ValueOptional | studio.AdminKey | None = None) -> None:
@@ -145,7 +145,7 @@ class Optional_of_Studio_AdminKey(Declared, Optional["studio.AdminKey"]):
     def type(cls) -> dsviper.Type:
         return _type_optional_Studio_AdminKey()
 
-class Optional_of_Studio_Credentials(Declared, Optional["studio.Credentials"]):
+class Optional_of_Studio_Credentials(Declared, Option["studio.Credentials"]):
     __slots__ = ()
 
     def __init__(self, value: Optional_of_Studio_Credentials | dsviper.ValueOptional | studio.Credentials | None = None) -> None:
@@ -155,7 +155,7 @@ class Optional_of_Studio_Credentials(Declared, Optional["studio.Credentials"]):
     def type(cls) -> dsviper.Type:
         return _type_optional_Studio_Credentials()
 
-class Optional_of_Studio_DeviceKey(Declared, Optional["studio.DeviceKey"]):
+class Optional_of_Studio_DeviceKey(Declared, Option["studio.DeviceKey"]):
     __slots__ = ()
 
     def __init__(self, value: Optional_of_Studio_DeviceKey | dsviper.ValueOptional | studio.DeviceKey | None = None) -> None:
@@ -165,7 +165,7 @@ class Optional_of_Studio_DeviceKey(Declared, Optional["studio.DeviceKey"]):
     def type(cls) -> dsviper.Type:
         return _type_optional_Studio_DeviceKey()
 
-class Optional_of_Studio_MemberKey(Declared, Optional["studio.MemberKey"]):
+class Optional_of_Studio_MemberKey(Declared, Option["studio.MemberKey"]):
     __slots__ = ()
 
     def __init__(self, value: Optional_of_Studio_MemberKey | dsviper.ValueOptional | studio.MemberKey | None = None) -> None:
@@ -175,7 +175,7 @@ class Optional_of_Studio_MemberKey(Declared, Optional["studio.MemberKey"]):
     def type(cls) -> dsviper.Type:
         return _type_optional_Studio_MemberKey()
 
-class Optional_of_Studio_PrincipalKey(Declared, Optional["studio.PrincipalKey"]):
+class Optional_of_Studio_PrincipalKey(Declared, Option["studio.PrincipalKey"]):
     __slots__ = ()
 
     def __init__(self, value: Optional_of_Studio_PrincipalKey | dsviper.ValueOptional | studio.PrincipalKey | None = None) -> None:
@@ -185,7 +185,7 @@ class Optional_of_Studio_PrincipalKey(Declared, Optional["studio.PrincipalKey"])
     def type(cls) -> dsviper.Type:
         return _type_optional_Studio_PrincipalKey()
 
-class Optional_of_Studio_Profile(Declared, Optional["studio.Profile"]):
+class Optional_of_Studio_Profile(Declared, Option["studio.Profile"]):
     __slots__ = ()
 
     def __init__(self, value: Optional_of_Studio_Profile | dsviper.ValueOptional | studio.Profile | None = None) -> None:
@@ -195,7 +195,7 @@ class Optional_of_Studio_Profile(Declared, Optional["studio.Profile"]):
     def type(cls) -> dsviper.Type:
         return _type_optional_Studio_Profile()
 
-class Optional_of_Tuto_Account(Declared, Optional["tuto.Account"]):
+class Optional_of_Tuto_Account(Declared, Option["tuto.Account"]):
     __slots__ = ()
 
     def __init__(self, value: Optional_of_Tuto_Account | dsviper.ValueOptional | tuto.Account | None = None) -> None:
@@ -205,7 +205,7 @@ class Optional_of_Tuto_Account(Declared, Optional["tuto.Account"]):
     def type(cls) -> dsviper.Type:
         return _type_optional_Tuto_Account()
 
-class Optional_of_Tuto_Identity(Declared, Optional["tuto.Identity"]):
+class Optional_of_Tuto_Identity(Declared, Option["tuto.Identity"]):
     __slots__ = ()
 
     def __init__(self, value: Optional_of_Tuto_Identity | dsviper.ValueOptional | tuto.Identity | None = None) -> None:
@@ -215,7 +215,7 @@ class Optional_of_Tuto_Identity(Declared, Optional["tuto.Identity"]):
     def type(cls) -> dsviper.Type:
         return _type_optional_Tuto_Identity()
 
-class Optional_of_Tuto_Login(Declared, Optional["tuto.Login"]):
+class Optional_of_Tuto_Login(Declared, Option["tuto.Login"]):
     __slots__ = ()
 
     def __init__(self, value: Optional_of_Tuto_Login | dsviper.ValueOptional | tuto.Login | None = None) -> None:
@@ -225,7 +225,7 @@ class Optional_of_Tuto_Login(Declared, Optional["tuto.Login"]):
     def type(cls) -> dsviper.Type:
         return _type_optional_Tuto_Login()
 
-class Optional_of_Tuto_Texture(Declared, Optional["tuto.Texture"]):
+class Optional_of_Tuto_Texture(Declared, Option["tuto.Texture"]):
     __slots__ = ()
 
     def __init__(self, value: Optional_of_Tuto_Texture | dsviper.ValueOptional | tuto.Texture | None = None) -> None:
@@ -235,7 +235,7 @@ class Optional_of_Tuto_Texture(Declared, Optional["tuto.Texture"]):
     def type(cls) -> dsviper.Type:
         return _type_optional_Tuto_Texture()
 
-class Optional_of_Tuto_Thumbnail(Declared, Optional["tuto.Thumbnail"]):
+class Optional_of_Tuto_Thumbnail(Declared, Option["tuto.Thumbnail"]):
     __slots__ = ()
 
     def __init__(self, value: Optional_of_Tuto_Thumbnail | dsviper.ValueOptional | tuto.Thumbnail | None = None) -> None:
@@ -245,7 +245,7 @@ class Optional_of_Tuto_Thumbnail(Declared, Optional["tuto.Thumbnail"]):
     def type(cls) -> dsviper.Type:
         return _type_optional_Tuto_Thumbnail()
 
-class Optional_of_Tuto_UserKey(Declared, Optional["tuto.UserKey"]):
+class Optional_of_Tuto_UserKey(Declared, Option["tuto.UserKey"]):
     __slots__ = ()
 
     def __init__(self, value: Optional_of_Tuto_UserKey | dsviper.ValueOptional | tuto.UserKey | None = None) -> None:

@@ -1,14 +1,14 @@
-# Generated from model.dsm.json by kibo-2.0.2.jar. Do not edit by hand.
-# Templates: kibo-template-viper 2.0.3 (MIT), Template Model 2.
+# Generated from model.dsm.json by kibo-2.0.0.jar. Do not edit by hand.
+# Templates: kibo-template-viper 2.0.0 (MIT), Template Model 2.
 # Runtime: this file imports `dsviper` >=1.2.29 <1.3.0,
 # distributed under LicenseRef-DigitalSubstrate-Commercial-1.2.
 # Commercial use requires a Commercial Licence from Digital Substrate.
 
 """The model model, generated over dsviper.
 
-Each DSM namespace is a module holding its structures, enumerations and keys, and its
-attachments as `attachments`:
-`model.tuto`, `model.studio`.
+Each DSM namespace is a module holding its structures, enumerations and keys:
+`model.tuto`, `model.studio`. Its attachments,
+rendered with the Attachments feature, are a submodule imported by its path, `<unit>.attachments`.
 `containers` holds one class per container shape the model uses, in a structure, an
 attachment or a pool; another shape is built with the runtime, from Viper values:
 `dsviper.Value.create(dsviper.TypeSet(model.studio.AdminKey.type()), [k.unwrap_value() for k in keys])`.
@@ -17,6 +17,7 @@ attachment or a pool; another shape is built with the runtime, from Viper values
 A document is stored in a dsviper database that knows the model, and read and written
 through an attachment, given the database or a state:
 
+    import model.studio.attachments
     db = dsviper.Database.create_in_memory()     # a CommitDatabase keeps every commit
     db.extend_definitions(model.definitions())
     db.begin_transaction()

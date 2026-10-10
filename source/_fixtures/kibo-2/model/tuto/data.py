@@ -1,5 +1,5 @@
-# Generated from model.dsm.json by kibo-2.0.2.jar. Do not edit by hand.
-# Templates: kibo-template-viper 2.0.3 (MIT), Template Model 2.
+# Generated from model.dsm.json by kibo-2.0.0.jar. Do not edit by hand.
+# Templates: kibo-template-viper 2.0.0 (MIT), Template Model 2.
 # Runtime: this file imports `dsviper` >=1.2.29 <1.3.0,
 # distributed under LicenseRef-DigitalSubstrate-Commercial-1.2.
 # Commercial use requires a Commercial Licence from Digital Substrate.
@@ -192,11 +192,11 @@ class Account(Proxy[dsviper.ValueStructure]):
     def type(cls) -> dsviper.TypeStructure:
         return definitions().check_structure(ACCOUNT)
 
-    def __init__(_self, _source: dsviper.ValueStructure | dict[str, typing.Any] | None = None, /, *,
+    def __init__(_self, _source: dsviper.Value | dict[str, typing.Any] | None = None, /, *,
                  state: Status | NotGiven = NOT_GIVEN) -> None:
         """Fields by keyword, in snake_case; or a source: a Viper ValueStructure of this
         type, boxed and not copied, or a dict keyed by the DSM field names, as the runtime
-        takes it."""
+        takes it. A Viper value of another type raises TypeError."""
         _init_structure(_self, _self.type(), _source, "Tuto::Account")
         if not _builtins.isinstance(state, _NotGiven):
             _self.state = state
@@ -222,12 +222,12 @@ class Identity(Proxy[dsviper.ValueStructure]):
     def type(cls) -> dsviper.TypeStructure:
         return definitions().check_structure(IDENTITY)
 
-    def __init__(_self, _source: dsviper.ValueStructure | dict[str, typing.Any] | None = None, /, *,
+    def __init__(_self, _source: dsviper.Value | dict[str, typing.Any] | None = None, /, *,
                  firstname: str | NotGiven = NOT_GIVEN,
                  lastname: str | NotGiven = NOT_GIVEN) -> None:
         """Fields by keyword, in snake_case; or a source: a Viper ValueStructure of this
         type, boxed and not copied, or a dict keyed by the DSM field names, as the runtime
-        takes it."""
+        takes it. A Viper value of another type raises TypeError."""
         _init_structure(_self, _self.type(), _source, "Tuto::Identity")
         if not _builtins.isinstance(firstname, _NotGiven):
             _self.firstname = firstname
@@ -263,12 +263,12 @@ class Login(Proxy[dsviper.ValueStructure]):
     def type(cls) -> dsviper.TypeStructure:
         return definitions().check_structure(LOGIN)
 
-    def __init__(_self, _source: dsviper.ValueStructure | dict[str, typing.Any] | None = None, /, *,
+    def __init__(_self, _source: dsviper.Value | dict[str, typing.Any] | None = None, /, *,
                  nickname: str | NotGiven = NOT_GIVEN,
                  password: str | NotGiven = NOT_GIVEN) -> None:
         """Fields by keyword, in snake_case; or a source: a Viper ValueStructure of this
         type, boxed and not copied, or a dict keyed by the DSM field names, as the runtime
-        takes it."""
+        takes it. A Viper value of another type raises TypeError."""
         _init_structure(_self, _self.type(), _source, "Tuto::Login")
         if not _builtins.isinstance(nickname, _NotGiven):
             _self.nickname = nickname
@@ -304,13 +304,13 @@ class Texture(Proxy[dsviper.ValueStructure]):
     def type(cls) -> dsviper.TypeStructure:
         return definitions().check_structure(TEXTURE)
 
-    def __init__(_self, _source: dsviper.ValueStructure | dict[str, typing.Any] | None = None, /, *,
+    def __init__(_self, _source: dsviper.Value | dict[str, typing.Any] | None = None, /, *,
                  width: int | NotGiven = NOT_GIVEN,
                  height: int | NotGiven = NOT_GIVEN,
                  pixels: dsviper.ValueBlobId | NotGiven = NOT_GIVEN) -> None:
         """Fields by keyword, in snake_case; or a source: a Viper ValueStructure of this
         type, boxed and not copied, or a dict keyed by the DSM field names, as the runtime
-        takes it."""
+        takes it. A Viper value of another type raises TypeError."""
         _init_structure(_self, _self.type(), _source, "Tuto::Texture")
         if not _builtins.isinstance(width, _NotGiven):
             _self.width = width
@@ -356,13 +356,13 @@ class Thumbnail(Proxy[dsviper.ValueStructure]):
     def type(cls) -> dsviper.TypeStructure:
         return definitions().check_structure(THUMBNAIL)
 
-    def __init__(_self, _source: dsviper.ValueStructure | dict[str, typing.Any] | None = None, /, *,
+    def __init__(_self, _source: dsviper.Value | dict[str, typing.Any] | None = None, /, *,
                  width: int | NotGiven = NOT_GIVEN,
                  height: int | NotGiven = NOT_GIVEN,
                  data: dsviper.ValueBlob | NotGiven = NOT_GIVEN) -> None:
         """Fields by keyword, in snake_case; or a source: a Viper ValueStructure of this
         type, boxed and not copied, or a dict keyed by the DSM field names, as the runtime
-        takes it."""
+        takes it. A Viper value of another type raises TypeError."""
         _init_structure(_self, _self.type(), _source, "Tuto::Thumbnail")
         if not _builtins.isinstance(width, _NotGiven):
             _self.width = width

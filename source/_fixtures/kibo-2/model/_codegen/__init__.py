@@ -1,8 +1,8 @@
-# The runtime of the kibo-template-viper 2.0.3 Python templates (MIT), copied into every
+# The runtime of the kibo-template-viper 2.0.0 Python templates (MIT), copied into every
 # generated package. Do not edit by hand.
 
 from .attachment import AttachmentProxy
-from .container import (AnyValue, Fixed, Mapping, Matrix, Optional, Ordered, Sequence, SetView, Variant, Vector, View,
+from .container import (AnyValue, Fixed, Mapping, Matrix, Option, Ordered, Sequence, SetView, Variant, Vector, View,
                         Declared, declare)
 from .proxy import (NOT_GIVEN, AnyConceptKey, Key, NotGiven, Proxy, is_known, register,
                     unwrap, wrap)
@@ -19,7 +19,7 @@ __all__ = [
     "Ordered",
     "Proxy",
     "is_known",
-    "Optional",
+    "Option",
     "Sequence",
     "Vector",
     "SetView",

@@ -1,4 +1,4 @@
-# The runtime of the kibo-template-viper 2.0.3 Python templates (MIT), copied into every
+# The runtime of the kibo-template-viper 2.0.0 Python templates (MIT), copied into every
 # generated package. Do not edit by hand.
 
 from __future__ import annotations
@@ -114,7 +114,7 @@ def wrap(value: typing.Any) -> typing.Any:
             return AnyConceptKey(value)
         return _named(type_key.element_type()).wrap_value(value)
 
-    from .container import AnyValue, Fixed, Mapping, Matrix, Optional, Ordered, SetView, Variant, Vector, declared
+    from .container import AnyValue, Fixed, Mapping, Matrix, Option, Ordered, SetView, Variant, Vector, declared
 
     if code == "any":
         return AnyValue.wrap_value(value)
@@ -128,7 +128,7 @@ def wrap(value: typing.Any) -> typing.Any:
     if code == "xarray":
         return Ordered(value)
     if code == "optional":
-        return Optional(value)
+        return Option(value)
     if code == "variant":
         return Variant(value)
     if code == "vector":

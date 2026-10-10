@@ -118,6 +118,7 @@ diff shows; the last column says what a template does about it.
 | 8 | **A set of keys is spelled as the DSM spells it** in `dsmType` | `set<Demo::ConceptA>` → `set<key<Demo::ConceptA>>` | Nothing, unless you parsed the old form. |
 | 9 | **A binding accessor answers for the target being generated**, and a native target has no binding | under `-c cpp`, the `type` of `bindingType`, `bindingElementType` and `bindingKeyType`, `bindingSequenceType`, `bindingColumnType` and a member's `bindingType.type` are empty (`proxy` is not); Model 1 returned Python spellings there | Generate binding code with the binding's own target: `-c python` gives exactly what Model 1 gave under any target, apart from rows 5 to 7; `-c typescript` gives the TypeScript spellings (`bigint` for a 64-bit integer). |
 | 10 | **Two lists changed order** | a namespace's `concepts` list a parent before its children (Model 1: by name); the container function lists (`optionalFunctions`, …) are sorted by their C++ type, so row 1 moves them | Nothing, unless the order of what you generate matters to you; then sort it yourself. |
+| 11 | **A C++ set or map whose element or key holds a floating-point value outside any structure takes `Viper::StaticLess`**, in `type`, `typeInNamespace`, `elementType` and the container function lists | `std::set<double>` → `std::set<double, Viper::StaticLess>`; `std::map<std::array<float, 3>, std::int32_t>` → `std::map<std::array<float, 3>, std::int32_t, Viper::StaticLess>` | Nothing, if you write the type the model gives. `std::less` orders such a value as IEEE 754 does, which is no order once a NaN is present: the tree is undefined. Where you built a set of a map's keys yourself (`std::set<<keyType>>`), read `keySetType`, which carries the same comparator. |
 
 Two additions are not changes: **structures and enumerations now carry `dsmType`**, as concepts
 and clubs already did, and a member of a tuple or a variant carries it too.
@@ -160,6 +161,13 @@ take up when it wants to:
   `pool(p)` and `attachment_pool(p)` once per pool. A namespace becomes a unit of generated
   code — a module, a header — with its dependencies, its include guard and its attachments
   grouped by the concept they are keyed on.
+- **Dependencies by what an artefact emits**: `u.dependencies.types`, `u.dependencies.attachments`,
+  and `u.dependencies.attachmentFields` for an attachments artefact that addresses a document field
+  by field, whose setters name the fields' types.
+- **`keySetType`** on a map field: the C++ type of a set of its keys, as a map's `subtract`
+  takes it, with the comparator the map orders its keys by.
+- **`strictAncestorsInNamespace`** on a concept: every ancestor, the parent first, named from
+  the concept's namespace, so a key widens to any ancestor.
 - **Formats** that carry a model's documentation into generated code (`string`, `docstring`,
   `comment`) and one snake_case rule for static names (`snake`, `usnake`).
 

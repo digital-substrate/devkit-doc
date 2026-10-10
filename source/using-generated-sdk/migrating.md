@@ -125,6 +125,7 @@ the package:
 >>> import dsviper
 >>> import model
 >>> from model import tuto, containers
+>>> import model.tuto.attachments
 
 >>> tuto.Login
 <class 'model.tuto.data.Login'>

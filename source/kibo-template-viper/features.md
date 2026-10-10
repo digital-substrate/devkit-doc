@@ -20,8 +20,9 @@ the generated C++, interface and build unioned, since asking for a feature means
 | Feature | What it gives | Requires | Templates |
 |---|---|---|---|
 | `Base` | The type system and everything that cannot be pulled apart from it. Data, Codec, Model and AnyConcept include one another in both directions; there is no cut. | — | `data`, `codec`, `model`, `any_concept` (`.hpp` and `.cpp` each) |
-| `Fields` | The name and the path of every field, as constants: code that handles structures through the dynamic API gets completion instead of a string it can misspell. Selectable alone; `Attachments` builds its typed field setters on it. | — | `fields` |
-| `Attachments` | The attachments a unit declares, read and written in memory or in a database. | `Base`, `Fields` | `attachments` |
+| `Fields` | The name of every field, as a constant (`fields::S::f`, a `std::string_view`): code that handles structures through the dynamic API gets completion instead of a string it can misspell. Selectable alone. | — | `fields` |
+| `Paths` | The path of every field, built once from its name (`paths::S::f()`). `Attachments` addresses a field through it. | `Fields` | `paths` (`.hpp` and `.cpp`) |
+| `Attachments` | The attachments a unit declares, read and written in memory or in a database. | `Base`, `Paths` | `attachments` |
 | `Pool` | A function pool, server side: the functions the application implements, and the pool that registers them. | `Base` | `pool` |
 | `PoolRemote` | A function pool, client side: `Remote`, which calls the pool through a service. Selectable without `Pool`, so a client does not link the functions only a server implements. | `Base` | `remote` |
 
@@ -34,6 +35,7 @@ For a model named `features` with one namespace `Demo` and one pool `Tools`:
 |---|---|
 | `Base` | `features_demo_data`, `features_demo_model`, `features_demo_codec`, `features_codec`, `features_any_concept` (`.hpp`, `.cpp`), and `features_resources.hpp` |
 | `Fields` | `features_demo_fields` |
+| `Paths` | `features_demo_paths` (`.hpp`, `.cpp`) |
 | `Attachments` | `features_demo_attachments` |
 | `Pool` | `features_tools_pool` |
 | `PoolRemote` | `features_tools_remote` |
@@ -42,13 +44,17 @@ For a model named `features` with one namespace `Demo` and one pool `Tools`:
 
 | Feature | What it gives | Requires | Templates |
 |---|---|---|---|
-| `Base` | The package: its entry point, the types each namespace declares, the attachments, and the container bindings the model mentions. | — | `__init__.py`, `data.py`, `attachments.py`, `containers.py` |
+| `Base` | The package: its entry point, the types each namespace declares, and the container bindings the model mentions. | — | `__init__.py`, `data.py`, `containers.py` |
+| `Fields` | The name of every field, as a constant (`fields.S.f`). | — | `fields.py` |
+| `Paths` | The path of every field, built once from its name (`paths.S.f`). | `Fields` | `paths.py` |
+| `Attachments` | The attachments a unit declares, a module of their own: `import <package>.<unit>.attachments`. | `Base`, `Paths` | `attachments.py` |
 | `Pool` | A function pool and its client edge. Most projects have none: a pool is a service surface, not a consequence of having a model. | `Base` | `pool/__init__.py`, `pool.py` |
 | `Wheel` | What makes the package installable, and therefore typed. | `Base` | `pyproject.toml`, `py.typed` |
 
 The package is the directory `<output>/<infrastructure>/`. `Base` renders `__init__.py` at
-its root (`definitions()`, the units) and in each unit, `<unit>/data.py`,
-`<unit>/attachments.py` and `containers.py`; `Pool` renders `<pool>/__init__.py` and
+its root (`definitions()`, the units) and in each unit, `<unit>/data.py` and `containers.py`;
+`Fields`, `Paths` and `Attachments` render `<unit>/fields.py`, `<unit>/paths.py` and
+`<unit>/attachments.py`, which a unit's `__init__.py` does not import; `Pool` renders `<pool>/__init__.py` and
 `<pool>/pool.py` (`Pool` and `Remote`). `Wheel` is the one feature whose two files do not land
 beside the modules: `py.typed` goes inside the package, `pyproject.toml` one level up, at the
 target's output. Without `py.typed` a type checker reports `Stub file not found` and every
@@ -59,12 +65,17 @@ directory. See [Python Wheels](wheels.md).
 
 | Feature | What it gives | Requires | Templates |
 |---|---|---|---|
-| `Base` | The package: its entry point, the types each namespace declares, the attachments, and the container bindings the model mentions. | — | `index.ts`, `definitions.ts`, `data.ts`, `attachments.ts`, `containers.ts` |
+| `Base` | The package: its entry point, the types each namespace declares, and the container bindings the model mentions. | — | `index.ts`, `definitions.ts`, `data.ts`, `containers.ts` |
+| `Fields` | The name of every field, as a constant. | — | `fields.ts` |
+| `Paths` | The path of every field, built once from its name. | `Fields` | `paths.ts` |
+| `Attachments` | The attachments a unit declares, a module of their own: `from "<package>/<unit>/attachments"`. | `Base`, `Paths` | `attachments.ts` |
 | `Pool` | A function pool and its client edge. Most projects have none: a pool is a service surface, not a consequence of having a model. | `Base` | `pool/index.ts`, `pools.ts`, `pool.ts` |
 | `Package` | What makes the package buildable and installable: `package.json` and `tsconfig.json`, at the package root, the sources staying in `src/`. | `Base` | `package.json`, `tsconfig.json` |
 
 The sources are the directory `<output>/src/`. `Base` renders `index.ts` at its root and in
-each unit, `definitions.ts`, `<unit>/data.ts`, `<unit>/attachments.ts` and `containers.ts`;
+each unit, `definitions.ts`, `<unit>/data.ts` and `containers.ts`; `Fields`, `Paths` and
+`Attachments` render `<unit>/fields.ts`, `<unit>/paths.ts` and `<unit>/attachments.ts`, which
+a unit's `index.ts` does not export;
 `Pool` renders `pools.ts` (every pool, one namespace each) and `<pool>/index.ts`,
 `<pool>/pool.ts` (`Remote`). `Package` renders `package.json` and `tsconfig.json` at the
 target's output, the package root. See [npm Packages](node.md).
@@ -259,7 +270,7 @@ them:
 
 | 1.2 feature | In 2.0 |
 |---|---|
-| `Data`, `Model` | Merged into `Base`: the types and their identity in the definitions cannot be pulled apart from the codec. The field names and paths `Model` carried (1.2's `Field` and `Path`) are the `Fields` feature: `Field::S::f` becomes `fields::S::f`, a `std::string_view`, and `Path::S::f()` becomes `fields::S::fPath()`. |
+| `Data`, `Model` | Merged into `Base`: the types and their identity in the definitions cannot be pulled apart from the codec. The field names and paths `Model` carried (1.2's `Field` and `Path`) are the `Fields` and `Paths` features: `Field::S::f` becomes `fields::S::f`, a `std::string_view`, and `Path::S::f()` becomes `paths::S::f()`, in the `Paths` feature. |
 | `ValueType` | Absorbed into `Base` (the unit's `model` file); in Python and TypeScript, into `containers` and the package entry point, with `definitions()`. |
 | `Stream`, `ValueCodec` | Removed: the static layer is the runtime's, and the codec generated in `Base` bridges the C++ types to a `Value` through it. |
 | `Json`, `ValueHasher` | Removed: JSON, XML and a hexdigest are one runtime call on what `codec::encode` returns. |

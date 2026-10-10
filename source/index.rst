@@ -16,6 +16,7 @@ dsviper runtime gives you:
    >>> from dsviper import CommitDatabase, CommitStateBuilder, CommitMutableState
    >>> import model                  # the package Kibo generated from the DSM model
    >>> from model import tuto        # the module of the DSM namespace Tuto
+   >>> import model.tuto.attachments # its attachments, a module of their own
 
    >>> # Open a commit database that knows the model
    >>> db = CommitDatabase.create_in_memory()

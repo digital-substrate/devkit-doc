@@ -88,12 +88,14 @@ Every file starts with a header naming the generator, the templates and the runt
 artifact, regenerated on every model change. A defect in it is fixed in the DSM model or
 in the templates, never in the output.
 
-The entry point gives the units, the containers and the model's definitions:
+The entry point gives the units, the containers and the model's definitions; a unit's
+attachments are a module of their own, imported by its path:
 
 ```{doctest}
 >>> import dsviper
 >>> import model
 >>> from model import tuto, containers
+>>> import model.tuto.attachments
 
 >>> tuto.Login
 <class 'model.tuto.data.Login'>
@@ -178,9 +180,10 @@ composites.f_vector.append(parts.Colour(r=1.0))   # f_vector is containers.Vecto
 composites.f_tuple.set(0, core.Colour(r=1))       # tuple<Core::Colour, Parts::Colour>
 ```
 
-A function pool is a subpackage imported by its path, `import model.<pool>`: the entry
-module belongs to the `Base` feature and cannot import what only the `Pool` feature renders
-(see [Pools](#pools)).
+A function pool is a subpackage imported by its path, `import model.<pool>`, and a unit's
+attachments a module imported the same way, `import model.<unit>.attachments`: the entry
+module belongs to the `Base` feature and cannot import what only the `Pool` and
+`Attachments` features render (see [Pools](#pools)).
 
 ## Structures
 

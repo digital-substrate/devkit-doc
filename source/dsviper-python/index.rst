@@ -43,6 +43,7 @@ Open a commit database, write a typed value, commit:
    >>> from dsviper import CommitDatabase, CommitStateBuilder, CommitMutableState
    >>> import model
    >>> from model import tuto
+   >>> import model.tuto.attachments
 
    >>> db = CommitDatabase.create_in_memory()
    >>> _ = db.extend_definitions(model.definitions())

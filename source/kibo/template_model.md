@@ -598,13 +598,19 @@ public class TemplateDependencies {
                                                       // and structure fields
     public ArrayList<TemplateNameSpace> attachments;  // reached by an attachment's key or
                                                       // document type
+    public ArrayList<TemplateNameSpace> attachmentFields; // attachments, and the fields of a
+                                                      // structure document: what an artefact
+                                                      // addressing the document field by field
+                                                      // names
     public ArrayList<TemplateNameSpace> functions;    // reached by a function's parameters or
                                                       // return type: a pool's dependencies
     public ArrayList<TemplateNameSpace> all;          // everything the unit reaches, in emission order
 }
 ```
 
-A namespace fills `types`, `attachments` and `all`; a pool fills `functions` and `all`.
+A namespace fills `types`, `attachments`, `attachmentFields` and `all`; a pool fills
+`functions` and `all`. `attachmentFields` is a superset of `attachments`, kept apart so that an
+artefact addressing a document whole includes nothing its fields alone reach.
 
 ### TemplateIncludePaths
 
@@ -646,6 +652,9 @@ public class TemplateConcept {
     public ArrayList<TemplateConcept> descendants;        // itself included
     public ArrayList<TemplateConcept> strictDescendants;  // itself excluded
     public ArrayList<TemplateConceptInNamespace> strictDescendantsInNamespace;
+    public ArrayList<TemplateConceptInNamespace> strictAncestorsInNamespace; // every ancestor,
+                                             // the parent first, named from this namespace:
+                                             // a key widens to any of them
     public Boolean hasForeignDescendants;    // whether a strict descendant lives in another
                                              // namespace
 
@@ -973,6 +982,9 @@ public class TemplateField {
     public String keyType;
     public String keyTypeInNamespace;      // the key type as written inside the owning namespace
     public String keyTypeSuffix;
+    public String keySetType;              // C++: a set of this map's keys, as subtract takes it,
+                                           // ordered as the map orders them (Viper::StaticLess
+                                           // for a key holding a floating-point value)
     public String elementType;
     public String elementTypeInNamespace;  // the element type as written inside the owning namespace
     public String elementTypeSuffix;

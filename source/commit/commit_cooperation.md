@@ -175,8 +175,8 @@ that asks an operator to pick. That is the supervised regime — the
 *Collaboration* row of the summary below.
 
 The arbitration is yours. The engine decides nothing, and the
-[import outcomes](commit_contract.md#import-outcomes) it provides are the
-back-stop at read time, beneath whatever discipline you choose.
+[import outcomes](commit_contract.md#import-outcomes) the application picks
+at read time are the back-stop, beneath whatever discipline you choose.
 [Supervised Reconciliation](commit_collaboration.md) documents the
 supervisor `dsviper` ships — headless, additive over the public API: it
 identifies the loci where an intent was lost and applies the decisions you

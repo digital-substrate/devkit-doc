@@ -80,7 +80,8 @@ two heads that are folded without a human reviewing the result?**
 - **No — one stream. This is the product.** One writer at a time, each
   extending the head it read. Several writers qualify too, as long as
   the application serialises them onto that head — what ends the regime
-  is a write prepared against an older head, not a second person. Read
+  is a write prepared against an older head whose fold nobody reviews,
+  not a second person. Read
   :doc:`Commit Database <commit_database>`,
   :doc:`CommitStore <commit_store>` and
   :doc:`Commit Application Model <commit_application_model>`; skip the

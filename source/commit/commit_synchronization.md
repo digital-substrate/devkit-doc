@@ -151,8 +151,8 @@ write time. Whether that makes you *multi-stream* is a question of how
 those heads are reduced, not of topology — the same line
 [Modes of Use](commit_modes.md#multi-head-exploration) draws for
 multi-head exploration. Reviewing each head reduction keeps you
-single-stream; **writes landing on two sites in parallel**, or a head
-reduction left unreviewed, do not.
+single-stream, even with writes landing on two sites in parallel; **a
+head reduction left unreviewed** does not.
 
 Once you are past that line, a single-stream model — one that assumes
 a linear history it alone extends — has no safe path here. You are
@@ -184,7 +184,7 @@ writes without folding. That is what makes the order the same for everyone,
 since it is the only order anyone applies.
 
 Treat that designation as a decision, not a detail. Launching a reduction is
-an act of arbitration ([Import Outcomes](commit_contract.md#import-outcomes)):
+a choice with consequences ([Import Outcomes](commit_contract.md#import-outcomes)):
 the fold picks winners on every contested path, and whoever calls it chooses
 them without being able to predict them. Decide who is allowed to perform
 it, rather than leaving it to whoever happens to call first.
@@ -232,7 +232,7 @@ writes on the same paths.
 - [Modes of Use](commit_modes.md) — the diagnostic that determines
   whether sync is even an option for your application.
 - [The Dual-Layer Contract](commit_contract.md) — what becomes
-  load-bearing once sync is in play.
+  load-bearing if sync puts you in multi-stream with strong invariants.
 - [Cooperative Discipline](commit_cooperation.md) — routing each
   site's writes so the post-sync fold has nothing meaningful to pick
   between.

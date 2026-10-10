@@ -61,7 +61,8 @@ below are what that looks like.
 Kibo and its template pack version themselves on their own: their `2.0.0` is a
 generator line, not a runtime one. Both generate over the **1.2 runtime** described on
 this page, which does not change; kibo 1.2 and the 1.2 pack stay supported on their
-`LTS-1.2` line, documented in the {doc}`Kibo 1 section <kibo-1/index>`. The full lists are the two
+`LTS-1.2` line, documented in the {doc}`Kibo 1 section <kibo-1/index>`. The entries below say
+what changes from kibo 1.2.13 and kibo-template-viper 1.2.5; the full lists are the two
 repositories' CHANGELOGs:
 [kibo](https://github.com/digital-substrate/kibo/blob/main/CHANGELOG.md),
 [kibo-template-viper](https://github.com/digital-substrate/kibo-template-viper/blob/main/CHANGELOG.md).
@@ -83,8 +84,9 @@ repositories' CHANGELOGs:
   include guard, its attachments grouped by concept.
 - **`-t` is repeatable**: several templates, files or directories, render in one run, one
   JVM instead of one per template — {doc}`kibo/usage`.
-- **Formats** carry a model's documentation into generated code (`string`, `docstring`,
-  `comment`), and one snake_case rule names static symbols (`snake`, `usnake`).
+- **Formats**: `comment` carries a model's documentation into a `/** */` block, beside the
+  `string` and `docstring` 1.2.13 has, and one snake_case rule names static symbols (`snake`,
+  `usnake`).
 - **A model whose outputs would collide is refused before rendering**, and a template
   that reads a name the model does not carry is reported on stderr.
 - **A name the template pack's own code takes stops the generation**, saying which directive to

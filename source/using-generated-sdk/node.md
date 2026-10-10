@@ -163,7 +163,13 @@ const s = new demo.StructureS({ f_float: 1.5, f_string: "hello" });
 s.f_string;                        // "hello"
 s.f_float = 2.5;
 s.toString();                      // "{f_float=2.5, f_string='hello'}"
+console.log(s);                    // StructureS { f_float: 2.5, f_string: 'hello' }
 ```
+
+`console.log` shows a generated object as Node shows its own: the class and the fields, a
+container's size and elements (`Vector_of_uint8(3) [ 1, 2, 3 ]`), a key's instance id
+(`ConceptCKey(…)`), down to Node's inspection depth. `toString()` and `toJSON()` keep the
+runtime's text.
 
 In an init object, an `undefined` member means "not given". The checker flags an unknown
 member or a wrong type; at run time an unknown member throws `TypeError`, and a proxy is

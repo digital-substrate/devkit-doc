@@ -37,7 +37,7 @@ model declares function pools.
 ## The generated files
 
 `package.json`, as rendered (JSON has no comments, so it carries no header; its
-`dependencies` name the runtime and its range):
+`peerDependencies` name the runtime and its range):
 
 ```json
 {
@@ -63,10 +63,11 @@ model declares function pools.
     "scripts": {
         "build": "tsc -p tsconfig.json"
     },
-    "dependencies": {
+    "peerDependencies": {
         "@digitalsubstrate/dsviper": ">=1.2.14 <1.3.0"
     },
     "devDependencies": {
+        "@digitalsubstrate/dsviper": ">=1.2.14 <1.3.0",
         "@types/node": ">=20",
         "typescript": ">=5"
     },
@@ -100,6 +101,11 @@ model declares function pools.
 Adjust `version` and `license` for your release; keep the `@digitalsubstrate/dsviper` range:
 it is the pack's (see [Version management](#version-management)).
 
+The runtime is a **peer** dependency: the package uses it, the project that installs the
+package provides it. npm installs one copy, the project's, and refuses a project whose version
+lies outside the range, rather than installing a second copy beside it. The same range sits in
+`devDependencies`, so that `npm install` in the package root has a runtime to build against.
+
 ## Build
 
 In the package root:
@@ -128,7 +134,7 @@ A pool is reached through `features/pools` or its own directory: the entry modul
 The package imports `@digitalsubstrate/dsviper`, and so does any code that opens a database or
 builds a runtime value. Both must reach **one installation** of the runtime: make
 `@digitalsubstrate/dsviper` a dependency of the project, in the range the package's
-`package.json` declares, so that a single copy serves both. Two copies of the native binding
+`package.json` declares as its peer, so that a single copy serves both. Two copies of the native binding
 cannot share a process — the second one to load stops with a message naming both, and
 `npm ls @digitalsubstrate/dsviper` finds them.
 
@@ -235,7 +241,8 @@ npm pack
 
 This gives `features-1.0.0.tgz`, with `dist`, `src` and `package.json` (the `files` entry).
 Publish it to a private registry, or install the tarball in the consuming project beside the
-runtime, which the project depends on directly:
+runtime, which the project depends on directly — the package names it as a peer and does not
+install it:
 
 ```bash
 npm install @digitalsubstrate/dsviper ./features-1.0.0.tgz

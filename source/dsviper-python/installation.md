@@ -31,11 +31,11 @@ before any commercial use.
 
 ## Installing from the DevKit
 
-If you also want Kibo, kibo-template-viper, dsviper-tools
-download the DevKit from the [Downloads](https://devkit.digitalsubstrate.io/downloads/) page, unzip, and run:
+If you also want kibo, its template pack, kibo-project and dsviper-tools, download the
+DevKit from the [Downloads](https://devkit.digitalsubstrate.io/downloads/) page, unzip, and run:
 
 ```bash
-cd dsviper-*-devkit
+cd dsviper-devkit-*
 pip install -r requirements.txt
 ```
 

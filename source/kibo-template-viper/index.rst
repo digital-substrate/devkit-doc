@@ -117,7 +117,7 @@ patch is versioned independently per binding, so the floors differ:
      - Range
    * - ``cpp``
      - ``viper`` (C++ runtime)
-     - 1.2, with its static layer
+     - ``>=1.2.29 <1.3``, with its static layer
    * - ``python``
      - ``dsviper`` (PyPI wheel)
      - ``>=1.2.29, <1.3``
@@ -128,10 +128,10 @@ patch is versioned independently per binding, so the floors differ:
 A floor lives in the generated output, where the consumer's build reads it:
 the generated ``pyproject.toml`` declares the ``dsviper`` range, the generated
 ``package.json`` the ``@digitalsubstrate/dsviper`` range. The C++ code
-crosses to a ``Value``, and hashes, through the runtime's static layer
+crosses to a ``Value``, hashes and compares through the runtime's static layer
 (``Viper_StaticType``, ``Viper_StaticWriter``, ``Viper_StaticReader``,
-``Viper_StaticHash``), so a C++ project builds a ``viper`` 1.2 runtime that
-carries it.
+``Viper_StaticHash``, ``Viper_StaticCompare``), so a C++ project builds a
+``viper`` runtime ``>=1.2.29``, the first that carries ``StaticCompare``.
 
 Every generated source file's header names what produced it, and every file
 that imports the runtime names the runtime and its range; a manifest
@@ -144,7 +144,7 @@ Here, a C++ header of a model named ``features``:
    //
    // Generated from features.dsm.json by kibo-2.0.0.jar. Do not edit by hand.
    // Templates: kibo-template-viper 2.0.0 (MIT), Template Model 2.
-   // Runtime: this file links against the `viper` C++ runtime 1.2.x,
+   // Runtime: this file links against the `viper` C++ runtime >=1.2.29 <1.3.0,
    // distributed under LicenseRef-DigitalSubstrate-Commercial-1.2.
    // Commercial use requires a Commercial Licence from Digital Substrate.
 

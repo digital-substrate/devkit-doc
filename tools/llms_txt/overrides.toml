@@ -388,5 +388,5 @@ sort = 200
 
 [overrides."https://docs.digitalsubstrate.io/changelog.html"]
 title = "Release notes"
-description = "Curated changelog for the runtime, the Python wheel and the Node binding across the 1.2.x line, and for kibo 2.0 and its template pack."
+description = "Curated changelog for the runtime, the Python wheel and the Node binding across the 1.2.x line; kibo and its pack keep theirs in their repositories."
 sort = 10

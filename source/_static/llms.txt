@@ -140,7 +140,7 @@ DevKit is the **distribution** that bundles **DSM** (the modeling language), **K
 
 ## Release notes
 
-- [Release notes](https://docs.digitalsubstrate.io/changelog.html): Curated changelog for the runtime, the Python wheel and the Node binding across the 1.2.x line, and for kibo 2.0 and its template pack.
+- [Release notes](https://docs.digitalsubstrate.io/changelog.html): Curated changelog for the runtime, the Python wheel and the Node binding across the 1.2.x line; kibo and its pack keep theirs in their repositories.
 
 ## For LLM agents and RAG pipelines
 

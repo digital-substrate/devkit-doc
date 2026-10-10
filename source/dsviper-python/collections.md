@@ -111,6 +111,43 @@ Set operations:
 {3, 4}
 ```
 
+The operators take a native set on either side, and answer a `ValueSet`:
+
+```{doctest}
+>>> s | {9}
+{2, 3, 4, 9}
+>>> {1} | s
+{1, 2, 3, 4}
+```
+
+### A set the binding returns
+
+A method answering a set of ids or of names — `blob_ids()`, `commit_ids()`,
+`head_commit_ids()`, `attachment_identifiers()`, the runtime ids of the definitions —
+answers a `ValueSet` typed by its element: membership by value, sorted iteration, the
+operations above, and an element of another type refused. It equals a native set
+holding the same elements, but it is not one:
+
+```{doctest}
+>>> db = CommitDatabase.create_in_memory()
+>>> blob_id = db.create_blob(BlobLayout.parse("uchar-1"), ValueBlob(b"\x01\x02"))
+>>> ids = db.blob_ids()
+>>> ids.type_set()
+set<blob_id>
+>>> blob_id in ids
+True
+>>> ids == {blob_id}
+True
+>>> isinstance(ids, set)
+False
+>>> ids.add(42)
+Traceback (most recent call last):
+    ...
+dsviper.ViperError: ...expected type 'str or blob_id', got 'int'...
+```
+
+The sets of `TypeName` and `NameSpace`, which are not values, stay native sets.
+
 ## Map
 
 `ValueMap` is compatible with Python's dict API:

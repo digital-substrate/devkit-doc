@@ -108,8 +108,8 @@ A freshly created database has no commits — `first_commit_id()` and
 True
 >>> db.last_commit_id() is None
 True
->>> db.head_commit_ids()
-set()
+>>> len(db.head_commit_ids())
+0
 ```
 
 `CommitStateBuilder.initial_state(db)` always works and returns the empty

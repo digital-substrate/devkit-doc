@@ -34,7 +34,8 @@ document, opcode by opcode (each opcode's exception included). The DAG
 topology and the merge order fix what that trace contains (see
 [How Reduction Picks a Winner](#how-reduction-picks-a-winner)); nothing
 downstream re-examines the result. Once a `commitMerge` nobody reviewed lies in
-its history, the state you get back is therefore *input to re-validate*, not a
+its history — or an Enable/Disable nobody reviewed, masking a commit that later
+mutations were written on top of — the state you get back is therefore *input to re-validate*, not a
 stored fact — a read is "an import, not a load", the
 [Dual-Layer Contract](commit_contract.md#reading-the-state-is-an-import-not-a-load).
 

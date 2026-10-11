@@ -218,15 +218,44 @@ defensive-by-design route from day one. They are commonly framed
 as "strategies"; under strong invariants they are better described
 as **modes of loss**: none re-enters the DAG, none recovers intent.
 
-The trigger for import is a `commitMerge` nobody reviewed, not
-concurrency or automation. A strictly linear history is a *load*: every
-mutation you submitted is exactly the one that contributed to the state.
-So is a history whose every fold a person reviewed: the reviewer owns the
-result. The moment the history of the state read contains a fold nobody
-reviewed — an unsupervised reducer, or a merge accepted as it came —
-best-effort drops have been applied silently, and reading that state, and
-every state after it, becomes an *import*. The engine records the fold,
-not the review: whether a fold was reviewed is the application's to know.
+The trigger for import is a rewrite of the trace nobody reviewed, not
+concurrency or automation. A mutation is written against the state its
+author read. A state is a *load* when every mutation it replays is
+applied to exactly that state: every mutation you submitted is then the
+one that contributed, as you wrote it. Two kinds of commit can break
+that:
+
+- **a `commitMerge`** — the merged branch is replayed after mutations
+  its authors never saw;
+- **an Enable / Disable commit whose target has active mutations
+  above it** — masking the target removes, beneath them, a mutation
+  their authors saw; unmasking it inserts one they did not. Undo and
+  redo walked as a stack (disable the last active mutation, re-enable
+  the last one disabled) never do this; disabling a commit that later
+  mutations were written on top of does.
+
+A history with neither is a load, however long. So is one whose every
+such commit a person reviewed: the reviewer owns the result. The moment
+the history of the state read contains one nobody reviewed — an
+unsupervised reducer, a merge accepted as it came, a past commit
+disabled in place — best-effort drops have been applied silently, and
+reading that state, and every state after it, becomes an *import*. The
+engine records the merge or the mask, not the review: whether it was
+reviewed is the application's to know.
+
+A mask needs no second head. With the invariant `a == b`:
+
+```text
+C1  set     {a: 1, b: 1}
+C2  update  a = 2
+C3  update  b = 2        # written against {a: 2, b: 2}
+C4  disable C2           → {a: 1, b: 2}
+```
+
+Each field holds a value someone wrote, no opcode failed, so the trace
+shows nothing, and the history has one head and no merge — yet no author
+wrote that combination. Disable C1 instead and the document is gone, C2
+and C3 with it.
 
 That state answers to no single human intent. Where streams overlap,
 reduction picks by structural rule; where they wrote disjoint paths, it can

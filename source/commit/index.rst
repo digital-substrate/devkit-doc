@@ -31,7 +31,9 @@ they are the product, whole, and nothing is ever collapsed:
   write and maintain for every command in the application. The stack
   itself is per-session and does not outlive the store, though the
   commits it walked stay in the DAG
-  (:doc:`CommitStore <commit_store>`).
+  (:doc:`CommitStore <commit_store>`). Exact as a stack: masking an older
+  commit that later mutations were written on top of replays them against
+  a state their authors never read (:doc:`Modes of Use <commit_modes>`).
 * **History you never had to model.** Any past state is reconstructed
   from its ``commitId``, and every change is a commit carrying a label
   and a timestamp. There is no separate history schema to design, and
@@ -81,7 +83,8 @@ two heads that are folded without a human reviewing the result?**
   extending the head it read. Several writers qualify too, as long as
   the application serialises them onto that head — what ends the regime
   is a write prepared against an older head whose fold nobody reviews,
-  not a second person. Read
+  not a second person — or an unreviewed Enable/Disable of a commit that
+  later mutations were written on top of: undo walks a stack. Read
   :doc:`Commit Database <commit_database>`,
   :doc:`CommitStore <commit_store>` and
   :doc:`Commit Application Model <commit_application_model>`; skip the

@@ -89,6 +89,15 @@ immutability, content-addressing.
 rewrites history — it masks its target with an Enable/Disable commit.
 All structural guarantees apply.
 
+Append-only does not mean the mask is harmless: it changes the trace
+every later commit is replayed on. Walked as a stack — undo the last
+active mutation, redo in reverse order, as `CommitStore.undo` /
+`redo` do — it changes nothing beneath anyone. Disabling or
+re-enabling a commit that later mutations were written on top of
+replays them against a state their authors never read: a read is then
+an [import](commit_contract.md#import-outcomes), with one head and no
+merge in the history.
+
 ### Multi-head exploration
 
 *Parallel heads.* Diverge the DAG and keep parallel heads alive,
@@ -97,12 +106,14 @@ every reduced result is reviewed stays **single-stream** —
 `commitMerge` happens, but a person owns the resulting state.
 
 ```{important}
-In single-stream every read returns exactly what you wrote. In
-multi-stream a read is an
+In single-stream every read returns exactly what you wrote, as long as
+undo / redo is walked as a stack. In multi-stream a read is an
 [import](commit_contract.md#reading-the-state-is-an-import-not-a-load)
 as soon as a `commitMerge` nobody reviewed lies in the history of the
 state read — a *past* state included, when such a fold precedes it. A
-state before the first unreviewed fold is still a load. The three
+state before the first unreviewed fold is still a load. In either
+context, an unreviewed Enable/Disable of a commit that later mutations
+were written on top of makes a read an import too. The three
 operations above do not change between the two contexts; what changes is
 the contract around the state they read.
 ```
@@ -114,8 +125,10 @@ the contract around the state they read.
 ### Single-stream
 
 No fold goes unreviewed — every commit extends the head it read, or a
-person reviews the result of folding the heads they diverged. No state
-you read has a `commitMerge` nobody reviewed in its history, so the
+person reviews the result of folding the heads they diverged — and no
+mask reaches beneath later mutations unreviewed: undo / redo walks a
+stack. No state you read has a `commitMerge` nobody reviewed, nor such
+a mask, in its history, so the
 [Dual-Layer Contract](commit_contract.md) is reference material, not
 load-bearing.
 What defines the regime is where writes land, not how many people are

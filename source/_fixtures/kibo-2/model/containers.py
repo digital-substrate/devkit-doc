@@ -57,7 +57,7 @@ def _type_blob() -> dsviper.TypeBlob: return dsviper.TypeBlob()
 def _type_blob_id() -> dsviper.TypeBlobId: return dsviper.TypeBlobId()
 def _type_commit_id() -> dsviper.TypeCommitId: return dsviper.TypeCommitId()
 def _type_uuid() -> dsviper.TypeUUId: return dsviper.TypeUUId()
-def _type_any() -> dsviper.TypeAny: return dsviper.TypeAny()
+def _type_Any() -> dsviper.TypeAny: return dsviper.TypeAny()
 def _type_AnyConceptKey() -> dsviper.TypeKey: return dsviper.TypeKey(dsviper.TypeAnyConcept())
 def _type_Tuto_UserKey() -> dsviper.Type: return dsviper.TypeKey(definitions().check_concept(tuto.data.USER))
 def _type_Tuto_Status() -> dsviper.Type: return definitions().check_enumeration(tuto.data.STATUS)
@@ -75,45 +75,45 @@ def _type_Studio_Name() -> dsviper.Type: return definitions().check_structure(st
 def _type_Studio_Profile() -> dsviper.Type: return definitions().check_structure(studio.data.PROFILE)
 
 @functools.cache
-def _type_optional_AnyConceptKey() -> dsviper.Type: return dsviper.TypeOptional(_type_AnyConceptKey())
+def _type_Optional_of_AnyConceptKey() -> dsviper.Type: return dsviper.TypeOptional(_type_AnyConceptKey())
 @functools.cache
-def _type_optional_string() -> dsviper.Type: return dsviper.TypeOptional(_type_string())
+def _type_Optional_of_string() -> dsviper.Type: return dsviper.TypeOptional(_type_string())
 @functools.cache
-def _type_optional_Studio_AdminKey() -> dsviper.Type: return dsviper.TypeOptional(_type_Studio_AdminKey())
+def _type_Optional_of_Studio_AdminKey() -> dsviper.Type: return dsviper.TypeOptional(_type_Studio_AdminKey())
 @functools.cache
-def _type_optional_Studio_Credentials() -> dsviper.Type: return dsviper.TypeOptional(_type_Studio_Credentials())
+def _type_Optional_of_Studio_Credentials() -> dsviper.Type: return dsviper.TypeOptional(_type_Studio_Credentials())
 @functools.cache
-def _type_optional_Studio_DeviceKey() -> dsviper.Type: return dsviper.TypeOptional(_type_Studio_DeviceKey())
+def _type_Optional_of_Studio_DeviceKey() -> dsviper.Type: return dsviper.TypeOptional(_type_Studio_DeviceKey())
 @functools.cache
-def _type_optional_Studio_MemberKey() -> dsviper.Type: return dsviper.TypeOptional(_type_Studio_MemberKey())
+def _type_Optional_of_Studio_MemberKey() -> dsviper.Type: return dsviper.TypeOptional(_type_Studio_MemberKey())
 @functools.cache
-def _type_optional_Studio_PrincipalKey() -> dsviper.Type: return dsviper.TypeOptional(_type_Studio_PrincipalKey())
+def _type_Optional_of_Studio_PrincipalKey() -> dsviper.Type: return dsviper.TypeOptional(_type_Studio_PrincipalKey())
 @functools.cache
-def _type_optional_Studio_Profile() -> dsviper.Type: return dsviper.TypeOptional(_type_Studio_Profile())
+def _type_Optional_of_Studio_Profile() -> dsviper.Type: return dsviper.TypeOptional(_type_Studio_Profile())
 @functools.cache
-def _type_optional_Tuto_Account() -> dsviper.Type: return dsviper.TypeOptional(_type_Tuto_Account())
+def _type_Optional_of_Tuto_Account() -> dsviper.Type: return dsviper.TypeOptional(_type_Tuto_Account())
 @functools.cache
-def _type_optional_Tuto_Identity() -> dsviper.Type: return dsviper.TypeOptional(_type_Tuto_Identity())
+def _type_Optional_of_Tuto_Identity() -> dsviper.Type: return dsviper.TypeOptional(_type_Tuto_Identity())
 @functools.cache
-def _type_optional_Tuto_Login() -> dsviper.Type: return dsviper.TypeOptional(_type_Tuto_Login())
+def _type_Optional_of_Tuto_Login() -> dsviper.Type: return dsviper.TypeOptional(_type_Tuto_Login())
 @functools.cache
-def _type_optional_Tuto_Texture() -> dsviper.Type: return dsviper.TypeOptional(_type_Tuto_Texture())
+def _type_Optional_of_Tuto_Texture() -> dsviper.Type: return dsviper.TypeOptional(_type_Tuto_Texture())
 @functools.cache
-def _type_optional_Tuto_Thumbnail() -> dsviper.Type: return dsviper.TypeOptional(_type_Tuto_Thumbnail())
+def _type_Optional_of_Tuto_Thumbnail() -> dsviper.Type: return dsviper.TypeOptional(_type_Tuto_Thumbnail())
 @functools.cache
-def _type_optional_Tuto_UserKey() -> dsviper.Type: return dsviper.TypeOptional(_type_Tuto_UserKey())
+def _type_Optional_of_Tuto_UserKey() -> dsviper.Type: return dsviper.TypeOptional(_type_Tuto_UserKey())
 @functools.cache
-def _type_vector_string() -> dsviper.Type: return dsviper.TypeVector(_type_string())
+def _type_Vector_of_string() -> dsviper.Type: return dsviper.TypeVector(_type_string())
 @functools.cache
-def _type_set_string() -> dsviper.Type: return dsviper.TypeSet(_type_string())
+def _type_Set_of_string() -> dsviper.Type: return dsviper.TypeSet(_type_string())
 @functools.cache
-def _type_set_Studio_MemberKey() -> dsviper.Type: return dsviper.TypeSet(_type_Studio_MemberKey())
+def _type_Set_of_Studio_MemberKey() -> dsviper.Type: return dsviper.TypeSet(_type_Studio_MemberKey())
 @functools.cache
-def _type_set_Studio_PrincipalKey() -> dsviper.Type: return dsviper.TypeSet(_type_Studio_PrincipalKey())
+def _type_Set_of_Studio_PrincipalKey() -> dsviper.Type: return dsviper.TypeSet(_type_Studio_PrincipalKey())
 @functools.cache
-def _type_set_Tuto_UserKey() -> dsviper.Type: return dsviper.TypeSet(_type_Tuto_UserKey())
+def _type_Set_of_Tuto_UserKey() -> dsviper.Type: return dsviper.TypeSet(_type_Tuto_UserKey())
 @functools.cache
-def _type_map_string_to_string() -> dsviper.Type: return dsviper.TypeMap(_type_string(), _type_string())
+def _type_Map_of_string_to_string() -> dsviper.Type: return dsviper.TypeMap(_type_string(), _type_string())
 
 class Optional_of_AnyConceptKey(Declared, Option["AnyConceptKey"]):
     __slots__ = ()
@@ -123,7 +123,7 @@ class Optional_of_AnyConceptKey(Declared, Option["AnyConceptKey"]):
 
     @classmethod
     def type(cls) -> dsviper.Type:
-        return _type_optional_AnyConceptKey()
+        return _type_Optional_of_AnyConceptKey()
 
 class Optional_of_string(Declared, Option["str"]):
     __slots__ = ()
@@ -133,7 +133,7 @@ class Optional_of_string(Declared, Option["str"]):
 
     @classmethod
     def type(cls) -> dsviper.Type:
-        return _type_optional_string()
+        return _type_Optional_of_string()
 
 class Optional_of_Studio_AdminKey(Declared, Option["studio.AdminKey"]):
     __slots__ = ()
@@ -143,7 +143,7 @@ class Optional_of_Studio_AdminKey(Declared, Option["studio.AdminKey"]):
 
     @classmethod
     def type(cls) -> dsviper.Type:
-        return _type_optional_Studio_AdminKey()
+        return _type_Optional_of_Studio_AdminKey()
 
 class Optional_of_Studio_Credentials(Declared, Option["studio.Credentials"]):
     __slots__ = ()
@@ -153,7 +153,7 @@ class Optional_of_Studio_Credentials(Declared, Option["studio.Credentials"]):
 
     @classmethod
     def type(cls) -> dsviper.Type:
-        return _type_optional_Studio_Credentials()
+        return _type_Optional_of_Studio_Credentials()
 
 class Optional_of_Studio_DeviceKey(Declared, Option["studio.DeviceKey"]):
     __slots__ = ()
@@ -163,7 +163,7 @@ class Optional_of_Studio_DeviceKey(Declared, Option["studio.DeviceKey"]):
 
     @classmethod
     def type(cls) -> dsviper.Type:
-        return _type_optional_Studio_DeviceKey()
+        return _type_Optional_of_Studio_DeviceKey()
 
 class Optional_of_Studio_MemberKey(Declared, Option["studio.MemberKey"]):
     __slots__ = ()
@@ -173,7 +173,7 @@ class Optional_of_Studio_MemberKey(Declared, Option["studio.MemberKey"]):
 
     @classmethod
     def type(cls) -> dsviper.Type:
-        return _type_optional_Studio_MemberKey()
+        return _type_Optional_of_Studio_MemberKey()
 
 class Optional_of_Studio_PrincipalKey(Declared, Option["studio.PrincipalKey"]):
     __slots__ = ()
@@ -183,7 +183,7 @@ class Optional_of_Studio_PrincipalKey(Declared, Option["studio.PrincipalKey"]):
 
     @classmethod
     def type(cls) -> dsviper.Type:
-        return _type_optional_Studio_PrincipalKey()
+        return _type_Optional_of_Studio_PrincipalKey()
 
 class Optional_of_Studio_Profile(Declared, Option["studio.Profile"]):
     __slots__ = ()
@@ -193,7 +193,7 @@ class Optional_of_Studio_Profile(Declared, Option["studio.Profile"]):
 
     @classmethod
     def type(cls) -> dsviper.Type:
-        return _type_optional_Studio_Profile()
+        return _type_Optional_of_Studio_Profile()
 
 class Optional_of_Tuto_Account(Declared, Option["tuto.Account"]):
     __slots__ = ()
@@ -203,7 +203,7 @@ class Optional_of_Tuto_Account(Declared, Option["tuto.Account"]):
 
     @classmethod
     def type(cls) -> dsviper.Type:
-        return _type_optional_Tuto_Account()
+        return _type_Optional_of_Tuto_Account()
 
 class Optional_of_Tuto_Identity(Declared, Option["tuto.Identity"]):
     __slots__ = ()
@@ -213,7 +213,7 @@ class Optional_of_Tuto_Identity(Declared, Option["tuto.Identity"]):
 
     @classmethod
     def type(cls) -> dsviper.Type:
-        return _type_optional_Tuto_Identity()
+        return _type_Optional_of_Tuto_Identity()
 
 class Optional_of_Tuto_Login(Declared, Option["tuto.Login"]):
     __slots__ = ()
@@ -223,7 +223,7 @@ class Optional_of_Tuto_Login(Declared, Option["tuto.Login"]):
 
     @classmethod
     def type(cls) -> dsviper.Type:
-        return _type_optional_Tuto_Login()
+        return _type_Optional_of_Tuto_Login()
 
 class Optional_of_Tuto_Texture(Declared, Option["tuto.Texture"]):
     __slots__ = ()
@@ -233,7 +233,7 @@ class Optional_of_Tuto_Texture(Declared, Option["tuto.Texture"]):
 
     @classmethod
     def type(cls) -> dsviper.Type:
-        return _type_optional_Tuto_Texture()
+        return _type_Optional_of_Tuto_Texture()
 
 class Optional_of_Tuto_Thumbnail(Declared, Option["tuto.Thumbnail"]):
     __slots__ = ()
@@ -243,7 +243,7 @@ class Optional_of_Tuto_Thumbnail(Declared, Option["tuto.Thumbnail"]):
 
     @classmethod
     def type(cls) -> dsviper.Type:
-        return _type_optional_Tuto_Thumbnail()
+        return _type_Optional_of_Tuto_Thumbnail()
 
 class Optional_of_Tuto_UserKey(Declared, Option["tuto.UserKey"]):
     __slots__ = ()
@@ -253,7 +253,7 @@ class Optional_of_Tuto_UserKey(Declared, Option["tuto.UserKey"]):
 
     @classmethod
     def type(cls) -> dsviper.Type:
-        return _type_optional_Tuto_UserKey()
+        return _type_Optional_of_Tuto_UserKey()
 class Vector_of_string(Declared, Vector["str"]):
     __slots__ = ()
 
@@ -262,7 +262,7 @@ class Vector_of_string(Declared, Vector["str"]):
 
     @classmethod
     def type(cls) -> dsviper.Type:
-        return _type_vector_string()
+        return _type_Vector_of_string()
 class Set_of_string(Declared, SetView["str"]):
     __slots__ = ()
 
@@ -271,7 +271,7 @@ class Set_of_string(Declared, SetView["str"]):
 
     @classmethod
     def type(cls) -> dsviper.Type:
-        return _type_set_string()
+        return _type_Set_of_string()
 
 class Set_of_Studio_MemberKey(Declared, SetView["studio.MemberKey"]):
     __slots__ = ()
@@ -281,7 +281,7 @@ class Set_of_Studio_MemberKey(Declared, SetView["studio.MemberKey"]):
 
     @classmethod
     def type(cls) -> dsviper.Type:
-        return _type_set_Studio_MemberKey()
+        return _type_Set_of_Studio_MemberKey()
 
 class Set_of_Studio_PrincipalKey(Declared, SetView["studio.PrincipalKey"]):
     __slots__ = ()
@@ -291,7 +291,7 @@ class Set_of_Studio_PrincipalKey(Declared, SetView["studio.PrincipalKey"]):
 
     @classmethod
     def type(cls) -> dsviper.Type:
-        return _type_set_Studio_PrincipalKey()
+        return _type_Set_of_Studio_PrincipalKey()
 
 class Set_of_Tuto_UserKey(Declared, SetView["tuto.UserKey"]):
     __slots__ = ()
@@ -301,7 +301,7 @@ class Set_of_Tuto_UserKey(Declared, SetView["tuto.UserKey"]):
 
     @classmethod
     def type(cls) -> dsviper.Type:
-        return _type_set_Tuto_UserKey()
+        return _type_Set_of_Tuto_UserKey()
 class Map_of_string_to_string(Declared, Mapping["str", "str"]):
     __slots__ = ()
 
@@ -310,7 +310,7 @@ class Map_of_string_to_string(Declared, Mapping["str", "str"]):
 
     @classmethod
     def type(cls) -> dsviper.Type:
-        return _type_map_string_to_string()
+        return _type_Map_of_string_to_string()
 
 from . import tuto  # noqa: E402
 from . import studio  # noqa: E402

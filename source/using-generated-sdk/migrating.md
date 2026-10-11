@@ -64,7 +64,7 @@ TypeScript package, the outer C++ namespace — and the application keeps its ow
 
 **Containers are named by their shape.** A container class is named by its kind and its
 elements: `Vector_of_uint8`, `Set_of_Graph_VertexKey`, `Map_of_A_to_B`,
-`Variant_of_A_or_B`, `Tuple_of_a_and_b`, `Vec2_of_uint8`, `Mat2x3_of_uint8`. In Python they
+`Variant2_of_A_or_B`, `Tuple2_of_a_and_b`, `Vec2_of_uint8`, `Mat2x3_of_uint8`. In Python they
 live in the package's `containers` module, in TypeScript at the package root. In both, a
 container field is a live view over the runtime value, not a copy.
 
@@ -104,7 +104,7 @@ uses snake_case for modules; C++ uses snake_case for unit and pool namespaces.
 |---|---|
 | `from pkg.data import *`; `Demo_StructureS`, `Demo_ConceptAKey` | `from pkg import demo`; `demo.StructureS`, `demo.ConceptAKey` |
 | `Vector_uint8`, `Set_X`, `Map_A_to_B`, `Optional_X`, `XArray_X`, at the package root | `containers.Vector_of_uint8`, `Set_of_X`, `Map_of_A_to_B`, `Optional_of_X`, `XArray_of_X` |
-| `Variant_A_B`, `Tuple_a_b`, `Vec_uint8_2`, `Mat_uint8_2_3` | `containers.Variant_of_A_or_B`, `Tuple_of_a_and_b`, `Vec2_of_uint8`, `Mat2x3_of_uint8` |
+| `Variant_A_B`, `Tuple_a_b`, `Vec_uint8_2`, `Mat_uint8_2_3` | `containers.Variant2_of_A_or_B`, `Tuple2_of_a_and_b`, `Vec2_of_uint8`, `Mat2x3_of_uint8` |
 | `pkg.definitions.definitions()` | `pkg.definitions()` |
 | `RuntimeIds.Demo_StructureS` | `pkg.demo.STRUCTURE_S` |
 | `AttachmentRuntimeIds.Demo_ConceptA_Properties` | `pkg.demo.attachments.ConceptA.properties.runtime_id` |

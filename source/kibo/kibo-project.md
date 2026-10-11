@@ -148,6 +148,18 @@ wrap_value = "wrapped"
 The DSM name stays the one sent to the runtime: a C++ client and a Python service still meet on
 the wire. Nothing is renamed without such a line.
 
+kibo names every type from its shape: the class a Python or TypeScript target generates for it,
+and the suffix of the helpers every target keys on it (`Set_of_App_UserKey`,
+`Tuple2_of_int64_and_float`). A DSM name may hold the separators of those names, so two types can
+be written alike: `tuple<N::A_and_N_B, N::C>` and `tuple<N::A, N::B_and_N_C>` are both
+`Tuple2_of_N_A_and_N_B_and_N_C`. kibo then stops, names both types and proposes a name; the
+project names one of them, for every target, the type written as the DSM writes it:
+
+```toml
+[names.types]
+"tuple<N::A_and_N_B, N::C>" = "Tuple2_of_N_A_and_N_B_and_N_C_2"
+```
+
 ### A part of the model
 
 A project that reads a few attachments of a large model names them, and every target is

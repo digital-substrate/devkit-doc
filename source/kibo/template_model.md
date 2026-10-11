@@ -138,7 +138,9 @@ nothing.
 ## Type Suffix
 
 During the conversion from DSM Model to Template Model, Kibo recursively collects and
-decomposes all types and constructs a symbol per type called the **type suffix**.
+decomposes all types and constructs a symbol per type called the **type suffix**: `_` and the
+type's name, the same string as the class a binding generates for it (`proxy`). Two types of a
+model never share one.
 
 ### Decomposition Examples
 
@@ -147,24 +149,31 @@ With `User` a concept of the namespace `App`:
 - `float`
     - `_float`
 - `vector<float>`
-    - `_vector_float`
+    - `_Vector_of_float`
     - `_float`
 - `map<tuple<int64, float>, vector<key<User>>>`
-    - `_map_tuple_int64_float_to_vector_App_UserKey`
-    - `_tuple_int64_float`
+    - `_Map_of_Tuple2_of_int64_and_float_to_Vector_of_App_UserKey`
+    - `_Tuple2_of_int64_and_float`
     - `_int64`
     - `_float`
-    - `_vector_App_UserKey`
+    - `_Vector_of_App_UserKey`
     - `_App_UserKey`
 
 The type suffix is neutral: it is the same whatever the target. A type the DSM declares
-carries its namespace (`_App_UserKey`, `_App_S`); a primitive type has none (`_float`).
+carries its namespace (`_App_UserKey`, `_App_S`); a primitive type has none (`_float`); `any`
+is `_Any`.
 
-Two distinct types share a suffix when a tuple or a variant is a member, other than the last,
-of another tuple or variant: `tuple<tuple<int64, float>, float>` and
-`tuple<tuple<int64, float, float>>` are both `_tuple_tuple_int64_float_float`, and both bind to
-the class `Tuple_of_Tuple_of_int64_and_float_and_float`. A model that declares both gets one
-helper and one class, those of one of the two.
+A tuple and a variant say how many members follow (`Tuple2_of_…`, `Variant3_of_…`), so one
+nested in another reads one way: `tuple<tuple<int64, float>, float>` is
+`_Tuple2_of_Tuple2_of_int64_and_float_and_float` and `tuple<tuple<int64, float, float>>` is
+`_Tuple1_of_Tuple3_of_int64_and_float_and_float`.
+
+A DSM name may hold the separators of those names (`A_and_N_B`), so two types can still be
+written alike: `tuple<N::A_and_N_B, N::C>` and `tuple<N::A, N::B_and_N_C>` are both
+`Tuple2_of_N_A_and_N_B_and_N_C`. Kibo knows every type of the model and stops, in every target:
+it names both types and the directive that names one of them, with a name proposed
+(`--type-name` in [usage](usage.md), `[names.types]` in [kibo-project](kibo-project.md)). The
+name given is the type's class and its suffix, in every target.
 
 ### Recursive Template Invocation
 
@@ -188,7 +197,7 @@ void StreamWriter::write<v.typeSuffix>(<v.type> const & value) {
 The generated code for a `map<int8, string>` is:
 
 ```cpp
-void StreamWriter::write_map_int8_to_string(std::map<std::int8_t,std::string> const & value) {
+void StreamWriter::write_Map_of_int8_to_string(std::map<std::int8_t,std::string> const & value) {
     writing->writeUInt64(static_cast<std::uint64_t>(value.size()));
     for (auto const & [k, v] : value) {
         write_int8(k);
@@ -284,7 +293,7 @@ What each member answers, for a structure field declared in the namespace `Model
 | `proxy` | `uint8` | `ModelA_MaterialKey` | `Set_of_ModelA_MaterialKey` |
 | `useProxy` | false | true | true |
 | `isNamed` | false | true | false |
-| `typeSuffix` | `_uint8` | `_ModelA_MaterialKey` | `_set_ModelA_MaterialKey` |
+| `typeSuffix` | `_uint8` | `_ModelA_MaterialKey` | `_Set_of_ModelA_MaterialKey` |
 | `type` | `int` (`number` in `typescript`) | `ModelA_MaterialKey` | `Set_of_ModelA_MaterialKey` |
 | `typeInNamespace` | `int` | `MaterialKey` | `Set_of_ModelA_MaterialKey` |
 | `annotation` | `int` | `MaterialKey` | `containers.Set_of_ModelA_MaterialKey` |
@@ -300,7 +309,7 @@ What each member answers, for a structure field declared in the namespace `Model
 - `input` and `inputQualified` fall back to `annotation` and `qualified` when a write accepts
   exactly what a read returns. They are wider where the runtime decodes more into the type:
   an optional also takes its element or nothing, a variant its members
-  (`containers.Variant_of_string_or_uint8_or_Demo_StructureS | str | int | demo.StructureS`).
+  (`containers.Variant3_of_string_or_uint8_or_Demo_StructureS | str | int | demo.StructureS`).
 - `constructorInput` is present only for a container, an optional or a variant: the host's own
   collection, whose generated elements the constructor unwraps, so that the runtime checks
   every element where the container is built.
@@ -404,9 +413,9 @@ class TemplateMapFunction {
     //...
     public String dsmType;           // "map<int64, vector<string>>"
     public String type;              // "std::map<std::int64_t, std::vector<std::string>>"
-    public String typeSuffix;        // "_map_int64_to_vector_string"
+    public String typeSuffix;        // "_Map_of_int64_to_Vector_of_string"
     public String keyTypeSuffix;     // "_int64"
-    public String elementTypeSuffix; // "_vector_string"
+    public String elementTypeSuffix; // "_Vector_of_string"
     //...
 }
 ```

@@ -283,14 +283,15 @@ A container is a live view over the Viper container it wraps. The package export
 class per container shape the model uses — in a structure field, an attachment or a pool —
 named `<Kind>_of_<element>`: `Vector_of_uint8`, `Set_of_Demo_StructureS`,
 `Map_of_string_to_Demo_StructureS`, `Optional_of_Demo_StructureV`,
-`Variant_of_string_or_uint8`, `Tuple_of_uint8_and_string`, `XArray_of_uint8`,
+`Variant2_of_string_or_uint8`, `Tuple2_of_uint8_and_string`, `XArray_of_uint8`,
 `Vec2_of_uint8`, `Mat2x3_of_uint8`.
 
 The element is spelled the way the DSM spells it: a primitive by its name (`uint8`,
 `string`), `Any` for an `any`, `AnyConceptKey` for a `key<any_concept>`, a type of a
 namespace as `<Namespace>_<Type>` whatever the namespace (`Demo_StructureS`,
-`Parts_Colour`), and a container by its own class name. A map is `Map_of_<K>_to_<V>`, a
-variant joins its alternatives with `_or_`, a tuple with `_and_`:
+`Parts_Colour`), and a container by its own class name. A map is `Map_of_<K>_to_<V>`; a
+variant joins its alternatives with `_or_` and a tuple its members with `_and_`, after their
+number (`Variant3_of_…`, `Tuple2_of_…`), so that one nested in another reads one way:
 
 | DSM | Class |
 |---|---|
@@ -298,7 +299,7 @@ variant joins its alternatives with `_or_`, a tuple with `_and_`:
 | `set<key<any_concept>>` | `Set_of_AnyConceptKey` |
 | `vector<Parts::Colour>` | `Vector_of_Parts_Colour` |
 | `map<key<ModelA::Material>, key<ModelB::Material>>` | `Map_of_ModelA_MaterialKey_to_ModelB_MaterialKey` |
-| `variant<string, uint8, StructureS>` in `Demo` | `Variant_of_string_or_uint8_or_Demo_StructureS` |
+| `variant<string, uint8, StructureS>` in `Demo` | `Variant3_of_string_or_uint8_or_Demo_StructureS` |
 
 Each kind declares what it does, typed by its element, so `tsc` refuses a method the kind
 does not have, a misspelt one and a wrong element:

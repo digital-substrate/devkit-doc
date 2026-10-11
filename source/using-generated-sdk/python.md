@@ -370,8 +370,9 @@ a read document.
 The element is spelled the way the DSM spells it: a primitive by its name (`uint8`,
 `string`), `Any` for an `any`, `AnyConceptKey` for a `key<any_concept>`, a type of a
 namespace as `<Namespace>_<Type>` whatever the namespace (`Tuto_UserKey`, `Parts_Colour`),
-and a container by its own class name. A map is `Map_of_<K>_to_<V>`, a variant joins its
-alternatives with `_or_`, a tuple with `_and_`:
+and a container by its own class name. A map is `Map_of_<K>_to_<V>`; a variant joins its
+alternatives with `_or_` and a tuple its members with `_and_`, after their number
+(`Variant3_of_…`, `Tuple2_of_…`), so that one nested in another reads one way:
 
 | DSM | Class |
 |---|---|
@@ -379,7 +380,7 @@ alternatives with `_or_`, a tuple with `_and_`:
 | `set<key<any_concept>>` | `Set_of_AnyConceptKey` |
 | `vector<Parts::Colour>` | `Vector_of_Parts_Colour` |
 | `map<key<ModelA::Material>, key<ModelB::Material>>` | `Map_of_ModelA_MaterialKey_to_ModelB_MaterialKey` |
-| `variant<string, uint8, StructureS>` in `Demo` | `Variant_of_string_or_uint8_or_Demo_StructureS` |
+| `variant<string, uint8, StructureS>` in `Demo` | `Variant3_of_string_or_uint8_or_Demo_StructureS` |
 
 ```{doctest}
 >>> bob = tuto.UserKey.create()
@@ -409,8 +410,8 @@ Each kind declares what it does, so a type checker refuses a method the kind doe
 | `set<T>` | `Set_of_T` | sorted: `add`, `remove`, `discard`, `pop`, `min`, `max`, the set operations, their `_update` forms and operators |
 | `map<K, V>` | `Map_of_K_to_V` | a `dict`-like mapping: `m[k]`, `get`, `items`, `popitem`, `min`, `max`, … |
 | `optional<T>` | `Optional_of_T` | `is_nil`, `unwrap`, `wrap`, `get(default)`, `clear`; its truth is presence |
-| `variant<A, B>` | `Variant_of_A_or_B` | per alternative: `is_A()`, `get_A()`, `set_A()`; `unwrap()` the element it holds, `wrap(e)` or `wrap(e, type)` |
-| `tuple<A, B>` | `Tuple_of_A_and_B` | fixed length: `t[i]`, `set(i, e)`, and `get_0()`, `get_1()`, … typed by member |
+| `variant<A, B>` | `Variant2_of_A_or_B` | per alternative: `is_A()`, `get_A()`, `set_A()`; `unwrap()` the element it holds, `wrap(e)` or `wrap(e, type)` |
+| `tuple<A, B>` | `Tuple2_of_A_and_B` | fixed length: `t[i]`, `set(i, e)`, and `get_0()`, `get_1()`, … typed by member |
 | `xarray<T>` | `XArray_of_T` | positions that survive concurrent edits: `append`, `insert`, `remove`, `x[i]` or `x[position]`, `at`, `set`, `positions`, `position`, `index`, `has_position`, `position_of`, `items`, `extend`, `insert_position`, `disable_position`, `create_position()` and `END`, `to_vector` |
 | `vec<T, n>` | `Vec<n>_of_T` | fixed length: `v[i]`, `set(i, e)` |
 | `mat<T, c, r>` | `Mat<c>x<r>_of_T` | column-major: `m[c, r]`, `m[c]` a column, `at`, `set`, `column`, `columns`, `rows`; `len` its columns, `size()` its elements; iterating yields its columns |

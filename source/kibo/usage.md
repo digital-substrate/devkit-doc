@@ -31,6 +31,7 @@ java -jar kibo-2.0.0.jar \
 | `--atom WORD` | A word the snake_case of a static name never splits (`IPv4`, `YCoCg`); repeatable |
 | `--rename NAME=snake_name` | A DSM name and the snake_case it takes; repeatable |
 | `--spell NAME=identifier` | How this target spells a DSM name it cannot take; the DSM name stays the one sent to the runtime; repeatable |
+| `--type-name "type=Name"` | The name of a type, the type written as the DSM writes it (`tuple<App::A, float>`): its class and its type suffix, in every target. Kibo asks for it when two types of the model would be written alike; repeatable |
 | `--reserve KIND:name` | A name the template pack's own code takes in this target, for one family of names (`namespace`, `pool`, `type`, `field`, `case`, `attachment`, `function`, `parameter`); repeatable |
 | `-q, --quiet` | Disable output messages |
 | `-l, --log` | Display internal process steps |

@@ -2,8 +2,7 @@
 
 A project states its code generation once, in a project file, `kibo.toml`. `kibo-project`
 reads it and drives the two components it does not replace: `dsviper`, which assembles the DSM
-into definitions, and the kibo jar, which renders a template pack. A project no longer carries
-a generation script.
+into definitions, and the kibo jar, which renders a template pack.
 
 For each target of the project file, `kibo_project.py`:
 
@@ -13,7 +12,7 @@ For each target of the project file, `kibo_project.py`:
 2. finds the template pack, and the newest kibo jar the pack accepts;
 3. resolves the features into the templates they need, dependencies included;
 4. runs kibo, into the directories the pack declares — once per directory, every template in
-   the same run, with kibo 2.0.0 or later; once per template with an older kibo;
+   the same run;
 5. writes the embedded definitions in the encoding the pack declares, and copies the pack's
    runtime beside the generated sources;
 6. validates what it wrote, as the pack declares: for the script targets, where a wrong name
@@ -205,10 +204,3 @@ In the DevKit, this script is `tools/kibo_project.py`, and each generator line s
 The pack is checked against the project's declared line through the version stamped in its
 templates. The jar is the newest at or above the floor the pack declares (`generator.kibo` in
 `features.json`); an explicit `KIBO_JAR` below that floor is refused.
-
-## Coming from a generate.py
-
-A kibo 1.2 project drove kibo from a `generate.py`, one subprocess per template. Its
-features become a target's `features`, its output paths the target's `output`, its namespace
-the project's `infrastructure`; the templates each feature needs, their order and the
-embedded definitions are the pack's business.

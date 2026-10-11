@@ -1,4 +1,17 @@
-# Migrating a template pack from Template Model 1 to Template Model 2
+# Migrating from kibo 1.2
+
+Two things move from kibo 1.2 to kibo 2: a project's generation, and a template pack. A project
+that uses a published pack only needs the first.
+
+## A project
+
+A kibo 1.2 project drove kibo from a `generate.py`, one subprocess per template. kibo 2 projects
+state their generation in a `kibo.toml`, which [kibo-project](kibo-project.md) reads. The script's
+features become a target's `features`, its output paths the target's `output`, its namespace the
+project's `infrastructure`; the templates each feature needs, their order and the embedded
+definitions are the pack's business.
+
+## A template pack
 
 Template Model 2 ships with kibo 2. It renames the accessors that describe a type **as the
 binding sees it**, and it changes some of the **values** the model carries — how a C++ type
@@ -6,18 +19,14 @@ names its namespace, how a container class is named, what a binding type answers
 concept or for `any`. There are no compatibility aliases: a pack written against Model 1 does
 not render against kibo 2 until it is migrated.
 
-This page is the complete list of both: what was renamed, and what now reads differently. A
-project's own generation — a `generate.py` driving kibo 1.2 — moves to a `kibo.toml`, covered in
-[kibo-project](kibo-project.md).
+The rest of this page is the complete list of both: what was renamed, and what now reads
+differently. The list is measured, not remembered: a probe template printing every scalar
+accessor of Template Model 1 is rendered by both kibo lines on several models, and every value
+that differs must be listed here
+([devkit-codegen-test](https://github.com/digital-substrate/devkit-codegen-test),
+`tools/template_model.py`).
 
-The list is measured, not remembered. A probe template that prints every scalar accessor of
-every class of Template Model 1 is rendered by kibo 1.2, then migrated by the renames below and
-rendered by kibo 2, on several models and for the `python` and `cpp` targets; every value that
-differs must be one this page lists, or the check fails. It runs in the
-[devkit-codegen-test](https://github.com/digital-substrate/devkit-codegen-test) laboratory as
-`tools/template_model.py`.
-
-## The method: a diff you can account for
+### The method: a diff you can account for
 
 A migration changes the names your templates read, and the values below change what some of
 them return. So the test is a diff in which **every difference has a reason on this page**:
@@ -44,7 +53,7 @@ comparison, or ignore its line the same way. Take up what Model 2 makes possible
 messages, dropping a leaf table — as a second change, once the first diff is accounted for;
 otherwise a diff tells you two things at once.
 
-## Names you build yourself
+### Names you build yourself
 
 The diff shows what kibo 2 renders differently. It cannot show a name your templates build
 by concatenation when that name reads the same in both renders but no longer designates
@@ -56,7 +65,7 @@ simply importing and exercising the package. Search your templates for the place
 concatenate a class name (`Set_`, `Optional_`, `Vector<`, `…Suffix>`); each is a place to
 check.
 
-## Read the diagnostics, but do not stop there
+### Read the diagnostics, but do not stop there
 
 A template that reads an accessor the model does not carry renders the **empty string**. The
 render succeeds, the file is written, and the missing part is simply absent. Kibo 2 reports
@@ -71,7 +80,7 @@ line on stderr is a rename not yet done. **An empty stderr is not the end**: it 
 accessor resolves, not that every value is the one your templates expect — the diff says that —
 nor that every name your templates build still designates a generated class.
 
-## The renames
+### The renames
 
 One to one, on the same objects:
 
@@ -101,7 +110,7 @@ object describing all three spaces:
 
 So `<v.pythonMembers:{m|<m.type>}>` becomes `<v.members:{m|<m.bindingType.type>}>`.
 
-## What reads differently
+### What reads differently
 
 Each row is a change of value under the same accessor, after the renames. They are what the
 diff shows; the last column says what a template does about it.
@@ -124,7 +133,7 @@ diff shows; the last column says what a template does about it.
 Two additions are not changes: **structures and enumerations now carry `dsmType`**, as concepts
 and clubs already did, and a member of a tuple or a variant carries it too.
 
-## Does this affect your pack?
+### Does this affect your pack?
 
 **A native target — C++ — is affected by rows 1 to 4, 8, 10, 11 and 12**, wherever it reads a type, a
 parent name or a representation. Rows 1 and 2 are the ones a C++ pack meets first: the generated
@@ -134,7 +143,7 @@ namespaces are spelled in lower snake case, as the modules of the other bindings
 is affected by every row.** Rows 5 to 7 change the names of the classes it generates and
 refers to; row 12 the names of the helpers keyed on a type suffix.
 
-## Which space to name where
+### Which space to name where
 
 **In a type position** — a signature, an annotation, a declaration — use the target's spelling:
 `bindingType.type`, or `bindingType.proxy` where you build a *name* rather than write a type.
@@ -145,7 +154,7 @@ the DSM name is what whoever wrote the model recognises, and it reads the same w
 target. Adopting it moves your generated output, so do it after the migration's diff is
 accounted for, as its own change.
 
-## Dropping your leaf table
+### Dropping your leaf table
 
 If your pack carries a dictionary mapping DSM primitive names to your binding's spellings —
 `int64` to `bigint`, `blob` to a runtime value class — Model 2 lets you delete it and read
@@ -153,7 +162,7 @@ If your pack carries a dictionary mapping DSM primitive names to your binding's 
 `python` and `typescript`. If yours is neither, keep your table: `proxy` and `useProxy` still let
 you resolve a leaf yourself. Either way, verify by the same diff.
 
-## What Model 2 adds, without breaking anything
+### What Model 2 adds, without breaking anything
 
 A Model 1 pack renders its whole model from `main(m)`, as before. Model 2 adds what a pack can
 take up when it wants to:
@@ -174,7 +183,7 @@ take up when it wants to:
 
 The [Template Model reference](template_model.md) describes each.
 
-## Checklist
+### Checklist
 
 1. Regenerate with your current kibo into `before/`.
 2. Apply the renames, and rewrite `pythonMembers` to `members`.

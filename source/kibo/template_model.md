@@ -8,13 +8,6 @@ definitions.
 Understanding this reference is essential for anyone writing or modifying `.stg`
 template files.
 
-```{note}
-Template Model 1 is the model of kibo 1.2. Template Model 2 renames the accessors that
-describe a type as the binding sees it, with no compatibility aliases, and adds the entries
-that render a template once per namespace or per pool. If you maintain a pack written for
-kibo 1.2, start with [Migrating a template pack](migrating.md).
-```
-
 ## Code Generation Pipeline
 
 Kibo generates code from a JSON representation of DSM definitions. The pipeline is:
@@ -56,15 +49,14 @@ ask.
 
 | Entry | Argument | Rendered | Scope |
 |---|---|---|---|
-| `main(m)` | `m`: `TemplateDefinitions` | once, for the whole model (as in Template Model 1) | model |
+| `main(m)` | `m`: `TemplateDefinitions` | once, for the whole model; the same as `model(m)` | model |
 | `model(m)` | `m`: `TemplateDefinitions` | once, for the whole model | model |
 | `unit(u)` | `u`: `TemplateNameSpace` | once per DSM namespace, in emission order | unit |
 | `pool(p)` | `p`: `TemplateFunctionPool` | once per `function_pool` | unit |
 | `attachment_pool(p)` | `p`: `TemplateAttachmentFunctionPool` | once per `attachment_function_pool` | unit |
 
 Kibo renders an entry only when the template **defines it and it takes that argument**: a
-`pool(po)` written as a loop body before these names were reserved is not mistaken for an
-entry. A template may declare several entries — most declare both
+rule `pool(po)` used as a loop body is not mistaken for an entry. A template may declare several entries — most declare both
 `unit` and `model`, because the concepts and structures of a namespace belong to a unit while
 what no unit can claim belongs to the model. `main` and `model` render to the same file, so a
 template declaring both is refused. A file `-t` names that declares none is an error, not an empty file; in
@@ -1479,11 +1471,7 @@ public class NameSpace {
 }
 ```
 
-```{note}
-In kibo 2, `representationIn` answers from the name's own namespace: a type of another
-namespace is now qualified. It used to return the bare name every time, which was only right
-for a model with one namespace. `TemplateAttachment.representation` is built with it.
-```
+`TemplateAttachment.representation` is built with `representationIn`.
 
 ### DSMTypeReference
 

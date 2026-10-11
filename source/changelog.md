@@ -61,7 +61,7 @@ kibo and its template pack, kibo-template-viper, version themselves on their own
 the runtime: their release notes are their repositories' CHANGELOGs —
 [kibo](https://github.com/digital-substrate/kibo/blob/main/CHANGELOG.md),
 [kibo-template-viper](https://github.com/digital-substrate/kibo-template-viper/blob/main/CHANGELOG.md).
-Moving from kibo 1 to kibo 2 is {doc}`a template pack's migration <kibo/migrating>` and
+Moving from kibo 1 to kibo 2 is {doc}`a project's and a template pack's migration <kibo/migrating>` and
 {doc}`an application's <using-generated-sdk/migrating>`.
 
 ## Viper C++ runtime

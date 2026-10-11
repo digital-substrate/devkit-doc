@@ -96,9 +96,3 @@ output = "python/generated"
 ```bash
 python3 kibo_project.py generate kibo.toml
 ```
-
-## Coming from kibo 1.2
-
-A template pack written for kibo 1.2 reads Template Model 1; moving it is covered in
-[Migrating a template pack](migrating.md). A project's `generate.py` gives way to a
-`kibo.toml` and [kibo-project](kibo-project.md).

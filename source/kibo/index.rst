@@ -13,9 +13,8 @@ Template Model a template reads, and kibo-project, which drives the
 generation of a whole project. The catalogue of templated features it
 produces in the Viper world lives in :doc:`../kibo-template-viper/index`.
 
-This is kibo 2, which exposes **Template Model 2** and generates over the
-same 1.2 runtime as kibo 1.2. A template pack written for kibo 1.2 moves
-with :doc:`migrating`.
+This is kibo 2: it exposes **Template Model 2** and generates over the 1.2
+runtime. Coming from kibo 1.2: :doc:`migrating`.
 
 
 Place in the ecosystem
@@ -76,9 +75,3 @@ Topics
    template_model
    migrating
 
-
-Status
-------
-
-Kibo 2 — Template Model 2, over the 1.2 runtime. Kibo 1.2 and Template
-Model 1 are documented in the :doc:`Kibo 1 section <../kibo-1/index>`.

@@ -24,10 +24,10 @@ def _links(docname: str, markdown: bool) -> str:
     up = "../" * depth
     if markdown:
         return (f"See {{doc}}`kibo 2 <{up}kibo/index>`, "
-                f"{{doc}}`moving a template pack <{up}kibo/migrating>` and "
+                f"{{doc}}`moving a project or a template pack <{up}kibo/migrating>` and "
                 f"{{doc}}`moving application code <{up}using-generated-sdk/migrating>`.")
     return (f"See :doc:`kibo 2 <{up}kibo/index>`, "
-            f":doc:`moving a template pack <{up}kibo/migrating>` and "
+            f":doc:`moving a project or a template pack <{up}kibo/migrating>` and "
             f":doc:`moving application code <{up}using-generated-sdk/migrating>`.")
 
 

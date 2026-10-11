@@ -88,7 +88,7 @@ target does not declare is refused with the list of those it does; a cycle is re
 
 ```
 $ ./resolve.py cpp Attachments
-features : Base Fields Attachments
+features : Base Fields Paths Attachments
   data.cpp.stg
   data.hpp.stg
   codec.cpp.stg
@@ -97,8 +97,9 @@ features : Base Fields Attachments
   model.hpp.stg
   any_concept.cpp.stg
   any_concept.hpp.stg
-  fields.cpp.stg
   fields.hpp.stg
+  paths.cpp.stg
+  paths.hpp.stg
   attachments.cpp.stg
   attachments.hpp.stg
 ```
@@ -110,20 +111,24 @@ directory the templates render into, `root` for the target's output itself:
 
 ```
 [python] python -n features -> /…/python
-    features: Base, Wheel
+    features: Base, Fields, Paths, Attachments, Wheel
     python/__init__.py.stg                   sources
     python/data.py.stg                       sources
-    python/attachments.py.stg                sources
     python/containers.py.stg                 sources
+    python/fields.py.stg                     sources
+    python/paths.py.stg                      sources
+    python/attachments.py.stg                sources
     python/pyproject.toml.stg                root
     python/py.typed.stg                      sources
 [typescript] typescript -n features -> /…/typescript
-    features: Base, Package
+    features: Base, Fields, Paths, Attachments, Package
     typescript/index.ts.stg                  sources
     typescript/definitions.ts.stg            sources
     typescript/data.ts.stg                   sources
-    typescript/attachments.ts.stg            sources
     typescript/containers.ts.stg             sources
+    typescript/fields.ts.stg                 sources
+    typescript/paths.ts.stg                  sources
+    typescript/attachments.ts.stg            sources
     typescript/package.json.stg              root
     typescript/tsconfig.json.stg             root
 ```
@@ -260,29 +265,3 @@ Common selections:
 
 Several targets of one language — a server and its client, say — name each target for what it
 produces and state its `language`; see [the project file](../kibo/kibo-project.md#the-project-file).
-
-(features-from-1-2)=
-## Where the 1.2 features went
-
-The 1.2 pack had one feature per template directory. Kibo 2's pack has fewer, larger
-features; some of the 1.2 ones are merged, others are gone because the runtime now covers
-them:
-
-| 1.2 feature | In 2.0 |
-|---|---|
-| `Data`, `Model` | Merged into `Base`: the types and their identity in the definitions cannot be pulled apart from the codec. The field names and paths `Model` carried (1.2's `Field` and `Path`) are the `Fields` and `Paths` features: `Field::S::f` becomes `fields::S::f`, a `std::string_view`, and `Path::S::f()` becomes `paths::S::f()`, in the `Paths` feature. |
-| `ValueType` | Absorbed into `Base` (the unit's `model` file); in Python and TypeScript, into `containers` and the package entry point, with `definitions()`. |
-| `Stream`, `ValueCodec` | Removed: the static layer is the runtime's, and the codec generated in `Base` bridges the C++ types to a `Value` through it. |
-| `Json`, `ValueHasher` | Removed: JSON, XML and a hexdigest are one runtime call on what `codec::encode` returns. |
-| `Database` | Removed: the runtime's `Viper::Database` has the surface, and the attachments take a database as well as a state. |
-| `FunctionPool`, `AttachmentFunctionPool` | `Pool`, which renders every function pool and attachment function pool, server side. |
-| `FunctionPoolRemote`, `AttachmentFunctionPoolRemote` | `PoolRemote`, the client side. |
-| `AttachmentFunctionPool_Attachments` | Removed. Code written ahead uses the generated attachments (`Graph::selection::unionVertexKeys` in C++, `attachments.Graph.selection.union_vertex_keys` in Python); a session without generation uses the runtime directly, with the constants `Definitions.inject()` gives and an `AttachmentMutating`. |
-| `Python` | Removed: `Definitions.inject()` computes the same constants — the model's types, attachments and field paths — from the definitions at run time, into an embedded Python module. |
-| `Test`, `TestApp` | Removed from the pack: they test the generator, not an application, and stay with the laboratory, [devkit-codegen-test](https://github.com/digital-substrate/devkit-codegen-test). |
-| `package` (the Python package directory) | Python `Base`, with `Pool` for the pools. `database_attachments`, `path`, `value_type` and `definitions` are absorbed into the attachments, the package entry point and `containers`; field paths are not exposed, the typed field operations cover them. 1.2's `wheel/pyproject.toml` is the `Wheel` feature. |
-| TypeScript `project/` | The `Package` feature, the counterpart of Python's `Wheel`. |
-
-The surface the features generate changed too — one module per namespace, attachments grouped
-by concept, Python names in snake_case; code written against the 1.2 output migrates as the
-pack's `CHANGELOG.md` says (2.0.0, *Migrating from 1.2*).

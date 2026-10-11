@@ -1,17 +1,9 @@
 # Kibo 1
 
 Kibo 1 — kibo 1.2.x with the kibo-template-viper 1.2.x pack, reading **Template Model 1** —
-is the generator line that projects created before kibo 2 use. **It is deprecated**: it
-receives fixes only — no new features — for the life of the LTS-1.2 line, and its generation
-says so when it runs. It generates for the same
-Viper LTS-1.2 runtime as kibo 2: the DSM language, the runtime and the databases are the
-same, only the generator and the code it generates differ.
-
-**Kibo 2 is the current line**, documented in {doc}`../kibo/index`,
-{doc}`../kibo-template-viper/index` and {doc}`../using-generated-sdk/index`. Moving to it:
-
-- a template pack — {doc}`../kibo/migrating`;
-- an application's code — {doc}`../using-generated-sdk/migrating`.
+generates for the Viper LTS-1.2 runtime. **It is deprecated**: it receives fixes only — no
+new features — for the life of the LTS-1.2 line, and its generation says so when it runs.
+Moving a project off it is {doc}`../kibo-migration/index`.
 
 In the DevKit, kibo 1 sits in the `kibo-1/` folder — its jar in `kibo-1/tools/`, its pack in
 `kibo-1/templates/` — and generates through `tools/dsm_util.py create_python_package` and

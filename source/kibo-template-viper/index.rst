@@ -18,7 +18,7 @@ Place in the ecosystem
   target (see `Versioning`_).
 * **Driven by** — :doc:`kibo-project <../kibo/kibo-project>`, which reads a
   project's ``kibo.toml``, resolves the features and runs kibo once per
-  template.
+  output directory, with every template of that directory.
 * **Source repository** —
   `digital-substrate/kibo-template-viper
   <https://github.com/digital-substrate/kibo-template-viper>`_.
@@ -35,7 +35,7 @@ directory — so two namespaces of one model may declare the same name.
   crosses them to a Viper ``Value`` through the runtime's static layer, field
   constants, attachments and function pools, compiled against the
   :term:`Viper C++` runtime.
-* **A Python package** over ``dsviper`` — one module per namespace, the
+* **A Python package** over ``dsviper`` — one subpackage per namespace, the
   container classes the model uses, the attachments grouped by concept, and
   ``definitions()``. It carries a small runtime of its own, ``_codegen``, and
   becomes an installable, typed wheel with the ``Wheel`` feature
@@ -155,10 +155,7 @@ without this page.
 
 What the generated code exposes is a public API: renaming a generated class,
 field or operation breaks the code written against it, and is a breaking
-change of the pack, recorded in its changelog. Code written against the 1.2
-pack's output migrates as the pack's ``CHANGELOG.md`` says (2.0.0,
-*Migrating from 1.2*); where each 1.2 feature went is in
-:ref:`features-from-1-2`.
+change of the pack, recorded in its changelog.
 
 The templates are MIT. The generated code is not standalone: running it
 requires the runtime of its target, distributed under
@@ -180,7 +177,6 @@ Topics
 Status
 ------
 
-kibo-template-viper 2 — Template Model 2, over the 1.2 runtime; the 1.2 pack
-is documented in the :doc:`Kibo 1 section <../kibo-1/kibo-template-viper/index>`. For Kibo's CLI, the
+kibo-template-viper 2 — Template Model 2, over the 1.2 runtime. For Kibo's CLI, the
 generic template format, and how to write your own template targeting
 another runtime, see the :doc:`Kibo section <../kibo/index>`.

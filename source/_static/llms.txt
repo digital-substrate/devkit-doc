@@ -32,7 +32,6 @@ DevKit is the **distribution** that bundles **DSM** (the modeling language), **K
 - [Templates](https://docs.digitalsubstrate.io/kibo/templates.html): What a templated feature is, and how a template pack groups features.
 - [kibo-project](https://docs.digitalsubstrate.io/kibo/kibo-project.html): Generating a project from a kibo.toml: targets, features, the pack and the JAR it resolves.
 - [Template model](https://docs.digitalsubstrate.io/kibo/template_model.html): Template Model 2: the entries, units, binding types and formats a template reads.
-- [Migrating from kibo 1.2](https://docs.digitalsubstrate.io/kibo/migrating.html): Moving a project from a generate.py to a kibo.toml, and a template pack from Template Model 1 to Template Model 2: the renames, the values that read differently, and a diff that accounts for every change.
 
 ## kibo-template-viper — first-party template pack
 
@@ -47,11 +46,16 @@ DevKit is the **distribution** that bundles **DSM** (the modeling language), **K
 - [Generated SDK in Python](https://docs.digitalsubstrate.io/using-generated-sdk/python.html): Units, proxies and ownership, containers, keys, attachments, stores, the bridge, errors and pools.
 - [Generated SDK in Node](https://docs.digitalsubstrate.io/using-generated-sdk/node.html): The same surface in TypeScript: units, proxies, containers, keys, attachments, stores and pools.
 - [Generated SDK in C++](https://docs.digitalsubstrate.io/using-generated-sdk/cpp.html): Native value types, attachments, and the codec crossing to a Viper Value through the static layer.
-- [Migrating application code from 1.2](https://docs.digitalsubstrate.io/using-generated-sdk/migrating.html): What moved in the generated surface between 1.2 and 2.0, per language, with a worked example.
+
+## Migrating from kibo 1.2
+
+- [Migrating a project](https://docs.digitalsubstrate.io/kibo-migration/project.html): From a generate.py or dsm_util.py to a kibo.toml: what each line of the script becomes, which kibo 2 feature replaces each 1.2 template, a complete example, and how to check the result.
+- [Migrating a template pack](https://docs.digitalsubstrate.io/kibo-migration/template-pack.html): From Template Model 1 to Template Model 2: rename scripts, the values that read differently, and a diff that accounts for every change.
+- [Migrating application code](https://docs.digitalsubstrate.io/kibo-migration/application.html): What moved in the generated surface between 1.2 and 2.0, per language, with a worked example.
 
 ## Kibo 1 — the generator line of existing projects
 
-- [Kibo 1](https://docs.digitalsubstrate.io/kibo-1/index.html): Kibo 1 — kibo 1.2.x with the kibo-template-viper 1.2.x pack, reading Template Model 1 — is the generator line that projects created before kibo 2 use. It is deprecated: it receives fixes only — no new features — for the life of the LTS-1.2 line, and its generation says so when it runs. It generates for the same Viper LTS-1.2 runtime as kibo 2: the DSM language, the runtime and the databases are the same, only the generator and the code it generates differ.
+- [Kibo 1](https://docs.digitalsubstrate.io/kibo-1/index.html): kibo 1.2 with the kibo-template-viper 1.2 pack, reading Template Model 1. Deprecated: fixes only, for the life of the LTS-1.2 line.
 - [Templated Features](https://docs.digitalsubstrate.io/kibo-1/kibo-template-viper/features.html): The catalogue of templated features shipped with kibo-template-viper — what each one does, in C++, Python, and TypeScript. Use this page to pick the features you need; pass each to Kibo via the -t flag (see the [Kibo usage guide](../kibo/usage.md)).
 - [npm Packages](https://docs.digitalsubstrate.io/kibo-1/kibo-template-viper/node.html): Creating a distributable npm package from your DSM model — the TypeScript analogue of Python wheels <wheels>, over the @digitalsubstrate/dsviper Node binding instead of CPython.
 - [Python Wheels](https://docs.digitalsubstrate.io/kibo-1/kibo-template-viper/wheels.html): Creating distributable Python wheels from your DSM model.

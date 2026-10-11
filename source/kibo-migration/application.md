@@ -1,4 +1,4 @@
-# Migrating application code from 1.2
+# Migrating application code
 
 You have code — an application, a script, a service — written by hand against a package that
 kibo 1.2 generated, and the project now generates with **kibo 2** and
@@ -8,10 +8,11 @@ until it is migrated. This page says what moved, why, and in what order to move 
 Python, TypeScript and C++, and ends with a worked example: a public Python application
 migrated from one to the other.
 
-It is about the code that *calls* the generated package. Migrating a template pack is
-{doc}`../kibo/migrating`; generating the package is {doc}`../kibo/kibo-project`'s job. The
-2.0 surface itself is described on the {doc}`Python <python>`, {doc}`TypeScript <node>` and
-{doc}`C++ <cpp>` pages, which this one links to rather than repeats.
+It is about the code that *calls* the generated package. Generating it is
+{doc}`project`; migrating a template pack is {doc}`template-pack`. The
+2.0 surface itself is described on the {doc}`Python <../using-generated-sdk/python>`,
+{doc}`TypeScript <../using-generated-sdk/node>` and {doc}`C++ <../using-generated-sdk/cpp>`
+pages, which this one links to rather than repeats.
 
 ## What does not move
 
@@ -29,15 +30,15 @@ that name a generated type, a generated function or a generated module.
 What worked, in this order:
 
 1. **Regenerate** the package with kibo-project, from a `kibo.toml` that replaces the
-   project's `generate.py` (see {doc}`../kibo/kibo-project`, *Coming from a generate.py*).
-   Remove the 1.2 package first, or generate into a new directory: a 1.2 module left
+   project's `generate.py` (see {doc}`project`). Remove the 1.2 package first, or generate
+   into a new directory: a 1.2 module left
    lying around still imports, and hides a call not yet migrated.
 2. **Fix the imports first.** One module per DSM namespace replaces the flat 1.2 package, so
    every file that imported from it stops at its first line, and a checker cannot check a
    name from a module it cannot find.
 3. **Let the type checker drive the rest**, row by row through the tables below: `mypy` for
    Python, `tsc --strict` with the package's settings for TypeScript (see
-   {doc}`node`, *Using it from a project*), the compiler for C++. The generated Python is
+   {doc}`../using-generated-sdk/node`, *Using it from a project*), the compiler for C++. The generated Python is
    fully annotated, its runtime included, and the TypeScript containers are typed by their
    element, so each 1.2 name the 2.0 package no longer has is an error at its line.
 4. **Run the application**, and whatever checks its behaviour. A type checker sees names,
@@ -80,7 +81,7 @@ replaces 1.2's separate `database_attachments` functions.
 Viper value. 1.2 exposed that value as an attribute, `vpr_value` (`vprValue`). 2.0 makes the
 crossing a pair of named operations: `p.unwrap_value()` gives the value, `Cls.wrap_value(value)`
 boxes one of exactly the class's type, both without copying (see
-{doc}`python`, *The bridge to the runtime*). A constructor given a Viper value of its type
+{doc}`../using-generated-sdk/python`, *The bridge to the runtime*). A constructor given a Viper value of its type
 boxes it too, as 1.2's `Cls(value)` did; a copy is explicit, `p.copy()`.
 
 **Runtime features go through the bridge.** 1.2 gave every proxy its own `encode`,
@@ -107,17 +108,19 @@ uses snake_case for modules; C++ uses snake_case for unit and pool namespaces.
 | `Variant_A_B`, `Tuple_a_b`, `Vec_uint8_2`, `Mat_uint8_2_3` | `containers.Variant2_of_A_or_B`, `Tuple2_of_a_and_b`, `Vec2_of_uint8`, `Mat2x3_of_uint8` |
 | `pkg.definitions.definitions()` | `pkg.definitions()` |
 | `RuntimeIds.Demo_StructureS` | `pkg.demo.STRUCTURE_S` |
-| `AttachmentRuntimeIds.Demo_ConceptA_Properties` | `pkg.demo.attachments.ConceptA.properties.runtime_id` |
-| `<ns>_<concept>_<att>_get(getting, key)`, `_set`, `_has`, `_keys`, `_diff` | `pkg.<ns>.attachments.<Concept>.<att>.get(getting, key)`, … |
+| `AttachmentRuntimeIds.Demo_ConceptA_Properties` | `pkg.demo.attachments.ConceptA.properties.runtime_id`, after `import pkg.demo.attachments` |
+| `<ns>_<concept>_<att>_get(getting, key)`, `_set`, `_has`, `_keys`, `_diff`, `_enumerate` | `pkg.<ns>.attachments.<Concept>.<att>.get(getting, key)`, …, `.enumerate(getting)`: the module `pkg.<ns>.attachments` is imported by its path (feature `Attachments`) |
+| a function annotated with what an attachment's `get` returns (`-> Optional_X`) | `-> Option[X]` (`from pkg._codegen import Option`): `get` is declared `Option[D]`; at run time it is the declared `containers.Optional_of_X`, but `mypy` refuses the `Option[D]` a function annotated `-> Optional_of_X` returns |
 | `database_attachments.<ns>_<concept>_<att>_set(db, …)`, `_get`, `_del` | the same attachment, given the `Database`: `.set(db, …)`, `.get(db, …)`, `.delete(db, key)` |
 | `p.vpr_value`; `Cls(value)` to view a stored value | `p.unwrap_value()`; `Cls.wrap_value(value)` or `Cls(value)`, both boxing it |
 | `p.encode()`; `Cls.decode(blob)` | `Value.encode(p.unwrap_value())`; `Cls.wrap_value(Value.decode(blob, Cls.type(), pkg.definitions(), encoded=False))` |
 | `value_type.type_X()` | `Cls.type()`: `demo.StructureS.type()`, `containers.Vector_of_uint8.type()` |
 | a field `f_uint_8`, `channel_0`, an enumeration case `A_0` | `f_uint8`, `channel0`, `A0` |
 | an `any` read as the runtime `ValueAny` | `AnyValue`; `unwrap()` gives the runtime value, as before |
+| `dsviper.ValueAny(x)` written into an `any` field | `AnyValue(x)`, the declared type; the runtime value is still accepted |
 
 The right-hand column, run against the `model` package this chapter uses (its `Tuto`
-namespace is the module `model.tuto`; see {doc}`python` for the model). A namespace is a
+namespace is the module `model.tuto`; see {doc}`../using-generated-sdk/python` for the model). A namespace is a
 module, a container is named by its shape, and the model's definitions are a function of
 the package:
 
@@ -199,7 +202,7 @@ What reads the same: an attachment's `get` still answers an optional, so the 1.2
 `opt = …get(…)` / `if opt:` / `opt.unwrap()` carries over unchanged. Structures are
 constructed by naming their fields as keywords (`tuto.Login(nickname="alice")`), and
 setting a field after construction works as before. Keys, their views and their
-conversions are described in {doc}`python`, *Keys*; errors in *Errors*.
+conversions are described in {doc}`../using-generated-sdk/python`, *Keys*; errors in *Errors*.
 
 ## TypeScript
 
@@ -207,7 +210,7 @@ conversions are described in {doc}`python`, *Keys*; errors in *Errors*.
 |---|---|
 | `Demo_Vector3`, `Demo_Level`, from the package root | `demo.Vector3`, `demo.Level`: each unit is a namespace of the package, and a subpath export (`pkg/demo`) |
 | `Vector_uint8`, `Map_A_to_B`, … | `Vector_of_uint8`, `Map_of_A_to_B`, …, at the package root |
-| `attachments.player_Property.get(…)` | `demo.attachments.Player.property.get(…)` |
+| `attachments.player_Property.get(…)` | `attachments.Player.property.get(…)`, with `import * as attachments from "pkg/demo/attachments"` (feature `Attachments`): the unit does not re-export its attachments |
 | `functionPoolRemotes.Tools`, `attachmentFunctionPoolRemotes.PlayerModel` | `tools.Remote`, `player_model.Remote`, from `pkg/pools` |
 | a pool function `add_vector`, `has_player` | `addVector`, `hasPlayer`: the DSM spelling |
 | `x.compareTo(y)` | `x.compare(y)` |
@@ -268,7 +271,7 @@ const document = Player.property.get(mutating, found.unwrap());
 
 Bytes go through the bridge, as in Python: `dsviper.Value.encode(p.unwrapValue())`, and
 `X.wrapValue(dsviper.Value.decode(blob, X.type(), definitions()))`. The full surface is
-{doc}`node`.
+{doc}`../using-generated-sdk/node`.
 
 ## C++
 
@@ -280,6 +283,8 @@ Bytes go through the bridge, as in Python: `dsviper.Value.encode(p.unwrapValue()
 | `NS::Demo::Attachments::Concept_Att::get(…)`, `NS::Demo::DatabaseAttachments::…` | `ns::demo::attachments::Concept::att::get(…)`, the `Database` overloads included |
 | `NS::Database::create(…)` (the model registered for you) | `Viper::Database::create(…)` then `extendDefinitions(ns::codec::definitions())` |
 | `AttachmentRuntimeIds::C_a` | `ns::demo::attachments::C::a::runtimeId` |
+| `XKey k = uuid;` (a key from a bare `UUId`, implicitly) | `XKey k{uuid};`: the constructor is `explicit` |
+| `NS::Demo::Field::S::f`, `NS::Demo::Path::S::f()` | `ns::demo::fields::S::f` (a `std::string_view`, feature `Fields`), `ns::demo::paths::S::f()` (feature `Paths`) |
 | `NS::FunctionPools::tools()`, `FunctionPoolBridges::Tools::add_vector` | `ns::tools::pool()`, `ns::tools::addVector` |
 | `NS::AttachmentFunctionPools::playerModel()` | `ns::player_model::pool()` |
 | `NS::AttachmentFunctionPools::attachments()` | gone: see below |
@@ -288,7 +293,7 @@ Bytes go through the bridge, as in Python: `dsviper.Value.encode(p.unwrapValue()
 the constructors 1.2 gave it. What crosses them to a `Viper::Value` is now one pair of
 overloaded functions, `codec::encode` and `codec::decode<T>`, in place of one function per
 type; JSON, XML and a hexdigest are one runtime call on what `encode` returns, and the
-binary form is the runtime's static layer (see {doc}`cpp`, *The codec*).
+binary form is the runtime's static layer (see {doc}`../using-generated-sdk/cpp`, *The codec*).
 
 **The database is the runtime's.** 1.2 generated an `NS::Database` class that registered the
 model for you. 2.0 generates none: open a `Viper::Database` (or a `Viper::CommitDatabase`)
@@ -349,7 +354,8 @@ Viper::Service::make(
 
 (The laboratory also changed its infrastructure name from `Service` to `service` between
 the two lines; the outer namespace is whatever a project's `infrastructure` says.) Two
-internal C++ applications were migrated along the same rows. The full surface is {doc}`cpp`.
+internal C++ applications were migrated along the same rows. The full surface is
+{doc}`../using-generated-sdk/cpp`.
 
 ## A worked example: dsviper-ge
 

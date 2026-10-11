@@ -10,8 +10,7 @@ from __future__ import annotations
 import re
 
 NOTICE = (
-    "Kibo 1 is deprecated. It receives fixes only, for the life of the LTS-1.2 line. "
-    "New projects generate with kibo 2; existing projects move with the migration guides."
+    "Kibo 1 is deprecated. It receives fixes only, for the life of the LTS-1.2 line."
 )
 
 SECTIONS = {
@@ -23,12 +22,8 @@ def _links(docname: str, markdown: bool) -> str:
     depth = docname.count("/")
     up = "../" * depth
     if markdown:
-        return (f"See {{doc}}`kibo 2 <{up}kibo/index>`, "
-                f"{{doc}}`moving a project or a template pack <{up}kibo/migrating>` and "
-                f"{{doc}}`moving application code <{up}using-generated-sdk/migrating>`.")
-    return (f"See :doc:`kibo 2 <{up}kibo/index>`, "
-            f":doc:`moving a project or a template pack <{up}kibo/migrating>` and "
-            f":doc:`moving application code <{up}using-generated-sdk/migrating>`.")
+        return f"Moving a project off it: {{doc}}`{up}kibo-migration/index`."
+    return f"Moving a project off it: :doc:`{up}kibo-migration/index`."
 
 
 def _insert_after_title(text: str, block: str, markdown: bool) -> str:

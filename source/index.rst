@@ -68,6 +68,7 @@ Documentation
    kibo/index
    kibo-template-viper/index
    using-generated-sdk/index
+   kibo-migration/index
    kibo-1/index
    dsviper-python/index
    dsviper-node/index

@@ -14,7 +14,7 @@ generation of a whole project. The catalogue of templated features it
 produces in the Viper world lives in :doc:`../kibo-template-viper/index`.
 
 This is kibo 2: it exposes **Template Model 2** and generates over the 1.2
-runtime. Coming from kibo 1.2: :doc:`migrating`.
+runtime.
 
 
 Place in the ecosystem
@@ -73,5 +73,4 @@ Topics
    usage
    kibo-project
    template_model
-   migrating
 

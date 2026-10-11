@@ -92,12 +92,12 @@ title = "kibo-project"
 description = "Generating a project from a kibo.toml: targets, features, the pack and the JAR it resolves."
 sort = 25
 
-[overrides."https://docs.digitalsubstrate.io/kibo/migrating.html"]
-title = "Migrating a template pack"
-description = "Moving a template pack from Template Model 1 to Template Model 2: the renames, the values that read differently, and a diff that accounts for every change."
-sort = 40
-
 # ---- kibo 1 ------------------------------------------------------------
+[overrides."https://docs.digitalsubstrate.io/kibo-1/index.html"]
+title = "Kibo 1"
+description = "kibo 1.2 with the kibo-template-viper 1.2 pack, reading Template Model 1. Deprecated: fixes only, for the life of the LTS-1.2 line."
+sort = 10
+
 
 [overrides."https://docs.digitalsubstrate.io/kibo-1/using-generated-sdk/python.html"]
 title = "Python (kibo 1)"
@@ -147,10 +147,21 @@ title = "Generated SDK in C++"
 description = "Native value types, attachments, and the codec crossing to a Viper Value through the static layer."
 sort = 40
 
-[overrides."https://docs.digitalsubstrate.io/using-generated-sdk/migrating.html"]
-title = "Migrating application code from 1.2"
+# ---- Migrating from kibo 1.2 -----------------------------------------
+[overrides."https://docs.digitalsubstrate.io/kibo-migration/project.html"]
+title = "Migrating a project"
+description = "From a generate.py or dsm_util.py to a kibo.toml: what each line of the script becomes, which kibo 2 feature replaces each 1.2 template, a complete example, and how to check the result."
+sort = 20
+
+[overrides."https://docs.digitalsubstrate.io/kibo-migration/template-pack.html"]
+title = "Migrating a template pack"
+description = "From Template Model 1 to Template Model 2: rename scripts, the values that read differently, and a diff that accounts for every change."
+sort = 30
+
+[overrides."https://docs.digitalsubstrate.io/kibo-migration/application.html"]
+title = "Migrating application code"
 description = "What moved in the generated surface between 1.2 and 2.0, per language, with a worked example."
-sort = 50
+sort = 40
 
 # ---- dsviper ---------------------------------------------------------
 

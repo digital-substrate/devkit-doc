@@ -633,16 +633,45 @@ public class TemplateAttachmentScope {
 }
 ```
 
-### TemplateConcept
+### Named entities
 
-Corresponds to the definition of a `concept`.
+`TemplateConcept`, `TemplateClub`, `TemplateEnumeration` and `TemplateStructure` — a `concept`,
+a `club`, an `enum` and a `struct` — share these members:
+
+```java
+    // Namespace
+    public String namespace;
+    public String name;            // as the target spells it (--spell), else the DSM name
+    public String dsmName;         // the DSM name: what is sent to the runtime
+    public boolean nameIsUpperSnake; // the name is already what format="usnake" makes of it
+
+    // Runtime ID
+    public String runtimeId;
+
+    // Documentation
+    public Boolean hasDocumentation;
+    public String documentation;
+
+    // Type
+    public String dsmType;      // the DSM name, whatever the target: ModelA::Material
+    public String type;         // the C++ type; for a concept or a club, its key:
+                                // model_a::MaterialKey
+    public String typeSuffix;
+
+    // Viper C++
+    public String viperType;    // "TypeKey", "TypeEnumeration" or "TypeStructure"
+    public String viperValue;   // "ValueKey", "ValueEnumeration" or "ValueStructure"
+
+    // Binding
+    public TemplateBindingType bindingType;
+```
+
+Each also carries its DSM definition and its own components:
 
 ```java
 public class TemplateConcept {
-    // DSM
     public DSMConcept dsmConcept;
 
-    // Components
     public TemplateConcept parent;
     public String parentNameInNamespace;     // the parent, as a C++ scope writes it: Thing,
                                              // or core::Thing from another namespace
@@ -659,33 +688,28 @@ public class TemplateConcept {
     public Boolean hasForeignDescendants;    // whether a strict descendant lives in another
                                              // namespace
 
-    // Namespace
-    public String namespace;
-    public String name;            // as the target spells it (--spell), else the DSM name
-    public String dsmName;         // the DSM name: what is sent to the runtime
-    public boolean nameIsUpperSnake; // the name is already what format="usnake" makes of it
-
-    // Runtime ID
-    public String runtimeId;
-
-    // Documentation
-    public Boolean hasDocumentation;
-    public String documentation;
-
-    // Type
-    public String dsmType;      // the DSM name: ModelA::Material
-    public String type;         // the C++ key type: model_a::MaterialKey
-    public String typeSuffix;
-
-    // Attachments
     public ArrayList<TemplateAttachment> attachments;
+}
 
-    // Viper C++
-    public String viperType;    // "TypeKey"
-    public String viperValue;   // "ValueKey"
+public class TemplateClub {
+    public DSMClub dsmClub;
 
-    // Binding
-    public TemplateBindingType bindingType;
+    public ArrayList<TemplateConcept> members;
+    public ArrayList<TemplateConceptInNamespace> membersInNamespace;
+    public ArrayList<TemplateConcept> memberDescendants;
+}
+
+public class TemplateEnumeration {
+    public DSMEnumeration dsmEnumeration;
+
+    public ArrayList<DSMEnumerationCase> members;
+}
+
+public class TemplateStructure {
+    public DSMStructure dsmStructure;
+
+    public ArrayList<TemplateStructureField> fields;
+    public boolean isMovable;
 }
 ```
 
@@ -697,8 +721,8 @@ class when this is true.
 ### TemplateConceptInNamespace
 
 Wraps a `TemplateConcept` to provide namespace-qualified names. Used in
-`strictDescendantsInNamespace` and `membersInNamespace` to generate correct type
-references when a concept belongs to a different namespace.
+`strictDescendantsInNamespace`, `strictAncestorsInNamespace` and `membersInNamespace` to
+generate correct type references when a concept belongs to a different namespace.
 
 ```java
 public class TemplateConceptInNamespace {
@@ -711,128 +735,6 @@ public class TemplateConceptInNamespace {
     public String nameInNamespace;      // Thing, or core::Thing
     public String asNameInNamespace;    // Thing, or CoreThing
     public String bindingInNamespace;   // the key as a module writes it: ThingKey, or core.ThingKey
-}
-```
-
-### TemplateClub
-
-Corresponds to the definition of a `club`.
-
-```java
-public class TemplateClub {
-    // DSM
-    public DSMClub dsmClub;
-
-    // Components
-    public ArrayList<TemplateConcept> members;
-    public ArrayList<TemplateConceptInNamespace> membersInNamespace;
-    public ArrayList<TemplateConcept> memberDescendants;
-
-    // Namespace
-    public String namespace;
-    public String name;            // as the target spells it (--spell), else the DSM name
-    public String dsmName;         // the DSM name: what is sent to the runtime
-    public boolean nameIsUpperSnake; // the name is already what format="usnake" makes of it
-
-    // Runtime ID
-    public String runtimeId;
-
-    // Documentation
-    public Boolean hasDocumentation;
-    public String documentation;
-
-    // Type
-    public String dsmType;      // the DSM name, without the Key suffix of `type`
-    public String type;
-    public String typeSuffix;
-
-    // Viper C++
-    public String viperType;    // "TypeKey"
-    public String viperValue;   // "ValueKey"
-
-    // Binding
-    public TemplateBindingType bindingType;
-}
-```
-
-### TemplateEnumeration
-
-Corresponds to the definition of an `enum`.
-
-```java
-public class TemplateEnumeration {
-    // DSM
-    public DSMEnumeration dsmEnumeration;
-
-    // Components
-    public ArrayList<DSMEnumerationCase> members;
-
-    // Namespace
-    public String namespace;
-    public String name;            // as the target spells it (--spell), else the DSM name
-    public String dsmName;         // the DSM name: what is sent to the runtime
-    public boolean nameIsUpperSnake; // the name is already what format="usnake" makes of it
-
-    // Runtime ID
-    public String runtimeId;
-
-    // Documentation
-    public Boolean hasDocumentation;
-    public String documentation;
-
-    // Type
-    public String dsmType;      // the DSM name, whatever the target
-    public String type;
-    public String typeSuffix;
-
-    // Viper C++
-    public String viperType;    // "TypeEnumeration"
-    public String viperValue;   // "ValueEnumeration"
-
-    // Binding
-    public TemplateBindingType bindingType;
-}
-```
-
-### TemplateStructure
-
-Corresponds to the definition of a `struct`.
-
-```java
-public class TemplateStructure {
-    // DSM
-    public DSMStructure dsmStructure;
-
-    // Components
-    public ArrayList<TemplateStructureField> fields;
-
-    // Predicates
-    public boolean isMovable;
-
-    // Namespace
-    public String namespace;
-    public String name;            // as the target spells it (--spell), else the DSM name
-    public String dsmName;         // the DSM name: what is sent to the runtime
-    public boolean nameIsUpperSnake; // the name is already what format="usnake" makes of it
-
-    // Runtime ID
-    public String runtimeId;
-
-    // Documentation
-    public Boolean hasDocumentation;
-    public String documentation;
-
-    // Type
-    public String dsmType;      // the DSM name, whatever the target
-    public String type;
-    public String typeSuffix;
-
-    // Viper C++
-    public String viperType;    // "TypeStructure"
-    public String viperValue;   // "ValueStructure"
-
-    // Binding
-    public TemplateBindingType bindingType;
 }
 ```
 
@@ -1008,20 +910,21 @@ its namespace makes `Graph::X` name the concept — which is what the `*InNamesp
 avoid. Where the container has no key or no element, the string members read `<None>` and the
 binding members are absent.
 
-### TemplateFunctionPool
+### TemplateFunctionPool and TemplateAttachmentFunctionPool
 
-Corresponds to the definition of a `function_pool`. It is the `p` of `pool(p)`.
+A `function_pool` and an `attachment_function_pool`. Each is the `p` of its entry, `pool(p)` or
+`attachment_pool(p)`.
 
 ```java
 public class TemplateFunctionPool {
     // DSM
-    public DSMFunctionPool dsmFunctionPool;
+    public DSMFunctionPool dsmFunctionPool;  // dsmAttachmentFunctionPool on the other
     public String name;            // as the target spells it (--spell), else the DSM name
     public String dsmName;         // the DSM name: what is sent to the runtime
     public String uuid;
 
     // Components
-    public ArrayList<TemplateFunction> functions;
+    public ArrayList<TemplateFunction> functions;  // TemplateAttachmentFunction on the other
 
     // Model
     public TemplateDefinitions model;     // the whole model, for what a pool does not own
@@ -1038,14 +941,14 @@ public class TemplateFunctionPool {
     public String documentation;
 
     // Type
-    public String type;   // "FunctionPool"
+    public String type;   // "FunctionPool" or "AttachmentFunctionPool"
 }
 ```
 
 A pool belongs to no namespace, so every named type its signatures mention is foreign to
 it: in a pool template, a binding's `typeInNamespace` and `annotation` are always qualified.
 
-### TemplateFunction
+### TemplateFunction and TemplateAttachmentFunction
 
 ```java
 public class TemplateFunction {
@@ -1066,6 +969,7 @@ public class TemplateFunction {
     // Type
     public String type;
     public String typeSuffix;
+    public String interfaceType;   // TemplateAttachmentFunction only: "Mutating" or "Getting"
 
     // Viper C++
     public String returnViperValue;
@@ -1097,132 +1001,49 @@ public class TemplateFunctionParameter {
 }
 ```
 
-### TemplateAttachmentFunctionPool
+### Container functions
 
-Corresponds to the definition of an `attachment_function_pool`. It is the `p` of
-`attachment_pool(p)`.
-
-```java
-public class TemplateAttachmentFunctionPool {
-    // DSM
-    public DSMAttachmentFunctionPool dsmAttachmentFunctionPool;
-    public String name;            // as the target spells it (--spell), else the DSM name
-    public String dsmName;         // the DSM name: what is sent to the runtime
-    public String uuid;
-
-    // Components
-    public ArrayList<TemplateAttachmentFunction> functions;
-
-    // Model
-    public TemplateDefinitions model;
-
-    // Artefacts
-    public TemplateIncludePaths include;
-    public TemplateIncludePaths guard;
-
-    // Dependencies
-    public TemplateDependencies dependencies;  // fills `functions`: what the signatures reach
-
-    // Documentation
-    public Boolean hasDocumentation;
-    public String documentation;
-
-    // Type
-    public String type;   // "AttachmentFunctionPool"
-}
-```
-
-### TemplateAttachmentFunction
+`TemplateDefinitions` lists one function per distinct container type of the model
+(`vecFunctions`, `matFunctions`, …). Every one of them carries:
 
 ```java
-public class TemplateAttachmentFunction {
+public class Template<Container>Function {
     // DSM
-    public String name;            // as the target spells it (--spell), else the DSM name
-    public String dsmName;         // the DSM name: what is sent to the runtime
-
-    // Components
-    public ArrayList<TemplateFunctionParameter> parameters;
-
-    // Predicates
-    public Boolean isVoid;
-
-    // Documentation
-    public Boolean hasDocumentation;
-    public String documentation;
+    public String dsmType;      // "map<int64, vector<string>>"
 
     // Type
-    public String type;
+    public String type;         // the C++ type
     public String typeSuffix;
-    public String interfaceType;   // "Mutating" or "Getting"
 
     // Viper C++
-    public String returnViperValue;
-
-    // Binding
-    public TemplateBindingType returnBindingType;
-}
-```
-
-### TemplateVecFunction
-
-Corresponds to the definition of a `vec<elementType, size>`.
-
-```java
-public class TemplateVecFunction {
-    // DSM
-    public String dsmType;
-    public String size;
-
-    // Type
-    public String type;
-    public String typeSuffix;
-    public String elementTypeSuffix;
-
-    // Viper C++
-    public String viperType;    // "TypeVec"
-    public String viperValue;   // "ValueVec"
+    public String viperType;    // "TypeVec", "TypeMap", …
+    public String viperValue;   // "ValueVec", "ValueMap", …
 
     // Binding
     public TemplateBindingType bindingType;
-    public TemplateBindingType bindingElementType;
-    public String bindingSequenceType;  // how the target writes this fixed-size sequence
 }
 ```
 
-For `vec<uint8, 2>`, `bindingSequenceType` is `tuple[int, int]` under `python` and
-`number[]` under `typescript`.
+and, per container:
 
-### TemplateMatFunction
+| Class | DSM | Also carries |
+|---|---|---|
+| `TemplateVecFunction` | `vec<T, size>` | `size`, `elementTypeSuffix`, `bindingElementType`, `bindingSequenceType` |
+| `TemplateMatFunction` | `mat<T, columns, rows>` | `columns`, `rows`, `elementTypeSuffix`, `bindingElementType`, `bindingSequenceType`, `bindingColumnType` |
+| `TemplateTupleFunction` | `tuple<T0, ...>` | `members` |
+| `TemplateOptionalFunction` | `optional<T>` | `elementType`, `elementTypeSuffix`, `bindingElementType` |
+| `TemplateVectorFunction` | `vector<T>` | `valueRef` (`&`, or empty for `vector<bool>`), `elementTypeSuffix`, `bindingElementType` |
+| `TemplateSetFunction` | `set<T>` | `elementTypeSuffix`, `bindingElementType` |
+| `TemplateMapFunction` | `map<K, V>` | `keyTypeSuffix`, `elementTypeSuffix`, `bindingKeyType`, `bindingElementType` |
+| `TemplateVariantFunction` | `variant<T0, ...>` | `members` |
+| `TemplateXArrayFunction` | `xarray<T>` | `elementType`, `elementTypeSuffix`, `bindingElementType` |
 
-Corresponds to the definition of a `mat<elementType, columns, rows>`.
+The `binding…` members are `TemplateBindingType`s, except `bindingSequenceType` and
+`bindingColumnType`, which are strings: how the target writes the fixed-size sequence of a
+`vec`, or a matrix as a sequence of columns and one of its columns. For `vec<uint8, 2>`,
+`bindingSequenceType` is `tuple[int, int]` under `python` and `number[]` under `typescript`.
 
-```java
-public class TemplateMatFunction {
-    // DSM
-    public String dsmType;
-    public String columns;
-    public String rows;
-
-    // Type
-    public String type;
-    public String typeSuffix;
-    public String elementTypeSuffix;
-
-    // Viper C++
-    public String viperType;    // "TypeMat"
-    public String viperValue;   // "ValueMat"
-
-    // Binding
-    public TemplateBindingType bindingType;
-    public TemplateBindingType bindingElementType;
-    public String bindingSequenceType;  // how the target writes this matrix: a sequence of columns
-    public String bindingColumnType;    // how the target writes one of its columns
-}
-```
-
-### TemplateType
-
-One member of a `tuple` or a `variant`, carried in all three spaces.
+`members`, on a tuple or a variant, is a list of `TemplateType`, one member in all three spaces:
 
 ```java
 public class TemplateType {
@@ -1233,184 +1054,8 @@ public class TemplateType {
 }
 ```
 
-### TemplateTupleFunction
-
-Corresponds to the definition of a `tuple<T0, ...>`.
-
-```java
-public class TemplateTupleFunction {
-    // DSM
-    public String dsmType;
-
-    // Components
-    public ArrayList<TemplateType> members;
-
-    // Type
-    public String type;
-    public String typeSuffix;
-
-    // Viper C++
-    public String viperType;    // "TypeTuple"
-    public String viperValue;   // "ValueTuple"
-
-    // Binding
-    public TemplateBindingType bindingType;
-}
-```
-
 A member's binding spelling is `<v.members:{tm|<tm.bindingType.type>}>`, and its name for a
 message is `<tm.dsmType>`.
-
-### TemplateOptionalFunction
-
-Corresponds to the definition of an `optional<elementType>`.
-
-```java
-public class TemplateOptionalFunction {
-    // DSM
-    public String dsmType;
-
-    // Type
-    public String type;
-    public String typeSuffix;
-    public String elementType;
-    public String elementTypeSuffix;
-
-    // Viper C++
-    public String viperType;    // "TypeOptional"
-    public String viperValue;   // "ValueOptional"
-
-    // Binding
-    public TemplateBindingType bindingType;
-    public TemplateBindingType bindingElementType;
-}
-```
-
-### TemplateVectorFunction
-
-Corresponds to the definition of a `vector<elementType>`.
-
-```java
-public class TemplateVectorFunction {
-    // DSM
-    public String dsmType;
-
-    public String valueRef;     // "&", or empty for vector<bool>
-
-    // Type
-    public String type;
-    public String typeSuffix;
-    public String elementTypeSuffix;
-
-    // Viper C++
-    public String viperType;    // "TypeVector"
-    public String viperValue;   // "ValueVector"
-
-    // Binding
-    public TemplateBindingType bindingType;
-    public TemplateBindingType bindingElementType;
-}
-```
-
-### TemplateSetFunction
-
-Corresponds to the definition of a `set<elementType>`.
-
-```java
-public class TemplateSetFunction {
-    // DSM
-    public String dsmType;
-
-    // Type
-    public String type;
-    public String typeSuffix;
-    public String elementTypeSuffix;
-
-    // Viper C++
-    public String viperType;    // "TypeSet"
-    public String viperValue;   // "ValueSet"
-
-    // Binding
-    public TemplateBindingType bindingType;
-    public TemplateBindingType bindingElementType;
-}
-```
-
-### TemplateMapFunction
-
-Corresponds to the definition of a `map<keyType, elementType>`.
-
-```java
-public class TemplateMapFunction {
-    // DSM
-    public String dsmType;
-
-    // Type
-    public String type;
-    public String typeSuffix;
-    public String keyTypeSuffix;
-    public String elementTypeSuffix;
-
-    // Viper C++
-    public String viperType;    // "TypeMap"
-    public String viperValue;   // "ValueMap"
-
-    // Binding
-    public TemplateBindingType bindingType;
-    public TemplateBindingType bindingKeyType;
-    public TemplateBindingType bindingElementType;
-}
-```
-
-### TemplateVariantFunction
-
-Corresponds to the definition of a `variant<T0, ...>`.
-
-```java
-public class TemplateVariantFunction {
-    // DSM
-    public String dsmType;
-
-    // Components
-    public ArrayList<TemplateType> members;
-
-    // Type
-    public String type;
-    public String typeSuffix;
-
-    // Viper C++
-    public String viperType;    // "TypeVariant"
-    public String viperValue;   // "ValueVariant"
-
-    // Binding
-    public TemplateBindingType bindingType;
-}
-```
-
-### TemplateXArrayFunction
-
-Corresponds to the definition of a `xarray<elementType>`.
-
-```java
-public class TemplateXArrayFunction {
-    // DSM
-    public String dsmType;
-
-    // Type
-    public String type;
-    public String typeSuffix;
-    public String elementType;
-    public String elementTypeSuffix;
-
-    // Viper C++
-    public String viperType;    // "TypeXArray"
-    public String viperValue;   // "ValueXArray"
-
-    // Binding
-    public TemplateBindingType bindingType;
-    public TemplateBindingType bindingElementType;
-}
-```
 
 ## DSM Model
 
@@ -1595,109 +1240,22 @@ public abstract class DSMType {
 }
 ```
 
-### DSMTypeKey
+### Container types
 
-Corresponds to the definition of a `key<T>`.
+Each DSM type constructor has its class, deriving from `DSMType`:
 
-```java
-public class DSMTypeKey extends DSMType {
-    public DSMTypeReference elementType;
-}
-```
-
-### DSMTypeVec
-
-Corresponds to the definition of a `vec<T, n>`.
-
-```java
-public class DSMTypeVec extends DSMType {
-    public DSMTypeReference elementType;
-    public long size;
-}
-```
-
-### DSMTypeMat
-
-Corresponds to the definition of a `mat<T, columns, rows>`.
-
-```java
-public class DSMTypeMat extends DSMType {
-    public DSMTypeReference elementType;
-    public long columns;
-    public long rows;
-}
-```
-
-### DSMTypeTuple
-
-Corresponds to the definition of a `tuple<T0, ...>`.
-
-```java
-public class DSMTypeTuple extends DSMType {
-    public ArrayList<DSMType> types;
-}
-```
-
-### DSMTypeOptional
-
-Corresponds to the definition of an `optional<T>`.
-
-```java
-public class DSMTypeOptional extends DSMType {
-    public DSMType elementType;
-}
-```
-
-### DSMTypeVector
-
-Corresponds to the definition of a `vector<T>`.
-
-```java
-public class DSMTypeVector extends DSMType {
-    public DSMType elementType;
-}
-```
-
-### DSMTypeSet
-
-Corresponds to the definition of a `set<T>`.
-
-```java
-public class DSMTypeSet extends DSMType {
-    public DSMType elementType;
-}
-```
-
-### DSMTypeMap
-
-Corresponds to the definition of a `map<K, V>`.
-
-```java
-public class DSMTypeMap extends DSMType {
-    public DSMType keyType;
-    public DSMType elementType;
-}
-```
-
-### DSMTypeVariant
-
-Corresponds to the definition of a `variant<T0, ...>`.
-
-```java
-public class DSMTypeVariant extends DSMType {
-    public ArrayList<DSMType> types;
-}
-```
-
-### DSMTypeXArray
-
-Corresponds to the definition of a `xarray<elementType>`.
-
-```java
-public class DSMTypeXArray extends DSMType {
-    public DSMType elementType;
-}
-```
+| DSM | Class | Fields |
+|---|---|---|
+| `key<T>` | `DSMTypeKey` | `DSMTypeReference elementType` |
+| `vec<T, n>` | `DSMTypeVec` | `DSMTypeReference elementType`, `long size` |
+| `mat<T, columns, rows>` | `DSMTypeMat` | `DSMTypeReference elementType`, `long columns`, `long rows` |
+| `tuple<T0, ...>` | `DSMTypeTuple` | `ArrayList<DSMType> types` |
+| `optional<T>` | `DSMTypeOptional` | `DSMType elementType` |
+| `vector<T>` | `DSMTypeVector` | `DSMType elementType` |
+| `set<T>` | `DSMTypeSet` | `DSMType elementType` |
+| `map<K, V>` | `DSMTypeMap` | `DSMType keyType`, `DSMType elementType` |
+| `variant<T0, ...>` | `DSMTypeVariant` | `ArrayList<DSMType> types` |
+| `xarray<T>` | `DSMTypeXArray` | `DSMType elementType` |
 
 ### DSMFunctionPool
 

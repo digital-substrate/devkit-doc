@@ -30,13 +30,13 @@ across teams as a spec.
 You feed your `.dsm` file plus a Kibo **template** to the `kibo` CLI. Kibo is
 the code generator; the template pack determines the runtime.
 For the Viper C++ / dsviper world, that template pack is `kibo-template-viper`, which
-can emits two parallel surfaces from a single DSM model: C++ headers and
+can emit two parallel surfaces from a single DSM model: C++ headers and
 implementations for Viper C++, and a typed Python package for dsviper.
 
 **What you have at the end of this step.** Two typed surfaces of your DSM
-model — a **C++ surface** (headers + `.cpp`) for embedding in Viper C++, and a
-typed **Python package** importable from any Python application. Both are
-generated from the same metadata.
+model — a **C++ surface** (`.hpp` and `.cpp` files) for embedding in Viper
+C++, and a typed **Python package** importable from any Python application.
+Both are generated from the same metadata.
 
 → Reference: {doc}`../kibo/usage`.
 

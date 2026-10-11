@@ -59,7 +59,7 @@ A project states its generation once, in a ``kibo.toml``:
    python3 kibo_project.py generate kibo.toml
 
 The Python result is a typed package, ``import myapp``, ready to be used
-through :term:`dsviper`; the C++ result is headers and ``.cpp`` files that
+through :term:`dsviper`; the C++ result is ``.hpp`` and ``.cpp`` files that
 link against the :term:`Viper C++` runtime. Calling the JAR directly is
 covered in :doc:`usage`.
 

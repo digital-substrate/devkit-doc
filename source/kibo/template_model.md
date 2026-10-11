@@ -138,9 +138,11 @@ nothing.
 ## Type Suffix
 
 During the conversion from DSM Model to Template Model, Kibo recursively collects and
-decomposes all types and constructs a unique symbol per type called the **type suffix**.
+decomposes all types and constructs a symbol per type called the **type suffix**.
 
 ### Decomposition Examples
+
+With `User` a concept of the namespace `App`:
 
 - `float`
     - `_float`
@@ -148,15 +150,21 @@ decomposes all types and constructs a unique symbol per type called the **type s
     - `_vector_float`
     - `_float`
 - `map<tuple<int64, float>, vector<key<User>>>`
-    - `_map_tuple_int64_float_to_vector_UserKey`
+    - `_map_tuple_int64_float_to_vector_App_UserKey`
     - `_tuple_int64_float`
     - `_int64`
     - `_float`
-    - `_vector_UserKey`
-    - `_UserKey`
+    - `_vector_App_UserKey`
+    - `_App_UserKey`
 
-The type suffix is neutral: it is the same whatever the target, and a type of a namespace
-carries the namespace (`_ModelA_MaterialKey`, `_set_ModelA_MaterialKey`).
+The type suffix is neutral: it is the same whatever the target. A type the DSM declares
+carries its namespace (`_App_UserKey`, `_App_S`); a primitive type has none (`_float`).
+
+Two distinct types share a suffix when a tuple or a variant is a member, other than the last,
+of another tuple or variant: `tuple<tuple<int64, float>, float>` and
+`tuple<tuple<int64, float, float>>` are both `_tuple_tuple_int64_float_float`, and both bind to
+the class `Tuple_of_Tuple_of_int64_and_float_and_float`. A model that declares both gets one
+helper and one class, those of one of the two.
 
 ### Recursive Template Invocation
 

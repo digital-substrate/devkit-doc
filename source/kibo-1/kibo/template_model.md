@@ -34,7 +34,7 @@ introspection API. Template rules can access both layers.
 ## Type Suffix
 
 During the conversion from DSM Model to Template Model, Kibo recursively collects and
-decomposes all types and constructs a unique symbol per type called the **type suffix**.
+decomposes all types and constructs a symbol per type called the **type suffix**.
 
 ### Decomposition Examples
 
@@ -50,6 +50,11 @@ decomposes all types and constructs a unique symbol per type called the **type s
     - `_float`
     - `_vector_UserKey`
     - `_UserKey`
+
+Two distinct types share a suffix when a tuple or a variant is a member, other than the last,
+of another tuple or variant: `tuple<tuple<int64, float>, float>` and
+`tuple<tuple<int64, float, float>>` are both `_tuple_tuple_int64_float_float`. A model that
+declares both gets the helpers of one of the two, and its generated C++ does not compile.
 
 ### Recursive Template Invocation
 

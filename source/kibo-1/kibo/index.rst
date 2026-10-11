@@ -56,7 +56,7 @@ Direct Kibo invocation, for finer control or for the C++ surface:
 The Python result is a typed package importable as
 ``import MyApp.attachments`` (or whatever namespace your DSM model
 declares), ready to be used through :term:`dsviper`. The C++ result is
-headers and ``.cpp`` files designed to link against the :term:`Viper C++`
+``.hpp`` and ``.cpp`` files designed to link against the :term:`Viper C++`
 runtime.
 
 

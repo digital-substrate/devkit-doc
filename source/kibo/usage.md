@@ -1,8 +1,9 @@
 # Command-line usage
 
-Kibo renders one template against a DSM model per run. A project rarely calls it by hand:
-[kibo-project](kibo-project.md) reads the project's `kibo.toml` and runs kibo once per
-template the chosen features need. This page is for calling the jar directly, or for
+Kibo renders templates against a DSM model: every template given with `-t` renders in the
+same run. A project rarely calls it by hand: [kibo-project](kibo-project.md) reads the
+project's `kibo.toml` and runs kibo once per output directory, with every template the chosen
+features need for that directory. This page is for calling the jar directly, or for
 understanding what kibo-project does on your behalf. See [Templates](templates.md) for
 templates as an ecosystem and the [Template Model reference](template_model.md) for what a
 template reads.

@@ -10,24 +10,17 @@ template files.
 
 ## Code Generation Pipeline
 
-Kibo generates code from a JSON representation of DSM definitions. The pipeline is:
+Kibo reads DSM definitions that `dsviper` has assembled, parsed, validated and encoded as JSON
+(`.dsm.json`); [kibo-project](kibo-project.md) writes them as `<infrastructure>.dsm.json`. Then:
 
-1. **Assemble** — Merge multiple `.dsm` files into a single definition set.
-2. **Parse** — Produce the AST from the assembled definitions.
-3. **Validate** — Check the semantics of the AST.
-4. **Encode** — Serialize the validated definitions to JSON (`.dsm.json`).
-
-[kibo-project](kibo-project.md) runs these four steps with `dsviper` and writes
-`<infrastructure>.dsm.json` beside the project file.
-
-5. **Load** — Kibo reads the `.dsm.json` file to construct a hierarchy of objects where
+1. **Load** — Kibo reads the `.dsm.json` file to construct a hierarchy of objects where
    the root object is an instance of `DSMDefinitions`.
-6. **Convert** — The Object-Oriented representation is not suited for the StringTemplate
+2. **Convert** — The Object-Oriented representation is not suited for the StringTemplate
    engine, so Kibo converts it to a **Template Model** representation that drastically
    simplifies feature implementation with templates. The conversion is made for the target
    named by `-c` (`cpp`, `python` or `typescript`): the target decides how a type is spelled
    through its binding and where each output file lands.
-7. **Render** — Each `.stg` file is rendered once per scope it declares (the whole model,
+3. **Render** — Each `.stg` file is rendered once per scope it declares (the whole model,
    each namespace, each pool), and each result is saved under the name the target's layout
    gives it.
 
@@ -162,10 +155,9 @@ nested in another reads one way: `tuple<tuple<int64, float>, float>` is
 
 A DSM name may hold the separators of those names (`A_and_N_B`), so two types can still be
 written alike: `tuple<N::A_and_N_B, N::C>` and `tuple<N::A, N::B_and_N_C>` are both
-`Tuple2_of_N_A_and_N_B_and_N_C`. Kibo knows every type of the model and stops, in every target:
-it names both types and the directive that names one of them, with a name proposed
-(`--type-name` in [usage](usage.md), `[names.types]` in [kibo-project](kibo-project.md)). The
-name given is the type's class and its suffix, in every target.
+`Tuple2_of_N_A_and_N_B_and_N_C`. Kibo then stops, in every target, and proposes a name
+for one of them (`--type-name`, or `[names.types]` in [kibo-project](kibo-project.md#names)); the
+name given is the type's class and its suffix.
 
 ### Recursive Template Invocation
 

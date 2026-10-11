@@ -67,18 +67,11 @@ check.
 
 ### Read the diagnostics, but do not stop there
 
-A template that reads an accessor the model does not carry renders the **empty string**. The
-render succeeds, the file is written, and the missing part is simply absent. Kibo 2 reports
-every such miss on stderr, each distinct one once with the number of times it fired:
-
-```
-kibo: templates/data.py.stg: context [/main /structure] 12:8 no such property or can't access: …
-```
-
-They are warnings: the file is still written and kibo still exits zero. During the migration a
-line on stderr is a rename not yet done. **An empty stderr is not the end**: it says every
-accessor resolves, not that every value is the one your templates expect — the diff says that —
-nor that every name your templates build still designates a generated class.
+A template that reads an accessor the model does not carry renders the **empty string**, and
+kibo 2 reports it on stderr ([Render diagnostics](template_model.md#render-diagnostics)). During
+the migration, a line on stderr is a rename not yet done. **An empty stderr is not the end**: it
+says every accessor resolves, not that every value is the one your templates expect — the diff
+says that — nor that every name your templates build still designates a generated class.
 
 ### The renames
 
@@ -121,7 +114,7 @@ diff shows; the last column says what a template does about it.
 | 2 | **`AnyConceptKey`, the key of `any_concept`, lives in the infrastructure namespace**, the one `-n` names | `AnyConceptKey` → `::features::AnyConceptKey` | Declare `AnyConceptKey` in the namespace `-n` names, or read the name from the model rather than writing it. |
 | 3 | **A parent from another namespace is named with its namespace** in `parentNameInNamespace` | `Thing` → `core::Thing` | Nothing, if you used it as a C++ name: Model 1 named a parent from another namespace as if it were local. |
 | 4 | **An attachment's `representation` names a type of another namespace with its namespace** | `attachment<Material, string> Annotations::note` → `attachment<ModelA::Material, string> Annotations::note` | Nothing, unless you parse it. A type of the attachment's own namespace stays unqualified. |
-| 5 | **A container class of a binding is named after what it holds**: `bindingType.proxy` and `bindingType.type` of a container | `Map_int8_to_string` → `Map_of_int8_to_string`; `Vec_uint8_2` → `Vec2_of_uint8`; `Mat_uint8_2_3` → `Mat2x3_of_uint8`; `Tuple_uint8_string` → `Tuple2_of_uint8_and_string`; `Variant_A_B` → `Variant2_of_A_or_B` (a tuple and a variant say how many members follow, so a nested one reads one way) | Name a container class from its `proxy`. A map's set of keys and an attachment's set of keys have their own binding type, `bindingKeySetType`. Where no accessor carries the class you need — the optional an attachment's `get` returns, the vector an xarray converts to — build it by the same rule: `Optional_of_<proxy>`, `Vector_of_<proxy>`. A name built by the 1.2 rule (`Set_<proxy>`, `Vector<elementTypeSuffix>`) points at a class that is no longer generated, and reads the same in both renders: see [Names you build yourself](#names-you-build-yourself). |
+| 5 | **A container class of a binding is named after what it holds**: `bindingType.proxy` and `bindingType.type` of a container | `Map_int8_to_string` → `Map_of_int8_to_string`; `Vec_uint8_2` → `Vec2_of_uint8`; `Mat_uint8_2_3` → `Mat2x3_of_uint8`; `Tuple_uint8_string` → `Tuple2_of_uint8_and_string`; `Variant_A_B` → `Variant2_of_A_or_B` (a tuple and a variant say how many members follow, so a nested one reads one way) | Name a container class from its `proxy`. A map's set of keys and an attachment's set of keys have their own binding type, `bindingKeySetType`. Where no accessor carries the class you need — the optional an attachment's `get` returns, the vector an xarray converts to — build it by the same rule: `Optional_of_<proxy>`, `Vector_of_<proxy>`. A name built by the 1.2 rule (`Set_<proxy>`) no longer designates anything: see [Names you build yourself](#names-you-build-yourself). |
 | 6 | **A concept's or a club's `bindingType.type` is its key class** | `Demo_ConceptA` → `Demo_ConceptAKey` | Every name you built from a concept's or a club's `bindingType.type` moves: where you appended `Key`, read `bindingType.type` alone; where you meant the entity's own name (a runtime id constant, say), read `bindingType.proxy`, which is unchanged. |
 | 7 | **`any` is a proxy** | `bindingType.type` `dsviper.ValueAny` → `Any`; `useProxy` `false` → `true` | A pack that generates no `Any` class keeps a leaf table for it: test the type suffix `_Any` (row 12), and write `dsviper.ValueAny` yourself. |
 | 8 | **A set of keys is spelled as the DSM spells it** in `dsmType` | `set<Demo::ConceptA>` → `set<key<Demo::ConceptA>>` | Nothing, unless you parsed the old form. |
@@ -143,16 +136,12 @@ namespaces are spelled in lower snake case, as the modules of the other bindings
 is affected by every row.** Rows 5 to 7 change the names of the classes it generates and
 refers to; row 12 the names of the helpers keyed on a type suffix.
 
-### Which space to name where
+### Naming a type in a message
 
-**In a type position** — a signature, an annotation, a declaration — use the target's spelling:
-`bindingType.type`, or `bindingType.proxy` where you build a *name* rather than write a type.
-
-**In a comment, a docstring, a `repr` or an exception message** — use `dsmType`. Every such
-message in a generated file guards a runtime type comparison, and a runtime type is a DSM type;
-the DSM name is what whoever wrote the model recognises, and it reads the same whatever the
-target. Adopting it moves your generated output, so do it after the migration's diff is
-accounted for, as its own change.
+Model 2 lets a message name a type as the model does: `dsmType` in a comment, a docstring, a
+`repr` or an exception message, the target's spelling in a type position ([Which space to use
+where](template_model.md#which-space-to-use-where)). Adopting it moves your generated output, so
+do it after the migration's diff is accounted for, as its own change.
 
 ### Dropping your leaf table
 
@@ -164,24 +153,13 @@ you resolve a leaf yourself. Either way, verify by the same diff.
 
 ### What Model 2 adds, without breaking anything
 
-A Model 1 pack renders its whole model from `main(m)`, as before. Model 2 adds what a pack can
-take up when it wants to:
+A Model 1 pack renders its whole model from `main(m)`, as before. What a pack can take up when
+it wants to, each described in the [Template Model reference](template_model.md):
 
-- **Entries per scope**: `model(m)` once for the model, `unit(u)` once per DSM namespace,
-  `pool(p)` and `attachment_pool(p)` once per pool. A namespace becomes a unit of generated
-  code — a module, a header — with its dependencies, its include guard and its attachments
-  grouped by the concept they are keyed on.
-- **Dependencies by what an artefact emits**: `u.dependencies.types`, `u.dependencies.attachments`,
-  and `u.dependencies.attachmentFields` for an attachments artefact that addresses a document field
-  by field, whose setters name the fields' types.
-- **`keySetType`** on a map field: the C++ type of a set of its keys, as a map's `subtract`
-  takes it, with the comparator the map orders its keys by.
-- **`strictAncestorsInNamespace`** on a concept: every ancestor, the parent first, named from
-  the concept's namespace, so a key widens to any ancestor.
-- **Formats** that carry a model's documentation into generated code (`string`, `docstring`,
-  `comment`) and one snake_case rule for static names (`snake`, `usnake`).
-
-The [Template Model reference](template_model.md) describes each.
+- entries per scope — `model(m)`, `unit(u)`, `pool(p)`, `attachment_pool(p)` — so that a
+  namespace becomes a unit of generated code, with its `include`, `guard` and `dependencies`;
+- `keySetType` on a map field, and `strictAncestorsInNamespace` on a concept;
+- the formats `string`, `docstring`, `comment`, `snake` and `usnake`.
 
 ### Checklist
 

@@ -34,12 +34,5 @@ that covers your needs, and the dependencies follow. See
 [Picking a feature set](../kibo-template-viper/features.md#picking-a-feature-set) for common
 selections by use case.
 
-## Two ways to encounter templates
-
-* **Use an existing template pack** — for the Viper world, that
-  pack is [kibo-template-viper](../kibo-template-viper/index.rst), which
-  ships C++, Python, and TypeScript templates for every layer of the stack.
-* **Write your own** — Kibo's template format is generic. You can build a
-  template targeting any language or runtime. See
-  [Template Model Reference](template_model.md) for the type-suffix
-  mechanism, naming conventions, and complete reference.
+To write your own pack, for any language or runtime, start from the
+[Template Model reference](template_model.md).

@@ -15,9 +15,7 @@ For each target of the project file, `kibo_project.py`:
    the same run;
 5. writes the embedded definitions in the encoding the pack declares, and copies the pack's
    runtime beside the generated sources;
-6. validates what it wrote, as the pack declares: for the script targets, where a wrong name
-   would otherwise go unnoticed — Python imported, every structure built, `mypy --strict`;
-   TypeScript through `tsc`. A validation that cannot run, its tool missing, is an error.
+6. validates what it wrote, as the pack declares (`validate`, below).
 
 The tool knows nothing of a particular pack: what a feature renders, where it lands and how
 the definitions are embedded are read from the pack's `features.json`. Every file it writes
@@ -45,11 +43,11 @@ and after a change, can then be compared. `--no-validate` skips the pack's valid
 target, for a rendering compared as text rather than run.
 
 `check` says whether the outputs in place are what the project generates now, and writes nothing
-in the project: every target is rendered into a scratch directory and compared file by file. It
-exits 0 when they are current; otherwise 1, listing per target each file that differs, is missing,
-or is extra — extra only in a directory the generator owns (`clean`), where it is a file of a type
-the definitions no longer declare. Files that running the code leaves (`__pycache__`, `.mypy_cache`)
-are not compared. The pack's validation does not run: the comparison is of text.
+in the project. Every target is rendered into a scratch directory and compared as text, file by
+file; the pack's validation does not run. It exits 0 when they are current. Otherwise it exits 1
+and lists, per target, each file that differs, is missing, or is extra. A file counts as extra
+only in a directory the generator owns (`clean`). Files that running the code leaves
+(`__pycache__`, `.mypy_cache`) are not compared.
 
 ## The project file
 
@@ -103,24 +101,26 @@ output = "RaptorEditor/RaptorEditor/Scripts"
   them, as the pack declares, so such a target gets neither.
 - `clean` removes the files of a type the definitions no longer declare. It is refused when the
   sources directory holds the project itself.
-- `validate` — on by default — runs, once a target is written, the checks the pack declares for
-  it. The script targets are where a model's name can produce code that runs and does something
-  else, a field masking a method of the generated class: with kibo-template-viper, Python is
-  imported, every structure built and checked with `mypy --strict`, TypeScript checked with
-  `tsc`. A check whose tool is not found stops the generation, saying where it looked;
-  `validate = false` switches it off for that target.
-- The pack declares the names its own code takes in each target, per family of names;
-  kibo-project passes them to kibo, and a model's name meeting one stops the generation, saying
-  which directive to write — a field `wrap_value` beside the method every generated class has.
+- `validate` — on by default — runs the checks the pack declares once a target is written. They
+  matter for the script targets, where a model's name can produce code that runs and does
+  something else (a field masking a method of the generated class). With kibo-template-viper,
+  Python is imported, every structure built and checked with `mypy --strict`; TypeScript is
+  checked with `tsc`. A check whose tool is not found stops the generation, saying where it
+  looked.
 - A project's own manifest follows the pack's format; its templates sit beside it, in
-  `<manifest dir>/<target>/`. A feature name the pack already declares is refused.
-  Its `reserved` names — the modules or names its own templates take — are reserved as the
-  pack's are: a DSM name meeting one stops the generation.
+  `<manifest dir>/<target>/`. A feature name the pack already declares is refused. Its
+  `reserved` names are reserved as the pack's are.
 
-How a static name is spelled where kibo projects it to snake_case — a Python field, method,
-parameter or module, the packages' directories — follows one rule (`vec3Curves` →
-`vec3_curves`, `docUInt8` → `doc_uint8`, `render2DAttributes` → `render_2d_attributes`). Two
-names that land on one spelling stop the generation. A project says what only its author knows:
+### Names
+
+Where kibo projects a DSM name to snake_case — a Python field, method, parameter or module, a
+package directory — one rule applies (`vec3Curves` → `vec3_curves`, `docUInt8` → `doc_uint8`,
+`render2DAttributes` → `render_2d_attributes`). Kibo renames nothing on its own: two names that
+land on one spelling stop the generation, and so does a DSM name meeting a name the pack's own
+code takes, such as a field `wrap_value` beside the method every generated Python class has. The
+message names the line to write.
+
+A project says what only its author knows:
 
 ```toml
 [names]
@@ -130,11 +130,8 @@ atoms = ["IPv4", "YCoCg"]            # never split: IPv4Address -> ipv4_address
 "f_E" = "f_enum"                     # a whole name, spelled as written here
 ```
 
-A DSM name is valid in every language or in none, and the model is never changed for one
-target. When a target cannot take a name — a field `class` in C++, which its compiler refuses —
-or a name meets one the pack's own code takes — a field `wrap_value` beside the method every
-generated class has, which kibo refuses, saying so — the project spells it otherwise for that
-target:
+The model is never changed for one target. A target that cannot take a name — `class` in C++,
+`wrap_value` in Python — spells it otherwise:
 
 ```toml
 [names.cpp.rename]
@@ -145,14 +142,14 @@ wrap_value = "wrapped"
 ```
 
 The DSM name stays the one sent to the runtime: a C++ client and a Python service still meet on
-the wire. Nothing is renamed without such a line.
+the wire.
 
-kibo names every type from its shape: the class a Python or TypeScript target generates for it,
-and the suffix of the helpers every target keys on it (`Set_of_App_UserKey`,
-`Tuple2_of_int64_and_float`). A DSM name may hold the separators of those names, so two types can
-be written alike: `tuple<N::A_and_N_B, N::C>` and `tuple<N::A, N::B_and_N_C>` are both
-`Tuple2_of_N_A_and_N_B_and_N_C`. kibo then stops, names both types and proposes a name; the
-project names one of them, for every target, the type written as the DSM writes it:
+kibo names every type from its shape (`Set_of_App_UserKey`, `Tuple2_of_int64_and_float`): the
+class a Python or TypeScript target generates, and the suffix every target keys its helpers on.
+A DSM name may hold the separators of those names, so two types can be written alike:
+`tuple<N::A_and_N_B, N::C>` and `tuple<N::A, N::B_and_N_C>` are both
+`Tuple2_of_N_A_and_N_B_and_N_C`. kibo then stops and proposes a name; the project names one of
+the two types, for every target, written as the DSM writes it:
 
 ```toml
 [names.types]

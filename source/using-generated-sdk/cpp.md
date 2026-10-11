@@ -18,18 +18,53 @@ The examples use the `features` model of the generator's laboratory,
 [devkit-codegen-test](https://github.com/digital-substrate/devkit-codegen-test), whose
 infrastructure name (Kibo's `-n`) is `features`. It declares one namespace, `Demo`:
 
-```text
-namespace Demo {
+```dsm
+namespace Demo {7fdd9ba9-b85e-4b33-a749-9b9615e43452} {
+
 concept ConceptA;
 concept ConceptB;
 concept ConceptC is a ConceptB;
 concept ConceptD;
-club Klub;                         // members: ConceptC, ConceptD
-enum EnumerationE { a, b, c };
-struct StructureS { float f_float; string f_string; };
-struct StructureV { uint8 f_uint8 = 8; string f_string = "Forty Two"; set<uint8> f_set = {1, 2, 3}; … };
+
+club Klub;
+membership Klub ConceptC;
+membership Klub ConceptD;
+
+enum EnumerationE {
+  a,
+  b,
+  c
+};
+
+struct StructureS {
+  float f_float;
+  string f_string;
+};
+
+struct StructureT {
+  string field_string;
+  StructureS field_structure_s;
+};
+
+// One field of every DSM type: numbers, strings, blobs, keys and containers.
+struct StructureU {
+  uint8 f_uint8;
+  int64 f_int64;
+  vector<uint8> f_vector;
+  // …
+};
+
+// The same fields, each with a default value.
+struct StructureV {
+  uint8 f_uint8 = 8;
+  string f_string = "Forty Two";
+  // …
+};
+
 attachment<ConceptA, StructureV> properties;
-…
+attachment<ConceptB, StructureT> propertiesB;
+attachment<Klub, StructureV> propertiesD;
+// …
 };
 ```
 
@@ -43,8 +78,9 @@ Which files are rendered depends on the features a project selects:
 | Feature | Files | What they hold |
 |---|---|---|
 | `Base` | `<ns>_<unit>_data`, `_model`, `_codec`, `<ns>_codec`, `<ns>_any_concept`, `<ns>_resources` | structures, enumerations, keys; their identity in the definitions; the codec to a `Viper::Value` |
-| `Fields` | `<ns>_<unit>_fields` | every field's name and path, for code that goes through the dynamic API |
-| `Attachments` | `<ns>_<unit>_attachments` | one scope per attachment, its operations |
+| `Fields` | `<ns>_<unit>_fields` | every field's name (`fields::S::f`), for code that goes through the dynamic API |
+| `Paths` | `<ns>_<unit>_paths` | every field's path (`paths::S::f()`); requires `Fields` |
+| `Attachments` | `<ns>_<unit>_attachments` | one scope per attachment, its operations; requires `Paths` |
 | `Pool` | `<ns>_<pool>_pool` | the functions an application implements, and the pool it exposes |
 | `PoolRemote` | `<ns>_<pool>_remote` | the same pool, called through a service |
 
@@ -235,8 +271,12 @@ subsystem's.
 A function pool is a namespace, `<ns>::<pool>`. The laboratory's `service` model (the
 infrastructure `service`) declares `Tools`:
 
-```text
-function_pool Tools { int64 add(int64 a, int64 b); Vector3 addVector(Vector3 a, Vector3 b); … };
+```dsm
+function_pool Tools {7aa5aea2-c9de-4f91-8371-7995aca8c947} {
+    int64 add(int64 a, int64 b);
+    Vector3 addVector(Vector3 a, Vector3 b);
+    // …
+};
 ```
 
 With the `Pool` feature, the application implements the functions in that namespace, and

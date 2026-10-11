@@ -23,7 +23,7 @@ infrastructure = "features"
 templates = "2"
 
 [target.typescript]
-features = ["Base", "Package"]
+features = ["Base", "Attachments", "Package"]
 output = "typescript"
 ```
 
@@ -53,6 +53,18 @@ model declares function pools.
         "./pools": {
             "types": "./dist/pools.d.ts",
             "import": "./dist/pools.js"
+        },
+        "./*/attachments": {
+            "types": "./dist/*/attachments.d.ts",
+            "import": "./dist/*/attachments.js"
+        },
+        "./*/fields": {
+            "types": "./dist/*/fields.d.ts",
+            "import": "./dist/*/fields.js"
+        },
+        "./*/paths": {
+            "types": "./dist/*/paths.d.ts",
+            "import": "./dist/*/paths.js"
         },
         "./*": {
             "types": "./dist/*/index.d.ts",
@@ -124,10 +136,13 @@ which is what the exports point to.
 |---|---|---|
 | `features` (`.`) | `dist/index.js` | `definitions()`, `AnyConceptKey`, `AnyValue`, `Key`, the type `AttachmentProxy`, every container class, and each namespace as a namespace (`demo`) |
 | `features/pools` (`./pools`) | `dist/pools.js` | every function pool, one namespace each (`tools`), holding its `Remote`; always declared, it resolves once the package is rendered with `Pool` (without it, importing `features/pools` fails) |
+| `features/<unit>/attachments` (`./*/attachments`) | `dist/<unit>/attachments.js` | a namespace's attachments, one class per concept (`Attachments`) |
+| `features/<unit>/fields`, `features/<unit>/paths` | `dist/<unit>/fields.js`, `dist/<unit>/paths.js` | a namespace's field names and paths (`Fields`, `Paths`) |
 | `features/<dir>` (`./*`) | `dist/<dir>/index.js` | one namespace (`features/demo`) or one pool (`features/tools`) on its own |
 
-A pool is reached through `features/pools` or its own directory: the entry module belongs to
-`Base` and cannot import what only the `Pool` feature renders.
+A pool is reached through `features/pools` or its own directory, a namespace's attachments
+through `features/<unit>/attachments`: the entry module and a namespace's `index.ts` belong to
+`Base` and cannot import what only the `Pool` or `Attachments` feature renders.
 
 ## Using it from a project
 
@@ -141,6 +156,7 @@ cannot share a process — the second one to load stops with a message naming bo
 ```ts
 import dsviper from "@digitalsubstrate/dsviper";
 import { definitions, demo, Vector_of_uint8 } from "features";
+import * as attachments from "features/demo/attachments";
 
 const s = new demo.StructureS({ f_float: 1.5, f_string: "hello" });
 const v = new Vector_of_uint8([1, 2, 3]);
@@ -149,9 +165,9 @@ const key = demo.ConceptAKey.create();
 const db = dsviper.Database.createInMemory();
 db.extendDefinitions(definitions());
 db.beginTransaction();
-demo.attachments.ConceptA.properties.set(db, key, new demo.StructureV({ f_string: "stored" }));
+attachments.ConceptA.properties.set(db, key, new demo.StructureV({ f_string: "stored" }));
 db.commit();
-console.log(demo.attachments.ConceptA.properties.get(db, key).unwrap().f_string);   // stored
+console.log(attachments.ConceptA.properties.get(db, key).unwrap().f_string);   // stored
 
 const same = demo.StructureS.wrapValue(s.unwrapValue());   // the same value, not a copy
 same.f_string = "changed";
@@ -201,7 +217,7 @@ defaults and fails on the binding's import.
 ## Package structure
 
 A model named `features` with one namespace `Demo` and one function pool `Tools`, rendered
-with `Base`, `Pool` and `Package`:
+with `Base`, `Attachments`, `Pool` and `Package`:
 
 ```
 typescript/
@@ -213,9 +229,11 @@ typescript/
     ├── containers.ts        # one class per container shape the model uses: Vector_of_uint8, …
     ├── resources.ts         # the embedded definitions
     ├── demo/                # one directory per DSM namespace: Demo is demo
-    │   ├── index.ts         # re-exports data, and attachments as a namespace
+    │   ├── index.ts         # re-exports data
     │   ├── data.ts          # structures, enumerations, keys, and the runtime ids
-    │   └── attachments.ts   # one class per concept, one accessor per attachment
+    │   ├── fields.ts        # Fields (required by Attachments): field names
+    │   ├── paths.ts         # Paths (required by Attachments): field paths
+    │   └── attachments.ts   # Attachments: one class per concept, one accessor per attachment
     ├── pools.ts             # Pool: every pool, one namespace each
     ├── tools/               # Pool: one directory per function pool
     │   ├── index.ts

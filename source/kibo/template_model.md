@@ -298,9 +298,10 @@ What each member answers, for a structure field declared in the namespace `Model
   collection, whose generated elements the constructor unwraps, so that the runtime checks
   every element where the container is built.
 - On an entity — `TemplateConcept`, `TemplateClub`, `TemplateEnumeration`,
-  `TemplateStructure` — `bindingType` is the type seen from the unit that declares it:
-  `typeInNamespace`, `annotation` and `qualified` are all the bare name (`MaterialKey`), and
-  `type` is the flat proxy name (`ModelA_MaterialKey`). For a concept or a club, `proxy` is
+  `TemplateStructure` — `bindingType` is the type seen from the unit that declares it, in
+  every scope: `typeInNamespace` and `annotation` are the bare name (`MaterialKey`), `qualified`
+  names its module (`model_a.MaterialKey`), and `type` is the flat proxy name
+  (`ModelA_MaterialKey`). For a concept or a club, `proxy` is
   the namespace and the name without the `Key` suffix (`ModelA_Material`).
 
 ```{note}
@@ -362,7 +363,7 @@ apply to string values only; an unknown format leaves the string unchanged.
 **`lsc` and `snake` are two rules.** `lsc` (with `sc` and `usc`) is the rule the runtime
 computes for names it derives itself, and must stay identical to it: C++ namespaces and
 names that cross the wire use it. `snake` names a static symbol of a generated package — a
-Python field, method, parameter or module, and the package directories of both bindings —
+Python field, method, parameter or module, and the unit directories of both bindings —
 and only there do the two differ:
 
 | Input | `lsc` | `snake` |

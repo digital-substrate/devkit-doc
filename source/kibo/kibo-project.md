@@ -34,8 +34,9 @@ python3 kibo_project.py plan     [kibo.toml] [--definitions PATH]
 python3 kibo_project.py check    [kibo.toml] [--target NAME ...] [--definitions PATH]
 ```
 
-`plan` shows the jar and the pack it found and, per target, the features it renders and
-every template with where it lands, without writing anything. `--definitions` renders
+`plan` shows the jar and the pack it found and, per target, its output directory, the
+features it renders and every template, marked `sources` (rendered into the pack's sources
+directory) or `root` (rendered at the output itself), without writing anything. `--definitions` renders
 another model than the project's, for one run: a test programme checked against a real
 project's model, for instance. `--into` renders into another directory, each output keeping
 its place relative to the project, and leaves the project untouched: two renderings, before
@@ -47,7 +48,8 @@ in the project. Every target is rendered into a scratch directory and compared a
 file; the pack's validation does not run. It exits 0 when they are current. Otherwise it exits 1
 and lists, per target, each file that differs, is missing, or is extra. A file counts as extra
 only in a directory the generator owns (`clean`). Files that running the code leaves
-(`__pycache__`, `.mypy_cache`) are not compared.
+(`__pycache__`, `.mypy_cache`, `*.pyc`, `.DS_Store`) are not compared. `check`, like `--into`,
+refuses a target whose `output` lies outside the project directory.
 
 ## The project file
 
@@ -71,7 +73,8 @@ clean = true                         # optional: empty the sources directory fir
 validate = false                     # optional: skip the pack's validation of this target
 ```
 
-Paths are relative to the project file. A target may set its own `infrastructure`.
+Paths are relative to the project file. A target may set its own `infrastructure`. A key the tool
+does not read is refused, naming the keys it reads: a misspelt one would otherwise be ignored.
 
 A target named after a language needs nothing more. A project that renders one language to
 several places names each target for what it produces, and states its language:
@@ -104,18 +107,24 @@ output = "RaptorEditor/RaptorEditor/Scripts"
 - `validate` — on by default — runs the checks the pack declares once a target is written. They
   matter for the script targets, where a model's name can produce code that runs and does
   something else (a field masking a method of the generated class). With kibo-template-viper,
-  Python is imported, every structure built and checked with `mypy --strict`; TypeScript is
-  checked with `tsc`. A check whose tool is not found stops the generation, saying where it
-  looked.
+  Python is imported, every structure built and checked with `mypy --strict` when `Base` is
+  rendered; TypeScript is checked with `tsc` when `Package` is, so a TypeScript target without
+  `Package` is not checked. `mypy` must be importable by the Python that runs kibo-project —
+  on the `PATH` is not enough; `tsc` is taken from the nearest `node_modules/.bin` above the
+  target's output, else from the `PATH`. A check whose tool is not found stops the generation,
+  saying where it looked. A validation that fails names who corrects it: the project's own manifest when the
+  files it reports come from the templates that manifest declares, the pack when they come from
+  the pack's.
 - A project's own manifest follows the pack's format; its templates sit beside it, in
   `<manifest dir>/<target>/`. A feature name the pack already declares is refused. Its
   `reserved` names are reserved as the pack's are.
 
 ### Names
 
-Where kibo projects a DSM name to snake_case — a Python field, method, parameter or module, a
-package directory — one rule applies (`vec3Curves` → `vec3_curves`, `docUInt8` → `doc_uint8`,
-`render2DAttributes` → `render_2d_attributes`). Kibo renames nothing on its own: two names that
+Where kibo projects a DSM name to snake_case — a Python field, method, parameter or module, the
+directory of a namespace — one rule applies (`vec3Curves` → `vec3_curves`, `docUInt8` → `doc_uint8`,
+`render2DAttributes` → `render_2d_attributes`). The package's own directory is the
+infrastructure as the project writes it, not its snake_case. Kibo renames nothing on its own: two names that
 land on one spelling stop the generation, and so does a DSM name meeting a name the pack's own
 code takes, such as a field `wrap_value` beside the method every generated Python class has. The
 message names the line to write.
@@ -191,7 +200,7 @@ attachments = [
 
 | | |
 |---|---|
-| kibo jar | `KIBO_JAR`; else `kibo-*.jar` beside this script, or in `../kibo-*/tools/`; else `../kibo/target/kibo-*.jar` |
+| kibo jar | `KIBO_JAR`; else `kibo-*.jar` beside this script, or in `../kibo-*/tools/`; else `../kibo/target/kibo-*.jar`. Its version is read from its name, `kibo-X.Y.Z.jar`, so `KIBO_JAR` names a file named so |
 | template pack | `KIBO_TEMPLATES`; else `../kibo-<line>/templates`; else `../templates`; else `../kibo-template-viper` |
 
 In the DevKit, this script is `tools/kibo_project.py`, and each generator line sits beside

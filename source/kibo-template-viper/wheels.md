@@ -23,7 +23,7 @@ infrastructure = "features"
 templates = "2"
 
 [target.python]
-features = ["Base", "Wheel"]
+features = ["Base", "Attachments", "Wheel"]
 output = "python"
 ```
 
@@ -31,8 +31,9 @@ output = "python"
 python3 kibo_project.py generate kibo.toml
 ```
 
-`infrastructure` names the package (`features` here, in kibo's snake_case); add `"Pool"` to
-the features when the model declares function pools.
+`infrastructure` names the package (`features` here), exactly as written: it is the import
+name. Only the distribution name in `pyproject.toml` is snake_case. Add `"Pool"` to the
+features when the model declares function pools.
 
 ## The generated `pyproject.toml`
 
@@ -94,12 +95,14 @@ the runtime can install the wheel alone, with `--no-deps`.
 
 ## Use
 
-A namespace is a module of the package, and a type is reached through it:
+A namespace is a subpackage of the package, and a type is reached through it; its
+attachments are a module of their own, imported by its path:
 
 ```python
 import dsviper
 import features
 from features import demo, containers
+import features.demo.attachments
 
 s = demo.StructureS(f_float=1.5, f_string="hello")
 v = containers.Vector_of_uint8([1, 2, 3])
@@ -137,7 +140,7 @@ use.py:4: error: Incompatible types in assignment (expression has type "str", va
 ## Package structure
 
 A model named `features` with one namespace `Demo` and one function pool `Tools`, rendered
-with `Base`, `Pool` and `Wheel`:
+with `Base`, `Attachments`, `Pool` and `Wheel`:
 
 ```
 python/
@@ -148,9 +151,11 @@ python/
     ├── resources.py          # the embedded definitions (base64 of the zlib-compressed bytes)
     ├── py.typed              # Wheel: the package is typed
     ├── demo/                 # one subpackage per DSM namespace: Demo is demo
-    │   ├── __init__.py       # re-exports data, imports attachments
+    │   ├── __init__.py       # re-exports data
     │   ├── data.py           # structures, enumerations, keys, and the runtime ids
-    │   └── attachments.py    # one class per concept, one accessor per attachment
+    │   ├── fields.py         # Fields (required by Attachments): field names
+    │   ├── paths.py          # Paths (required by Attachments): field paths
+    │   └── attachments.py    # Attachments: one class per concept, one accessor per attachment
     ├── tools/                # Pool: one subpackage per function pool
     │   ├── __init__.py
     │   └── pool.py           # Pool (local) and Remote (through a service)
@@ -161,8 +166,9 @@ python/
         └── attachment.py
 ```
 
-A pool is imported by its path, `import features.tools`: the entry module belongs to `Base` and
-cannot import what only the `Pool` feature renders. `_codegen/` and `resources.py` are written
+A pool is imported by its path, `import features.tools`, and so are a unit's attachments,
+`import features.demo.attachments`: the entry module and the unit's `__init__.py` belong to
+`Base` and cannot import what only another feature renders. `_codegen/` and `resources.py` are written
 by kibo-project, as the pack's layout declares — the runtime copied from the pack, the
 definitions encoded beside the modules.
 

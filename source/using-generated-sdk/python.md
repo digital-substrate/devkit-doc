@@ -14,15 +14,30 @@ delegates to is the {doc}`dsviper for Python <../dsviper-python/index>` chapter.
 The examples are doctests, run against the package generated from two small DSM
 namespaces. `Tuto` is the model the runtime pages use:
 
-```text
+```dsm
 namespace Tuto {f529bc42-0618-4f54-a3fb-d55f95c5ad03} {
 
 concept User;
 
-struct Login    { string nickname; string password; };
-struct Identity { string firstname; string lastname; };
-enum Status     { pending, active, completed };
-struct Account  { Status state; };
+struct Login {
+    string nickname;
+    string password;
+};
+
+struct Identity {
+    string firstname;
+    string lastname;
+};
+
+enum Status {
+    pending,
+    active,
+    completed
+};
+
+struct Account {
+    Status state;
+};
 
 attachment<User, Login> login;
 attachment<User, Identity> identity;
@@ -35,7 +50,7 @@ attachment<User, Account> account;
 `Studio` adds what Tuto lacks — a concept that is another, a club, a structure holding a
 structure and containers, a declared default:
 
-```text
+```dsm
 namespace Studio {3a5c2f8e-6b1d-4c7a-9e2f-8d4b6a1c3e5f} {
 
 concept Member;
@@ -46,7 +61,11 @@ club Principal;
 membership Principal Member;
 membership Principal Device;
 
-struct Name { string first; string last; };
+struct Name {
+    string first;
+    string last;
+};
+
 struct Profile {
     Name name;
     vector<string> tags;
@@ -55,7 +74,9 @@ struct Profile {
     optional<string> motto;
     uint8 level = 1;
 };
-struct Credentials { string login; };
+struct Credentials {
+    string login;
+};
 
 attachment<Member, Profile> profile;
 attachment<Principal, Credentials> credentials;
@@ -887,9 +908,13 @@ A function pool is a subpackage of its own, imported by its path. Neither Tuto n
 declares one; the laboratory's `service` model declares `Tools` (plain functions) and
 `PlayerModel` (functions over an attachment):
 
-```text
-function_pool Tools { int64 add(int64 a, int64 b); Vector3 addVector(Vector3 a, Vector3 b); … };
-attachment_function_pool PlayerModel {
+```dsm
+function_pool Tools {7aa5aea2-c9de-4f91-8371-7995aca8c947} {
+    int64 add(int64 a, int64 b);
+    Vector3 addVector(Vector3 a, Vector3 b);
+    // …
+};
+attachment_function_pool PlayerModel {d75a8a57-f0ad-4a44-84f7-1ea409d4bd36} {
     mutable key<Player> create(string nickname, Level level);
     optional<key<Player>> hasPlayer(string nickname);
 };
@@ -905,6 +930,7 @@ import dsviper
 import service
 import service.tools
 import service.player_model
+import service.demo.attachments
 from service import demo
 
 remote = dsviper.ServiceRemote.connect("localhost", "54328", dsviper.Definitions())

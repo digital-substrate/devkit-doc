@@ -25,7 +25,8 @@ target's business, at generation:
   does something else — a field masking a method of the generated class. So
   [kibo-project](../kibo/kibo-project.md) validates the generated Python and TypeScript after
   each generation, as the template pack declares: Python is imported, every structure built,
-  and checked with `mypy --strict`; TypeScript is checked with `tsc`.
+  and checked with `mypy --strict`; TypeScript, rendered with its
+  `Package` feature, is checked with `tsc`.
 - A model's name meeting a name the template pack's own code takes — a field `wrap_value`
   beside the method every generated class has — is refused at generation, saying so.
 

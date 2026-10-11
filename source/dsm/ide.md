@@ -241,7 +241,7 @@ my_project/
 │   ├── Model.dsm
 │   └── Pools.dsm
 ├── src/generated/      # Kibo output (C++)
-├── python/mymodel/     # Kibo output (Python)
+├── python/             # Kibo output (Python): the package is python/mymodel/
 └── kibo.toml           # Code generation, run by kibo-project
 ```
 

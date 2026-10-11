@@ -18,20 +18,53 @@ The examples use the `features` model of the generator's laboratory,
 [devkit-codegen-test](https://github.com/digital-substrate/devkit-codegen-test), whose
 infrastructure name is `features`. It declares one namespace, `Demo`:
 
-```text
-namespace Demo {
+```dsm
+namespace Demo {7fdd9ba9-b85e-4b33-a749-9b9615e43452} {
+
 concept ConceptA;
 concept ConceptB;
 concept ConceptC is a ConceptB;
 concept ConceptD;
-club Klub;                         // members: ConceptC, ConceptD
-enum EnumerationE { a, b, c };
-struct StructureS { float f_float; string f_string; };
-struct StructureT { string field_string; StructureS field_structure_s; };
-struct StructureU { uint8 f_uint8; int64 f_int64; vector<uint8> f_vector; … };   // every type
-struct StructureV { uint8 f_uint8 = 8; string f_string = "Forty Two"; … };       // with defaults
+
+club Klub;
+membership Klub ConceptC;
+membership Klub ConceptD;
+
+enum EnumerationE {
+  a,
+  b,
+  c
+};
+
+struct StructureS {
+  float f_float;
+  string f_string;
+};
+
+struct StructureT {
+  string field_string;
+  StructureS field_structure_s;
+};
+
+// One field of every DSM type: numbers, strings, blobs, keys and containers.
+struct StructureU {
+  uint8 f_uint8;
+  int64 f_int64;
+  vector<uint8> f_vector;
+  // …
+};
+
+// The same fields, each with a default value.
+struct StructureV {
+  uint8 f_uint8 = 8;
+  string f_string = "Forty Two";
+  // …
+};
+
 attachment<ConceptA, StructureV> properties;
-…
+attachment<ConceptB, StructureT> propertiesB;
+attachment<Klub, StructureV> propertiesD;
+// …
 };
 ```
 
@@ -58,12 +91,14 @@ is a build artifact, regenerated on every model change. A defect in it is fixed 
 model or in the templates, never in the output.
 
 The entry point exports the units, the containers and the model's definitions; the package
-also exports every unit directory (`features/demo`) and the pools (`features/pools`):
+also exports every unit directory (`features/demo`), each unit's attachments
+(`features/demo/attachments`, the `Attachments` feature) and the pools (`features/pools`):
 
 ```ts
 import dsviper from "@digitalsubstrate/dsviper";
 import { definitions, demo, AnyConceptKey, Vector_of_uint8, Set_of_Demo_StructureS,
          Set_of_Demo_ConceptBKey, Set_of_uint8, XArray_of_uint8 } from "features";
+import * as attachments from "features/demo/attachments";
 
 const defs: dsviper.DefinitionsConst = definitions();   // the model, decoded once
 ```
@@ -144,9 +179,9 @@ const store = dsviper.Database.createInMemory();  // Database.create(path) on di
 store.extendDefinitions(definitions());
 const owner = demo.ConceptAKey.create();
 store.beginTransaction();
-demo.attachments.ConceptA.properties.set(store, owner, new demo.StructureV({ f_string: "hello" }));
+attachments.ConceptA.properties.set(store, owner, new demo.StructureV({ f_string: "hello" }));
 store.commit();
-demo.attachments.ConceptA.properties.get(store, owner).unwrap().f_string;   // "hello"
+attachments.ConceptA.properties.get(store, owner).unwrap().f_string;   // "hello"
 ```
 
 [Attachments and stores](#attachments-and-stores) covers the rest: reading, deleting,
@@ -473,21 +508,22 @@ parents.has(c.toParentKey());                                     // true
 ## Attachments and stores
 
 Data does not live in a key: it is attached to it. An attachment is reached through its
-unit and the concept it is keyed on, `<unit>.attachments.<Concept>.<attachment>`, and each
-operation takes the store it acts on:
+unit's attachments module, imported by its path (`import * as attachments from
+"<package>/<unit>/attachments"`; the unit does not re-export it), and the concept it is keyed
+on, `attachments.<Concept>.<attachment>`; each operation takes the store it acts on:
 
 ```ts
-const properties = demo.attachments.ConceptA.properties;
+const properties = attachments.ConceptA.properties;
 properties.runtimeId;              // a constant: which attachment an id names
 properties.descriptor;             // the runtime's dsviper.Attachment
 ```
 
-An attachment on a club is grouped by the club (`demo.attachments.Klub.propertiesD`, from
+An attachment on a club is grouped by the club (`attachments.Klub.propertiesD`, from
 `attachment<Klub, StructureV> propertiesD;`), one on any concept under `AnyConcept`
-(`demo.attachments.AnyConcept.propertiesAnyConceptAny`, from
+(`attachments.AnyConcept.propertiesAnyConceptAny`, from
 `attachment<any_concept, any> propertiesAnyConceptAny;`), and one on a concept of another
 namespace under `<Namespace>_<Concept>` (`attachment<Core::Thing, Parts::Colour> mark;` in
-the `crossing` model's `Woven` gives `woven.attachments.Core_Thing.mark`).
+the `crossing` model's `Woven` gives `Core_Thing.mark` in `crossing/woven/attachments`).
 
 **Reading** — `keys`, `has`, `get`, `enumerate` — takes an `AttachmentGetting` (a state's or
 a mutable state's `attachmentGetting()`) or a `Database`. `get` returns the document as an
@@ -694,8 +730,12 @@ module belongs to the `Base` feature and cannot import what only the `Pool` feat
 renders. The laboratory's `service` model declares `Tools` (plain functions) and
 `PlayerModel` (functions over an attachment):
 
-```text
-function_pool Tools { int64 add(int64 a, int64 b); Vector3 addVector(Vector3 a, Vector3 b); … };
+```dsm
+function_pool Tools {7aa5aea2-c9de-4f91-8371-7995aca8c947} {
+    int64 add(int64 a, int64 b);
+    Vector3 addVector(Vector3 a, Vector3 b);
+    // …
+};
 attachment_function_pool PlayerModel {
     mutable key<Player> create(string nickname, Level level);
     optional<key<Player>> hasPlayer(string nickname);
@@ -711,6 +751,7 @@ the service carries the pool, and each pool module exports its `NAME` and `UUID`
 import dsviper from "@digitalsubstrate/dsviper";
 import { definitions, demo } from "service";
 import { tools, player_model } from "service/pools";
+import * as attachments from "service/demo/attachments";
 
 const remote = dsviper.ServiceRemote.connect("localhost", "54328", new dsviper.Definitions());
 
@@ -725,7 +766,7 @@ const players = new player_model.Remote(remote);
 const state = new dsviper.CommitMutableState(new dsviper.CommitState(definitions()));
 const player = players.create(state.attachmentMutating(), "zoe", demo.Level.EXPERT);
 players.hasPlayer(state.attachmentGetting(), "zoe").unwrap().equals(player);   // true
-demo.attachments.Player.property.get(state.attachmentGetting(), player).unwrap().nickname;
+attachments.Player.property.get(state.attachmentGetting(), player).unwrap().nickname;
 ```
 
 An attachment function takes the state its parameter type names: an `AttachmentMutating`

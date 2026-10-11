@@ -25,7 +25,7 @@ them; the [Template Model reference](template_model.md) lists what it reads.
 
 A template pack groups its templates into features, and a feature can require others. In the
 [viper template pack](../kibo-template-viper/index.rst), the C++ `Attachments` feature requires
-`Base` and `Fields`: you don't render `Attachments` in isolation. The pack declares these
+`Base` and `Paths`, which requires `Fields`: you don't render `Attachments` in isolation. The pack declares these
 dependencies in its `features.json`, and [kibo-project](kibo-project.md) expands a project's
 choice into the templates it needs; kibo itself renders whatever template it is given.
 
